@@ -96,6 +96,9 @@ public class LangTest extends TestCase {
         assertEquals("zh-Hans",  Lang.normalizeIso639_1("zh-CHS"));
         assertEquals("zh-Hant",  Lang.normalizeIso639_1("zh-CHT"));
 
+        assertEquals("zh-Hans",  Lang.normalizeIso639_1("zh-chs"));
+        assertEquals("zh-Hant",  Lang.normalizeIso639_1("zh-cht"));
+
         assertEquals("da",       Lang.normalizeIso639_1("da"));
         assertEquals("nl",       Lang.normalizeIso639_1("nl"));
         assertEquals("en",       Lang.normalizeIso639_1("en"));
