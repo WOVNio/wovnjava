@@ -497,7 +497,7 @@ class Interceptor {
         for (String l : values.getLangs()) {
             insertNode = doc.createElement("link");
             insertNode.setAttribute("ref", "altername");
-            insertNode.setAttribute("hreflang", l);
+            insertNode.setAttribute("hreflang", Lang.normalizeIso639_1(l));
             insertNode.setAttribute("href", headers.redirectLocation(l));
             parentNode.appendChild(insertNode);
         }

@@ -89,4 +89,36 @@ public class LangTest extends TestCase {
         assertSame(null, Lang.getLang(null));
     }
 
+    public void testNomalizeIso639_1() {
+        assertEquals("ar",       Lang.normalizeIso639_1("ar"));
+        assertEquals("bg",       Lang.normalizeIso639_1("bg"));
+
+        assertEquals("zh-Hans",  Lang.normalizeIso639_1("zh-CHS"));
+        assertEquals("zh-Hant",  Lang.normalizeIso639_1("zh-CHT"));
+
+        assertEquals("da",       Lang.normalizeIso639_1("da"));
+        assertEquals("nl",       Lang.normalizeIso639_1("nl"));
+        assertEquals("en",       Lang.normalizeIso639_1("en"));
+        assertEquals("fi",       Lang.normalizeIso639_1("fi"));
+        assertEquals("fr",       Lang.normalizeIso639_1("fr"));
+        assertEquals("de",       Lang.normalizeIso639_1("de"));
+        assertEquals("el",       Lang.normalizeIso639_1("el"));
+        assertEquals("he",       Lang.normalizeIso639_1("he"));
+        assertEquals("id",       Lang.normalizeIso639_1("id"));
+        assertEquals("it",       Lang.normalizeIso639_1("it"));
+        assertEquals("ja",       Lang.normalizeIso639_1("ja"));
+        assertEquals("ko",       Lang.normalizeIso639_1("ko"));
+        assertEquals("ms",       Lang.normalizeIso639_1("ms"));
+        assertEquals("no",       Lang.normalizeIso639_1("no"));
+        assertEquals("pl",       Lang.normalizeIso639_1("pl"));
+        assertEquals("pt",       Lang.normalizeIso639_1("pt"));
+        assertEquals("ru",       Lang.normalizeIso639_1("ru"));
+        assertEquals("es",       Lang.normalizeIso639_1("es"));
+        assertEquals("sv",       Lang.normalizeIso639_1("sv"));
+        assertEquals("th",       Lang.normalizeIso639_1("th"));
+        assertEquals("hi",       Lang.normalizeIso639_1("hi"));
+        assertEquals("tr",       Lang.normalizeIso639_1("tr"));
+        assertEquals("uk",       Lang.normalizeIso639_1("uk"));
+        assertEquals("vi",       Lang.normalizeIso639_1("vi"));
+    }
 }
