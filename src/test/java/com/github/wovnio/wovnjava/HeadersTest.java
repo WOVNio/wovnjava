@@ -11,169 +11,64 @@ import javax.servlet.http.HttpServletRequest;
 public class HeadersTest extends TestCase {
 
     private static FilterConfig mockConfigPath() {
-        FilterConfig mock = EasyMock.createMock(FilterConfig.class);
-        EasyMock.expect(mock.getInitParameter("userToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("projectToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("sitePrefixPath")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("secretKey")).andReturn("secret");
-        EasyMock.expect(mock.getInitParameter("urlPattern")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("urlPatternReg")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("query")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("apiUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("defaultLang")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("supportedLangs")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("useProxy")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("debugMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalUrlHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalQueryStringHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("strictHtmlCheck")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidClosingTag")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidUTF8")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("connectTimeout")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("readTimeout")).andReturn("");
-        EasyMock.replay(mock);
-
-        return mock;
+        HashMap<String, String> parameters = new HashMap<String, String>() {{
+            put("userToken", "2Wle3");
+            put("projectToken", "2Wle3");
+            put("secretKey", "secret");
+        }};
+        return TestUtil.makeConfig(parameters);
     }
     private static FilterConfig mockConfigSubdomain() {
-        FilterConfig mock = EasyMock.createMock(FilterConfig.class);
-        EasyMock.expect(mock.getInitParameter("userToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("projectToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("sitePrefixPath")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("secretKey")).andReturn("secret");
-        EasyMock.expect(mock.getInitParameter("urlPattern")).andReturn("subdomain");
-        EasyMock.expect(mock.getInitParameter("urlPatternReg")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("query")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("apiUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("defaultLang")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("supportedLangs")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("useProxy")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("debugMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalUrlHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalQueryStringHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("strictHtmlCheck")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidClosingTag")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidUTF8")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("connectTimeout")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("readTimeout")).andReturn("");
-        EasyMock.replay(mock);
-
-        return mock;
+        HashMap<String, String> parameters = new HashMap<String, String>() {{
+            put("userToken", "2Wle3");
+            put("projectToken", "2Wle3");
+            put("secretKey", "secret");
+            put("urlPattern", "subdomain");
+        }};
+        return TestUtil.makeConfig(parameters);
     }
     private static FilterConfig mockConfigQuery() {
-        FilterConfig mock = EasyMock.createMock(FilterConfig.class);
-        EasyMock.expect(mock.getInitParameter("userToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("projectToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("sitePrefixPath")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("secretKey")).andReturn("secret");
-        EasyMock.expect(mock.getInitParameter("urlPattern")).andReturn("query");
-        EasyMock.expect(mock.getInitParameter("urlPatternReg")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("query")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("apiUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("defaultLang")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("supportedLangs")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("useProxy")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("debugMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalUrlHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalQueryStringHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("strictHtmlCheck")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidClosingTag")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidUTF8")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("connectTimeout")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("readTimeout")).andReturn("");
-        EasyMock.replay(mock);
-
-        return mock;
+        HashMap<String, String> parameters = new HashMap<String, String>() {{
+            put("userToken", "2Wle3");
+            put("projectToken", "2Wle3");
+            put("secretKey", "secret");
+            put("urlPattern", "query");
+        }};
+        return TestUtil.makeConfig(parameters);
     }
 
     private static FilterConfig mockConfigQueryParameter() {
-        FilterConfig mock = EasyMock.createMock(FilterConfig.class);
-        EasyMock.expect(mock.getInitParameter("userToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("projectToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("sitePrefixPath")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("secretKey")).andReturn("secret");
-        EasyMock.expect(mock.getInitParameter("urlPattern")).andReturn("query");
-        EasyMock.expect(mock.getInitParameter("urlPatternReg")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("query")).andReturn("abc");
-        EasyMock.expect(mock.getInitParameter("apiUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("defaultLang")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("supportedLangs")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("useProxy")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("debugMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalUrlHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalQueryStringHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("strictHtmlCheck")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidClosingTag")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidUTF8")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("connectTimeout")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("readTimeout")).andReturn("");
-        EasyMock.replay(mock);
-
-        return mock;
+        HashMap<String, String> parameters = new HashMap<String, String>() {{
+            put("userToken", "2Wle3");
+            put("projectToken", "2Wle3");
+            put("secretKey", "secret");
+            put("urlPattern", "query");
+            put("query", "abc");
+        }};
+        return TestUtil.makeConfig(parameters);
     }
 
     private static FilterConfig mockConfigQueryParameterAAA() {
-        FilterConfig mock = EasyMock.createMock(FilterConfig.class);
-        EasyMock.expect(mock.getInitParameter("userToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("projectToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("sitePrefixPath")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("secretKey")).andReturn("secret");
-        EasyMock.expect(mock.getInitParameter("urlPattern")).andReturn("query");
-        EasyMock.expect(mock.getInitParameter("urlPatternReg")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("query")).andReturn("AAA");
-        EasyMock.expect(mock.getInitParameter("apiUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("defaultLang")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("supportedLangs")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("useProxy")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("debugMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalUrlHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalQueryStringHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("strictHtmlCheck")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidClosingTag")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidUTF8")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("connectTimeout")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("readTimeout")).andReturn("");
-        EasyMock.replay(mock);
-
-        return mock;
+        HashMap<String, String> parameters = new HashMap<String, String>() {{
+            put("userToken", "2Wle3");
+            put("projectToken", "2Wle3");
+            put("secretKey", "secret");
+            put("urlPattern", "query");
+            put("query", "AAA");
+        }};
+        return TestUtil.makeConfig(parameters);
     }
 
     private static FilterConfig mockConfigOriginalHeaders() {
-        FilterConfig mock = EasyMock.createMock(FilterConfig.class);
-        EasyMock.expect(mock.getInitParameter("userToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("projectToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("sitePrefixPath")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("secretKey")).andReturn("secret");
-        EasyMock.expect(mock.getInitParameter("urlPattern")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("urlPatternReg")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("query")).andReturn("baz");
-        EasyMock.expect(mock.getInitParameter("apiUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("defaultLang")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("supportedLangs")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("useProxy")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("debugMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalUrlHeader")).andReturn("REDIRECT_URL");
-        EasyMock.expect(mock.getInitParameter("originalQueryStringHeader")).andReturn("REDIRECT_QUERY_STRING");
-        EasyMock.expect(mock.getInitParameter("strictHtmlCheck")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidClosingTag")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidUTF8")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("connectTimeout")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("readTimeout")).andReturn("");
-        EasyMock.replay(mock);
-
-        return mock;
+        HashMap<String, String> parameters = new HashMap<String, String>() {{
+            put("userToken", "2Wle3");
+            put("projectToken", "2Wle3");
+            put("secretKey", "secret");
+            put("query", "baz");
+            put("originalUrlHeader", "REDIRECT_URL");
+            put("originalQueryStringHeader", "REDIRECT_QUERY_STRING");
+        }};
+        return TestUtil.makeConfig(parameters);
     }
 
     private static HttpServletRequest mockRequestPath() {
@@ -256,24 +151,6 @@ public class HeadersTest extends TestCase {
 
         return mock;
 
-    }
-
-    private static FilterConfig mockSpecificConfig(HashMap<String, String> option) {
-        FilterConfig mock = EasyMock.createMock(FilterConfig.class);
-        String[] keys = {"userToken", "projectToken", "sitePrefixPath", "secretKey", "urlPattern", "urlPatternReg", "query", "apiUrl", "defaultLang", "supportedLangs", "testMode", "testUrl", "useProxy", "debugMode", "originalUrlHeader", "originalQueryStringHeader", "strictHtmlCheck", "deleteInvalidClosingTag", "deleteInvalidUTF8", "connectTimeout", "readTimeout"};
-        for (int i=0; i<keys.length; ++i) {
-            String key = keys[i];
-            String val = option.get(key);
-            val = val == null ? "" : val;
-            EasyMock.expect(mock.getInitParameter(key)).andReturn(val);
-        }
-        EasyMock.replay(mock);
-        return mock;
-    }
-
-    private static Settings makeSettings(HashMap<String, String> option) {
-        FilterConfig mock = mockSpecificConfig(option);
-        return new Settings(mock);
     }
 
     public void testHeaders() {
@@ -432,7 +309,7 @@ public class HeadersTest extends TestCase {
     private Headers makeHeader(String requestPath, String sitePrefix) {
         HttpServletRequest mockRequest = mockRequestPath(requestPath);
         HashMap<String, String> option = new HashMap<String, String>(){ { put("sitePrefixPath", "/global/"); } };
-        Settings s = makeSettings(option);
+        Settings s = TestUtil.makeSettings(option);
         return new Headers(mockRequest, s);
     }
 

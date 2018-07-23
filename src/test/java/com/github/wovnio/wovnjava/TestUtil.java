@@ -73,33 +73,6 @@ public class TestUtil {
         return mock;
     }
 
-    public static FilterConfig mockFilterConfig() {
-        FilterConfig mock = EasyMock.createMock(FilterConfig.class);
-        EasyMock.expect(mock.getInitParameter("userToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("projectToken")).andReturn("2Wle3");
-        EasyMock.expect(mock.getInitParameter("sitePrefixPath")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("secretKey")).andReturn("secret");
-        EasyMock.expect(mock.getInitParameter("urlPattern")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("urlPatternReg")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("query")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("apiUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("defaultLang")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("supportedLangs")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("testUrl")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("useProxy")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("debugMode")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalUrlHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("originalQueryStringHeader")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("strictHtmlCheck")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidClosingTag")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("deleteInvalidUTF8")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("connectTimeout")).andReturn("");
-        EasyMock.expect(mock.getInitParameter("readTimeout")).andReturn("");
-        EasyMock.replay(mock);
-        return mock;
-    }
-
     public static FilterChainMock doServletFilter(String contentType, String path) throws ServletException, IOException {
         return doServletFilter(contentType, path, path, emptyOption);
     }
