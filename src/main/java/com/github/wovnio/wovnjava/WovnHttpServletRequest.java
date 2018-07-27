@@ -2,13 +2,46 @@ package com.github.wovnio.wovnjava;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.*;
 
 public class WovnHttpServletRequest extends HttpServletRequestWrapper {
     private Headers headers;
+    private final Map<String, String> customHeaders;
 
     public WovnHttpServletRequest(HttpServletRequest r, Headers h) {
         super(r);
         headers = h;
+
+        this.customHeaders = new HashMap<String, String>();
+        this.addHeader("X-Wovn-Lang", headers.langCode());
+    }
+
+    public void addHeader(String name, String value){
+        this.customHeaders.put(name, value);
+    }
+
+    public String getHeader(String name) {
+        // return custom header if exists
+        String headerValue = customHeaders.get(name);
+
+        if (headerValue != null) {
+            return headerValue;
+        }
+
+        // otherwise, return original headers
+        return ((HttpServletRequest) getRequest()).getHeader(name);
+    }
+
+    public Enumeration<String> getHeaderNames() {
+        Set<String> set = new HashSet<String>(customHeaders.keySet());
+
+        Enumeration<String> e = ((HttpServletRequest) getRequest()).getHeaderNames();
+        while (e.hasMoreElements()) {
+            String n = e.nextElement();
+            set.add(n);
+        }
+
+        return Collections.enumeration(set);
     }
 
     public String getRemoteHost() {
