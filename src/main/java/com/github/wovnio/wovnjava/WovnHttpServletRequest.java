@@ -2,7 +2,13 @@ package com.github.wovnio.wovnjava;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Collections;
+import java.util.List;
 
 public class WovnHttpServletRequest extends HttpServletRequestWrapper {
     private Headers headers;
@@ -12,8 +18,9 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
         super(r);
         headers = h;
 
-        this.customHeaders = new HashMap<String, String>();
-        this.addHeader("X-Wovn-Lang", headers.langCode());
+        this.customHeaders = new HashMap<String, String>() {{
+            put("X-Wovn-Lang", headers.langCode());
+        }};
     }
 
     public void addHeader(String name, String value){
@@ -29,19 +36,15 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
         }
 
         // otherwise, return original headers
-        return ((HttpServletRequest) getRequest()).getHeader(name);
+        return super.getHeader(name);
     }
 
     public Enumeration<String> getHeaderNames() {
+        List<String> names = Collections.list(super.getHeaderNames());
         Set<String> set = new HashSet<String>(customHeaders.keySet());
+        names.addAll(set);
 
-        Enumeration<String> e = ((HttpServletRequest) getRequest()).getHeaderNames();
-        while (e.hasMoreElements()) {
-            String n = e.nextElement();
-            set.add(n);
-        }
-
-        return Collections.enumeration(set);
+        return Collections.enumeration(names);
     }
 
     public String getRemoteHost() {
