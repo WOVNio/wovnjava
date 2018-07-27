@@ -272,4 +272,28 @@ public class WovnHttpServletRequestTest extends TestCase {
 
         assertEquals("/test", wovnRequest.getServletPath());
     }
+
+    public void testWovnLangHeaderWithPath() {
+        HttpServletRequest mockRequest = mockRequestPath();
+        FilterConfig mockConfig = mockConfigPath();
+
+        Settings settings = new Settings(mockConfig);
+        Headers headers = new Headers(mockRequest, settings);
+
+        WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
+
+        assertEquals("en", wovnRequest.getHeader("X-Wovn-Lang"));
+    }
+
+    public void testWovnLangHeaderWithQuery() {
+        HttpServletRequest mockRequest = mockRequestQuery();
+        FilterConfig mockConfig = mockConfigQuery();
+
+        Settings settings = new Settings(mockConfig);
+        Headers headers = new Headers(mockRequest, settings);
+
+        WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
+
+        assertEquals("en", wovnRequest.getHeader("X-Wovn-Lang"));
+    }
 }
