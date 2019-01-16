@@ -11,7 +11,7 @@ public class LangTest extends TestCase {
     }
 
     public void testLangsSize() {
-        assertEquals(30, Lang.LANG.size());
+        assertEquals(31, Lang.LANG.size());
     }
 
     public void testKeyExist() {

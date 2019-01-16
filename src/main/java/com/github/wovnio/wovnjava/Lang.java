@@ -40,6 +40,7 @@ class Lang {
         map.put("tr", new Lang("Türkçe", "tr", "Turkish"));
         map.put("uk", new Lang("Українська", "uk", "Ukrainian"));
         map.put("vi", new Lang("Tiếng Việt", "vi", "Vietnamese"));
+        map.put("tl", new Lang("Tagalog", "tl", "Tagalog"));
         LANG = Collections.unmodifiableMap(map);
     }
 
