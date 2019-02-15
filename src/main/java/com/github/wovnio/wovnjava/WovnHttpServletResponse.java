@@ -17,8 +17,6 @@ class WovnHttpServletResponse extends HttpServletResponseWrapper {
     private ServletOutputStream output;
     private Headers headers;
 
-    private boolean disableFlushBuffer = true;
-
     WovnHttpServletResponse(HttpServletResponse response, Headers headers) {
         super(response);
         this.buff = new ByteArrayOutputStream();
@@ -88,11 +86,9 @@ class WovnHttpServletResponse extends HttpServletResponseWrapper {
 
         // Calling `super.flushBuffer` may lead to response already being committed.
         // This prevents us from, among other things, changing the HTTP content-length.
-        // This problem happens in Weblogic when a servlet forward method trigger a
-        // flush before it forwarded.
-        // disableFlushBuffer for that purpose is 'true' by default
+        // flushBuffer for that purpose is disabled by default
         // See: https://jira.terracotta.org/jira/si/jira.issueviews:issue-html/EHC-447/EHC-447.html
-        if (!disableFlushBuffer) {
+        if (this.headers.settings.enableFlushBuffer) {
           super.flushBuffer();
         }
     }

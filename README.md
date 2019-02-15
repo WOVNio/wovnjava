@@ -211,3 +211,11 @@ Including three classes, `email-address-element`, `my-secret-class`, and `noshow
   ...
 </filter>
 ```
+
+### 2.10. enableFlushBuffer
+This parameter is set to `false` by default.
+
+When `enableFlushBuffer` is set to `false`, the wovnjava servlet filter will capture calls to `response.flushBuffer()` without
+immediately writing content to the client. Only when the complete HTML response is ready will the filter translate the content
+and send it to the client. This is necessary in order to translate the content properly.
+
