@@ -27,6 +27,7 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
         this.customHeaders.put(name, value);
     }
 
+    @Override
     public String getHeader(String name) {
         // return custom header if exists
         String headerValue = customHeaders.get(name);
@@ -39,6 +40,7 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
         return super.getHeader(name);
     }
 
+    @Override
     public Enumeration<String> getHeaderNames() {
         List<String> names = Collections.list(super.getHeaderNames());
         Set<String> set = new HashSet<String>(customHeaders.keySet());
@@ -47,6 +49,7 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
         return Collections.enumeration(names);
     }
 
+    @Override
     public String getRemoteHost() {
         String host = super.getRemoteHost();
         if (headers.settings.urlPattern.equals("subdomain")) {
@@ -55,6 +58,7 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
         return host;
     }
 
+    @Override
     public String getServerName() {
         String serverName = super.getServerName();
         if (headers.settings.urlPattern.equals("subdomain")) {
@@ -63,6 +67,7 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
         return serverName;
     }
 
+    @Override
     public String getRequestURI() {
         String uri = super.getRequestURI();
         if (!headers.settings.urlPattern.equals("subdomain")) {
@@ -73,12 +78,14 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
         return uri;
     }
 
+    @Override
     public StringBuffer getRequestURL() {
         String url = super.getRequestURL().toString();
         url = this.headers.removeLang(url, null);
         return new StringBuffer(url);
     }
 
+    @Override
     public String getServletPath() {
         String path = super.getServletPath();
         if (this.headers.settings.urlPattern.equals("path")) {

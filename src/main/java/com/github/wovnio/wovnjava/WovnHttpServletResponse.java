@@ -44,15 +44,18 @@ class WovnHttpServletResponse extends HttpServletResponseWrapper {
         return ret;
     }
 
+    @Override
     public String toString() {
         return Utf8.toStringUtf8(this.getData());
     }
 
+    @Override
     public void setStatus(int sc) {
         status = sc;
         super.setStatus(sc);
     }
 
+    @Override
     public ServletOutputStream getOutputStream() throws IOException {
         if (this.output == null)
             this.output = new FilterServletOutputStream(this.buff);
@@ -60,6 +63,7 @@ class WovnHttpServletResponse extends HttpServletResponseWrapper {
         return this.output;
     }
 
+    @Override
     public PrintWriter getWriter() throws IOException {
         if (this.writer == null) {
             this.writer = new PrintWriter(
@@ -70,10 +74,12 @@ class WovnHttpServletResponse extends HttpServletResponseWrapper {
         return this.writer;
     }
 
+    @Override
     public void sendRedirect(String location) throws java.io.IOException {
         super.sendRedirect(headers.locationWithLangCode(location));
     }
 
+    @Override
     public void setHeader(String name, String value) {
         if (name.toLowerCase() == "location") {
             value = headers.locationWithLangCode(value);
@@ -81,6 +87,7 @@ class WovnHttpServletResponse extends HttpServletResponseWrapper {
         super.setHeader(name, value);
     }
 
+    @Override
     public void flushBuffer() throws IOException {
         flush();
 
