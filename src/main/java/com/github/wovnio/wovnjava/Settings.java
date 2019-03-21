@@ -24,6 +24,7 @@ class Settings {
     String urlPattern = "path";
     String urlPatternReg = UrlPatternRegPath;
     ArrayList<String> query;
+    String snippetUrl = "//j.wovn.io/1";
     String apiUrl = "https://wovn.global.ssl.fastly.net/v0/";
     String defaultLang = "en";
     ArrayList<String> supportedLangs;
@@ -35,6 +36,7 @@ class Settings {
     final String version = VERSION;
     int connectTimeout = 1000;
     int readTimeout = 1000;
+    boolean devMode = false;
 
     Settings(FilterConfig config) {
         super();
@@ -138,6 +140,11 @@ class Settings {
             this.strictHtmlCheck = getBoolParameter(p);
         }
 
+        p = config.getInitParameter("devMode");
+        if (p != null && !p.isEmpty()) {
+            this.devMode = getBoolParameter(p);
+        }
+
         this.initialize();
     }
 
@@ -194,6 +201,10 @@ class Settings {
             this.urlPatternReg = UrlPatternRegQuery;
         } else if (this.urlPattern.equals("subdomain")) {
             this.urlPatternReg = UrlPatternRegSubdomain;
+        }
+
+        if (this.devMode) {
+          this.snippetUrl = "//j.dev-wovn.io:3000/1";
         }
     }
 
