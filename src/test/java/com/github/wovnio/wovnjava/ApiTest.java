@@ -70,6 +70,7 @@ public class ApiTest extends TestCase {
                                      "&token=token0" +
                                      "&lang_code=ja" +
                                      "&url_pattern=path" +
+                                     "&site_prefix_path=" +
                                      "&body=" + html;
         assertEquals(expectedRequestBody, apiRequestBody);
 
