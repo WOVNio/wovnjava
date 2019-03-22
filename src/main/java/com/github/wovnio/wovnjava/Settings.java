@@ -16,6 +16,8 @@ class Settings {
     static final String UrlPatternRegQuery = "(?:(?:\\?.*&)|\\?)wovn=([^&]+)(?:&|$)";
     static final String UrlPatternRegSubdomain = "^([^.]+)\\.";
 
+    static final String DefaultApiUrl = "https://wovn.global.ssl.fastly.net/v0/";
+
     String projectToken = "";
     boolean hasSitePrefixPath = false;
     String sitePrefixPathWithSlash = "/";
@@ -25,7 +27,7 @@ class Settings {
     String urlPatternReg = UrlPatternRegPath;
     ArrayList<String> query;
     String snippetUrl = "//j.wovn.io/1";
-    String apiUrl = "https://wovn.global.ssl.fastly.net/v0/";
+    String apiUrl = DefaultApiUrl;
     String defaultLang = "en";
     ArrayList<String> supportedLangs;
     ArrayList<String> ignoreClasses;
@@ -204,7 +206,10 @@ class Settings {
         }
 
         if (this.devMode) {
-          this.snippetUrl = "//j.dev-wovn.io:3000/1";
+            this.snippetUrl = "//j.dev-wovn.io:3000/1";
+            if (this.apiUrl == DefaultApiUrl) {
+              this.apiUrl = "http://localhost:3001/v0/";
+            }
         }
     }
 
