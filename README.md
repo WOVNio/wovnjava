@@ -219,3 +219,36 @@ When `enableFlushBuffer` is set to `false`, the wovnjava servlet filter will cap
 immediately writing content to the client. Only when the complete HTML response is ready will the filter translate the content
 and send it to the client. This is necessary in order to translate the content properly.
 
+### 2.11. sitePrefixPath
+
+This parameter lets you set a prefix path to use as an anchor for which WOVN will translate pages. With this setting, WOVN will only translate pages that match the prefix path, and the path language code will be added _after_ the prefix path.
+
+If, for example, you set your sitePrefix path to `city` as follows
+```
+<filter>
+  ...
+  <init-param>
+    <param-name>sitePrefixPath</param-name>
+    <param-value>city</param-value>
+  </init-param>
+  ...
+</filter>
+```
+WOVN will only translate pages that match `http://www.mysite.com/city/*`.
+
+`http://www.mysite.com/city/tokyo/map.html` would be translated, and it would be possible to access that page with language code (in english) like this: `http://www.mysite.com/city/en/tokyo.map.html`.
+
+By default, WOVN will translate all pages for your domain and process path language codes at the beginning of the path.
+
+#### Requirements
+
+This setting _must_ be used together with the `urlPattern = path` setting.
+
+Furthermore, it is highly recommended to also configure your `web.xml` with a corresponding filter-mapping for the wovnjava servlet filter. If prefix path is set to `city` as in the example above, the corresponding filter-mapping would look as follows.
+```
+<filter-mapping>
+  <filter-name>wovn</filter-name>
+  <url-pattern>/city/*</url-pattern>
+  ...
+</filter-mapping>
+```

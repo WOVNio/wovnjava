@@ -3,6 +3,7 @@ package com.github.wovnio.wovnjava;
 import java.util.HashMap;
 
 import javax.servlet.FilterConfig;
+import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.TestCase;
 
@@ -100,6 +101,27 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(original.replace("INPUT", "input"), stripExtraSpaces(converter.restore(html)));
     }
 
+    public void testConvertWithSitePrefixPath() {
+        String original = "<html><head></head><body></body></html>";
+        String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + Settings.VERSION + "&amp;site_prefix_path=global\" data-wovnio-type=\"test-type\" async></script>";
+        String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/global/tokyo/\">" +
+                                   "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/en/tokyo/\">" +
+                                   "<link ref=\"alternate\" hreflang=\"th\" href=\"https://site.com/global/th/tokyo/\">";
+        String expectedHtml = "<html><head>" + expectedSnippet + expectedHrefLangs + "</head><body></body></html>";
+
+        HashMap<String, String> option = new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ja,en,th");
+            put("sitePrefixPath", "global");
+        }};
+        Settings settings = TestUtil.makeSettings(option);
+        HttpServletRequest mockRequest = mockRequestPath("/global/tokyo/", "site.com");
+        Headers headers = new Headers(mockRequest, settings);
+        HtmlConverter converter = new HtmlConverter(settings, original);
+
+        assertEquals(expectedHtml, converter.convert(headers, "ja", "test-type"));
+    }
+
     public void testMixAllCase() {
         String original = "<html><head>" +
             "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script>" +
@@ -151,5 +173,18 @@ public class HtmlConverterTest extends TestCase {
 
     private String stripExtraSpaces(String html) {
         return html.replaceAll("\\s +", "").replaceAll(">\\s+<", "><");
+    }
+
+    private static HttpServletRequest mockRequestPath(String path, String host) {
+        HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
+        EasyMock.expect(mock.getScheme()).andReturn("https");
+        EasyMock.expect(mock.getRemoteHost()).andReturn(host);
+        EasyMock.expect(mock.getRequestURI()).andReturn(path).atLeastOnce();
+        EasyMock.expect(mock.getServerName()).andReturn(host).atLeastOnce();
+        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
+        EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
+        EasyMock.replay(mock);
+
+        return mock;
     }
 }
