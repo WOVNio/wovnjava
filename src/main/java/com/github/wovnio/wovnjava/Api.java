@@ -130,6 +130,7 @@ class Api {
         appendKeyValue(sb, "&token=", settings.projectToken);
         appendKeyValue(sb, "&lang_code=", lang);
         appendKeyValue(sb, "&url_pattern=", settings.urlPattern);
+        appendKeyValue(sb, "&site_prefix_path=", settings.sitePrefixPathWithoutSlash);
         appendKeyValue(sb, "&body=", body);
         return sb.toString();
     }

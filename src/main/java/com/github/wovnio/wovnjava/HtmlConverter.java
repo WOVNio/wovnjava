@@ -130,6 +130,10 @@ class HtmlConverter {
         sb.append(settings.urlPattern);
         sb.append("&langCodeAliases={}&version=");
         sb.append(settings.version);
+        if (settings.hasSitePrefixPath) {
+            sb.append("&site_prefix_path=");
+            sb.append(settings.sitePrefixPathWithoutSlash.replaceFirst("/", ""));
+        }
         String key = sb.toString();
         js.attr("src", settings.snippetUrl);
         js.attr("data-wovnio", key);

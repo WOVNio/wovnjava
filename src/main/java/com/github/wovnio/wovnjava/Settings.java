@@ -11,7 +11,7 @@ import javax.servlet.FilterConfig;
 import javax.xml.bind.DatatypeConverter;
 
 class Settings {
-    public static final String VERSION = "0.4.1";
+    public static final String VERSION = "0.4.2";
     static final String UrlPatternRegPath = "/([^/.?]+)";
     static final String UrlPatternRegQuery = "(?:(?:\\?.*&)|\\?)wovn=([^&]+)(?:&|$)";
     static final String UrlPatternRegSubdomain = "^([^.]+)\\.";
@@ -39,13 +39,13 @@ class Settings {
     int connectTimeout = 1000;
     int readTimeout = 1000;
     boolean devMode = false;
+    boolean enableFlushBuffer = false;
 
     Settings(FilterConfig config) {
         super();
 
         this.query = new ArrayList<String>();
         this.supportedLangs = new ArrayList<String>();
-        this.supportedLangs.add("en");
         this.ignoreClasses = new ArrayList<String>();
 
         String p;
@@ -63,6 +63,7 @@ class Settings {
         p = config.getInitParameter("sitePrefixPath");
         this.hasSitePrefixPath = p != null && p.length() > 0;
         if (this.hasSitePrefixPath) {
+            if (!p.startsWith("/")) p = "/" + p;
             if (p.endsWith("/")) {
                 this.sitePrefixPathWithSlash = p;
                 this.sitePrefixPathWithoutSlash = p.substring(0, p.length() - 1);
@@ -145,6 +146,11 @@ class Settings {
         p = config.getInitParameter("devMode");
         if (p != null && !p.isEmpty()) {
             this.devMode = getBoolParameter(p);
+        }
+
+        p = config.getInitParameter("enableFlushBuffer");
+        if (p != null && !p.isEmpty()) {
+            this.enableFlushBuffer = getBoolParameter(p);
         }
 
         this.initialize();
@@ -240,6 +246,10 @@ class Settings {
         if (supportedLangs.size() < 1) {
             valid = false;
             errors.add("Supported langs is not configured.");
+        }
+        if (hasSitePrefixPath && urlPattern != "path") {
+            valid = false;
+            errors.add("sitePrefixPath must be used together with urlPattern=path.");
         }
 
         if (errors.size() > 0) {

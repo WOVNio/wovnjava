@@ -211,3 +211,99 @@ Including three classes, `email-address-element`, `my-secret-class`, and `noshow
   ...
 </filter>
 ```
+
+### 2.10. enableFlushBuffer
+This parameter is set to `false` by default.
+
+When `enableFlushBuffer` is set to `false`, the wovnjava servlet filter will capture calls to `response.flushBuffer()` without
+immediately writing content to the client. Only when the complete HTML response is ready will the filter translate the content
+and send it to the client. This is necessary in order to translate the content properly.
+
+### 2.11. sitePrefixPath
+
+This parameter lets you set a prefix path to use as an anchor for which WOVN will translate pages. With this setting, WOVN will only translate pages that match the prefix path, and the path language code will be added _after_ the prefix path.
+
+If, for example, you set your sitePrefix path to `city` as follows
+```
+<filter>
+  ...
+  <init-param>
+    <param-name>sitePrefixPath</param-name>
+    <param-value>city</param-value>
+  </init-param>
+  ...
+</filter>
+```
+WOVN will only translate pages that match `http://www.mysite.com/city/*`.
+
+`http://www.mysite.com/city/tokyo/map.html` would be translated, and it would be possible to access that page with language code (in english) like this: `http://www.mysite.com/city/en/tokyo.map.html`.
+
+By default, WOVN will translate all pages for your domain and process path language codes at the beginning of the path.
+
+#### Requirements
+
+This setting _must_ be used together with the `urlPattern = path` setting.
+
+Furthermore, it is highly recommended to also configure your `web.xml` with a corresponding filter-mapping for the wovnjava servlet filter. If prefix path is set to `city` as in the example above, the corresponding filter-mapping would look as follows.
+```
+<filter-mapping>
+  <filter-name>wovn</filter-name>
+  <url-pattern>/city/*</url-pattern>
+  ...
+</filter-mapping>
+```
+
+### 2.12. supportedLangs
+
+This parameter lists the set of languages for which the library performs translations.
+
+Example settings for English, Japanese, and Korean:
+```xml
+<filter>
+    ...
+    <init-param>
+      <param-name>supportedLangs</param-name>
+      <param-value>en,ja,ko</param-value>
+    </init-param>
+    ...
+</filter>
+```
+Note: `defaultLang` will automatically be included in the set of supported languages.
+
+Find a list of languages that WOVN supports below.
+
+## Supported Langauges
+
+Language code | Language name | Name in English
+---|---|---
+ar | ﺎﻠﻋﺮﺒﻳﺓ | Arabic
+bg | Български | Bulgarian
+zh-CHS | 简体中文 | Simp Chinese
+zh-CHT | 繁體中文 | Trad Chinese
+da | Dansk | Danish
+nl | Nederlands | Dutch
+en | English | English
+fi | Suomi | Finnish
+fr | Français | French
+de | Deutsch | German
+el | Ελληνικά | Greek
+he | עברית | Hebrew
+id | Bahasa | Indonesian
+it | Italiano | Italian
+ja | 日本語 | Japanese
+ko | 한국어 | Korean
+ms | Bahasa | Malay
+my | ဗမာစာ | Burmese
+ne | नेपाली भाषा | Nepali
+no | Norsk | Norwegian
+pl | Polski | Polish
+pt | Português | Portuguese
+ru | Русский | Russian
+es | Español | Spanish
+sv | Svensk | Swedish
+th | ภาษาไทย | Thai
+hi | हिन्दी | Hindi
+tr | Türkçe | Turkish
+uk | Українська | Ukrainian
+vi | Tiếng | Vietnamese
+tl | Tagalog | Tagalog
