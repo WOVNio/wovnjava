@@ -35,6 +35,7 @@ class Settings {
     final String version = VERSION;
     int connectTimeout = 1000;
     int readTimeout = 1000;
+    boolean enableFlushBuffer = false;
 
     Settings(FilterConfig config) {
         super();
@@ -58,6 +59,7 @@ class Settings {
         p = config.getInitParameter("sitePrefixPath");
         this.hasSitePrefixPath = p != null && p.length() > 0;
         if (this.hasSitePrefixPath) {
+            if (!p.startsWith("/")) p = "/" + p;
             if (p.endsWith("/")) {
                 this.sitePrefixPathWithSlash = p;
                 this.sitePrefixPathWithoutSlash = p.substring(0, p.length() - 1);
@@ -135,6 +137,11 @@ class Settings {
         p = config.getInitParameter("strictHtmlCheck");
         if (p != null && !p.isEmpty()) {
             this.strictHtmlCheck = getBoolParameter(p);
+        }
+
+        p = config.getInitParameter("enableFlushBuffer");
+        if (p != null && !p.isEmpty()) {
+            this.enableFlushBuffer = getBoolParameter(p);
         }
 
         this.initialize();
@@ -223,6 +230,10 @@ class Settings {
         if (supportedLangs.size() < 1) {
             valid = false;
             errors.add("Supported langs is not configured.");
+        }
+        if (hasSitePrefixPath && urlPattern != "path") {
+            valid = false;
+            errors.add("sitePrefixPath must be used together with urlPattern=path.");
         }
 
         if (errors.size() > 0) {

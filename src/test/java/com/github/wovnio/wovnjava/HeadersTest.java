@@ -248,6 +248,27 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/ja/dir1/dir2/", h.redirectLocation("ja"));
     }
 
+    public void testRedirectLocation_WithSitePrefixPathBasePathOnly_AddsLanguageToUrl() {
+        Headers h = makeHeaderWithSitePrefixPath("/global", "/global/");
+        assertEquals("https://example.com/global", h.redirectLocation("en")); // `en` is defaultLang
+        assertEquals("https://example.com/global/ja/", h.redirectLocation("ja"));
+        assertEquals("https://example.com/global/garbage/", h.redirectLocation("garbage"));
+    }
+
+    public void testRedirectLocation_WithSitePrefixPathMatchingPath_AddsLanguageToUrl() {
+        Headers h = makeHeaderWithSitePrefixPath("/global/tokyo/", "/global/");
+        assertEquals("https://example.com/global/tokyo/", h.redirectLocation("en")); // `en` is defaultLang
+        assertEquals("https://example.com/global/ja/tokyo/", h.redirectLocation("ja"));
+        assertEquals("https://example.com/global/garbage/tokyo/", h.redirectLocation("garbage"));
+    }
+
+    public void testRedirectLocation_WithSitePrefixPathNonmatchingPath_DoesNotModifyUrl() {
+        Headers h = makeHeaderWithSitePrefixPath("/tokyo/global/", "/global/");
+        assertEquals("https://example.com/tokyo/global/", h.redirectLocation("en")); // `en` is defaultLang
+        assertEquals("https://example.com/tokyo/global/", h.redirectLocation("ja"));
+        assertEquals("https://example.com/tokyo/global/", h.redirectLocation("garbage"));
+    }
+
     public void testRedirectLocationSubdomain() {
 
     }
@@ -304,7 +325,7 @@ public class HeadersTest extends TestCase {
     }
 
     public void testSitePrefixPath() {
-        Headers h = makeHeader("/global/en/foo", "/global/");
+        Headers h = makeHeaderWithSitePrefixPath("/global/en/foo", "/global/");
         assertEquals("/global/", h.removeLang("/global/en/", null));
         assertEquals("/en/global/", h.removeLang("/en/global/", null));
     }
@@ -389,9 +410,44 @@ public class HeadersTest extends TestCase {
         assertEquals("https://ja.example.com/file", h.locationWithLangCode("../../file"));
     }
 
-    private Headers makeHeader(String requestPath, String sitePrefix) {
+    public void testLocationWithSitePrefixPath() {
+        Headers h = makeHeaderWithSitePrefixPath("/global/ja/foo", "/global/");
+        assertEquals("http://example.com/", h.locationWithLangCode("http://example.com/"));
+        assertEquals("http://example.com/global/ja/", h.locationWithLangCode("http://example.com/global/"));
+        assertEquals("https://example.com/global/ja/", h.locationWithLangCode("https://example.com/global/"));
+        assertEquals("https://example.com/global/ja/", h.locationWithLangCode("https://example.com/global/ja/"));
+        assertEquals("https://example.com/global/th/", h.locationWithLangCode("https://example.com/global/th/"));
+        assertEquals("https://example.com/global/ja/tokyo/", h.locationWithLangCode("https://example.com/global/tokyo/"));
+        assertEquals("https://example.com/global/ja/file.html", h.locationWithLangCode("https://example.com/global/file.html"));
+        assertEquals("https://example.com/global/ja/file.html", h.locationWithLangCode("https://example.com/pics/../global/file.html"));
+        assertEquals("https://example.com/global/../../file.html", h.locationWithLangCode("https://example.com/global/../../file.html"));
+        assertEquals("https://example.com/tokyo/", h.locationWithLangCode("https://example.com/tokyo/"));
+        assertEquals("https://example.com/tokyo/global/", h.locationWithLangCode("https://example.com/tokyo/global/"));
+        assertEquals("https://example.com/ja/global/", h.locationWithLangCode("https://example.com/ja/global/"));
+        assertEquals("https://example.com/th/global/", h.locationWithLangCode("https://example.com/th/global/"));
+        assertEquals("https://example.com/th/", h.locationWithLangCode("https://example.com/th/"));
+    }
+
+    public void testIsValidPath() {
+        Headers h;
+        h = makeHeaderWithSitePrefixPath("/", "global");
+        assertEquals(false, h.isValidPath());
+
+        h = makeHeaderWithSitePrefixPath("/global", "global");
+        assertEquals(true, h.isValidPath());
+
+        h = makeHeaderWithSitePrefixPath("/global/ja/foo", "global");
+        assertEquals(true, h.isValidPath());
+
+        h = makeHeaderWithSitePrefixPath("/ja/global/foo", "global");
+        assertEquals(false, h.isValidPath());
+    }
+
+    private Headers makeHeaderWithSitePrefixPath(String requestPath, String sitePrefixPath) {
         HttpServletRequest mockRequest = mockRequestPath(requestPath);
-        HashMap<String, String> option = new HashMap<String, String>(){ { put("sitePrefixPath", "/global/"); } };
+        HashMap<String, String> option = new HashMap<String, String>() {{
+            put("sitePrefixPath", sitePrefixPath);
+        }};
         Settings s = TestUtil.makeSettings(option);
         return new Headers(mockRequest, s);
     }

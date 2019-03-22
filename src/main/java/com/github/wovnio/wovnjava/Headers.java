@@ -201,10 +201,20 @@ class Headers {
                 location = lang.toLowerCase() + "." + location;
             } else {
                 // path
-                if (location.contains("/")) {
-                    location = location.replaceFirst("/", "/" + lang + "/");
+                if (settings.hasSitePrefixPath) {
+                    String sitePrefixPath = this.settings.sitePrefixPathWithoutSlash;
+                    if (this.pathName.startsWith(sitePrefixPath)) {
+                        location = location.replaceFirst(sitePrefixPath, sitePrefixPath + "/" + lang);
+                        if (!location.endsWith("/")) {
+                          location += "/";
+                        }
+                    }
                 } else {
-                    location += "/" + lang + "/";
+                    if (location.contains("/")) {
+                        location = location.replaceFirst("/", "/" + lang + "/");
+                    } else {
+                        location += "/" + lang + "/";
+                    }
                 }
             }
             return protocol + "://" + location;
@@ -239,6 +249,10 @@ class Headers {
         }
         path = pathNormalize(path);
 
+        if (!path.startsWith(this.settings.sitePrefixPathWithoutSlash)) {
+            return location;
+        }
+
         // check location already have language code
         if (settings.urlPattern.equals("query") && location.contains("wovn=")) {
             return location;
@@ -258,6 +272,7 @@ class Headers {
         String queryLangCode = "";
         String subdomainLangCode = "";
         String pathLangCode = "";
+        String sitePrefixPath = "";
         if (settings.urlPattern.equals("query")) {
             if (location.contains("?")) {
                 queryLangCode = "&wovn=" + lang;
@@ -268,8 +283,10 @@ class Headers {
             subdomainLangCode = lang + ".";
         } else {
             pathLangCode = "/" + lang;
+            sitePrefixPath = this.settings.sitePrefixPathWithoutSlash;
+            path = path.replaceFirst(sitePrefixPath, "");
         }
-        return locationProtocol + "://" + subdomainLangCode + host + pathLangCode + path + queryLangCode;
+        return locationProtocol + "://" + subdomainLangCode + host + sitePrefixPath + pathLangCode + path + queryLangCode;
     }
     /**
      * @return String Returns request URL without any language code
@@ -292,6 +309,10 @@ class Headers {
             String prefix = this.settings.sitePrefixPathWithSlash;
             return uri.replaceFirst(prefix + lang + "(/|$)", prefix);
         }
+    }
+
+    boolean isValidPath() {
+        return this.pathName.startsWith(this.settings.sitePrefixPathWithoutSlash);
     }
 
     private String removeFilePart(String path) {
