@@ -252,3 +252,58 @@ Furthermore, it is highly recommended to also configure your `web.xml` with a co
   ...
 </filter-mapping>
 ```
+
+### 2.12. supportedLangs
+
+This parameter lists the set of languages for which the library performs translations.
+
+Example settings for English, Japanese, and Korean:
+```xml
+<filter>
+    ...
+    <init-param>
+      <param-name>supportedLangs</param-name>
+      <param-value>en,ja,ko</param-value>
+    </init-param>
+    ...
+</filter>
+```
+Note: `defaultLang` will automatically be included in the set of supported languages.
+
+Find a list of languages that WOVN supports below.
+
+## Supported Langauges
+
+Language code | Language name | Name in English
+---|---|---
+ar | ﺎﻠﻋﺮﺒﻳﺓ | Arabic
+bg | Български | Bulgarian
+zh-CHS | 简体中文 | Simp Chinese
+zh-CHT | 繁體中文 | Trad Chinese
+da | Dansk | Danish
+nl | Nederlands | Dutch
+en | English | English
+fi | Suomi | Finnish
+fr | Français | French
+de | Deutsch | German
+el | Ελληνικά | Greek
+he | עברית | Hebrew
+id | Bahasa | Indonesian
+it | Italiano | Italian
+ja | 日本語 | Japanese
+ko | 한국어 | Korean
+ms | Bahasa | Malay
+my | ဗမာစာ | Burmese
+ne | नेपाली भाषा | Nepali
+no | Norsk | Norwegian
+pl | Polski | Polish
+pt | Português | Portuguese
+ru | Русский | Russian
+es | Español | Spanish
+sv | Svensk | Swedish
+th | ภาษาไทย | Thai
+hi | हिन्दी | Hindi
+tr | Türkçe | Turkish
+uk | Українська | Ukrainian
+vi | Tiếng | Vietnamese
+tl | Tagalog | Tagalog

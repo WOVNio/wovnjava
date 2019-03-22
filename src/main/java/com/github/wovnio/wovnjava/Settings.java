@@ -42,7 +42,6 @@ class Settings {
 
         this.query = new ArrayList<String>();
         this.supportedLangs = new ArrayList<String>();
-        this.supportedLangs.add("en");
         this.ignoreClasses = new ArrayList<String>();
 
         String p;
