@@ -35,6 +35,7 @@ class Settings {
     final String version = VERSION;
     int connectTimeout = 1000;
     int readTimeout = 1000;
+    boolean enableFlushBuffer = false;
 
     Settings(FilterConfig config) {
         super();
@@ -137,6 +138,11 @@ class Settings {
         p = config.getInitParameter("strictHtmlCheck");
         if (p != null && !p.isEmpty()) {
             this.strictHtmlCheck = getBoolParameter(p);
+        }
+
+        p = config.getInitParameter("enableFlushBuffer");
+        if (p != null && !p.isEmpty()) {
+            this.enableFlushBuffer = getBoolParameter(p);
         }
 
         this.initialize();
