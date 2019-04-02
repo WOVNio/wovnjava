@@ -16,6 +16,8 @@ class Settings {
     static final String UrlPatternRegQuery = "(?:(?:\\?.*&)|\\?)wovn=([^&]+)(?:&|$)";
     static final String UrlPatternRegSubdomain = "^([^.]+)\\.";
 
+    static final String DefaultApiUrl = "https://wovn.global.ssl.fastly.net/v0/";
+
     String projectToken = "";
     boolean hasSitePrefixPath = false;
     String sitePrefixPathWithSlash = "/";
@@ -24,7 +26,8 @@ class Settings {
     String urlPattern = "path";
     String urlPatternReg = UrlPatternRegPath;
     ArrayList<String> query;
-    String apiUrl = "https://wovn.global.ssl.fastly.net/v0/";
+    String snippetUrl = "//j.wovn.io/1";
+    String apiUrl = DefaultApiUrl;
     String defaultLang = "en";
     ArrayList<String> supportedLangs;
     ArrayList<String> ignoreClasses;
@@ -35,6 +38,7 @@ class Settings {
     final String version = VERSION;
     int connectTimeout = 1000;
     int readTimeout = 1000;
+    boolean devMode = false;
     boolean enableFlushBuffer = false;
 
     Settings(FilterConfig config) {
@@ -139,6 +143,11 @@ class Settings {
             this.strictHtmlCheck = getBoolParameter(p);
         }
 
+        p = config.getInitParameter("devMode");
+        if (p != null && !p.isEmpty()) {
+            this.devMode = getBoolParameter(p);
+        }
+
         p = config.getInitParameter("enableFlushBuffer");
         if (p != null && !p.isEmpty()) {
             this.enableFlushBuffer = getBoolParameter(p);
@@ -200,6 +209,13 @@ class Settings {
             this.urlPatternReg = UrlPatternRegQuery;
         } else if (this.urlPattern.equals("subdomain")) {
             this.urlPatternReg = UrlPatternRegSubdomain;
+        }
+
+        if (this.devMode) {
+            this.snippetUrl = "//j.dev-wovn.io:3000/1";
+            if (this.apiUrl == DefaultApiUrl) {
+              this.apiUrl = "http://localhost:3001/v0/";
+            }
         }
     }
 

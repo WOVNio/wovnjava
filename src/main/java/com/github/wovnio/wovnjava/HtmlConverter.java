@@ -135,7 +135,7 @@ class HtmlConverter {
             sb.append(settings.sitePrefixPathWithoutSlash.replaceFirst("/", ""));
         }
         String key = sb.toString();
-        js.attr("src", "//j.wovn.io/1");
+        js.attr("src", settings.snippetUrl);
         js.attr("data-wovnio", key);
         js.attr("data-wovnio-type", type);
         js.attr("async", "async");
