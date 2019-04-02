@@ -29,7 +29,7 @@ public class InterceptorTest extends TestCase {
     }
 
     public void testApiTimeout() throws NoSuchMethodException, IllegalAccessException, IOException, ServletException {
-        String originalHtml = "<!doctype html><html><head><title>test</title></head><body>test</body></html>";
+        String originalHtml = "<!doctype html><html><head><meta http-equiv=\"CONTENT-TYPE\"><title>test</title></head><body><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">test</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("projectToken", "token0");
             put("defaultLang", "en");
@@ -41,12 +41,13 @@ public class InterceptorTest extends TestCase {
                         "<link ref=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
                         "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
                         "<link ref=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
+                        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" +
                         "</head><body>test</body></html>";
         assertEquals(expect, stripExtraSpaces(html));
     }
 
     public void testNoApi() throws NoSuchMethodException, IllegalAccessException, IOException, ServletException {
-        String originalHtml = "<!doctype html><html><head><title>test</title></head><body>test</body></html>";
+        String originalHtml = "<!doctype html><html><head><meta http-equiv=\"CONTENT-TYPE\"><title>test</title></head><body>test</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("projectToken", "token0");
             put("defaultLang", "en");
@@ -58,6 +59,7 @@ public class InterceptorTest extends TestCase {
                         "<link ref=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
                         "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
                         "<link ref=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
+                        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" +
                         "</head><body>test</body></html>";
         assertEquals(expect, stripExtraSpaces(html));
     }

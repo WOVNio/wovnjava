@@ -107,7 +107,8 @@ public class HtmlConverterTest extends TestCase {
         String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/global/tokyo/\">" +
                                    "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/en/tokyo/\">" +
                                    "<link ref=\"alternate\" hreflang=\"th\" href=\"https://site.com/global/th/tokyo/\">";
-        String expectedHtml = "<html><head>" + expectedSnippet + expectedHrefLangs + "</head><body></body></html>";
+        String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
+        String expectedHtml = "<html><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
