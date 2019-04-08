@@ -29,7 +29,7 @@ public class InterceptorTest extends TestCase {
     }
 
     public void testApiTimeout() throws NoSuchMethodException, IllegalAccessException, IOException, ServletException {
-        String originalHtml = "<!doctype html><html><head><meta http-equiv=\"CONTENT-TYPE\"><title>test</title></head><body><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">test</body></html>";
+        String originalHtml = "<!doctype html><html><head><meta http-equiv=\"CONTENT-TYPE\"><title>test</title></head><body>test</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("projectToken", "token0");
             put("defaultLang", "en");
