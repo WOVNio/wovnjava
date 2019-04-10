@@ -78,7 +78,7 @@
     <build>
         <resources>
             <resource>
-                <directory>./</directory>
+                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
                     <include>project.properties</include>
