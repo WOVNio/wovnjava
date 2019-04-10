@@ -22,10 +22,12 @@ public class WovnServletFilter implements Filter {
 
     public static final String VERSION = Settings.VERSION;  // for backword compatibility
 
+    @Override
     public void init(FilterConfig config) throws ServletException {
         this.settings = new Settings(config);
     }
 
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException
     {
         Headers headers = new Headers((HttpServletRequest)request, settings);
@@ -41,6 +43,7 @@ public class WovnServletFilter implements Filter {
         }
     }
 
+    @Override
     public void destroy() {
     }
 
