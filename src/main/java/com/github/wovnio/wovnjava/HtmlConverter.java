@@ -35,6 +35,7 @@ class HtmlConverter {
         removeHrefLangIfConflicts();
         appendSnippet(lang, type);
         appendHrefLang(headers);
+        replaceContentType();
         return doc.html();
     }
 
@@ -156,5 +157,20 @@ class HtmlConverter {
         Comment comment = new Comment(WOVN_MARKER_PREFIX + String.valueOf(markers.size()));
         element.replaceWith(comment);
         markers.add(restore(element.outerHtml())); // restore original text if element has marker
+    }
+
+    private void replaceContentType() {
+        // Remove old content type
+        Elements elements = doc.getElementsByTag("meta");
+        for (Element element : elements) {
+            if (element.attr("http-equiv").toLowerCase().equals("content-type")) {
+                element.remove();
+            }
+        }
+        // Set new content type
+        Element meta = new Element(Tag.valueOf("meta"), "");
+        meta.attr("http-equiv", "Content-Type");
+        meta.attr("content", "text/html; charset=UTF-8");
+        doc.head().appendChild(meta);
     }
 }
