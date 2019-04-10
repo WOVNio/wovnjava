@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 class Version {
-    private static final String fallbackVersion = "projectPropertiesErrorFallback";
+    private static final String fallbackVersion = "unknown";
 
     public static String readProjectVersion() {
         try {
