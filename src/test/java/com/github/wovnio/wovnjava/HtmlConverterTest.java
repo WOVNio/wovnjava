@@ -120,7 +120,7 @@ public class HtmlConverterTest extends TestCase {
         Headers headers = new Headers(mockRequest, settings);
         HtmlConverter converter = new HtmlConverter(settings, original);
 
-        assertEquals(expectedHtml, converter.convert(headers, "ja", "test-type"));
+        assertEquals(expectedHtml, converter.convert(headers, "ja"));
     }
 
     public void testMixAllCase() {

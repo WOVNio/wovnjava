@@ -52,10 +52,11 @@ public class ApiTest extends TestCase {
         }});
 
         HttpServletRequest request = TestUtil.mockRequestPath("/ja/somepage/"); // mocks "https://example.com"
+        HttpServletResponse response = TestUtil.mockSimpleHttpServletResponse();
 
         Headers headers = new Headers(request, settings);
 
-        Api api = new Api(settings, headers);
+        Api api = new Api(settings, headers, response);
 
         ByteArrayOutputStream requestStream = new ByteArrayOutputStream();
         ByteArrayInputStream responseStream = new ByteArrayInputStream(apiServerResponse);

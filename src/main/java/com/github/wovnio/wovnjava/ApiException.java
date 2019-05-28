@@ -1,9 +1,20 @@
 package com.github.wovnio.wovnjava;
 
 class ApiException extends Exception {
-    static final ApiException timeout = new ApiException("timeout");
+    private String type;
+    private String details;
 
-    ApiException(String message) {
-        super(message);
+    ApiException(String type, String details) {
+        super(type + " : " + details);
+        this.type = type;
+        this.details = details;
+    }
+
+    String getType() {
+        return this.type;
+    }
+
+    String getDetails() {
+        return this.details;
     }
 }

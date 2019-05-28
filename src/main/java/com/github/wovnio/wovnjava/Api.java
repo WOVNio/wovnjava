@@ -9,25 +9,41 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Collections;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import javax.servlet.http.HttpServletResponse;
 
 import javax.xml.bind.DatatypeConverter;
 
 import net.arnx.jsonic.JSON;
 
 class Api {
+    private static final Map<String, String> wovnFastlyHeaders;
+    static {
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("X-Cache", "X-Wovn-Cache");
+        headers.put("X-Cache-Hits", "X-Wovn-Cache-Hits");
+        headers.put("X-Wovn-Surrogate-Key", "X-Wovn-Surrogate-Key");
+        wovnFastlyHeaders = Collections.unmodifiableMap(headers);
+    }
+
     private final int READ_BUFFER_SIZE = 8196;
     private final Settings settings;
     private final Headers headers;
+    private final HttpServletResponse response;
     private final String responseEncoding = "UTF-8"; // always response is UTF8
 
-    Api(Settings settings, Headers headers) {
+    Api(Settings settings, Headers headers, HttpServletResponse response) {
         this.settings = settings;
         this.headers = headers;
+        this.response = response;
     }
 
     String translate(String lang, String html) throws ApiException {
@@ -39,14 +55,13 @@ class Api {
             con.setReadTimeout(settings.readTimeout);
             return translate(lang, html, con);
         } catch (UnsupportedEncodingException e) {
-            Logger.log.error("Api url", e);
-            throw new ApiException("encoding");
+            throw new ApiException("UnsupportedEncodingException", e.getMessage());
+        } catch (MalformedURLException e) {
+            throw new ApiException("MalformedURLException", e.getMessage());
         } catch (IOException e) {
-            Logger.log.error("Api url", e);
-            throw new ApiException("io");
+            throw new ApiException("IOException", e.getMessage());
         } catch (NoSuchAlgorithmException e) {
-            Logger.log.error("Api url", e);
-            throw new ApiException("algorithm");
+            throw new ApiException("NoSuchAlgorithmException", e.getMessage());
         } finally {
             if (con != null) {
                 con.disconnect();
@@ -67,7 +82,9 @@ class Api {
             body.writeTo(out);
             out.close();
             out = null;
+            forwardFastlyHeaders(con);
             int status = con.getResponseCode();
+            this.response.setHeader("X-Wovn-Api-Status", String.valueOf(status));
             if (status == HttpURLConnection.HTTP_OK) {
                 InputStream input = con.getInputStream();
                 if ("gzip".equals(con.getContentEncoding())) {
@@ -75,20 +92,20 @@ class Api {
                 }
                 return extractHtml(input);
             } else {
-                throw new ApiException("status_" + String.valueOf(status));
+                throw new ApiException("status_" + String.valueOf(status), "");
             }
         } catch (UnsupportedEncodingException e) {
-            Logger.log.error("Api url", e);
-            throw new ApiException("encoding");
+            throw new ApiException("UnsupportedEncodingException", e.getMessage());
+        } catch (SocketTimeoutException e) {
+            throw new ApiException("SocketTimeoutException", e.getMessage());
         } catch (IOException e) {
-            Logger.log.error("Api url", e);
-            throw new ApiException("io");
+            throw new ApiException("IOException", e.getMessage());
         } finally {
             if (out != null) {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    Logger.log.error("Api close", e);
+                    Logger.log.error("Api close buffer error", e);
                 }
             }
         }
@@ -118,8 +135,7 @@ class Api {
         LinkedHashMap<String, String> dict = JSON.decode(json);
         String html = dict.get("body");
         if (html == null) {
-            Logger.log.error("Unknown json format " + json);
-            throw new ApiException("unknown_json_format");
+            throw new ApiException("unknown_json_format", "");
         }
         return html;
     }
@@ -149,8 +165,8 @@ class Api {
         appendValue(sb, headers.pathName);
         appendValue(sb, "&lang=");
         appendValue(sb, lang);
-        appendValue(sb, "&version=");
-        appendValue(sb, settings.version);
+        appendValue(sb, "&version=wovnjava_");
+        appendValue(sb, Settings.VERSION);
         appendValue(sb, ")");
         return new URL(sb.toString());
     }
@@ -169,5 +185,17 @@ class Api {
 
     private void appendValue(StringBuilder sb, String value) throws UnsupportedEncodingException {
         sb.append(URLEncoder.encode(value, "UTF-8"));
+    }
+
+    private void forwardFastlyHeaders(HttpURLConnection con) {
+        String apiHeaderName, responseHeaderName, value;
+        for (Map.Entry<String, String> entry : Api.wovnFastlyHeaders.entrySet()) {
+            apiHeaderName = entry.getKey();
+            responseHeaderName = entry.getValue();
+            value = con.getHeaderField(apiHeaderName);
+            if (value != null) {
+                this.response.setHeader(responseHeaderName, value);
+            }
+        }
     }
 }

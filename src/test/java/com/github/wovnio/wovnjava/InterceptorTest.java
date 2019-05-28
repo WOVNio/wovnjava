@@ -23,7 +23,7 @@ public class InterceptorTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
         }});
-        String html = translate("/ja/", originalHtml, settings, mockApi("replace"));
+        String html = translate("/ja/", originalHtml, settings, mockApiSuccess());
         String expect = "replaced html";
         assertEquals(expect, stripExtraSpaces(html));
     }
@@ -35,9 +35,9 @@ public class InterceptorTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
         }});
-        String html = translate("/ja/", originalHtml, settings, mockApi("timeout"));
+        String html = translate("/ja/", originalHtml, settings, mockApiTimeout());
         String expect = "<!doctype html><html><head><title>test</title>" +
-                        "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"timeout\" async></script>" +
+                        "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
                         "<link ref=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
                         "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
                         "<link ref=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
@@ -55,7 +55,7 @@ public class InterceptorTest extends TestCase {
         }});
         String html = translate("/", originalHtml, settings, null);
         String expect = "<!doctype html><html><head><title>test</title>" +
-                        "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"backend_without_api\" async></script>" +
+                        "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
                         "<link ref=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
                         "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
                         "<link ref=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
@@ -66,20 +66,26 @@ public class InterceptorTest extends TestCase {
 
     private String translate(String path, String html, Settings settings, Api api) throws NoSuchMethodException, IllegalAccessException, IOException, ServletException {
         HttpServletRequest request = mockRequestPath(path);
-        Interceptor interceptor = new Interceptor(new Headers(request, settings), settings, api);
+        HttpServletResponse response = TestUtil.mockSimpleHttpServletResponse();
+        Interceptor interceptor = new Interceptor(new Headers(request, settings), settings, api, response);
         return interceptor.translate(html);
     }
 
-    private Api mockApi(String type) {
+    private Api mockApiSuccess() {
         Api mock = EasyMock.createMock(Api.class);
         try {
-            if (type.equals("replace")) {
-                EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andReturn("replaced html").atLeastOnce();
-            } else if (type.equals("timeout")) {
-                EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andThrow(ApiException.timeout).atLeastOnce();
-            } else {
-                throw new IllegalArgumentException("Unknown type " + type);
-            }
+            EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andReturn("replaced html").atLeastOnce();
+        } catch (ApiException _) {
+            throw new RuntimeException("Fail create mock");
+        }
+        EasyMock.replay(mock);
+        return mock;
+    }
+
+    private Api mockApiTimeout() {
+        Api mock = EasyMock.createMock(Api.class);
+        try {
+            EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andThrow(new ApiException("SocketTimeoutException", "")).atLeastOnce();
         } catch (ApiException _) {
             throw new RuntimeException("Fail create mock");
         }
