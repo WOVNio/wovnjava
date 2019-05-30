@@ -31,7 +31,7 @@ public class WovnServletFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException
     {
         ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
-        ((HttpServletResponse)response).setHeader("X-Wovn-Api", "unused");
+        ((HttpServletResponse)response).setHeader("X-Wovn-Api", "Unused");
         Headers headers = new Headers((HttpServletRequest)request, settings);
         String lang = headers.getPathLang();
         boolean hasShorterPath = settings.urlPattern.equals("path") && lang.length() > 0 && lang.equals(settings.defaultLang);

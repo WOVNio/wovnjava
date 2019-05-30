@@ -93,7 +93,7 @@ class Api {
                 }
                 return extractHtml(input);
             } else {
-                throw new ApiException("status_" + String.valueOf(status), "");
+                throw new ApiException("Failure", "Status code " + String.valueOf(status));
             }
         } catch (UnsupportedEncodingException e) {
             throw new ApiException("UnsupportedEncodingException", e.getMessage());
@@ -136,7 +136,7 @@ class Api {
         LinkedHashMap<String, String> dict = JSON.decode(json);
         String html = dict.get("body");
         if (html == null) {
-            throw new ApiException("unknown_json_format", "");
+            throw new ApiException("ResponseFormatError", "Unknown JSON format");
         }
         return html;
     }

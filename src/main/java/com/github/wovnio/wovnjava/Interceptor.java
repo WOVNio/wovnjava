@@ -30,7 +30,7 @@ class Interceptor {
             HtmlConverter converter = new HtmlConverter(settings, body);
             String convertedBody = converter.strip();
             String translatedBody = api.translate(lang, convertedBody);
-            this.response.setHeader("X-Wovn-Api", "success");
+            this.response.setHeader("X-Wovn-Api", "Success");
             return converter.restore(translatedBody);
         } catch (ApiException e) {
             this.response.setHeader("X-Wovn-Api", e.getType());
