@@ -99,6 +99,9 @@ public class ApiTest extends TestCase {
         EasyMock.expect(mock.getContentEncoding()).andReturn(encoding);
         EasyMock.expect(mock.getOutputStream()).andReturn(requestStream);
         EasyMock.expect(mock.getInputStream()).andReturn(responseStream);
+        EasyMock.expect(mock.getHeaderField("X-Cache")).andReturn("mock fastly x-cache");
+        EasyMock.expect(mock.getHeaderField("X-Cache-Hits")).andReturn("mock fastly x-cache-his");
+        EasyMock.expect(mock.getHeaderField("X-Wovn-Surrogate-Key")).andReturn("mock fastly x-wovn-surrogate-key");
         EasyMock.replay(mock);
         return mock;
     }

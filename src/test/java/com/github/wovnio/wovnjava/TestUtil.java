@@ -67,6 +67,8 @@ public class TestUtil {
         EasyMock.expect(mock.getWriter()).andReturn(new PrintWriter(new StringWriter()));
         EasyMock.expect(mock.getContentType()).andReturn(contentType).atLeastOnce();
         EasyMock.expect(mock.getCharacterEncoding()).andReturn(encoding);
+        mock.setHeader(EasyMock.anyString(), EasyMock.anyString());
+        EasyMock.expectLastCall().atLeastOnce();
         EasyMock.replay(mock);
         return mock;
     }
