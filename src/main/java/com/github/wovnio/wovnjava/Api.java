@@ -47,6 +47,7 @@ class Api {
     }
 
     String translate(String lang, String html) throws ApiException {
+        response.setHeader("X-Wovn-Api", "requested");
         HttpURLConnection con = null;
         try {
             URL url = getApiUrl(lang, html);
