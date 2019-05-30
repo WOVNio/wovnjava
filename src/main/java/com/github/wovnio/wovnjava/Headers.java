@@ -56,7 +56,7 @@ class Headers {
         }
         // Both getRequestURI() and getPathInfo() do not have query parameters.
         if (this.settings.originalQueryStringHeader.isEmpty()) {
-            if (this.request.getQueryString() != null && !this.request.getQueryString().isEmpty()) {
+            if (r.getQueryString() != null && !this.request.getQueryString().isEmpty()) {
                 requestUri += "?" + this.request.getQueryString();
             }
         } else {
