@@ -31,7 +31,6 @@ public class WovnServletFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException
     {
         ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
-        ((HttpServletResponse)response).setHeader("X-Wovn-Api", "Unused");
         Headers headers = new Headers((HttpServletRequest)request, settings);
         String lang = headers.getPathLang();
         boolean hasShorterPath = settings.urlPattern.equals("path") && lang.length() > 0 && lang.equals(settings.defaultLang);
@@ -53,6 +52,9 @@ public class WovnServletFilter implements Filter {
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(request, headers);
         WovnHttpServletResponse wovnResponse = new WovnHttpServletResponse(response, headers);
 
+        ResponseHeaders responseHeaders = new ResponseHeaders(response);
+        responseHeaders.setApi("Unused");
+
         if (settings.urlPattern.equals("path") && headers.getPathLang().length() > 0) {
             wovnRequest.getRequestDispatcher(headers.pathNameKeepTrailingSlash).forward(wovnRequest, wovnResponse);
         } else {
@@ -65,8 +67,8 @@ public class WovnServletFilter implements Filter {
             String body = null;
             if (htmlChecker.canTranslate(response.getContentType(), headers.pathName, originalBody)) {
                 // html
-                Api api = new Api(settings, headers, response);
-                Interceptor interceptor = new Interceptor(headers, settings, api, response);
+                Api api = new Api(settings, headers, responseHeaders);
+                Interceptor interceptor = new Interceptor(headers, settings, api, responseHeaders);
                 body = interceptor.translate(originalBody);
             } else {
                 // css, javascript or others

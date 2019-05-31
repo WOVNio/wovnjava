@@ -23,7 +23,7 @@ public class InterceptorTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
         }});
-        String html = translate("/ja/", originalHtml, settings, mockApiSuccess());
+        String html = translate("/ja/", originalHtml, settings, mockApiSuccess(), mockResponseHeadersSuccess());
         String expect = "replaced html";
         assertEquals(expect, stripExtraSpaces(html));
     }
@@ -35,7 +35,7 @@ public class InterceptorTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
         }});
-        String html = translate("/ja/", originalHtml, settings, mockApiTimeout());
+        String html = translate("/ja/", originalHtml, settings, mockApiTimeout(), mockResponseHeadersTimeout());
         String expect = "<!doctype html><html><head><title>test</title>" +
                         "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
                         "<link ref=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
@@ -53,7 +53,7 @@ public class InterceptorTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
         }});
-        String html = translate("/", originalHtml, settings, null);
+        String html = translate("/", originalHtml, settings, null, null);
         String expect = "<!doctype html><html><head><title>test</title>" +
                         "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
                         "<link ref=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
@@ -64,10 +64,9 @@ public class InterceptorTest extends TestCase {
         assertEquals(expect, stripExtraSpaces(html));
     }
 
-    private String translate(String path, String html, Settings settings, Api api) throws NoSuchMethodException, IllegalAccessException, IOException, ServletException {
+    private String translate(String path, String html, Settings settings, Api api, ResponseHeaders responseHeaders) throws NoSuchMethodException, IllegalAccessException, IOException, ServletException {
         HttpServletRequest request = mockRequestPath(path);
-        HttpServletResponse response = TestUtil.mockSimpleHttpServletResponse();
-        Interceptor interceptor = new Interceptor(new Headers(request, settings), settings, api, response);
+        Interceptor interceptor = new Interceptor(new Headers(request, settings), settings, api, responseHeaders);
         return interceptor.translate(html);
     }
 
@@ -107,5 +106,21 @@ public class InterceptorTest extends TestCase {
 
     private String stripExtraSpaces(String html) {
         return html.replaceAll("\\s +", "").replaceAll(">\\s+<", "><");
+    }
+
+    private ResponseHeaders mockResponseHeadersSuccess() {
+        ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
+        mock.setApi("Success");
+        EasyMock.expectLastCall().times(1);
+        EasyMock.replay(mock);
+        return mock;
+    }
+
+    private ResponseHeaders mockResponseHeadersTimeout() {
+        ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
+        mock.setApi("SocketTimeoutException");
+        EasyMock.expectLastCall().times(1);
+        EasyMock.replay(mock);
+        return mock;
     }
 }

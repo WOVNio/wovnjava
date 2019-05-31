@@ -13,41 +13,28 @@ import java.net.SocketTimeoutException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.LinkedHashMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Collections;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import javax.servlet.http.HttpServletResponse;
 
 import javax.xml.bind.DatatypeConverter;
 
 import net.arnx.jsonic.JSON;
 
 class Api {
-    private static final Map<String, String> wovnFastlyHeaders;
-    static {
-        Map<String, String> headers = new HashMap<String, String>();
-        headers.put("X-Cache", "X-Wovn-Cache");
-        headers.put("X-Cache-Hits", "X-Wovn-Cache-Hits");
-        headers.put("X-Wovn-Surrogate-Key", "X-Wovn-Surrogate-Key");
-        wovnFastlyHeaders = Collections.unmodifiableMap(headers);
-    }
-
     private final int READ_BUFFER_SIZE = 8196;
     private final Settings settings;
     private final Headers headers;
-    private final HttpServletResponse response;
+    private final ResponseHeaders responseHeaders;
     private final String responseEncoding = "UTF-8"; // always response is UTF8
 
-    Api(Settings settings, Headers headers, HttpServletResponse response) {
+    Api(Settings settings, Headers headers, ResponseHeaders responseHeaders) {
         this.settings = settings;
         this.headers = headers;
-        this.response = response;
+        this.responseHeaders = responseHeaders;
     }
 
     String translate(String lang, String html) throws ApiException {
-        response.setHeader("X-Wovn-Api", "requested");
+        this.responseHeaders.setApi("Requested");
         HttpURLConnection con = null;
         try {
             URL url = getApiUrl(lang, html);
@@ -83,9 +70,9 @@ class Api {
             body.writeTo(out);
             out.close();
             out = null;
-            forwardFastlyHeaders(con);
+            this.responseHeaders.forwardFastlyHeaders(con);
             int status = con.getResponseCode();
-            this.response.setHeader("X-Wovn-Api-Status", String.valueOf(status));
+            this.responseHeaders.setApiStatus(String.valueOf(status));
             if (status == HttpURLConnection.HTTP_OK) {
                 InputStream input = con.getInputStream();
                 if ("gzip".equals(con.getContentEncoding())) {
@@ -186,17 +173,5 @@ class Api {
 
     private void appendValue(StringBuilder sb, String value) throws UnsupportedEncodingException {
         sb.append(URLEncoder.encode(value, "UTF-8"));
-    }
-
-    private void forwardFastlyHeaders(HttpURLConnection con) {
-        String apiHeaderName, responseHeaderName, value;
-        for (Map.Entry<String, String> entry : Api.wovnFastlyHeaders.entrySet()) {
-            apiHeaderName = entry.getKey();
-            responseHeaderName = entry.getValue();
-            value = con.getHeaderField(apiHeaderName);
-            if (value != null) {
-                this.response.setHeader(responseHeaderName, value);
-            }
-        }
     }
 }

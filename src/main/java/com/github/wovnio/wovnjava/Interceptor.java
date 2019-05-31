@@ -6,13 +6,13 @@ class Interceptor {
     private final Settings settings;
     private final Headers headers;
     private final Api api;
-    private final HttpServletResponse response;
+    private final ResponseHeaders responseHeaders;
 
-    Interceptor(Headers headers, Settings settings, Api api, HttpServletResponse response) {
+    Interceptor(Headers headers, Settings settings, Api api, ResponseHeaders responseHeaders) {
         this.headers = headers;
         this.settings = settings;
         this.api = api;
-        this.response = response;
+        this.responseHeaders = responseHeaders;
     }
 
     String translate(String body) {
@@ -30,10 +30,10 @@ class Interceptor {
             HtmlConverter converter = new HtmlConverter(settings, body);
             String convertedBody = converter.strip();
             String translatedBody = api.translate(lang, convertedBody);
-            this.response.setHeader("X-Wovn-Api", "Success");
+            responseHeaders.setApi("Success");
             return converter.restore(translatedBody);
         } catch (ApiException e) {
-            this.response.setHeader("X-Wovn-Api", e.getType());
+            responseHeaders.setApi(e.getType());
             Logger.log.error("ApiException", e);
             return apiTranslateFail(body, lang);
         }

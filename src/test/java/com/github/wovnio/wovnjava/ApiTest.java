@@ -52,11 +52,11 @@ public class ApiTest extends TestCase {
         }});
 
         HttpServletRequest request = TestUtil.mockRequestPath("/ja/somepage/"); // mocks "https://example.com"
-        HttpServletResponse response = TestUtil.mockSimpleHttpServletResponse();
+        ResponseHeaders responseHeaders = mockResponseHeaders();
 
         Headers headers = new Headers(request, settings);
 
-        Api api = new Api(settings, headers, response);
+        Api api = new Api(settings, headers, responseHeaders);
 
         ByteArrayOutputStream requestStream = new ByteArrayOutputStream();
         ByteArrayInputStream responseStream = new ByteArrayInputStream(apiServerResponse);
@@ -99,9 +99,6 @@ public class ApiTest extends TestCase {
         EasyMock.expect(mock.getContentEncoding()).andReturn(encoding);
         EasyMock.expect(mock.getOutputStream()).andReturn(requestStream);
         EasyMock.expect(mock.getInputStream()).andReturn(responseStream);
-        EasyMock.expect(mock.getHeaderField("X-Cache")).andReturn("mock fastly x-cache");
-        EasyMock.expect(mock.getHeaderField("X-Cache-Hits")).andReturn("mock fastly x-cache-his");
-        EasyMock.expect(mock.getHeaderField("X-Wovn-Surrogate-Key")).andReturn("mock fastly x-wovn-surrogate-key");
         EasyMock.replay(mock);
         return mock;
     }
@@ -125,5 +122,15 @@ public class ApiTest extends TestCase {
             br.close();
         }
         return sb.toString();
+    }
+
+    private ResponseHeaders mockResponseHeaders() {
+        ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
+        mock.forwardFastlyHeaders(EasyMock.anyObject(HttpURLConnection.class));
+        EasyMock.expectLastCall().times(1);
+        mock.setApiStatus("200");
+        EasyMock.expectLastCall().times(1);
+        EasyMock.replay(mock);
+        return mock;
     }
 }
