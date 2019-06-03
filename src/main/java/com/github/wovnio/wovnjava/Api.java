@@ -137,6 +137,7 @@ class Api {
         appendKeyValue(sb, "&site_prefix_path=", settings.sitePrefixPathWithoutSlash);
         appendKeyValue(sb, "&product=", "wovnjava");
         appendKeyValue(sb, "&version=", Settings.VERSION);
+        appendKeyValue(sb, "&debug_mode=", String.valueOf(headers.getDebugMode());
         appendKeyValue(sb, "&body=", body);
         return sb.toString();
     }
@@ -157,6 +158,10 @@ class Api {
         appendValue(sb, lang);
         appendValue(sb, "&version=wovnjava_");
         appendValue(sb, Settings.VERSION);
+        if (headers.getCacheDisableMode() || headers.getDebugMode()) {
+            appendValue(sb, "&timestamp=");
+            appendValue(sb, String.valueOf(System.currentTimeMillis()));
+        }
         appendValue(sb, ")");
         return new URL(sb.toString());
     }

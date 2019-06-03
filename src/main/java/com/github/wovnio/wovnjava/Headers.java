@@ -27,10 +27,20 @@ class Headers {
     private String unmaskedHost;
     private String unmaskedPathName;
     private String unmaskedUrl;
+    /* cacheDisableMode will bypass cache when sending request to translation API */
+    private boolean cacheDisableMode;
+    /* debugMode will activate extra debugging information.
+     * Only available if debugMode is also turned on server side. */
+    private boolean debugMode;
 
     Headers(HttpServletRequest r, Settings s) {
         this.settings = s;
         this.request = r;
+
+        this.cacheDisableMode = false;
+        this.debugMode = false;
+
+        setRequestModeByQueryString();
 
         this.protocol = this.request.getScheme();
         if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
@@ -144,6 +154,14 @@ class Headers {
         this.pathNameKeepTrailingSlash = this.pathName;
         this.pathName = Pattern.compile("/$").matcher(this.pathName).replaceAll("");
         this.pageUrl = this.host + this.pathName + this.query;
+    }
+
+    public boolean getCacheDisableMode() {
+        return this.cacheDisableMode;
+    }
+
+    public boolean getDebugMode() {
+        return this.debugMode;
     }
 
     String langCode() {
@@ -357,5 +375,13 @@ class Headers {
                 path = newPath;
             }
         }
+    }
+
+    private void setRequestModeByQueryString() {
+        String query = this.request.getQueryString();
+        if (query == null) return;
+
+        this.cacheDisableMode = (this.settings.debugMode && query.matches("wovnCacheDisable"));
+        this.debugMode = (this.settings.debugMode && query.matches("wovnDebugMode"));
     }
 }
