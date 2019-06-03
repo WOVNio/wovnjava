@@ -82,7 +82,7 @@ urlPattern                | yes      | 'path'
 query                     |          | ''
 defaultLang               | yes      | 'en'
 useProxy                  |          | 'false'
-debugMode                 |          | '0'
+debugMode                 |          | 'false'
 originalUrlHeader         |          | ''
 originalQueryStringHeader |          | ''
 ignoreClasses             |          | ''
@@ -147,7 +147,31 @@ When using a reverse proxy, if the WOVN.io Java Library is not given an appropri
 
 ### 2.7. debugMode
 
-As a development feature, if debugMode is set to 1, wovnjava will output debug logs.
+By turning on debugMode, you will enable extra debugging features for wovnjava.
+
+Turn on debugMode like this:
+```XML
+  <init-param>
+    <param-name>debugMode</param-name>
+    <param-value>true</param-value>
+  </init-param>
+```
+
+Two extra query parameters become available to change wovnjava's behavior:
+
+#### wovnCacheDisable
+Example request: `http://example.com/page/top.html?wovnCacheDisable`
+
+Using `wovnCacheDisable` as a query parameter will make wovnjava bypass the translation API cache, such that translation is always re-processed.
+This will make the request slower, but it is sometimes useful in order to force updated behavior.
+
+#### wovnDebugMode
+Example request: `http://example.com/page/top.html?wovnDebugMode`
+
+Using `wovnDebugMode` as a query parameter will activate embedded debug information in the response HTML comming from the server.
+This is intended to better understand what the problem is if something is not working correctly with wovnjava on your server.
+
+_Note that `wovnCacheDisable` and `wovnDebugMode` is only available when debugMode is turned on in your wovnjava configuration._
 
 ### 2.8. originalUrlHeader, originalQueryStringHeader
 
