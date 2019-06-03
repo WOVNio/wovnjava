@@ -24,12 +24,14 @@ class Api {
     private final int READ_BUFFER_SIZE = 8196;
     private final Settings settings;
     private final Headers headers;
+    private final RequestOptions requestOptions;
     private final ResponseHeaders responseHeaders;
     private final String responseEncoding = "UTF-8"; // always response is UTF8
 
-    Api(Settings settings, Headers headers, ResponseHeaders responseHeaders) {
+    Api(Settings settings, Headers headers, RequestOptions requestOptions, ResponseHeaders responseHeaders) {
         this.settings = settings;
         this.headers = headers;
+        this.requestOptions = requestOptions;
         this.responseHeaders = responseHeaders;
     }
 
@@ -137,7 +139,7 @@ class Api {
         appendKeyValue(sb, "&site_prefix_path=", settings.sitePrefixPathWithoutSlash);
         appendKeyValue(sb, "&product=", "wovnjava");
         appendKeyValue(sb, "&version=", Settings.VERSION);
-        appendKeyValue(sb, "&debug_mode=", String.valueOf(headers.getDebugMode()));
+        appendKeyValue(sb, "&debug_mode=", String.valueOf(this.requestOptions.getDebugMode()));
         appendKeyValue(sb, "&body=", body);
         return sb.toString();
     }
@@ -158,7 +160,7 @@ class Api {
         appendValue(sb, lang);
         appendValue(sb, "&version=wovnjava_");
         appendValue(sb, Settings.VERSION);
-        if (headers.getCacheDisableMode() || headers.getDebugMode()) {
+        if (this.requestOptions.getCacheDisableMode() || this.requestOptions.getDebugMode()) {
             appendValue(sb, "&timestamp=");
             appendValue(sb, String.valueOf(System.currentTimeMillis()));
         }

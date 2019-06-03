@@ -72,7 +72,8 @@ public class WovnServletFilter implements Filter {
             String body = null;
             if (htmlChecker.canTranslate(response.getContentType(), headers.pathName, originalBody)) {
                 // html
-                Api api = new Api(settings, headers, responseHeaders);
+                RequestOptions requestOptions = new RequestOptions(this.settings, request);
+                Api api = new Api(settings, headers, requestOptions, responseHeaders);
                 Interceptor interceptor = new Interceptor(headers, settings, api, responseHeaders);
                 body = interceptor.translate(originalBody);
             } else {

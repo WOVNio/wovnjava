@@ -55,8 +55,9 @@ public class ApiTest extends TestCase {
         ResponseHeaders responseHeaders = mockResponseHeaders();
 
         Headers headers = new Headers(request, settings);
+        RequestOptions requestOptions = new RequestOptions(settings, request);
 
-        Api api = new Api(settings, headers, responseHeaders);
+        Api api = new Api(settings, headers, requestOptions, responseHeaders);
 
         ByteArrayOutputStream requestStream = new ByteArrayOutputStream();
         ByteArrayInputStream responseStream = new ByteArrayInputStream(apiServerResponse);
