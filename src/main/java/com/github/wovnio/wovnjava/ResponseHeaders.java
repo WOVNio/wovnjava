@@ -11,8 +11,8 @@ import javax.xml.bind.DatatypeConverter;
 import net.arnx.jsonic.JSON;
 
 class ResponseHeaders {
-    private static final String apiHeaderName = "X-Wovn-Api";
-    private static final String apiStatusHeaderName = "X-Wovn-Api-Status";
+    private static final String apiHeaderName = "X-Wovn-Api-Status";
+    private static final String apiStatusHeaderName = "X-Wovn-Api-StatusCode";
     private static final Map<String, String> fastlyHeaders;
     static {
         Map<String, String> headers = new HashMap<String, String>();

@@ -10,7 +10,7 @@ import org.easymock.EasyMock;
 public class ResponseHeadersTest extends TestCase {
     public void testSetApi() {
         HttpServletResponse mockResponse = EasyMock.createMock(HttpServletResponse.class);
-        mockResponse.setHeader("X-Wovn-Api", "test value");
+        mockResponse.setHeader("X-Wovn-Api-Status", "test value");
         EasyMock.expectLastCall().atLeastOnce();
         EasyMock.replay(mockResponse);
 
@@ -20,12 +20,12 @@ public class ResponseHeadersTest extends TestCase {
 
     public void testSetApiStatus() {
         HttpServletResponse mockResponse = EasyMock.createMock(HttpServletResponse.class);
-        mockResponse.setHeader("X-Wovn-Api-Status", "test value");
+        mockResponse.setHeader("X-Wovn-Api-StatusCode", "500");
         EasyMock.expectLastCall().atLeastOnce();
         EasyMock.replay(mockResponse);
 
         ResponseHeaders responseHeaders = new ResponseHeaders(mockResponse);
-        responseHeaders.setApiStatus("test value");
+        responseHeaders.setApiStatus("500");
     }
 
     public void testForwardFastlyHeaders() {
