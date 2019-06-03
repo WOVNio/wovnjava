@@ -34,7 +34,7 @@ class Api {
     }
 
     String translate(String lang, String html) throws ApiException {
-        this.responseHeaders.setApi("Requested");
+        this.responseHeaders.setApiStatus("Requested");
         HttpURLConnection con = null;
         try {
             URL url = getApiUrl(lang, html);
@@ -72,7 +72,7 @@ class Api {
             out = null;
             this.responseHeaders.forwardFastlyHeaders(con);
             int status = con.getResponseCode();
-            this.responseHeaders.setApiStatus(String.valueOf(status));
+            this.responseHeaders.setApiStatusCode(String.valueOf(status));
             if (status == HttpURLConnection.HTTP_OK) {
                 InputStream input = con.getInputStream();
                 if ("gzip".equals(con.getContentEncoding())) {

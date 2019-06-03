@@ -15,7 +15,7 @@ public class ResponseHeadersTest extends TestCase {
         EasyMock.replay(mockResponse);
 
         ResponseHeaders responseHeaders = new ResponseHeaders(mockResponse);
-        responseHeaders.setApi("test value");
+        responseHeaders.setApiStatus("test value");
     }
 
     public void testSetApiStatus() {
