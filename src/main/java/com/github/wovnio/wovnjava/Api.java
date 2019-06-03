@@ -135,6 +135,8 @@ class Api {
         appendKeyValue(sb, "&lang_code=", lang);
         appendKeyValue(sb, "&url_pattern=", settings.urlPattern);
         appendKeyValue(sb, "&site_prefix_path=", settings.sitePrefixPathWithoutSlash);
+        appendKeyValue(sb, "&product=", "wovnjava");
+        appendKeyValue(sb, "&version=", Settings.VERSION);
         appendKeyValue(sb, "&body=", body);
         return sb.toString();
     }
