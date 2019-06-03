@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.LinkedHashMap;
@@ -23,14 +24,17 @@ class Api {
     private final int READ_BUFFER_SIZE = 8196;
     private final Settings settings;
     private final Headers headers;
+    private final ResponseHeaders responseHeaders;
     private final String responseEncoding = "UTF-8"; // always response is UTF8
 
-    Api(Settings settings, Headers headers) {
+    Api(Settings settings, Headers headers, ResponseHeaders responseHeaders) {
         this.settings = settings;
         this.headers = headers;
+        this.responseHeaders = responseHeaders;
     }
 
     String translate(String lang, String html) throws ApiException {
+        this.responseHeaders.setApi("Requested");
         HttpURLConnection con = null;
         try {
             URL url = getApiUrl(lang, html);
@@ -39,14 +43,13 @@ class Api {
             con.setReadTimeout(settings.readTimeout);
             return translate(lang, html, con);
         } catch (UnsupportedEncodingException e) {
-            Logger.log.error("Api url", e);
-            throw new ApiException("encoding");
+            throw new ApiException("UnsupportedEncodingException", e.getMessage());
+        } catch (MalformedURLException e) {
+            throw new ApiException("MalformedURLException", e.getMessage());
         } catch (IOException e) {
-            Logger.log.error("Api url", e);
-            throw new ApiException("io");
+            throw new ApiException("IOException", e.getMessage());
         } catch (NoSuchAlgorithmException e) {
-            Logger.log.error("Api url", e);
-            throw new ApiException("algorithm");
+            throw new ApiException("NoSuchAlgorithmException", e.getMessage());
         } finally {
             if (con != null) {
                 con.disconnect();
@@ -67,7 +70,9 @@ class Api {
             body.writeTo(out);
             out.close();
             out = null;
+            this.responseHeaders.forwardFastlyHeaders(con);
             int status = con.getResponseCode();
+            this.responseHeaders.setApiStatus(String.valueOf(status));
             if (status == HttpURLConnection.HTTP_OK) {
                 InputStream input = con.getInputStream();
                 if ("gzip".equals(con.getContentEncoding())) {
@@ -75,20 +80,20 @@ class Api {
                 }
                 return extractHtml(input);
             } else {
-                throw new ApiException("status_" + String.valueOf(status));
+                throw new ApiException("Failure", "Status code " + String.valueOf(status));
             }
         } catch (UnsupportedEncodingException e) {
-            Logger.log.error("Api url", e);
-            throw new ApiException("encoding");
+            throw new ApiException("UnsupportedEncodingException", e.getMessage());
+        } catch (SocketTimeoutException e) {
+            throw new ApiException("SocketTimeoutException", e.getMessage());
         } catch (IOException e) {
-            Logger.log.error("Api url", e);
-            throw new ApiException("io");
+            throw new ApiException("IOException", e.getMessage());
         } finally {
             if (out != null) {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    Logger.log.error("Api close", e);
+                    Logger.log.error("Api close buffer error", e);
                 }
             }
         }
@@ -118,8 +123,7 @@ class Api {
         LinkedHashMap<String, String> dict = JSON.decode(json);
         String html = dict.get("body");
         if (html == null) {
-            Logger.log.error("Unknown json format " + json);
-            throw new ApiException("unknown_json_format");
+            throw new ApiException("ResponseFormatError", "Unknown JSON format");
         }
         return html;
     }
@@ -149,8 +153,8 @@ class Api {
         appendValue(sb, headers.pathName);
         appendValue(sb, "&lang=");
         appendValue(sb, lang);
-        appendValue(sb, "&version=");
-        appendValue(sb, settings.version);
+        appendValue(sb, "&version=wovnjava_");
+        appendValue(sb, Settings.VERSION);
         appendValue(sb, ")");
         return new URL(sb.toString());
     }

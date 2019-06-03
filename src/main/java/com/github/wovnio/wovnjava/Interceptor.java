@@ -1,14 +1,18 @@
 package com.github.wovnio.wovnjava;
 
+import javax.servlet.http.HttpServletResponse;
+
 class Interceptor {
     private final Settings settings;
     private final Headers headers;
     private final Api api;
+    private final ResponseHeaders responseHeaders;
 
-    Interceptor(Headers headers, Settings settings, Api api) {
+    Interceptor(Headers headers, Settings settings, Api api, ResponseHeaders responseHeaders) {
         this.headers = headers;
         this.settings = settings;
         this.api = api;
+        this.responseHeaders = responseHeaders;
     }
 
     String translate(String body) {
@@ -26,18 +30,20 @@ class Interceptor {
             HtmlConverter converter = new HtmlConverter(settings, body);
             String convertedBody = converter.strip();
             String translatedBody = api.translate(lang, convertedBody);
+            responseHeaders.setApi("Success");
             return converter.restore(translatedBody);
         } catch (ApiException e) {
+            responseHeaders.setApi(e.getType());
             Logger.log.error("ApiException", e);
-            return apiTranslateFail(body, lang, e.getMessage());
+            return apiTranslateFail(body, lang);
         }
     }
 
-    private String apiTranslateFail(String body, String lang, String reason) {
-        return new HtmlConverter(settings, body).convert(headers, lang, reason);
+    private String apiTranslateFail(String body, String lang) {
+        return new HtmlConverter(settings, body).convert(headers, lang);
     }
 
     private String localTranslate(String lang, String body) {
-        return new HtmlConverter(settings, body).convert(headers, lang, "backend_without_api");
+        return new HtmlConverter(settings, body).convert(headers, lang);
     }
 }

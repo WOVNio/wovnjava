@@ -52,10 +52,11 @@ public class ApiTest extends TestCase {
         }});
 
         HttpServletRequest request = TestUtil.mockRequestPath("/ja/somepage/"); // mocks "https://example.com"
+        ResponseHeaders responseHeaders = mockResponseHeaders();
 
         Headers headers = new Headers(request, settings);
 
-        Api api = new Api(settings, headers);
+        Api api = new Api(settings, headers, responseHeaders);
 
         ByteArrayOutputStream requestStream = new ByteArrayOutputStream();
         ByteArrayInputStream responseStream = new ByteArrayInputStream(apiServerResponse);
@@ -121,5 +122,15 @@ public class ApiTest extends TestCase {
             br.close();
         }
         return sb.toString();
+    }
+
+    private ResponseHeaders mockResponseHeaders() {
+        ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
+        mock.forwardFastlyHeaders(EasyMock.anyObject(HttpURLConnection.class));
+        EasyMock.expectLastCall().times(1);
+        mock.setApiStatus("200");
+        EasyMock.expectLastCall().times(1);
+        EasyMock.replay(mock);
+        return mock;
     }
 }

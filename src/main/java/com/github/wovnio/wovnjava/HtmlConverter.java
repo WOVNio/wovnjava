@@ -30,10 +30,10 @@ class HtmlConverter {
         return doc.html();
     }
 
-    String convert(Headers headers, String lang, String type) {
+    String convert(Headers headers, String lang) {
         removeSnippet();
         removeHrefLangIfConflicts();
-        appendSnippet(lang, type);
+        appendSnippet(lang);
         appendHrefLang(headers);
         replaceContentType();
         return doc.html();
@@ -118,7 +118,7 @@ class HtmlConverter {
         }
     }
 
-    private void appendSnippet(String lang, String type) {
+    private void appendSnippet(String lang) {
         Element js = new Element(Tag.valueOf("script"), "");
         StringBuilder sb = new StringBuilder();
         sb.append("key=");
@@ -130,7 +130,7 @@ class HtmlConverter {
         sb.append("&urlPattern=");
         sb.append(settings.urlPattern);
         sb.append("&langCodeAliases={}&version=");
-        sb.append(settings.version);
+        sb.append(Settings.VERSION);
         if (settings.hasSitePrefixPath) {
             sb.append("&site_prefix_path=");
             sb.append(settings.sitePrefixPathWithoutSlash.replaceFirst("/", ""));
@@ -138,7 +138,7 @@ class HtmlConverter {
         String key = sb.toString();
         js.attr("src", settings.snippetUrl);
         js.attr("data-wovnio", key);
-        js.attr("data-wovnio-type", type);
+        js.attr("data-wovnio-type", "fallback");
         js.attr("async", "async");
         doc.head().appendChild(js);
     }
