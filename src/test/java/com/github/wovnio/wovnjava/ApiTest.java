@@ -72,6 +72,9 @@ public class ApiTest extends TestCase {
                                      "&lang_code=ja" +
                                      "&url_pattern=path" +
                                      "&site_prefix_path=" +
+                                     "&product=wovnjava" +
+                                     "&version=" + Settings.VERSION +
+                                     "&debug_mode=false" +
                                      "&body=" + html;
         assertEquals(expectedRequestBody, apiRequestBody);
 

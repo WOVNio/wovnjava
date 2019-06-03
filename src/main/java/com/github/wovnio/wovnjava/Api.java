@@ -137,7 +137,7 @@ class Api {
         appendKeyValue(sb, "&site_prefix_path=", settings.sitePrefixPathWithoutSlash);
         appendKeyValue(sb, "&product=", "wovnjava");
         appendKeyValue(sb, "&version=", Settings.VERSION);
-        appendKeyValue(sb, "&debug_mode=", String.valueOf(headers.getDebugMode());
+        appendKeyValue(sb, "&debug_mode=", String.valueOf(headers.getDebugMode()));
         appendKeyValue(sb, "&body=", body);
         return sb.toString();
     }
