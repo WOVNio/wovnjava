@@ -30,6 +30,11 @@ public class WovnServletFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException
     {
+        if (disableFilter(request)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
         Headers headers = new Headers((HttpServletRequest)request, settings);
         String lang = headers.getPathLang();
@@ -85,5 +90,13 @@ public class WovnServletFilter implements Filter {
             out.write(wovnResponse.getData());
             out.close();
         }
+    }
+
+    /*
+     * Check for `wovnDisable` in the query string
+     */
+    private boolean disableFilter(ServletRequest request) {
+        String query = ((HttpServletRequest)request).getQueryString();
+        return query != null && query.matches("wovnDisable");
     }
 }
