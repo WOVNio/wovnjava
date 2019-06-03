@@ -128,7 +128,7 @@ public class ApiTest extends TestCase {
         ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
         mock.forwardFastlyHeaders(EasyMock.anyObject(HttpURLConnection.class));
         EasyMock.expectLastCall().times(1);
-        mock.setApiStatus("200");
+        mock.setApiStatusCode("200");
         EasyMock.expectLastCall().times(1);
         EasyMock.replay(mock);
         return mock;

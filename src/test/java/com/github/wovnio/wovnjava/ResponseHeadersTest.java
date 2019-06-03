@@ -25,7 +25,7 @@ public class ResponseHeadersTest extends TestCase {
         EasyMock.replay(mockResponse);
 
         ResponseHeaders responseHeaders = new ResponseHeaders(mockResponse);
-        responseHeaders.setApiStatus("500");
+        responseHeaders.setApiStatusCode("500");
     }
 
     public void testForwardFastlyHeaders() {
