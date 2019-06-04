@@ -1,16 +1,14 @@
 package com.github.wovnio.wovnjava;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 class RequestOptions {
     /*
-     * Check for `wovnDisable` in the query string
+     * disableMode:
+     *      - do nothing to the request
      */
-    public static boolean wovnDisableMode(HttpServletRequest request) {
-        String query = request.getQueryString();
-        return query != null && query.matches("(.*)wovnDisable(.*)");
-    }
-
+    private boolean disableMode;
     /*
      * cacheDisableMode:
      *      - bypass cache for request to translation API
@@ -26,17 +24,23 @@ class RequestOptions {
      */
     private boolean debugMode;
 
-    RequestOptions(Settings settings, HttpServletRequest request) {
+    RequestOptions(Settings settings, ServletRequest request) {
+        this.disableMode = false;
         this.cacheDisableMode = false;
         this.debugMode = false;
 
-        if (settings.debugMode) {
-            String query = request.getQueryString();
-            if (query != null) {
+        String query = ((HttpServletRequest)request).getQueryString();
+        if (query != null) {
+            this.disableMode = query.matches("(.*)wovnDisable(.*)");
+            if (settings.debugMode) {
                 this.cacheDisableMode = query.matches("(.*)wovnCacheDisable(.*)");
                 this.debugMode = query.matches("(.*)wovnDebugMode(.*)");
             }
         }
+    }
+
+    public boolean getDisableMode() {
+        return this.disableMode;
     }
 
     public boolean getCacheDisableMode() {

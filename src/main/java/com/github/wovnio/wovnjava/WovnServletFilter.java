@@ -30,7 +30,8 @@ public class WovnServletFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException
     {
-        if (RequestOptions.wovnDisableMode((HttpServletRequest)request)) {
+        RequestOptions requestOptions = new RequestOptions(this.settings, request);
+        if (requestOptions.getDisableMode()) {
             chain.doFilter(request, response);
             return;
         }
@@ -42,7 +43,7 @@ public class WovnServletFilter implements Filter {
         if (hasShorterPath) {
             ((HttpServletResponse) response).sendRedirect(headers.redirectLocation(settings.defaultLang));
         } else if (headers.isValidPath() && htmlChecker.canTranslatePath(headers.pathName)) {
-            tryTranslate(headers, (HttpServletRequest)request, (HttpServletResponse)response, chain);
+            tryTranslate(headers, requestOptions, (HttpServletRequest)request, (HttpServletResponse)response, chain);
         } else {
             WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest((HttpServletRequest)request, headers);
             chain.doFilter(wovnRequest, response);
@@ -53,7 +54,7 @@ public class WovnServletFilter implements Filter {
     public void destroy() {
     }
 
-    private void tryTranslate(Headers headers, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    private void tryTranslate(Headers headers, RequestOptions requestOptions, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(request, headers);
         WovnHttpServletResponse wovnResponse = new WovnHttpServletResponse(response, headers);
 
@@ -72,7 +73,6 @@ public class WovnServletFilter implements Filter {
             String body = null;
             if (htmlChecker.canTranslate(response.getContentType(), headers.pathName, originalBody)) {
                 // html
-                RequestOptions requestOptions = new RequestOptions(this.settings, request);
                 Api api = new Api(settings, headers, requestOptions, responseHeaders);
                 Interceptor interceptor = new Interceptor(headers, settings, api, responseHeaders);
                 body = interceptor.translate(originalBody);

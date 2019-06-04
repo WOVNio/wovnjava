@@ -12,21 +12,27 @@ public class RequestOptionsTest extends TestCase {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(request.getQueryString()).andReturn(null);
         EasyMock.replay(request);
-        assertEquals(false, RequestOptions.wovnDisableMode(request));
+
+        RequestOptions sut = new RequestOptions(defaultSettings(), request);
+        assertEquals(false, sut.getDisableMode());
     }
 
     public void testDisableModeNonmatchingQueryParameter() {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(request.getQueryString()).andReturn("pen&pineapple&apple&pen");
         EasyMock.replay(request);
-        assertEquals(false, RequestOptions.wovnDisableMode(request));
+
+        RequestOptions sut = new RequestOptions(defaultSettings(), request);
+        assertEquals(false, sut.getDisableMode());
     }
 
     public void testDisableModeMatchingQueryParameter() {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(request.getQueryString()).andReturn("pen&wovnDisable&pen");
         EasyMock.replay(request);
-        assertEquals(true, RequestOptions.wovnDisableMode(request));
+
+        RequestOptions sut = new RequestOptions(defaultSettings(), request);
+        assertEquals(true, sut.getDisableMode());
     }
 
     public void testNoQueryParameter() {
