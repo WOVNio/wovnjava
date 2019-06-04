@@ -11,8 +11,8 @@ import javax.xml.bind.DatatypeConverter;
 import net.arnx.jsonic.JSON;
 
 class ResponseHeaders {
-    private static final String apiHeaderName = "X-Wovn-Api-Status";
-    private static final String apiStatusHeaderName = "X-Wovn-Api-StatusCode";
+    private static final String apiStatusHeaderName = "X-Wovn-Api-Status";
+    private static final String apiStatusCodeHeaderName = "X-Wovn-Api-StatusCode";
     private static final Map<String, String> fastlyHeaders;
     static {
         Map<String, String> headers = new HashMap<String, String>();
@@ -28,20 +28,20 @@ class ResponseHeaders {
         this.response = response;
     }
 
-    public void setApi(String value) {
-        this.response.setHeader(ResponseHeaders.apiHeaderName, value);
-    }
-
     public void setApiStatus(String value) {
         this.response.setHeader(ResponseHeaders.apiStatusHeaderName, value);
     }
 
+    public void setApiStatusCode(String value) {
+        this.response.setHeader(ResponseHeaders.apiStatusCodeHeaderName, value);
+    }
+
     public void forwardFastlyHeaders(HttpURLConnection con) {
-        String apiHeaderName, responseHeaderName, value;
+        String fastlyHeaderName, responseHeaderName, value;
         for (Map.Entry<String, String> entry : ResponseHeaders.fastlyHeaders.entrySet()) {
-            apiHeaderName = entry.getKey();
+            fastlyHeaderName = entry.getKey();
             responseHeaderName = entry.getValue();
-            value = con.getHeaderField(apiHeaderName);
+            value = con.getHeaderField(fastlyHeaderName);
             if (value != null) {
                 this.response.setHeader(responseHeaderName, value);
             }

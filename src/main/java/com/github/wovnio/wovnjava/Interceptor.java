@@ -30,10 +30,10 @@ class Interceptor {
             HtmlConverter converter = new HtmlConverter(settings, body);
             String convertedBody = converter.strip();
             String translatedBody = api.translate(lang, convertedBody);
-            responseHeaders.setApi("Success");
+            responseHeaders.setApiStatus("Success");
             return converter.restore(translatedBody);
         } catch (ApiException e) {
-            responseHeaders.setApi(e.getType());
+            responseHeaders.setApiStatus(e.getType());
             Logger.log.error("ApiException", e);
             return apiTranslateFail(body, lang);
         }

@@ -110,7 +110,7 @@ public class InterceptorTest extends TestCase {
 
     private ResponseHeaders mockResponseHeadersSuccess() {
         ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
-        mock.setApi("Success");
+        mock.setApiStatus("Success");
         EasyMock.expectLastCall().times(1);
         EasyMock.replay(mock);
         return mock;
@@ -118,7 +118,7 @@ public class InterceptorTest extends TestCase {
 
     private ResponseHeaders mockResponseHeadersTimeout() {
         ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
-        mock.setApi("SocketTimeoutException");
+        mock.setApiStatus("SocketTimeoutException");
         EasyMock.expectLastCall().times(1);
         EasyMock.replay(mock);
         return mock;

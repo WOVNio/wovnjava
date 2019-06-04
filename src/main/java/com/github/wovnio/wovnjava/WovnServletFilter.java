@@ -53,7 +53,7 @@ public class WovnServletFilter implements Filter {
         WovnHttpServletResponse wovnResponse = new WovnHttpServletResponse(response, headers);
 
         ResponseHeaders responseHeaders = new ResponseHeaders(response);
-        responseHeaders.setApi("Unused");
+        responseHeaders.setApiStatus("Unused");
 
         if (settings.urlPattern.equals("path") && headers.getPathLang().length() > 0) {
             wovnRequest.getRequestDispatcher(headers.pathNameKeepTrailingSlash).forward(wovnRequest, wovnResponse);
