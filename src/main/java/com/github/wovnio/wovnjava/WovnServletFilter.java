@@ -31,22 +31,23 @@ public class WovnServletFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException
     {
         RequestOptions requestOptions = new RequestOptions(this.settings, request);
+
         if (requestOptions.getDisableMode()) {
             chain.doFilter(request, response);
-            return;
-        }
-
-        ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
-        Headers headers = new Headers((HttpServletRequest)request, settings);
-        String lang = headers.getPathLang();
-        boolean hasShorterPath = settings.urlPattern.equals("path") && lang.length() > 0 && lang.equals(settings.defaultLang);
-        if (hasShorterPath) {
-            ((HttpServletResponse) response).sendRedirect(headers.redirectLocation(settings.defaultLang));
-        } else if (headers.isValidPath() && htmlChecker.canTranslatePath(headers.pathName)) {
-            tryTranslate(headers, requestOptions, (HttpServletRequest)request, (HttpServletResponse)response, chain);
         } else {
-            WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest((HttpServletRequest)request, headers);
-            chain.doFilter(wovnRequest, response);
+            ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
+
+            Headers headers = new Headers((HttpServletRequest)request, this.settings);
+            String lang = headers.getPathLang();
+            boolean hasShorterPath = settings.urlPattern.equals("path") && lang.length() > 0 && lang.equals(settings.defaultLang);
+            if (hasShorterPath) {
+                ((HttpServletResponse) response).sendRedirect(headers.redirectLocation(settings.defaultLang));
+            } else if (headers.isValidPath() && htmlChecker.canTranslatePath(headers.pathName)) {
+                tryTranslate(headers, requestOptions, (HttpServletRequest)request, (HttpServletResponse)response, chain);
+            } else {
+                WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest((HttpServletRequest)request, headers);
+                chain.doFilter(wovnRequest, response);
+            }
         }
     }
 
