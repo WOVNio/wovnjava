@@ -4,6 +4,14 @@ import javax.servlet.http.HttpServletRequest;
 
 class RequestOptions {
     /*
+     * Check for `wovnDisable` in the query string
+     */
+    public static boolean wovnDisableMode(HttpServletRequest request) {
+        String query = request.getQueryString();
+        return query != null && query.matches("(.*)wovnDisable(.*)");
+    }
+
+    /*
      * cacheDisableMode:
      *      - bypass cache for request to translation API
      * Only available if debugMode is also turned on server side.
