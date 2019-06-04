@@ -20,7 +20,7 @@ public class WovnServletFilter implements Filter {
     private Settings settings;
     private final HtmlChecker htmlChecker = new HtmlChecker();
 
-    public static final String VERSION = Settings.VERSION;  // for backword compatibility
+    public static final String VERSION = Settings.VERSION;  // for backward compatibility
 
     @Override
     public void init(FilterConfig config) throws ServletException {
