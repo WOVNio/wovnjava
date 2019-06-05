@@ -55,8 +55,9 @@ public class ApiTest extends TestCase {
         ResponseHeaders responseHeaders = mockResponseHeaders();
 
         Headers headers = new Headers(request, settings);
+        RequestOptions requestOptions = new RequestOptions(settings, request);
 
-        Api api = new Api(settings, headers, responseHeaders);
+        Api api = new Api(settings, headers, requestOptions, responseHeaders);
 
         ByteArrayOutputStream requestStream = new ByteArrayOutputStream();
         ByteArrayInputStream responseStream = new ByteArrayInputStream(apiServerResponse);
@@ -72,6 +73,9 @@ public class ApiTest extends TestCase {
                                      "&lang_code=ja" +
                                      "&url_pattern=path" +
                                      "&site_prefix_path=" +
+                                     "&product=wovnjava" +
+                                     "&version=" + Settings.VERSION +
+                                     "&debug_mode=false" +
                                      "&body=" + html;
         assertEquals(expectedRequestBody, apiRequestBody);
 

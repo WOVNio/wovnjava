@@ -39,6 +39,7 @@ class Settings {
     int connectTimeout = 1000;
     int readTimeout = 1000;
     boolean devMode = false;
+    boolean debugMode = false;
     boolean enableFlushBuffer = false;
 
     Settings(FilterConfig config) {
@@ -146,6 +147,11 @@ class Settings {
         p = config.getInitParameter("devMode");
         if (p != null && !p.isEmpty()) {
             this.devMode = getBoolParameter(p);
+        }
+
+        p = config.getInitParameter("debugMode");
+        if (p != null && !p.isEmpty()) {
+            this.debugMode = getBoolParameter(p);
         }
 
         p = config.getInitParameter("enableFlushBuffer");
