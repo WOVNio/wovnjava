@@ -244,10 +244,10 @@ class Headers {
             if (location.startsWith("/")) {
                 path = location;
             } else {
-                path = pathJoin("/", pathJoin(removeFilePart(pathNameKeepTrailingSlash), location));
+                path = UrlPath.join("/", UrlPath.join(UrlPath.removeFile(pathNameKeepTrailingSlash), location));
             }
         }
-        path = pathNormalize(path);
+        path = UrlPath.normalize(path);
 
         if (!path.startsWith(this.settings.sitePrefixPathWithoutSlash)) {
             return location;
@@ -313,49 +313,5 @@ class Headers {
 
     boolean isValidPath() {
         return this.pathName.startsWith(this.settings.sitePrefixPathWithoutSlash);
-    }
-
-    private String removeFilePart(String path) {
-        if (path.endsWith("/")) {
-            return path;
-        } else {
-            int index = path.lastIndexOf("/");
-            if (index > 0) {
-                return path.substring(0, index + 1);
-            } else {
-                return "/";
-            }
-        }
-    }
-
-    private String pathJoin(String left, String right) {
-        boolean l = left.endsWith("/");
-        boolean r = right.startsWith("/");
-        if (l && r) {
-            return left + right.substring(1);
-        } else if (l || r) {
-            return left + right;
-        } else {
-            return left + "/" + right;
-        }
-    }
-
-    private String pathNormalize(String path) {
-        path = replaceRepeat(path, "/./", "/");            // remove redundant relative path
-        path = replaceRepeat(path, "/[^/]+/\\.\\./", "/"); // combine relative path.         eg. '/dir/../file' to '/file'
-        path = path.replace("/../", "/");                  // remove nonsense relative path. eg. '/../dir/file' to '/dir/file'
-        path = path.replaceFirst("\\.\\./", "");           // remove nonsense relative path. eg.'../dir/file' to '/dir/file'
-        return path.length() == 0 ? "/" : path;
-    }
-
-    private String replaceRepeat(String path, String pattern, String replacement) {
-        while(true) {
-            String newPath = path.replaceAll(pattern, replacement);
-            if (path.length() == newPath.length()) {
-                return path;
-            } else {
-                path = newPath;
-            }
-        }
     }
 }
