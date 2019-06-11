@@ -25,6 +25,10 @@ public class HtmlCheckerTest extends TestCase {
         assertCanTranslatePath(false, "mp3");
         assertCanTranslatePath(false, "mp4");
         assertCanTranslatePath(false, "zip");
+        assertCanTranslatePath(false, "7zip");
+        assertCanTranslatePath(false, "gzip");
+        assertCanTranslatePath(false, "tar.gz");
+        assertCanTranslatePath(false, "rar");
         assertCanTranslatePath(false, "pdf");
         assertCanTranslatePath(false, "js");
         assertCanTranslatePath(false, "css");
