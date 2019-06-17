@@ -61,8 +61,8 @@ class Settings {
         }
 
         p = config.getInitParameter("sitePrefixPath");
-        this.hasSitePrefixPath = p != null && p.length() > 0;
-        if (this.hasSitePrefixPath) {
+        if (p != null && p.length() > 0) {
+            this.hasSitePrefixPath = true;
             if (!p.startsWith("/")) p = "/" + p;
             if (p.endsWith("/")) {
                 this.sitePrefixPath = p.substring(0, p.length() - 1);
