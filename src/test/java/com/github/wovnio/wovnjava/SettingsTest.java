@@ -192,7 +192,6 @@ public class SettingsTest extends TestCase {
     public void testSettingsWithoutSitePrefix() {
         Settings s = TestUtil.makeSettings();
         assertFalse(s.hasSitePrefixPath);
-        assertEquals("/", s.sitePrefixPathWithSlash);
         assertEquals("", s.sitePrefixPathWithoutSlash);
     }
 
@@ -201,7 +200,6 @@ public class SettingsTest extends TestCase {
         option.put("sitePrefixPath", "/global/");
         Settings s = TestUtil.makeSettings(option);
         assertTrue(s.hasSitePrefixPath);
-        assertEquals("/global/", s.sitePrefixPathWithSlash);
         assertEquals("/global", s.sitePrefixPathWithoutSlash);
     }
 }

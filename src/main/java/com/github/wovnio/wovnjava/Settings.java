@@ -20,7 +20,6 @@ class Settings {
 
     String projectToken = "";
     boolean hasSitePrefixPath = false;
-    String sitePrefixPathWithSlash = "/";
     String sitePrefixPathWithoutSlash = "";
     String secretKey = "";
     String urlPattern = "path";
@@ -66,10 +65,8 @@ class Settings {
         if (this.hasSitePrefixPath) {
             if (!p.startsWith("/")) p = "/" + p;
             if (p.endsWith("/")) {
-                this.sitePrefixPathWithSlash = p;
                 this.sitePrefixPathWithoutSlash = p.substring(0, p.length() - 1);
             } else {
-                this.sitePrefixPathWithSlash = p + "/";
                 this.sitePrefixPathWithoutSlash = p;
             }
         }
@@ -273,7 +270,7 @@ class Settings {
         for (String q : query) {
             md.update(q.getBytes());
         }
-        md.update(sitePrefixPathWithSlash.getBytes());
+        md.update(sitePrefixPathWithoutSlash.getBytes());
         md.update(defaultLang.getBytes());
         for (String lang : supportedLangs) {
             md.update(lang.getBytes());
