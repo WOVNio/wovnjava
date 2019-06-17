@@ -21,7 +21,6 @@ public class SettingsTest extends TestCase {
             put("projectToken", "2Wle3");
             put("secretKey", "secret");
             put("urlPattern", "query");
-            put("urlPatternReg", "aaa");
             put("query", "foo,bar");
             put("apiUrl", "https://example.com/v0/values");
             put("defaultLang", "ja");
@@ -38,7 +37,6 @@ public class SettingsTest extends TestCase {
             put("projectToken", "3elW2");
             put("secretKey", "secret");
             put("urlPattern", "query");
-            put("urlPatternReg", "aaa");
             put("query", "foo,bar");
             put("apiUrl", "https://example.com/v0/values");
             put("defaultLang", "ja");
@@ -68,7 +66,6 @@ public class SettingsTest extends TestCase {
         assertEquals("", s.projectToken);
         assertEquals("", s.secretKey);
         assertEquals("path", s.urlPattern);
-        assertEquals(Settings.UrlPatternRegPath, s.urlPatternReg);
         assertEquals(new ArrayList<String>(), s.query);
         assertEquals("https://wovn.global.ssl.fastly.net/v0/", s.apiUrl);
         assertEquals("en", s.defaultLang);
@@ -88,7 +85,6 @@ public class SettingsTest extends TestCase {
         assertEquals("2Wle3", s.projectToken);
         assertEquals("secret", s.secretKey);
         assertEquals("query", s.urlPattern);
-        assertEquals(Settings.UrlPatternRegQuery, s.urlPatternReg);
         ArrayList<String> query = new ArrayList<String>();
         query.add("foo");
         query.add("bar");
@@ -109,7 +105,6 @@ public class SettingsTest extends TestCase {
 
         assertNotNull(s);
         assertEquals("query", s.urlPattern);
-        assertEquals(Settings.UrlPatternRegQuery, s.urlPatternReg);
     }
 
     public void testIsValidWithEmptyConfig() {
@@ -173,7 +168,6 @@ public class SettingsTest extends TestCase {
         assertEquals("3elW2", s.projectToken);
         assertEquals("secret", s.secretKey);
         assertEquals("query", s.urlPattern);
-        assertEquals(Settings.UrlPatternRegQuery, s.urlPatternReg);
         ArrayList<String> query = new ArrayList<String>();
         query.add("foo");
         query.add("bar");

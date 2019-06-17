@@ -18,13 +18,19 @@ import org.apache.commons.logging.LogFactory;
 
 public class WovnServletFilter implements Filter {
     private Settings settings;
+    private PatternHandler patternHandler;
     private final HtmlChecker htmlChecker = new HtmlChecker();
 
     public static final String VERSION = Settings.VERSION;  // for backward compatibility
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        this.settings = new Settings(config);
+        try {
+            this.settings = new Settings(config);
+            this.patternHandler = PatternHandlerFactory.create(settings);
+        } catch (SettingsException e) {
+            throw new ServletException("WovnServletFilter SettingsExeption: " + e.getMessage());
+        }
     }
 
     @Override
@@ -33,7 +39,7 @@ public class WovnServletFilter implements Filter {
         ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
 
         RequestOptions requestOptions = new RequestOptions(this.settings, request);
-        Headers headers = new Headers((HttpServletRequest)request, this.settings);
+        Headers headers = new Headers((HttpServletRequest)request, this.settings, this.patternHandler);
 
         String lang = headers.getPathLang();
         boolean isRequestWithDefaultLanguageCode = settings.urlPattern.equals("path") && lang.length() > 0 && lang.equals(settings.defaultLang);
