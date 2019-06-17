@@ -57,7 +57,6 @@ class Headers {
             requestUri = Pattern.compile("^.*://[^/]+").matcher(requestUri).replaceFirst("");
         }
 
-        String[] split = requestUri.split("\\?");
         if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
             this.host = this.request.getHeader("X-Forwarded-Host");
         } else {
@@ -66,6 +65,7 @@ class Headers {
         if (this.settings.urlPattern.equals("subdomain")) {
             this.host = this.removeLang(this.host, this.langCode());
         }
+        String[] split = requestUri.split("\\?");
         this.pathName = split[0];
         if (split.length == 2) {
             this.query = split[1];
