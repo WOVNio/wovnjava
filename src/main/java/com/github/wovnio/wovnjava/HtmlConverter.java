@@ -133,7 +133,7 @@ class HtmlConverter {
         sb.append(Settings.VERSION);
         if (settings.hasSitePrefixPath) {
             sb.append("&sitePrefixPath=");
-            sb.append(settings.sitePrefixPathWithoutSlash.replaceFirst("/", ""));
+            sb.append(settings.sitePrefixPath.replaceFirst("/", ""));
         }
         String key = sb.toString();
         js.attr("src", settings.snippetUrl);
