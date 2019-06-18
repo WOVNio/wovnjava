@@ -5,9 +5,11 @@ import java.util.regex.Pattern;
 class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     static final String PATH_GET_LANG_PATTERN_REGEX = "/([^/.?]+)";
 
+    private String sitePrefixPath;
     private Pattern getLangPattern;
 
-    PathUrlLanguagePatternHandler(String sitePrefixPath) {
+    PathPatternHandler(String sitePrefixPath) {
+        this.sitePrefixPath = sitePrefixPath;
         this.getLangPattern = Pattern.compile(sitePrefixPath + PATH_GET_LANG_PATTERN_REGEX);
     }
 
@@ -15,8 +17,9 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         return this.getLangMatch(url, this.getLangPattern);
     }
 
-    String removeLang(String url) {
-        return "site.com/path";
+    String removeLang(String url, String lang) {
+        String prefix = this.sitePrefixPath + "/";
+        return url.replaceFirst(prefix + lang + "(/|$)", prefix);
     }
 
     String insertLang(String url, String lang) {

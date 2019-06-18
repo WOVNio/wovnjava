@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 abstract class UrlLanguagePatternHandler {
     abstract String getLang(String url);
 
-    abstract String removeLang(String url);
+    abstract String removeLang(String url, String lang);
 
     abstract String insertLang(String url, String lang);
 
