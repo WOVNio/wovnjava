@@ -1,20 +1,17 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 class PathPatternHandler extends PatternHandler {
-    static final String PathPatternRegex = "/([^/.?]+)";
+    static final String GET_PATH_LANG_REGEX = "/([^/.?]+)";
 
-    PathPatternHandler(String sitePrefixPath) {
-        if (sitePrefixPath.length() > 0 && !PathPatternRegex.contains(sitePrefixPath)) {
-            this.langPattern = Pattern.compile(sitePrefixPath + PathPatternRegex);
-        } else {
-            this.langPattern = Pattern.compile(PathPatternRegex);
-        }
+    PathPatternHandler(ArrayList<String> supportedLangs, String sitePrefixPath) {
+        this.getLangPattern = Pattern.compile(sitePrefixPath + GET_PATH_LANG_REGEX);
     }
 
     String getLang(String url) {
-        return this.getLangMatch(url, this.langPattern);
+        return this.getLangMatch(url, this.getLangPattern);
     }
 
     String removeLang(String url) {

@@ -228,7 +228,7 @@ class Headers {
         if (settings.urlPattern.equals("query") && location.contains("wovn=")) {
             return location;
         } else if (settings.urlPattern.equals("path")) {
-            Pattern p = this.patternHandler.getLangPattern();
+            Pattern p = this.patternHandler.getGetLangPattern();
             Matcher m = p.matcher(path);
             if (m.find()) {
                 String l = m.group(1);

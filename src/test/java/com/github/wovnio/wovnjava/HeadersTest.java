@@ -156,7 +156,7 @@ public class HeadersTest extends TestCase {
 
     }
 
-    public void testHeaders() throws SettingsException {
+    public void testHeaders() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
@@ -167,7 +167,7 @@ public class HeadersTest extends TestCase {
         assertNotNull(h);
     }
 
-    public void testHeadersWithoutQueryParameter() throws SettingsException {
+    public void testHeadersWithoutQueryParameter() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQueryParameter();
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -179,7 +179,7 @@ public class HeadersTest extends TestCase {
         assertEquals("", h.query);
     }
 
-    public void testHeadersWithQueryParameter() throws SettingsException {
+    public void testHeadersWithQueryParameter() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQueryParameter();
         FilterConfig mockConfig = mockConfigQueryParameter();
 
@@ -191,7 +191,7 @@ public class HeadersTest extends TestCase {
         assertEquals("?abc=123", h.query);
     }
 
-    public void testGetPathLangPath() throws SettingsException {
+    public void testGetPathLangPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
@@ -202,7 +202,7 @@ public class HeadersTest extends TestCase {
         assertEquals("ja", h.getPathLang());
     }
 
-    public void testGetPathLangSubdomain() throws SettingsException {
+    public void testGetPathLangSubdomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestSubdomain();
         FilterConfig mockConfig = mockConfigSubdomain();
 
@@ -213,7 +213,7 @@ public class HeadersTest extends TestCase {
         assertEquals("ja", h.getPathLang());
     }
 
-    public void testGetPathLangQuery() throws SettingsException {
+    public void testGetPathLangQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -224,7 +224,7 @@ public class HeadersTest extends TestCase {
         assertEquals("ja", h.getPathLang());
     }
 
-    public void testRedirectLocationPathTop() throws SettingsException {
+    public void testRedirectLocationPathTop() throws ConfigurationError {
         Settings s = TestUtil.makeSettings();
         PatternHandler ph = PatternHandlerFactory.create(s);
         Headers h = new Headers(TestUtil.mockRequestPath("/"), s, ph);
@@ -232,7 +232,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/ja/", h.redirectLocation("ja"));
     }
 
-    public void testRedirectLocationPathDirectory() throws SettingsException {
+    public void testRedirectLocationPathDirectory() throws ConfigurationError {
         Settings s = TestUtil.makeSettings();
         PatternHandler ph = PatternHandlerFactory.create(s);
         Headers h = new Headers(TestUtil.mockRequestPath("/test/"), s, ph);
@@ -240,7 +240,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/ja/test/", h.redirectLocation("ja"));
     }
 
-    public void testRedirectLocationPathFile() throws SettingsException {
+    public void testRedirectLocationPathFile() throws ConfigurationError {
         Settings s = TestUtil.makeSettings();
         PatternHandler ph = PatternHandlerFactory.create(s);
         Headers h = new Headers(TestUtil.mockRequestPath("/foo.html"), s, ph);
@@ -248,7 +248,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/ja/foo.html", h.redirectLocation("ja"));
     }
 
-    public void testRedirectLocationPathDirectoryAndFile() throws SettingsException {
+    public void testRedirectLocationPathDirectoryAndFile() throws ConfigurationError {
         Settings s = TestUtil.makeSettings();
         PatternHandler ph = PatternHandlerFactory.create(s);
         Headers h = new Headers(TestUtil.mockRequestPath("/dir/foo.html"), s, ph);
@@ -256,7 +256,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/ja/dir/foo.html", h.redirectLocation("ja"));
     }
 
-    public void testRedirectLocationPathNestedDirectory() throws SettingsException {
+    public void testRedirectLocationPathNestedDirectory() throws ConfigurationError {
         Settings s = TestUtil.makeSettings();
         PatternHandler ph = PatternHandlerFactory.create(s);
         Headers h = new Headers(TestUtil.mockRequestPath("/dir1/dir2/"), s, ph);
@@ -264,21 +264,21 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/ja/dir1/dir2/", h.redirectLocation("ja"));
     }
 
-    public void testRedirectLocation_WithSitePrefixPathBasePathOnly_AddsLanguageToUrl() throws SettingsException {
+    public void testRedirectLocation_WithSitePrefixPathBasePathOnly_AddsLanguageToUrl() throws ConfigurationError {
         Headers h = makeHeaderWithSitePrefixPath("/global", "/global/");
         assertEquals("https://example.com/global", h.redirectLocation("en")); // `en` is defaultLang
         assertEquals("https://example.com/global/ja/", h.redirectLocation("ja"));
         assertEquals("https://example.com/global/garbage/", h.redirectLocation("garbage"));
     }
 
-    public void testRedirectLocation_WithSitePrefixPathMatchingPath_AddsLanguageToUrl() throws SettingsException {
+    public void testRedirectLocation_WithSitePrefixPathMatchingPath_AddsLanguageToUrl() throws ConfigurationError {
         Headers h = makeHeaderWithSitePrefixPath("/global/tokyo/", "/global/");
         assertEquals("https://example.com/global/tokyo/", h.redirectLocation("en")); // `en` is defaultLang
         assertEquals("https://example.com/global/ja/tokyo/", h.redirectLocation("ja"));
         assertEquals("https://example.com/global/garbage/tokyo/", h.redirectLocation("garbage"));
     }
 
-    public void testRedirectLocation_WithSitePrefixPathNonmatchingPath_DoesNotModifyUrl() throws SettingsException {
+    public void testRedirectLocation_WithSitePrefixPathNonmatchingPath_DoesNotModifyUrl() throws ConfigurationError {
         Headers h = makeHeaderWithSitePrefixPath("/tokyo/global/", "/global/");
         assertEquals("https://example.com/tokyo/global/", h.redirectLocation("en")); // `en` is defaultLang
         assertEquals("https://example.com/tokyo/global/", h.redirectLocation("ja"));
@@ -292,7 +292,7 @@ public class HeadersTest extends TestCase {
 
     }
 
-    public void testRemoveLangPath() throws SettingsException {
+    public void testRemoveLangPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
@@ -302,7 +302,7 @@ public class HeadersTest extends TestCase {
 
         assertEquals("example.com/test", h.removeLang("example.com/ja/test", null));
     }
-    public void testRemoveLangSubdomain() throws SettingsException {
+    public void testRemoveLangSubdomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestSubdomain();
         FilterConfig mockConfig = mockConfigSubdomain();
 
@@ -312,7 +312,7 @@ public class HeadersTest extends TestCase {
 
         assertEquals("example.com/test", h.removeLang("ja.example.com/test", null));
     }
-    public void testRemoveLangQuery() throws SettingsException {
+    public void testRemoveLangQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -323,7 +323,7 @@ public class HeadersTest extends TestCase {
         assertEquals("example.com/test", h.removeLang("example.com/test?wovn=ja", null));
     }
 
-    public void testNotMatchQuery() throws SettingsException {
+    public void testNotMatchQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQueryParameter();
         FilterConfig mockConfig = mockConfigQueryParameterAAA();
 
@@ -334,7 +334,7 @@ public class HeadersTest extends TestCase {
         assertEquals("", h.query);
     }
 
-    public void testServerPort() throws SettingsException {
+    public void testServerPort() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestServerPort();
         FilterConfig mockConfig = mockConfigPath();
 
@@ -345,13 +345,13 @@ public class HeadersTest extends TestCase {
         assertEquals("example.com:8080/test", h.pageUrl);
     }
 
-    public void testSitePrefixPath() throws SettingsException {
+    public void testSitePrefixPath() throws ConfigurationError {
         Headers h = makeHeaderWithSitePrefixPath("/global/en/foo", "/global/");
         assertEquals("/global/", h.removeLang("/global/en/", null));
         assertEquals("/en/global/", h.removeLang("/en/global/", null));
     }
 
-    public void testLocationWithDefaultLangCode() throws SettingsException {
+    public void testLocationWithDefaultLangCode() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/signin");
         FilterConfig mockConfig = mockConfigPath();
         Settings s = new Settings(mockConfig);
@@ -362,7 +362,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/dir/file", h.locationWithLangCode("https://example.com/dir/file"));
     }
 
-    public void testLocationWithPath() throws SettingsException {
+    public void testLocationWithPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/ja/dir/signin");
         FilterConfig mockConfig = mockConfigPath();
         Settings s = new Settings(mockConfig);
@@ -379,7 +379,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/ja/file", h.locationWithLangCode("../../file"));
     }
 
-    public void testLocationWithPathAndTrailingSlash() throws SettingsException {
+    public void testLocationWithPathAndTrailingSlash() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/ja/dir/signin/");
         FilterConfig mockConfig = mockConfigPath();
         Settings s = new Settings(mockConfig);
@@ -391,7 +391,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/ja/file", h.locationWithLangCode("../../../file"));
     }
 
-    public void testLocationWithPathAndTopLevel() throws SettingsException {
+    public void testLocationWithPathAndTopLevel() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/location.jsp?wovn=ja");
         FilterConfig mockConfig = mockConfigQuery();
         Settings s = new Settings(mockConfig);
@@ -400,7 +400,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/index.jsp?wovn=ja", h.locationWithLangCode("./index.jsp"));
     }
 
-    public void testLocationWithQuery() throws SettingsException {
+    public void testLocationWithQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/dir/signin?wovn=ja");
         FilterConfig mockConfig = mockConfigQuery();
         Settings s = new Settings(mockConfig);
@@ -419,7 +419,7 @@ public class HeadersTest extends TestCase {
         assertEquals("../../file?wovn=zh-CHS", h.locationWithLangCode("../../file?wovn=zh-CHS"));
     }
 
-    public void testLocationWithSubdomain() throws SettingsException {
+    public void testLocationWithSubdomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/dir/signin", "ja.example.com");
         FilterConfig mockConfig = mockConfigSubdomain();
         Settings s = new Settings(mockConfig);
@@ -437,7 +437,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://ja.example.com/file", h.locationWithLangCode("../../file"));
     }
 
-    public void testLocationWithSitePrefixPath() throws SettingsException {
+    public void testLocationWithSitePrefixPath() throws ConfigurationError {
         Headers h = makeHeaderWithSitePrefixPath("/global/ja/foo", "/global/");
         assertEquals("http://example.com/", h.locationWithLangCode("http://example.com/"));
         assertEquals("http://example.com/global/ja/", h.locationWithLangCode("http://example.com/global/"));
@@ -455,7 +455,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/th/", h.locationWithLangCode("https://example.com/th/"));
     }
 
-    public void testIsValidPath() throws SettingsException {
+    public void testIsValidPath() throws ConfigurationError {
         Headers h;
         h = makeHeaderWithSitePrefixPath("/", "global");
         assertEquals(false, h.isValidPath());
@@ -470,7 +470,7 @@ public class HeadersTest extends TestCase {
         assertEquals(false, h.isValidPath());
     }
 
-    private Headers makeHeaderWithSitePrefixPath(String requestPath, String sitePrefixPath) throws SettingsException {
+    private Headers makeHeaderWithSitePrefixPath(String requestPath, String sitePrefixPath) throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath(requestPath);
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("sitePrefixPath", sitePrefixPath);
@@ -480,7 +480,7 @@ public class HeadersTest extends TestCase {
         return new Headers(mockRequest, s, ph);
     }
 
-    public void testOriginalHeaders() throws SettingsException {
+    public void testOriginalHeaders() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestOriginalHeaders();
         FilterConfig mockConfig = mockConfigOriginalHeaders();
 

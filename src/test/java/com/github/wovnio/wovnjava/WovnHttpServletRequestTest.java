@@ -88,7 +88,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         return TestUtil.makeConfig(parameters);
     }
 
-    public void testWovnHttpServletRequest() throws SettingsException {
+    public void testWovnHttpServletRequest() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
@@ -101,7 +101,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertNotNull(wovnRequest);
     }
 
-    public void testGetRemoteHostWithPath() throws SettingsException {
+    public void testGetRemoteHostWithPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
@@ -114,7 +114,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("example.com", wovnRequest.getRemoteHost());
     }
 
-    public void testGetRemoteHostWithSubDomain() throws SettingsException {
+    public void testGetRemoteHostWithSubDomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestSubDomain();
         FilterConfig mockConfig = mockConfigSubDomain();
 
@@ -127,7 +127,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("example.com", wovnRequest.getRemoteHost());
     }
 
-    public void testGetRemoteHostWithQuery() throws SettingsException {
+    public void testGetRemoteHostWithQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -140,7 +140,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("example.com", wovnRequest.getRemoteHost());
     }
 
-    public void testGetServerNameWithPath() throws SettingsException {
+    public void testGetServerNameWithPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -153,7 +153,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("example.com", wovnRequest.getServerName());
     }
 
-    public void testGetServerNameWithSubDomain() throws SettingsException {
+    public void testGetServerNameWithSubDomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestSubDomain();
         FilterConfig mockConfig = mockConfigSubDomain();
 
@@ -166,7 +166,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("example.com", wovnRequest.getServerName());
     }
 
-    public void testGetServerNameWithQuery() throws SettingsException {
+    public void testGetServerNameWithQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -179,7 +179,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("example.com", wovnRequest.getServerName());
     }
 
-    public void testGetRequestURIWithPath() throws SettingsException {
+    public void testGetRequestURIWithPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
@@ -192,7 +192,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("/test", wovnRequest.getRequestURI());
     }
 
-    public void testGetRequestURIWithSubDomain() throws SettingsException {
+    public void testGetRequestURIWithSubDomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestSubDomain();
         FilterConfig mockConfig = mockConfigSubDomain();
 
@@ -205,7 +205,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("/test", wovnRequest.getRequestURI());
     }
 
-    public void testGetRequestURIWithQuery() throws SettingsException {
+    public void testGetRequestURIWithQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -218,7 +218,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("/test", wovnRequest.getRequestURI());
     }
 
-    public void testGetRequestURLWithPath() throws SettingsException {
+    public void testGetRequestURLWithPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
@@ -231,7 +231,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("/test", wovnRequest.getRequestURL().toString());
     }
 
-    public void testGetRequestURLWithSubDomain() throws SettingsException {
+    public void testGetRequestURLWithSubDomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestSubDomain();
         FilterConfig mockConfig = mockConfigSubDomain();
 
@@ -244,7 +244,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("/test", wovnRequest.getRequestURL().toString());
     }
 
-    public void testGetRequestURLWithQuery() throws SettingsException {
+    public void testGetRequestURLWithQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -257,7 +257,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("/test", wovnRequest.getRequestURL().toString());
     }
 
-    public void testGetServletPathWithPath() throws SettingsException {
+    public void testGetServletPathWithPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
@@ -270,7 +270,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("/test", wovnRequest.getServletPath());
     }
 
-    public void testGetServletPathWithSubDomain() throws SettingsException {
+    public void testGetServletPathWithSubDomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestSubDomain();
         FilterConfig mockConfig = mockConfigSubDomain();
 
@@ -283,7 +283,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("/test", wovnRequest.getServletPath());
     }
 
-    public void testGetServletPathWithQuery() throws SettingsException {
+    public void testGetServletPathWithQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -296,7 +296,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("/test", wovnRequest.getServletPath());
     }
 
-    public void testWovnLangHeaderWithPath() throws SettingsException {
+    public void testWovnLangHeaderWithPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
@@ -314,7 +314,7 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("X-Wovn-Lang", reqHeaders.nextElement());
     }
 
-    public void testWovnLangHeaderWithQuery() throws SettingsException {
+    public void testWovnLangHeaderWithQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 

@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 abstract class PatternHandler {
-    protected Pattern langPattern;
+    protected Pattern getLangPattern;
 
     abstract String getLang(String url);
 
@@ -13,8 +13,8 @@ abstract class PatternHandler {
     abstract String insertLang(String url, String lang);
 
     /* Likely temporary access, until PatternHandler is complete */
-    public Pattern getLangPattern() {
-        return this.langPattern;
+    public Pattern getGetLangPattern() {
+        return this.getLangPattern;
     }
 
     protected String getLangMatch(String url, Pattern pattern) {

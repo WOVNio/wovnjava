@@ -28,8 +28,8 @@ public class WovnServletFilter implements Filter {
         try {
             this.settings = new Settings(config);
             this.patternHandler = PatternHandlerFactory.create(settings);
-        } catch (SettingsException e) {
-            throw new ServletException("WovnServletFilter SettingsExeption: " + e.getMessage());
+        } catch (ConfigurationError e) {
+            throw new ServletException("WovnServletFilter ConfigurationError: " + e.getMessage());
         }
     }
 
