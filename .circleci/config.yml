@@ -21,6 +21,7 @@ jobs:
       - image: circleci/openjdk:8-jdk
     steps:
       - checkout
+
       - run:
          name: install oracle jdk
          command: |
@@ -35,9 +36,17 @@ jobs:
            cat .jdk8-oracle.jinfo | awk -F'[ =]' '/^priority/ { priority=$2 } /^(hl|jre|jdk)/ { print "/usr/bin/" $2 " " $2 " " $3 " " priority; "\n" }' | xargs -t -n4 sudo update-alternatives --verbose --install
            sudo update-java-alternatives --set jdk8-oracle
            export JAVA_HOME=/usr/lib/jvm/jdk8-oracle
-      - *restore_cache
+
+      - restore_cache:
+          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+
       - run: mvn dependency:go-offline
-      - *save_cache
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+
       - run: mvn package
 
       - store_test_results:
@@ -48,9 +57,15 @@ jobs:
       - image: circleci/openjdk:8-jdk
     steps:
       - checkout
-      - *restore_cache
+
+      - restore_cache:
+          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
       - run: mvn dependency:go-offline
-      - *save_cache
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
       - run: mvn package
 
       - store_test_results:
