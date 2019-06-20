@@ -31,6 +31,7 @@ jobs:
            pip install awscli --upgrade --user
            aws s3 cp s3://$JDK_FILE_PATH ./jdk8-oracle.tar.gz > /dev/null 2>&1
            mkdir jdk8-oracle && tar zxf jdk8-oracle.tar.gz -C jdk8-oracle --strip-components 1
+           ls -la ~/
            sudo cp -a ~/jdk8-oracle /usr/lib/jvm
            sed -e "s/\(java-8-openjdk-amd64\|java-1.8.0-openjdk-amd64\)/jdk8-oracle/g" .java-1.8.0-openjdk-amd64.jinfo | sudo tee .jdk8-oracle.jinfo
            cat .jdk8-oracle.jinfo | awk -F'[ =]' '/^priority/ { priority=$2 } /^(hl|jre|jdk)/ { print "/usr/bin/" $2 " " $2 " " $3 " " priority; "\n" }' | xargs -t -n4 sudo update-alternatives --verbose --install
