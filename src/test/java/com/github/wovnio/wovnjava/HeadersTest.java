@@ -191,7 +191,7 @@ public class HeadersTest extends TestCase {
         assertEquals("?abc=123", h.query);
     }
 
-    public void testGetPathLangPath() throws ConfigurationError {
+    public void testGetRequestLangPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
@@ -199,10 +199,10 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getPathLang());
+        assertEquals("ja", h.getRequestLang());
     }
 
-    public void testGetPathLangSubdomain() throws ConfigurationError {
+    public void testGetRequestLangSubdomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestSubdomain();
         FilterConfig mockConfig = mockConfigSubdomain();
 
@@ -210,10 +210,10 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getPathLang());
+        assertEquals("ja", h.getRequestLang());
     }
 
-    public void testGetPathLangQuery() throws ConfigurationError {
+    public void testGetRequestLangQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -221,7 +221,7 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getPathLang());
+        assertEquals("ja", h.getRequestLang());
     }
 
     public void testRedirectLocationPathTop() throws ConfigurationError {

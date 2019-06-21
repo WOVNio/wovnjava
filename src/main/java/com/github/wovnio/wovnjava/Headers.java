@@ -19,7 +19,7 @@ class Headers {
     String url;
 
     private HttpServletRequest request;
-    private String pathLang;
+    private String requestLang;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
 
     Headers(HttpServletRequest r, Settings s, UrlLanguagePatternHandler urlLanguagePatternHandler) {
@@ -27,7 +27,7 @@ class Headers {
         this.request = r;
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
-        this.pathLang = this.calculateRequestLang();
+        this.requestLang = this.calculateRequestLang();
 
         this.protocol = this.request.getScheme();
 
@@ -132,7 +132,7 @@ class Headers {
     }
 
     String langCode() {
-        String pl = getPathLang();
+        String pl = this.requestLang;
         if (pl != null && pl.length() > 0) {
             return pl;
         } else {
@@ -140,8 +140,8 @@ class Headers {
         }
     }
 
-    String getPathLang() {
-        return this.pathLang;
+    String getRequestLang() {
+        return this.requestLang;
     }
 
     /**
@@ -254,7 +254,7 @@ class Headers {
 
     String removeLang(String uri, String lang) {
         if (lang == null || lang.length() == 0) {
-            lang = this.getPathLang();
+            lang = this.requestLang;
         }
         return this.urlLanguagePatternHandler.removeLang(uri, lang);
     }
