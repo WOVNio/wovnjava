@@ -1,12 +1,11 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 class SubdomainPatternHandler extends PatternHandler {
     static final String SubdomainPatternRegex = "^([^.]+)\\.";
 
-    SubdomainPatternHandler(ArrayList<String> supportedLangs) {
+    SubdomainPatternHandler() {
         this.getLangPattern = Pattern.compile(SubdomainPatternRegex);
     }
 

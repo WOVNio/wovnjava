@@ -1,12 +1,11 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 class QueryPatternHandler extends PatternHandler {
     static final String QueryPatternRegex = "(?:(?:\\?.*&)|\\?)wovn=([^&]+)(?:&|$)";
 
-    QueryPatternHandler(ArrayList<String> supportedLangs) {
+    QueryPatternHandler() {
         this.getLangPattern = Pattern.compile(QueryPatternRegex);
     }
 
