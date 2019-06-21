@@ -20,8 +20,7 @@ class Settings {
 
     String projectToken = "";
     boolean hasSitePrefixPath = false;
-    String sitePrefixPathWithSlash = "/";
-    String sitePrefixPathWithoutSlash = "";
+    String sitePrefixPath = "";
     String secretKey = "";
     String urlPattern = "path";
     String urlPatternReg = UrlPatternRegPath;
@@ -62,15 +61,13 @@ class Settings {
         }
 
         p = config.getInitParameter("sitePrefixPath");
-        this.hasSitePrefixPath = p != null && p.length() > 0;
-        if (this.hasSitePrefixPath) {
+        if (p != null && p.length() > 0) {
+            this.hasSitePrefixPath = true;
             if (!p.startsWith("/")) p = "/" + p;
             if (p.endsWith("/")) {
-                this.sitePrefixPathWithSlash = p;
-                this.sitePrefixPathWithoutSlash = p.substring(0, p.length() - 1);
+                this.sitePrefixPath = p.substring(0, p.length() - 1);
             } else {
-                this.sitePrefixPathWithSlash = p + "/";
-                this.sitePrefixPathWithoutSlash = p;
+                this.sitePrefixPath = p;
             }
         }
 
@@ -207,7 +204,7 @@ class Settings {
 
         if (this.urlPattern.equals("path")) {
             this.urlPatternReg = UrlPatternRegPath;
-            String prefix = this.sitePrefixPathWithoutSlash;
+            String prefix = this.sitePrefixPath;
             if (prefix.length() > 0 && !this.urlPatternReg.contains(prefix)) {
                 this.urlPatternReg = prefix + UrlPatternRegPath;
             }
@@ -273,7 +270,7 @@ class Settings {
         for (String q : query) {
             md.update(q.getBytes());
         }
-        md.update(sitePrefixPathWithSlash.getBytes());
+        md.update(sitePrefixPath.getBytes());
         md.update(defaultLang.getBytes());
         for (String lang : supportedLangs) {
             md.update(lang.getBytes());

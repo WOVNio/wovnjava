@@ -183,7 +183,7 @@ class Headers {
             } else {
                 // path
                 if (settings.hasSitePrefixPath) {
-                    String sitePrefixPath = this.settings.sitePrefixPathWithoutSlash;
+                    String sitePrefixPath = this.settings.sitePrefixPath;
                     if (this.pathName.startsWith(sitePrefixPath)) {
                         location = location.replaceFirst(sitePrefixPath, sitePrefixPath + "/" + lang);
                         if (!location.endsWith("/")) {
@@ -230,7 +230,7 @@ class Headers {
         }
         path = UrlPath.normalize(path);
 
-        if (!path.startsWith(this.settings.sitePrefixPathWithoutSlash)) {
+        if (!path.startsWith(this.settings.sitePrefixPath)) {
             return location;
         }
 
@@ -264,7 +264,7 @@ class Headers {
             subdomainLangCode = lang + ".";
         } else {
             pathLangCode = "/" + lang;
-            sitePrefixPath = this.settings.sitePrefixPathWithoutSlash;
+            sitePrefixPath = this.settings.sitePrefixPath;
             path = path.replaceFirst(sitePrefixPath, "");
         }
         return locationProtocol + "://" + subdomainLangCode + host + sitePrefixPath + pathLangCode + path + queryLangCode;
@@ -287,12 +287,12 @@ class Headers {
             return Pattern.compile("(^|(//))" + lang + "\\.", Pattern.CASE_INSENSITIVE)
                     .matcher(uri).replaceFirst("$1");
         } else {
-            String prefix = this.settings.sitePrefixPathWithSlash;
+            String prefix = this.settings.sitePrefixPath + "/";
             return uri.replaceFirst(prefix + lang + "(/|$)", prefix);
         }
     }
 
     boolean isValidPath() {
-        return this.pathName.startsWith(this.settings.sitePrefixPathWithoutSlash);
+        return this.pathName.startsWith(this.settings.sitePrefixPath);
     }
 }

@@ -136,7 +136,7 @@ class Api {
         appendKeyValue(sb, "&token=", settings.projectToken);
         appendKeyValue(sb, "&lang_code=", lang);
         appendKeyValue(sb, "&url_pattern=", settings.urlPattern);
-        appendKeyValue(sb, "&site_prefix_path=", settings.sitePrefixPathWithoutSlash);
+        appendKeyValue(sb, "&site_prefix_path=", settings.sitePrefixPath);
         appendKeyValue(sb, "&product=", "wovnjava");
         appendKeyValue(sb, "&version=", Settings.VERSION);
         appendKeyValue(sb, "&debug_mode=", String.valueOf(this.requestOptions.getDebugMode()));
