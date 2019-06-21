@@ -2,14 +2,11 @@ package com.github.wovnio.wovnjava;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
 
 class Headers {
     Settings settings;
@@ -22,22 +19,13 @@ class Headers {
     String url;
 
     private HttpServletRequest request;
-    private String browserLang;
     private String pathLang;
-    private String unmaskedHost;
-    private String unmaskedPathName;
-    private String unmaskedUrl;
 
     Headers(HttpServletRequest r, Settings s) {
         this.settings = s;
         this.request = r;
 
         this.protocol = this.request.getScheme();
-        if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
-            this.unmaskedHost = this.request.getHeader("X-Forwarded-Host");
-        } else {
-            this.unmaskedHost = this.request.getRemoteHost();
-        }
 
         String requestUri = null;
         if (!this.settings.originalUrlHeader.isEmpty()) {
@@ -69,14 +57,6 @@ class Headers {
             requestUri = Pattern.compile("^.*://[^/]+").matcher(requestUri).replaceFirst("");
         }
 
-        String[] split = requestUri.split("\\?");
-        this.unmaskedPathName = split[0];
-        if ( !Pattern.compile("/$").matcher(this.unmaskedPathName).find()
-                && !Pattern.compile("/[^/.]+\\.[^/.]+$").matcher(this.unmaskedPathName).find()
-                ) {
-            this.unmaskedPathName += "/";
-        }
-        this.unmaskedUrl = this.protocol + "://" + this.unmaskedHost + this.unmaskedPathName;
         if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
             this.host = this.request.getHeader("X-Forwarded-Host");
         } else {
@@ -85,6 +65,7 @@ class Headers {
         if (this.settings.urlPattern.equals("subdomain")) {
             this.host = this.removeLang(this.host, this.langCode());
         }
+        String[] split = requestUri.split("\\?");
         this.pathName = split[0];
         if (split.length == 2) {
             this.query = split[1];
