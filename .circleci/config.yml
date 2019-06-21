@@ -54,6 +54,18 @@ jobs:
       - store_test_results:
           path: target/surefire-reports
 
+      - run:
+          name: Collect artifacts
+          command: |
+            mkdir target/artifacts
+            version=`grep '^    <version>' pom.xml | sed -e 's/    <version>//' | sed -e 's!</version>!!'`
+            zip target/wovnjava-jar-${version}.zip -jr target/wovnjava-*.jar licenses/*
+            mv target/wovnjava-* target/artifacts
+
+      - store_artifacts:
+          path: target/artifacts/
+
+
   openjdk8:
     docker:
       - image: circleci/openjdk:8-jdk
@@ -62,12 +74,14 @@ jobs:
 
       - restore_cache:
           key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+
       - run: mvn dependency:go-offline
 
       - save_cache:
           paths:
             - ~/.m2
           key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+
       - run: mvn package
 
       - store_test_results:
