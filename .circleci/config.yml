@@ -1,7 +1,72 @@
 version: 2
 
+workflows:
+  version: 2
+  test:
+    jobs:
+      - oraclejdk8
+      - openjdk8
+
+anchors:
+  - restore_cache: &restore_cache
+      key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+  - save_cache: &save_cache
+      paths:
+        - ~/.m2
+      key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+
 jobs:
-  build:
+  oraclejdk8:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+
+      - run:
+         name: install oracle jdk
+         command: |
+           cd ~/
+           curl -O https://bootstrap.pypa.io/get-pip.py
+           python get-pip.py --user
+           export PATH=~/.local/bin/:$PATH
+           pip install awscli --upgrade --user
+           aws s3 cp s3://$JDK_FILE_PATH ./jdk8-oracle.tar.gz > /dev/null 2>&1
+           mkdir jdk8-oracle && tar zxf jdk8-oracle.tar.gz -C jdk8-oracle --strip-components 1
+           sudo cp -a ~/jdk8-oracle /usr/lib/jvm
+           cd /usr/lib/jvm
+           sed -e "s/\(java-8-openjdk-amd64\|java-1.8.0-openjdk-amd64\)/jdk8-oracle/g" .java-1.8.0-openjdk-amd64.jinfo | sudo tee .jdk8-oracle.jinfo
+           cat .jdk8-oracle.jinfo | awk -F'[ =]' '/^priority/ { priority=$2 } /^(hl|jre|jdk)/ { print "/usr/bin/" $2 " " $2 " " $3 " " priority; "\n" }' | xargs -t -n4 sudo update-alternatives --verbose --install
+           sudo update-java-alternatives --set jdk8-oracle
+           export JAVA_HOME=/usr/lib/jvm/jdk8-oracle
+
+      - restore_cache:
+          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+
+      - run: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+
+      - run: mvn package
+
+      - store_test_results:
+          path: target/surefire-reports
+
+      - run:
+          name: Collect artifacts
+          command: |
+            mkdir target/artifacts
+            version=`grep '^    <version>' pom.xml | sed -e 's/    <version>//' | sed -e 's!</version>!!'`
+            zip target/wovnjava-jar-${version}.zip -jr target/wovnjava-*.jar licenses/*
+            mv target/wovnjava-* target/artifacts
+
+      - store_artifacts:
+          path: target/artifacts/
+
+
+  openjdk8:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
