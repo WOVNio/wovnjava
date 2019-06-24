@@ -43,6 +43,8 @@ jobs:
            cat .jdk8-oracle.jinfo | awk -F'[ =]' '/^priority/ { priority=$2 } /^(hl|jre|jdk)/ { print "/usr/bin/" $2 " " $2 " " $3 " " priority; "\n" }' | xargs -t -n4 sudo update-alternatives --verbose --install || true
            export JAVA_HOME=/usr/lib/jvm/jdk8-oracle
            export PATH=${JAVA_HOME}/bin:$PATH
+           export M2_HOME=~/.m2
+           export MAVEN_HOME=~/.m2
 
       - restore_cache:
           key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
