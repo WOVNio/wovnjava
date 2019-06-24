@@ -12,9 +12,6 @@ import javax.xml.bind.DatatypeConverter;
 
 class Settings {
     public static final String VERSION = Version.readProjectVersion();
-    static final String UrlPatternRegPath = "/([^/.?]+)";
-    static final String UrlPatternRegQuery = "(?:(?:\\?.*&)|\\?)wovn=([^&]+)(?:&|$)";
-    static final String UrlPatternRegSubdomain = "^([^.]+)\\.";
 
     static final String DefaultApiUrl = "https://wovn.global.ssl.fastly.net/v0/";
 
@@ -23,7 +20,6 @@ class Settings {
     String sitePrefixPath = "";
     String secretKey = "";
     String urlPattern = "path";
-    String urlPatternReg = UrlPatternRegPath;
     ArrayList<String> query;
     String snippetUrl = "//j.wovn.io/1";
     String apiUrl = DefaultApiUrl;
@@ -79,11 +75,6 @@ class Settings {
         p = config.getInitParameter("urlPattern");
         if (p != null && p.length() > 0) {
             this.urlPattern = p;
-        }
-
-        p = config.getInitParameter("urlPatternReg");
-        if (p != null && p.length() > 0) {
-            this.urlPatternReg = p;
         }
 
         p = config.getInitParameter("query");
@@ -202,18 +193,6 @@ class Settings {
             this.supportedLangs.add(this.defaultLang);
         }
 
-        if (this.urlPattern.equals("path")) {
-            this.urlPatternReg = UrlPatternRegPath;
-            String prefix = this.sitePrefixPath;
-            if (prefix.length() > 0 && !this.urlPatternReg.contains(prefix)) {
-                this.urlPatternReg = prefix + UrlPatternRegPath;
-            }
-        } else if (this.urlPattern.equals("query")) {
-            this.urlPatternReg = UrlPatternRegQuery;
-        } else if (this.urlPattern.equals("subdomain")) {
-            this.urlPatternReg = UrlPatternRegSubdomain;
-        }
-
         if (this.devMode) {
             this.snippetUrl = "//j.dev-wovn.io:3000/1";
             if (this.apiUrl == DefaultApiUrl) {
@@ -266,7 +245,6 @@ class Settings {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(projectToken.getBytes());
         md.update(urlPattern.getBytes());
-        md.update(urlPatternReg.getBytes());
         for (String q : query) {
             md.update(q.getBytes());
         }

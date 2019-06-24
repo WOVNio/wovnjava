@@ -20,10 +20,12 @@ class Headers {
 
     private HttpServletRequest request;
     private String pathLang;
+    private UrlLanguagePatternHandler urlLanguagePatternHandler;
 
-    Headers(HttpServletRequest r, Settings s) {
+    Headers(HttpServletRequest r, Settings s, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = s;
         this.request = r;
+        this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
         this.protocol = this.request.getScheme();
 
@@ -137,8 +139,7 @@ class Headers {
     }
 
     String getPathLang() {
-        if (this.pathLang == null || this.pathLang.length() == 0) {
-            Pattern p = Pattern.compile(settings.urlPatternReg);
+        if (this.pathLang == null) {
             String path;
             if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
                 path = this.request.getHeader("X-Forwarded-Host") + this.request.getRequestURI();
@@ -148,18 +149,7 @@ class Headers {
             if (this.request.getQueryString() != null && this.request.getQueryString().length() > 0) {
                 path += "?" + this.request.getQueryString();
             }
-            Matcher m = p.matcher(path);
-            if (m.find()) {
-                String l = m.group(1);
-                if (l != null && l.length() > 0 && Lang.getLang(l) != null) {
-                    String lc = Lang.getCode(l);
-                    if (lc != null && lc.length() > 0) {
-                        this.pathLang = lc;
-                        return this.pathLang;
-                    }
-                }
-            }
-            this.pathLang = "";
+            this.pathLang = this.urlLanguagePatternHandler.getLang(path);
         }
         return this.pathLang;
     }
@@ -238,13 +228,9 @@ class Headers {
         if (settings.urlPattern.equals("query") && location.contains("wovn=")) {
             return location;
         } else if (settings.urlPattern.equals("path")) {
-            Pattern p = Pattern.compile(settings.urlPatternReg);
-            Matcher m = p.matcher(path);
-            if (m.find()) {
-                String l = m.group(1);
-                if (l != null && l.length() > 0 && Lang.getLang(l) != null) {
-                    return location;
-                }
+            String pathLang = this.urlLanguagePatternHandler.getLang(path);
+            if (pathLang != null && pathLang.length() > 0) {
+                return location;
             }
         }
 

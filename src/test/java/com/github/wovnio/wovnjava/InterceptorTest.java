@@ -16,7 +16,7 @@ import org.easymock.EasyMock;
 public class InterceptorTest extends TestCase {
     final String version = Settings.VERSION;
 
-    public void testApiTranslate() throws NoSuchMethodException, IllegalAccessException, IOException, ServletException {
+    public void testApiTranslate() throws NoSuchMethodException, IllegalAccessException, IOException, ServletException, ConfigurationError {
         String originalHtml = "<!doctype html><html><head><title>test</title></head><body>test</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("projectToken", "token0");
@@ -28,7 +28,7 @@ public class InterceptorTest extends TestCase {
         assertEquals(expect, stripExtraSpaces(html));
     }
 
-    public void testApiTimeout() throws NoSuchMethodException, IllegalAccessException, IOException, ServletException {
+    public void testApiTimeout() throws NoSuchMethodException, IllegalAccessException, IOException, ServletException, ConfigurationError {
         String originalHtml = "<!doctype html><html><head><meta http-equiv=\"CONTENT-TYPE\"><title>test</title></head><body>test</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("projectToken", "token0");
@@ -46,7 +46,7 @@ public class InterceptorTest extends TestCase {
         assertEquals(expect, stripExtraSpaces(html));
     }
 
-    public void testNoApi() throws NoSuchMethodException, IllegalAccessException, IOException, ServletException {
+    public void testNoApi() throws NoSuchMethodException, IllegalAccessException, IOException, ServletException, ConfigurationError {
         String originalHtml = "<!doctype html><html><head><meta http-equiv=\"CONTENT-TYPE\"><title>test</title></head><body>test</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("projectToken", "token0");
@@ -64,9 +64,10 @@ public class InterceptorTest extends TestCase {
         assertEquals(expect, stripExtraSpaces(html));
     }
 
-    private String translate(String path, String html, Settings settings, Api api, ResponseHeaders responseHeaders) throws NoSuchMethodException, IllegalAccessException, IOException, ServletException {
+    private String translate(String path, String html, Settings settings, Api api, ResponseHeaders responseHeaders) throws NoSuchMethodException, IllegalAccessException, IOException, ServletException, ConfigurationError {
         HttpServletRequest request = mockRequestPath(path);
-        Interceptor interceptor = new Interceptor(new Headers(request, settings), settings, api, responseHeaders);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Interceptor interceptor = new Interceptor(new Headers(request, settings, urlLanguagePatternHandler), settings, api, responseHeaders);
         return interceptor.translate(html);
     }
 

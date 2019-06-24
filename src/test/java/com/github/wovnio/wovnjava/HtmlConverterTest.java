@@ -101,7 +101,7 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(original.replace("INPUT", "input"), stripExtraSpaces(converter.restore(html)));
     }
 
-    public void testConvertWithSitePrefixPath() {
+    public void testConvertWithSitePrefixPath() throws ConfigurationError {
         String original = "<html><head></head><body></body></html>";
         String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + Settings.VERSION + "&amp;sitePrefixPath=global\" data-wovnio-type=\"fallback\" async></script>";
         String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/global/tokyo/\">" +
@@ -117,7 +117,8 @@ public class HtmlConverterTest extends TestCase {
         }};
         Settings settings = TestUtil.makeSettings(option);
         HttpServletRequest mockRequest = mockRequestPath("/global/tokyo/", "site.com");
-        Headers headers = new Headers(mockRequest, settings);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
         HtmlConverter converter = new HtmlConverter(settings, original);
 
         assertEquals(expectedHtml, converter.convert(headers, "ja"));
