@@ -2,13 +2,13 @@ package com.github.wovnio.wovnjava;
 
 import java.util.regex.Pattern;
 
-class QueryPatternHandler extends PatternHandler {
-    static final String QUERY_GET_LANG_PATTERN_REGEX = "(?:(?:\\?.*&)|\\?)wovn=([^&]+)(?:&|$)";
+class SubdomainUrlLangPatternHandler extends UrlLangPatternHandler {
+    static final String SUBDOMAIN_GET_LANG_PATTERN_REGEX = "^([^.]+)\\.";
 
     private Pattern getLangPattern;
 
-    QueryPatternHandler() {
-        this.getLangPattern = Pattern.compile(QUERY_GET_LANG_PATTERN_REGEX);
+    SubdomainUrlLangPatternHandler() {
+        this.getLangPattern = Pattern.compile(SUBDOMAIN_GET_LANG_PATTERN_REGEX);
     }
 
     String getLang(String url) {
@@ -20,6 +20,7 @@ class QueryPatternHandler extends PatternHandler {
     }
 
     String insertLang(String url, String lang) {
-        return "site.com/path?wovn=en";
+        return "en.site.com/path";
     }
 }
+
