@@ -25,6 +25,11 @@ jobs:
       - run:
          name: install oracle jdk
          command: |
+           sudo cp /etc/apt/sources.list /etc/apt/org_sources.list
+           sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+           sudo apt-get clean
+           sudo apt-get update
+           sudo apt install -y maven
            cd ~/
            curl -O https://bootstrap.pypa.io/get-pip.py
            python get-pip.py --user
@@ -36,7 +41,6 @@ jobs:
            cd /usr/lib/jvm
            export JAVA_HOME=/usr/lib/jvm/
            export PATH=${JAVA_HOME}/bin:$PATH
-           sudo apt install -y maven
 
       - restore_cache:
           key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
