@@ -8,7 +8,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     private String sitePrefixPath;
     private Pattern getLangPattern;
 
-    PathPatternHandler(String sitePrefixPath) {
+    PathUrlLanguagePatternHandler(String sitePrefixPath) {
         this.sitePrefixPath = sitePrefixPath;
         this.getLangPattern = Pattern.compile(sitePrefixPath + PATH_GET_LANG_PATTERN_REGEX);
     }

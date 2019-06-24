@@ -266,7 +266,7 @@ class Headers {
         if (lang == null || lang.length() == 0) {
             lang = this.getPathLang();
         }
-        return this.patternHandler.removeLang(uri, lang);
+        return this.urlLanguagePatternHandler.removeLang(uri, lang);
     }
 
     boolean isValidPath() {
