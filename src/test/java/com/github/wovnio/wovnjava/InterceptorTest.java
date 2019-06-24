@@ -66,8 +66,8 @@ public class InterceptorTest extends TestCase {
 
     private String translate(String path, String html, Settings settings, Api api, ResponseHeaders responseHeaders) throws NoSuchMethodException, IllegalAccessException, IOException, ServletException, ConfigurationError {
         HttpServletRequest request = mockRequestPath(path);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Interceptor interceptor = new Interceptor(new Headers(request, settings, urlLangPatternHandler), settings, api, responseHeaders);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Interceptor interceptor = new Interceptor(new Headers(request, settings, urlLanguagePatternHandler), settings, api, responseHeaders);
         return interceptor.translate(html);
     }
 

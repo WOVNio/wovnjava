@@ -50,12 +50,12 @@ public class ApiTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
         }});
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
 
         HttpServletRequest request = TestUtil.mockRequestPath("/ja/somepage/"); // mocks "https://example.com"
         ResponseHeaders responseHeaders = mockResponseHeaders();
 
-        Headers headers = new Headers(request, settings, urlLangPatternHandler);
+        Headers headers = new Headers(request, settings, urlLanguagePatternHandler);
         RequestOptions requestOptions = new RequestOptions(settings, request);
 
         Api api = new Api(settings, headers, requestOptions, responseHeaders);

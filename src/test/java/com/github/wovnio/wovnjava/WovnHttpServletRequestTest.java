@@ -93,8 +93,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigPath();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -106,8 +106,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigPath();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -119,8 +119,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigSubDomain();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -132,8 +132,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigQuery();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -145,8 +145,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigQuery();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -158,8 +158,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigSubDomain();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -171,8 +171,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigQuery();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -184,8 +184,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigPath();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -197,8 +197,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigSubDomain();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -210,8 +210,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigQuery();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -223,8 +223,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigPath();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -236,8 +236,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigSubDomain();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -249,8 +249,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigQuery();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -262,8 +262,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigPath();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -275,8 +275,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigSubDomain();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -288,8 +288,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigQuery();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -301,8 +301,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigPath();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
@@ -319,8 +319,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         FilterConfig mockConfig = mockConfigQuery();
 
         Settings settings = new Settings(mockConfig);
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 

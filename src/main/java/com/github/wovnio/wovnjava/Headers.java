@@ -20,12 +20,12 @@ class Headers {
 
     private HttpServletRequest request;
     private String pathLang;
-    private UrlLangPatternHandler urlLangPatternHandler;
+    private UrlLanguagePatternHandler urlLanguagePatternHandler;
 
-    Headers(HttpServletRequest r, Settings s, UrlLangPatternHandler urlLangPatternHandler) {
+    Headers(HttpServletRequest r, Settings s, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = s;
         this.request = r;
-        this.urlLangPatternHandler = urlLangPatternHandler;
+        this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
         this.protocol = this.request.getScheme();
 
@@ -149,7 +149,7 @@ class Headers {
             if (this.request.getQueryString() != null && this.request.getQueryString().length() > 0) {
                 path += "?" + this.request.getQueryString();
             }
-            this.pathLang = this.urlLangPatternHandler.getLang(path);
+            this.pathLang = this.urlLanguagePatternHandler.getLang(path);
         }
         return this.pathLang;
     }
@@ -228,7 +228,7 @@ class Headers {
         if (settings.urlPattern.equals("query") && location.contains("wovn=")) {
             return location;
         } else if (settings.urlPattern.equals("path")) {
-            String pathLang = this.urlLangPatternHandler.getLang(path);
+            String pathLang = this.urlLanguagePatternHandler.getLang(path);
             if (pathLang != null && pathLang.length() > 0) {
                 return location;
             }

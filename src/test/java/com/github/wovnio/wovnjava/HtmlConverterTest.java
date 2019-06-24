@@ -117,8 +117,8 @@ public class HtmlConverterTest extends TestCase {
         }};
         Settings settings = TestUtil.makeSettings(option);
         HttpServletRequest mockRequest = mockRequestPath("/global/tokyo/", "site.com");
-        UrlLangPatternHandler urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLangPatternHandler);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
         HtmlConverter converter = new HtmlConverter(settings, original);
 
         assertEquals(expectedHtml, converter.convert(headers, "ja"));

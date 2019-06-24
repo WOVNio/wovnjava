@@ -2,12 +2,12 @@ package com.github.wovnio.wovnjava;
 
 import java.util.regex.Pattern;
 
-class PathUrlLangPatternHandler extends UrlLangPatternHandler {
+class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     static final String PATH_GET_LANG_PATTERN_REGEX = "/([^/.?]+)";
 
     private Pattern getLangPattern;
 
-    PathUrlLangPatternHandler(String sitePrefixPath) {
+    PathUrlLanguagePatternHandler(String sitePrefixPath) {
         this.getLangPattern = Pattern.compile(sitePrefixPath + PATH_GET_LANG_PATTERN_REGEX);
     }
 

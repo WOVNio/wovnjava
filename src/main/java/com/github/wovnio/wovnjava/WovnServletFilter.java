@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class WovnServletFilter implements Filter {
     private Settings settings;
-    private UrlLangPatternHandler urlLangPatternHandler;
+    private UrlLanguagePatternHandler urlLanguagePatternHandler;
     private final HtmlChecker htmlChecker = new HtmlChecker();
 
     public static final String VERSION = Settings.VERSION;  // for backward compatibility
@@ -27,7 +27,7 @@ public class WovnServletFilter implements Filter {
     public void init(FilterConfig config) throws ServletException {
         try {
             this.settings = new Settings(config);
-            this.urlLangPatternHandler = UrlLangPatternHandlerFactory.create(settings);
+            this.urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
         } catch (ConfigurationError e) {
             throw new ServletException("WovnServletFilter ConfigurationError: " + e.getMessage());
         }
@@ -39,7 +39,7 @@ public class WovnServletFilter implements Filter {
         ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
 
         RequestOptions requestOptions = new RequestOptions(this.settings, request);
-        Headers headers = new Headers((HttpServletRequest)request, this.settings, this.urlLangPatternHandler);
+        Headers headers = new Headers((HttpServletRequest)request, this.settings, this.urlLanguagePatternHandler);
 
         String lang = headers.getPathLang();
         boolean isRequestWithDefaultLanguageCode = settings.urlPattern.equals("path") && lang.length() > 0 && lang.equals(settings.defaultLang);

@@ -3,7 +3,7 @@ package com.github.wovnio.wovnjava;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-abstract class UrlLangPatternHandler {
+abstract class UrlLanguagePatternHandler {
     abstract String getLang(String url);
 
     abstract String removeLang(String url);
