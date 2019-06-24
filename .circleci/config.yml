@@ -7,24 +7,21 @@ workflows:
       - oraclejdk8
       - openjdk8
 
-anchors:
-  - restore_cache: &restore_cache
-      key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
-  - save_cache: &save_cache
-      paths:
-        - ~/.m2
-      key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
-
 jobs:
   oraclejdk8:
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/circleci-cli:latest
     steps:
       - checkout
 
       - run:
          name: install oracle jdk
          command: |
+           sudo cp /etc/apt/sources.list /etc/apt/org_sources.list
+           sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+           sudo apt-get clean
+           sudo apt-get update
+           sudo apt install -y maven
            cd ~/
            curl -O https://bootstrap.pypa.io/get-pip.py
            python get-pip.py --user
@@ -35,19 +32,21 @@ jobs:
            sudo cp -a ~/jdk8-oracle /usr/lib/jvm
            cd /usr/lib/jvm
            sed -e "s/\(java-8-openjdk-amd64\|java-1.8.0-openjdk-amd64\)/jdk8-oracle/g" .java-1.8.0-openjdk-amd64.jinfo | sudo tee .jdk8-oracle.jinfo
-           cat .jdk8-oracle.jinfo | awk -F'[ =]' '/^priority/ { priority=$2 } /^(hl|jre|jdk)/ { print "/usr/bin/" $2 " " $2 " " $3 " " priority; "\n" }' | xargs -t -n4 sudo update-alternatives --verbose --install
-           sudo update-java-alternatives --set jdk8-oracle
+           cat .jdk8-oracle.jinfo | awk -F'[ =]' '/^priority/ { priority=$2 } /^(hl|jre|jdk)/ { print "/usr/bin/" $2 " " $2 " " $3 " " priority; "\n" }' | xargs -t -n4 sudo update-alternatives --verbose --install || true
            export JAVA_HOME=/usr/lib/jvm/jdk8-oracle
+           export PATH=${JAVA_HOME}/bin:$PATH
+           export M2_HOME=~/.m2
+           export MAVEN_HOME=~/.m2
 
       - restore_cache:
-          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+          key: circleci-wovnjava-oraclejdk-pom-{{ checksum "pom.xml" }}
 
       - run: mvn dependency:go-offline
 
       - save_cache:
           paths:
             - ~/.m2
-          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+          key: circleci-wovnjava-oraclejdk-pom-{{ checksum "pom.xml" }}
 
       - run: mvn package
 
@@ -73,14 +72,14 @@ jobs:
       - checkout
 
       - restore_cache:
-          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+          key: circleci-wovnjava-openjdk-pom-{{ checksum "pom.xml" }}
 
       - run: mvn dependency:go-offline
 
       - save_cache:
           paths:
             - ~/.m2
-          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+          key: circleci-wovnjava-openjdk-pom-{{ checksum "pom.xml" }}
 
       - run: mvn package
 
