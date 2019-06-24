@@ -3,12 +3,12 @@ package com.github.wovnio.wovnjava;
 import java.util.regex.Pattern;
 
 class SubdomainPatternHandler extends PatternHandler {
-    static final String SubdomainPatternRegex = "^([^.]+)\\.";
+    static final String SUBDOMAIN_GET_LANG_PATTERN_REGEX = "^([^.]+)\\.";
 
     private Pattern getLangPattern;
 
     SubdomainPatternHandler() {
-        this.getLangPattern = Pattern.compile(SubdomainPatternRegex);
+        this.getLangPattern = Pattern.compile(SUBDOMAIN_GET_LANG_PATTERN_REGEX);
     }
 
     String getLang(String url) {

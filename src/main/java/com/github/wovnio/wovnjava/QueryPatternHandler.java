@@ -3,12 +3,12 @@ package com.github.wovnio.wovnjava;
 import java.util.regex.Pattern;
 
 class QueryPatternHandler extends PatternHandler {
-    static final String QueryPatternRegex = "(?:(?:\\?.*&)|\\?)wovn=([^&]+)(?:&|$)";
+    static final String QUERY_GET_LANG_PATTERN_REGEX = "(?:(?:\\?.*&)|\\?)wovn=([^&]+)(?:&|$)";
 
     private Pattern getLangPattern;
 
     QueryPatternHandler() {
-        this.getLangPattern = Pattern.compile(QueryPatternRegex);
+        this.getLangPattern = Pattern.compile(QUERY_GET_LANG_PATTERN_REGEX);
     }
 
     String getLang(String url) {
