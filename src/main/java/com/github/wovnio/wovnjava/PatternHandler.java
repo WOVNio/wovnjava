@@ -4,18 +4,11 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 abstract class PatternHandler {
-    protected Pattern getLangPattern;
-
     abstract String getLang(String url);
 
     abstract String removeLang(String url);
 
     abstract String insertLang(String url, String lang);
-
-    /* Likely temporary access, until PatternHandler is complete */
-    public Pattern getGetLangPattern() {
-        return this.getLangPattern;
-    }
 
     protected String getLangMatch(String url, Pattern pattern) {
         Matcher matcher = pattern.matcher(url);

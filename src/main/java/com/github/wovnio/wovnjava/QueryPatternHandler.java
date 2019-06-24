@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 class QueryPatternHandler extends PatternHandler {
     static final String QueryPatternRegex = "(?:(?:\\?.*&)|\\?)wovn=([^&]+)(?:&|$)";
 
+    private Pattern getLangPattern;
+
     QueryPatternHandler() {
         this.getLangPattern = Pattern.compile(QueryPatternRegex);
     }

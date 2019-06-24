@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 class PathPatternHandler extends PatternHandler {
     static final String GET_PATH_LANG_REGEX = "/([^/.?]+)";
 
+    private Pattern getLangPattern;
+
     PathPatternHandler(String sitePrefixPath) {
         this.getLangPattern = Pattern.compile(sitePrefixPath + GET_PATH_LANG_REGEX);
     }

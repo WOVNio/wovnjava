@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 class SubdomainPatternHandler extends PatternHandler {
     static final String SubdomainPatternRegex = "^([^.]+)\\.";
 
+    private Pattern getLangPattern;
+
     SubdomainPatternHandler() {
         this.getLangPattern = Pattern.compile(SubdomainPatternRegex);
     }
