@@ -47,14 +47,14 @@ jobs:
            export MAVEN_HOME=~/.m2
 
       - restore_cache:
-          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+          key: circleci-wovnjava-pom-{{ checksum "~/.m2" }}
 
       - run: mvn dependency:go-offline
 
       - save_cache:
           paths:
             - ~/.m2
-          key: circleci-wovnjava-pom-{{ checksum "pom.xml" }}
+          key: circleci-wovnjava-pom-{{ checksum "~/.m2" }}
 
       - run: mvn package
 
