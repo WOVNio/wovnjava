@@ -273,6 +273,6 @@ class Headers {
         if (this.request.getQueryString() != null && this.request.getQueryString().length() > 0) {
             path += "?" + this.request.getQueryString();
         }
-        return this.patternHandler.getLang(path);
+        return this.urlLanguagePatternHandler.getLang(path);
     }
 }
