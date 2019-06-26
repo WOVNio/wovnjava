@@ -27,7 +27,7 @@ class Headers {
         this.request = r;
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
-        this.requestLang = this.calculateRequestLang();
+        this.requestLang = this.computeRequestLang();
 
         this.protocol = this.request.getScheme();
 
@@ -263,7 +263,7 @@ class Headers {
         return this.pathName.startsWith(this.settings.sitePrefixPath);
     }
 
-    private String calculateRequestLang() {
+    private String computeRequestLang() {
         String path;
         if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
             path = this.request.getHeader("X-Forwarded-Host") + this.request.getRequestURI();
