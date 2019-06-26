@@ -15,8 +15,9 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         return this.getLangMatch(url, this.getLangPattern);
     }
 
-    String removeLang(String url) {
-        return "site.com/path";
+    String removeLang(String url, String lang) {
+        return Pattern.compile("(^|(//))" + lang + "\\.", Pattern.CASE_INSENSITIVE)
+                      .matcher(url).replaceFirst("$1");
     }
 
     String insertLang(String url, String lang) {

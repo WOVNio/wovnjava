@@ -15,8 +15,9 @@ class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         return this.getLangMatch(url, this.getLangPattern);
     }
 
-    String removeLang(String url) {
-        return "site.com/path";
+    String removeLang(String url, String lang) {
+        return url.replaceFirst("(^|\\?|&)wovn=" + lang + "(&|$)", "$1")
+                  .replaceAll("(\\?|&)$", "");
     }
 
     String insertLang(String url, String lang) {

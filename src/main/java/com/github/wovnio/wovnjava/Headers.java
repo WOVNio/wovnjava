@@ -266,16 +266,7 @@ class Headers {
         if (lang == null || lang.length() == 0) {
             lang = this.getPathLang();
         }
-        if (this.settings.urlPattern.equals("query")) {
-            return uri.replaceFirst("(^|\\?|&)wovn=" + lang + "(&|$)", "$1")
-                    .replaceAll("(\\?|&)$", "");
-        } else if (this.settings.urlPattern.equals("subdomain")) {
-            return Pattern.compile("(^|(//))" + lang + "\\.", Pattern.CASE_INSENSITIVE)
-                    .matcher(uri).replaceFirst("$1");
-        } else {
-            String prefix = this.settings.sitePrefixPath + "/";
-            return uri.replaceFirst(prefix + lang + "(/|$)", prefix);
-        }
+        return this.urlLanguagePatternHandler.removeLang(uri, lang);
     }
 
     boolean isValidPath() {
