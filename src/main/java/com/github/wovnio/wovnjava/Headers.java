@@ -19,13 +19,15 @@ class Headers {
     String url;
 
     private HttpServletRequest request;
-    private String pathLang;
+    private String requestLang;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
 
     Headers(HttpServletRequest r, Settings s, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = s;
         this.request = r;
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
+
+        this.requestLang = this.computeRequestLang();
 
         this.protocol = this.request.getScheme();
 
@@ -130,7 +132,7 @@ class Headers {
     }
 
     String langCode() {
-        String pl = getPathLang();
+        String pl = this.requestLang;
         if (pl != null && pl.length() > 0) {
             return pl;
         } else {
@@ -138,20 +140,8 @@ class Headers {
         }
     }
 
-    String getPathLang() {
-        if (this.pathLang == null) {
-            String path;
-            if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
-                path = this.request.getHeader("X-Forwarded-Host") + this.request.getRequestURI();
-            } else {
-                path = this.request.getServerName() + this.request.getRequestURI();
-            }
-            if (this.request.getQueryString() != null && this.request.getQueryString().length() > 0) {
-                path += "?" + this.request.getQueryString();
-            }
-            this.pathLang = this.urlLanguagePatternHandler.getLang(path);
-        }
-        return this.pathLang;
+    String getRequestLang() {
+        return this.requestLang;
     }
 
     /**
@@ -264,12 +254,25 @@ class Headers {
 
     String removeLang(String uri, String lang) {
         if (lang == null || lang.length() == 0) {
-            lang = this.getPathLang();
+            lang = this.requestLang;
         }
         return this.urlLanguagePatternHandler.removeLang(uri, lang);
     }
 
     boolean isValidPath() {
         return this.pathName.startsWith(this.settings.sitePrefixPath);
+    }
+
+    private String computeRequestLang() {
+        String path;
+        if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
+            path = this.request.getHeader("X-Forwarded-Host") + this.request.getRequestURI();
+        } else {
+            path = this.request.getServerName() + this.request.getRequestURI();
+        }
+        if (this.request.getQueryString() != null && this.request.getQueryString().length() > 0) {
+            path += "?" + this.request.getQueryString();
+        }
+        return this.urlLanguagePatternHandler.getLang(path);
     }
 }
