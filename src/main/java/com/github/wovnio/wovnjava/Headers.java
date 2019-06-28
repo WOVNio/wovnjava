@@ -21,6 +21,7 @@ class Headers {
     private HttpServletRequest request;
     private String requestLang;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
+    private String clientRequestUrl;
 
     Headers(HttpServletRequest r, Settings s, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = s;
@@ -28,6 +29,8 @@ class Headers {
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
         this.requestLang = this.computeRequestLang();
+
+        this.clientRequestUrl = UrlResolver.calculateClientRequestUrl(r, s.useProxy, s.originalUrlHeader, s.originalQueryStringHeader);
 
         this.protocol = this.request.getScheme();
 
