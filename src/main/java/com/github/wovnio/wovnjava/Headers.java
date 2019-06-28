@@ -30,7 +30,7 @@ class Headers {
 
         this.requestLang = this.computeRequestLang();
 
-        this.clientRequestUrl = UrlResolver.calculateClientRequestUrl(r, s.useProxy, s.originalUrlHeader, s.originalQueryStringHeader);
+        this.clientRequestUrl = UrlResolver.computeClientRequestUrl(r, s.useProxy, s.originalUrlHeader, s.originalQueryStringHeader);
 
         this.protocol = this.request.getScheme();
 

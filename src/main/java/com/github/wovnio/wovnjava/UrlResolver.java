@@ -5,18 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 final class UrlResolver {
     private UrlResolver() {}
 
-    static String calculateCurrentRequestPath(HttpServletRequest request) {
-        if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
-            path = this.request.getHeader("X-Forwarded-Host") + this.request.getRequestURI();
-        } else {
-            path = this.request.getServerName() + this.request.getRequestURI();
-        }
-        if (this.request.getQueryString() != null && this.request.getQueryString().length() > 0) {
-            path += "?" + this.request.getQueryString();
-        }
-    }
-
-    static String calculateClientRequestUrl(
+    static String computeClientRequestUrl(
             HttpServletRequest request,
             boolean useProxy,
             String originalUrlHeaderSetting,
@@ -29,7 +18,7 @@ final class UrlResolver {
         return scheme + "://" + host + path + query;
     }
 
-    private static String clientRequestedHostAndPort(HttpServletRequest request, boolean useProxy) {
+    private static String clientRequestHostAndPort(HttpServletRequest request, boolean useProxy) {
         String host;
         if (useProxy && request.getHeader("X-Forwarded-Host") != null) {
             host = request.getHeader("X-Forwarded-Host");
@@ -53,7 +42,7 @@ final class UrlResolver {
         }
     }
 
-    private static String clientRequestedPath(HttpServletRequest request, String originalUrlHeaderSetting) {
+    private static String clientRequestPath(HttpServletRequest request, String originalUrlHeaderSetting) {
         String path = null;
         if (!originalUrlHeaderSetting.isEmpty()) {
             path = request.getHeader(originalUrlHeaderSetting);
@@ -67,15 +56,15 @@ final class UrlResolver {
         return path;
     }
 
-    private static String clientRequestedQuery(HttpServletRequest request, String originalQueryStringHeaderSetting) {
+    private static String clientRequestQuery(HttpServletRequest request, String originalQueryStringHeaderSetting) {
         String query;
-        if (originalQueryStringHeaderSetting.isEmpty()) {
+        if (!originalQueryStringHeaderSetting.isEmpty()) {
+            query = request.getHeader(originalQueryStringHeaderSetting);
+        } else {
             query = request.getAttribute("javax.servlet.forward.query_string");
             if (query == null || query.isEmpty()) {
                 query = request.getQueryString();
             }
-        } else {
-            query = request.getHeader(originalQueryStringHeaderSetting);
         }
 
         if (query == null || query.isEmpty()) {
