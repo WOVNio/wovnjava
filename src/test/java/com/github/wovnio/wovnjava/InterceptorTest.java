@@ -95,12 +95,14 @@ public class InterceptorTest extends TestCase {
 
     private HttpServletRequest mockRequestPath(String path) {
         HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https");
+        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
         EasyMock.expect(mock.getRemoteHost()).andReturn("example.com");
         EasyMock.expect(mock.getRequestURI()).andReturn(path).atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
         EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn("").anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn("").anyTimes();
         EasyMock.replay(mock);
         return mock;
     }

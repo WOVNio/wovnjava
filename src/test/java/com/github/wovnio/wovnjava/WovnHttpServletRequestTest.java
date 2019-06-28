@@ -23,6 +23,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         EasyMock.expect(mock.getServletPath()).andReturn("/en/test").atLeastOnce();
         EasyMock.expect(mock.getHeaderNames()).andReturn(new Vector<String>().elements());
         EasyMock.expect(mock.getHeader("X-Header-Key")).andReturn("x-header-value");
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn("").anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn("").anyTimes();
         EasyMock.replay(mock);
         return mock;
     }
@@ -39,6 +41,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         EasyMock.expect(mock.getServletPath()).andReturn("/test").atLeastOnce();
         EasyMock.expect(mock.getHeaderNames()).andReturn(new Vector<String>().elements());
         EasyMock.expect(mock.getHeader("X-Header-Key")).andReturn("x-header-value");
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn("").anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn("").anyTimes();
         EasyMock.replay(mock);
         return mock;
     }
@@ -55,6 +59,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         EasyMock.expect(mock.getServletPath()).andReturn("/test").atLeastOnce();
         EasyMock.expect(mock.getHeaderNames()).andReturn(new Vector<String>().elements());
         EasyMock.expect(mock.getHeader("X-Header-Key")).andReturn("x-header-value");
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn("").anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn("").anyTimes();
         EasyMock.replay(mock);
         return mock;
     }
