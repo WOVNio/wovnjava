@@ -12,6 +12,7 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("", sut.getLang("site.com/page/index.html"));
         assertEquals("", sut.getLang("site.com/en/pre/fix/index.html"));
         assertEquals("", sut.getLang("/page?language=en&wovn=fr"));
+        assertEquals("", sut.getLang("deutsch.site.com/page"));
     }
 
     public void testGetLang__MatchingSubdomain__ReturnLangCode() {
@@ -19,8 +20,6 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
 		assertEquals("en", sut.getLang("en.site.com"));
 		assertEquals("es", sut.getLang("es.site.com/"));
 		assertEquals("fr", sut.getLang("fr.site.com/en/page/index.html?lang=it&wovn=en"));
-        /* incorrect behavior below */
-		assertEquals("de", sut.getLang("deutsch.site.com/page"));
 	}
 
     public void testRemoveLang__NonMatchingSubdomain__DoNotModify() {
