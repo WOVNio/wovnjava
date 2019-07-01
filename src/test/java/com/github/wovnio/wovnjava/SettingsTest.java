@@ -135,6 +135,23 @@ public class SettingsTest extends TestCase {
         assertEquals(true, exceptionThrown);
     }
 
+    public void testSettings__invalidSupportedLangs() throws ConfigurationError {
+        HashMap<String, String> parametersWithInvalidSupportedLangs = new HashMap<String, String>() {{
+            put("projectToken", "2Wle3");
+            put("secretKey", "secret");
+            put("urlPattern", "query");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,japan,korean");
+        }};
+        boolean exceptionThrown = false;
+        try {
+            TestUtil.makeSettings(parametersWithInvalidSupportedLangs);
+        } catch (ConfigurationError e) {
+            exceptionThrown = true;
+        }
+        assertEquals(true, exceptionThrown);
+    }
+
     public void testGetBoolParameter() {
         assertTrue(Settings.getBoolParameter("on"));
         assertTrue(Settings.getBoolParameter("true"));

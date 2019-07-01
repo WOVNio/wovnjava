@@ -191,6 +191,12 @@ class Settings {
             throw new ConfigurationError("Invalid language code for defaultLang: " + this.defaultLang);
         }
 
+        for (int i = 0; i < this.supportedLangs.size(); i++) {
+            if (Lang.getLang(this.supportedLangs.get(i)) == null) {
+                throw new ConfigurationError("Invalid language code for supportedLangs: " + this.supportedLangs.get(i));
+            }
+        }
+
         if (this.supportedLangs.size() == 0) {
             this.supportedLangs.add(this.defaultLang);
         }
