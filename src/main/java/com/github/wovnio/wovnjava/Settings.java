@@ -187,7 +187,7 @@ class Settings {
     }
 
     private void initialize() {
-        this.defaultLang = Lang.getCode(this.defaultLang);
+        this.defaultLang = Lang.getLang(this.defaultLang).code;
 
         if (this.supportedLangs.size() == 0) {
             this.supportedLangs.add(this.defaultLang);

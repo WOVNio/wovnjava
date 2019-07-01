@@ -15,10 +15,7 @@ abstract class UrlLanguagePatternHandler {
         if (matcher.find()) {
             String lang = matcher.group(1);
             if (lang != null && lang.length() > 0 && Lang.getLang(lang) != null) {
-                String langCode = Lang.getCode(lang);
-                if (langCode != null && langCode.length() > 0) {
-                    return langCode;
-                }
+                return Lang.getLang(lang).code;
             }
         }
         return "";
