@@ -13,9 +13,10 @@ abstract class UrlLanguagePatternHandler {
     protected String getLangMatch(String url, Pattern pattern) {
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {
-            String lang = matcher.group(1);
-            if (lang != null && lang.length() > 0 && Lang.getLang(lang) != null) {
-                return Lang.getLang(lang).code;
+            String langMatch = matcher.group(1);
+            Lang lang = Lang.getLang(langMatch);
+            if (lang != null) {
+                return lang.code;
             }
         }
         return "";
