@@ -187,12 +187,9 @@ class Settings {
     }
 
     private void initialize() throws ConfigurationError {
-        String inputCode = this.defaultLang;
-        Lang defaultLangObject = Lang.getLang(inputCode);
-        if (defaultLangObject == null) {
-            throw new ConfigurationError("Invalid language code for defaultLang: " + inputCode);
+        if (Lang.getLang(this.defaultLang) == null) {
+            throw new ConfigurationError("Invalid language code for defaultLang: " + this.defaultLang);
         }
-        this.defaultLang = defaultLangObject.code;
 
         if (this.supportedLangs.size() == 0) {
             this.supportedLangs.add(this.defaultLang);
