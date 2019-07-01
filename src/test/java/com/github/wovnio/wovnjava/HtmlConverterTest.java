@@ -11,7 +11,7 @@ import org.easymock.EasyMock;
 
 public class HtmlConverterTest extends TestCase {
 
-    public void testDisablePrettyPrint() {
+    public void testDisablePrettyPrint() throws ConfigurationError {
         String original = "<html><head></head><body>\n " + "hello" + "\t\n</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = new HtmlConverter(settings, original);
@@ -19,7 +19,7 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(original, html);
     }
 
-    public void testRemoveWovnSnippet() {
+    public void testRemoveWovnSnippet() throws ConfigurationError {
         String original = "<html><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script></head><body></body></html>";
         String removedHtml = "<html><head></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
@@ -29,7 +29,7 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(removedHtml, stripExtraSpaces(converter.restore(html)));
     }
 
-    public void testRemoveScripts() {
+    public void testRemoveScripts() throws ConfigurationError {
         String original = "<html><head><script>alert(1)</script></head><body>a <script>console.log(1)</script>b</body></html>";
         String removedHtml = "<html><head><!--wovn-marker-0--></head><body>a <!--wovn-marker-1-->b</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
@@ -39,7 +39,7 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(stripExtraSpaces(original), stripExtraSpaces(converter.restore(html)));
     }
 
-    public void testRemoveHrefLangIfConflicts() {
+    public void testRemoveHrefLangIfConflicts() throws ConfigurationError {
         String original = "<html><head><link ref=\"altername\" hreflang=\"en\" href=\"http://localhost:8080/\"><link ref=\"altername\" hreflang=\"ja\" href=\"http://localhost:8080/ja/\"><link ref=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"></head><body></body></html>";
         String removedHtml = "<html><head><link ref=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
@@ -49,7 +49,7 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(removedHtml, stripExtraSpaces(converter.restore(html)));
     }
 
-    public void testRemoveWovnIgnore() {
+    public void testRemoveWovnIgnore() throws ConfigurationError {
         String original = "<html><head></head><body><div>Hello <span wovn-ignore>Duke</span>.</div></body></html>";
         String removedHtml = "<html><head></head><body><div>Hello <!--wovn-marker-0-->.</div></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
@@ -59,7 +59,7 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(original, stripExtraSpaces(converter.restore(html)));
     }
 
-    public void testRemoveClassIgnore() {
+    public void testRemoveClassIgnore() throws ConfigurationError {
         String original = "<html><head></head><body>" +
           "<p class=\"no-ignore\">The pizza needs <b class=\"ingredient\">pineapple</b>, <span class=\"name\">Chad</span>!</p>" +
           "<p class=\"ignore-me\">It's a fruit, <span class=\"name\">Louie</span>!</p>" +
@@ -79,7 +79,7 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(original, stripExtraSpaces(converter.restore(html)));
     }
 
-    public void testRemoveForm() {
+    public void testRemoveForm() throws ConfigurationError {
         String original = "<html><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
         String removedHtml = "<html><head></head><body><form><!--wovn-marker-0--><!--wovn-marker-1--></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
@@ -90,7 +90,7 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(original.replace("INPUT", "input"), stripExtraSpaces(converter.restore(html)));
     }
 
-    public void testNested() {
+    public void testNested() throws ConfigurationError {
         String original = "<html><head></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
         String removedHtml = "<html><head></head><body><!--wovn-marker-1--></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
@@ -124,7 +124,7 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(expectedHtml, converter.convert(headers, "ja"));
     }
 
-    public void testMixAllCase() {
+    public void testMixAllCase() throws ConfigurationError {
         String original = "<html><head>" +
             "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script>" +
             "<script>alert(1)</script>" +

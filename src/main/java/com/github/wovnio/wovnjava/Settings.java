@@ -37,7 +37,7 @@ class Settings {
     boolean debugMode = false;
     boolean enableFlushBuffer = false;
 
-    Settings(FilterConfig config) {
+    Settings(FilterConfig config) throws ConfigurationError {
         super();
 
         this.query = new ArrayList<String>();
@@ -186,8 +186,13 @@ class Settings {
         return param.equals("on") || param.equals("true") || param.equals("1");
     }
 
-    private void initialize() {
-        this.defaultLang = Lang.getLang(this.defaultLang).code;
+    private void initialize() throws ConfigurationError {
+        String inputCode = this.defaultLang;
+        Lang defaultLangObject = Lang.getLang(inputCode);
+        if (defaultLangObject == null) {
+            throw new ConfigurationError("Invalid language code for defaultLang: " + inputCode);
+        }
+        this.defaultLang = defaultLangObject.code;
 
         if (this.supportedLangs.size() == 0) {
             this.supportedLangs.add(this.defaultLang);
