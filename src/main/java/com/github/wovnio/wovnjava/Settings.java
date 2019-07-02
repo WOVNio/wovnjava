@@ -187,12 +187,12 @@ class Settings {
     }
 
     private void initialize() throws ConfigurationError {
-        if (Lang.getLang(this.defaultLang) == null) {
+        if (Lang.get(this.defaultLang) == null) {
             throw new ConfigurationError("Invalid language code for defaultLang: " + this.defaultLang);
         }
 
         for (String supportedLang : this.supportedLangs) {
-            if (Lang.getLang(supportedLang) == null) {
+            if (Lang.get(supportedLang) == null) {
                 throw new ConfigurationError("Invalid language code for supportedLangs: " + supportedLang);
             }
         }

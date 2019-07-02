@@ -50,7 +50,7 @@ class Lang {
         this.hreflangCode = hreflangCode;
     }
 
-    static Lang getLang(String langCode) {
+    static Lang get(String langCode) {
         if (langCode == null) return null;
 
         return LANG.get(langCode.toLowerCase());
