@@ -11,39 +11,37 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("", sut.getLang("site.com/page/index.html"));
         assertEquals("", sut.getLang("en.site.com/pre/fix/index.html"));
         assertEquals("", sut.getLang("/page?wovn=en"));
+        assertEquals("", sut.getLang("site.com/French/"));
+        assertEquals("", sut.getLang("site.com/Suomi/page/index.html"));
     }
 
     public void testGetLang__MatchingPath__ReturnLangCode() {
         PathUrlLanguagePatternHandler sut = createWithParams("");
-		assertEquals("fr", sut.getLang("/fr"));
-		assertEquals("fr", sut.getLang("/fr/"));
-		assertEquals("fr", sut.getLang("/fr/page"));
-		assertEquals("fr", sut.getLang("site.com/fr/page/index.html"));
-		assertEquals("fr", sut.getLang("en.site.com/fr/page/index.html?wovn=es"));
-        /* incorrect behavior below */
-		assertEquals("fr", sut.getLang("site.com/French/"));
-		assertEquals("fi", sut.getLang("site.com/Suomi/page/index.html"));
-	}
+        assertEquals("fr", sut.getLang("/fr"));
+        assertEquals("fr", sut.getLang("/fr/"));
+        assertEquals("fr", sut.getLang("/fr/page"));
+        assertEquals("fr", sut.getLang("site.com/fr/page/index.html"));
+        assertEquals("fr", sut.getLang("en.site.com/fr/page/index.html?wovn=es"));
+    }
 
     public void testGetLang__SitePrefixPath__NonMatchingPath__ReturnEmptyLang() {
         PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
-		assertEquals("", sut.getLang("site.com/fr"));
-		assertEquals("", sut.getLang("en.site.com/en/?wovn=en"));
-		assertEquals("", sut.getLang("/es/pre/fix/page/index.html"));
-		assertEquals("", sut.getLang("/pre/fr/fix/page/index.html"));
-		assertEquals("", sut.getLang("/pre/en/fix/page/index.html"));
-		assertEquals("", sut.getLang("/pre/fix/page/en/index.html"));
+        assertEquals("", sut.getLang("site.com/fr"));
+        assertEquals("", sut.getLang("en.site.com/en/?wovn=en"));
+        assertEquals("", sut.getLang("/es/pre/fix/page/index.html"));
+        assertEquals("", sut.getLang("/pre/fr/fix/page/index.html"));
+        assertEquals("", sut.getLang("/pre/en/fix/page/index.html"));
+        assertEquals("", sut.getLang("/pre/fix/page/en/index.html"));
+        assertEquals("", sut.getLang("/pre/fix/french/page/index.html"));
     }
 
     public void testGetLang__SitePrefixPath__MatchingPath__ReturnLangCode() {
         PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
-		assertEquals("fr", sut.getLang("site.com/pre/fix/fr"));
-		assertEquals("fr", sut.getLang("site.com/pre/fix/fr/"));
-		assertEquals("fr", sut.getLang("en.site.com/pre/fix/fr/index.html?wovn=es"));
-		assertEquals("fr", sut.getLang("/pre/fix/fr/index.html"));
-		assertEquals("fr", sut.getLang("/pre/fix/fr/page/index.html"));
-        /* incorrect behavior below */
-		assertEquals("fr", sut.getLang("/pre/fix/french/page/index.html"));
+        assertEquals("fr", sut.getLang("site.com/pre/fix/fr"));
+        assertEquals("fr", sut.getLang("site.com/pre/fix/fr/"));
+        assertEquals("fr", sut.getLang("en.site.com/pre/fix/fr/index.html?wovn=es"));
+        assertEquals("fr", sut.getLang("/pre/fix/fr/index.html"));
+        assertEquals("fr", sut.getLang("/pre/fix/fr/page/index.html"));
     }
 
     public void testRemoveLang__NonMatchingPath__DoNotModify() {

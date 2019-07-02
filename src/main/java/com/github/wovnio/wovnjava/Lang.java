@@ -1,94 +1,58 @@
 package com.github.wovnio.wovnjava;
 
-import org.jetbrains.annotations.Contract;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 class Lang {
-    static final Map<String, Lang> LANG;
+    private static final Map<String, Lang> LANG;
     static {
         HashMap<String, Lang> map = new HashMap<String, Lang>();
-        map.put("ar", new Lang("ﺎﻠﻋﺮﺒﻳﺓ", "ar", "Arabic"));
-        map.put("bg", new Lang("Български", "bg", "Bulgarian"));
-        map.put("zh-CHS", new Lang("简体中文", "zh-CHS", "Simp Chinese"));
-        map.put("zh-CHT", new Lang("繁體中文", "zh-CHT", "Trad Chinese"));
-        map.put("da", new Lang("Dansk", "da", "Danish"));
-        map.put("nl", new Lang("Nederlands", "nl", "Dutch"));
-        map.put("en", new Lang("English", "en", "English"));
-        map.put("fi", new Lang("Suomi", "fi", "Finnish"));
-        map.put("fr", new Lang("Français", "fr", "French"));
-        map.put("de", new Lang("Deutsch", "de", "German"));
-        map.put("el", new Lang("Ελληνικά", "el", "Greek"));
-        map.put("he", new Lang("עברית", "he", "Hebrew"));
-        map.put("id", new Lang("Bahasa Indonesia", "id", "Indonesian"));
-        map.put("it", new Lang("Italiano", "it", "Italian"));
-        map.put("ja", new Lang("日本語", "ja", "Japanese"));
-        map.put("ko", new Lang("한국어", "ko", "Korean"));
-        map.put("ms", new Lang("Bahasa Melayu", "ms", "Malay"));
-        map.put("my", new Lang("ဗမာစာ", "my", "Burmese"));
-        map.put("ne", new Lang("नेपाली भाषा", "ne", "Nepali"));
-        map.put("no", new Lang("Norsk", "no", "Norwegian"));
-        map.put("pl", new Lang("Polski", "pl", "Polish"));
-        map.put("pt", new Lang("Português", "pt", "Portuguese"));
-        map.put("ru", new Lang("Русский", "ru", "Russian"));
-        map.put("es", new Lang("Español", "es", "Spanish"));
-        map.put("sv", new Lang("Svensk", "sv", "Swedish"));
-        map.put("th", new Lang("ภาษาไทย", "th", "Thai"));
-        map.put("hi", new Lang("हिन्दी", "hi", "Hindi"));
-        map.put("tr", new Lang("Türkçe", "tr", "Turkish"));
-        map.put("uk", new Lang("Українська", "uk", "Ukrainian"));
-        map.put("vi", new Lang("Tiếng Việt", "vi", "Vietnamese"));
-        map.put("tl", new Lang("Tagalog", "tl", "Tagalog"));
+        map.put("ar",     new Lang("ar", "ar", "Arabic", "ﺎﻠﻋﺮﺒﻳﺓ"));
+        map.put("bg",     new Lang("bg", "bg", "Bulgarian", "Български"));
+        map.put("zh-chs", new Lang("zh-CHS", "zh-Hans", "Simp Chinese", "简体中文"));
+        map.put("zh-cht", new Lang("zh-CHT", "zh-Hant", "Trad Chinese", "繁體中文"));
+        map.put("da",     new Lang("da", "da", "Danish", "Dansk"));
+        map.put("nl",     new Lang("nl", "nl", "Dutch", "Nederlands"));
+        map.put("en",     new Lang("en", "en", "English", "English"));
+        map.put("fi",     new Lang("fi", "fi", "Finnish", "Suomi"));
+        map.put("fr",     new Lang("fr", "fr", "French", "Français"));
+        map.put("de",     new Lang("de", "de", "German", "Deutsch"));
+        map.put("el",     new Lang("el", "el", "Greek", "Ελληνικά"));
+        map.put("he",     new Lang("he", "he", "Hebrew", "עברית"));
+        map.put("id",     new Lang("id", "id", "Indonesian", "Bahasa Indonesia"));
+        map.put("it",     new Lang("it", "it", "Italian", "Italiano"));
+        map.put("ja",     new Lang("ja", "ja", "Japanese", "日本語"));
+        map.put("ko",     new Lang("ko", "ko", "Korean", "한국어"));
+        map.put("ms",     new Lang("ms", "ms", "Malay", "Bahasa Melayu"));
+        map.put("my",     new Lang("my", "my", "Burmese", "ဗမာစာ"));
+        map.put("ne",     new Lang("ne", "ne", "Nepali", "नेपाली भाषा"));
+        map.put("no",     new Lang("no", "no", "Norwegian", "Norsk"));
+        map.put("pl",     new Lang("pl", "pl", "Polish", "Polski"));
+        map.put("pt",     new Lang("pt", "pt", "Portuguese", "Português"));
+        map.put("ru",     new Lang("ru", "ru", "Russian", "Русский"));
+        map.put("es",     new Lang("es", "es", "Spanish", "Español"));
+        map.put("sv",     new Lang("sv", "sv", "Swedish", "Svensk"));
+        map.put("th",     new Lang("th", "th", "Thai", "ภาษาไทย"));
+        map.put("hi",     new Lang("hi", "hi", "Hindi", "हिन्दी"));
+        map.put("tr",     new Lang("tr", "tr", "Turkish", "Türkçe"));
+        map.put("uk",     new Lang("uk", "uk", "Ukrainian", "Українська"));
+        map.put("vi",     new Lang("vi", "vi", "Vietnamese", "Tiếng Việt"));
+        map.put("tl",     new Lang("tl", "tl", "Tagalog", "Tagalog"));
         LANG = Collections.unmodifiableMap(map);
     }
 
-    String name;
     String code;
-    String en;
+    String hreflangCode;
 
-    Lang(String n, String c, String e) {
-        super();
-        this.name = n;
-        this.code = c;
-        this.en = e;
+    Lang(String code, String hreflangCode, String englishName, String nativeName) {
+        this.code = code;
+        this.hreflangCode = hreflangCode;
     }
 
-    @Contract("null -> null")
-    static String getCode(String langName) {
-        if (langName == null || langName.length() == 0) {
-            return null;
-        }
-        if (LANG.get(langName) != null) {
-            return langName;
-        }
-        for (Map.Entry<String, Lang> e : LANG.entrySet()) {
-            Lang l = e.getValue();
-            String langNameLC = langName.toLowerCase();
-            if ( langNameLC.equals(l.name.toLowerCase())
-                    || langNameLC.equals(l.en.toLowerCase())
-                    || langNameLC.equals(l.code.toLowerCase())
-                    ) {
-                return l.code;
-            }
-        }
-        return null;
-    }
+    static Lang get(String langCode) {
+        if (langCode == null) return null;
 
-    static Lang getLang(String langName) {
-        String langCode = getCode(langName);
-        return LANG.get(langCode);
-    }
-
-    static String normalizeIso639_1(String langCode) {
-        String langCodeLC = langCode.toLowerCase();
-        if (langCodeLC.equals("zh-cht")) {
-            return "zh-Hant";
-        } else if (langCodeLC.equals("zh-chs")) {
-            return "zh-Hans";
-        } else {
-            return langCode;
-        }
+        return LANG.get(langCode.toLowerCase());
     }
 }

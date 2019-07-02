@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 
 public class RequestOptionsTest extends TestCase {
-    public void testDisableModeNoQueryParameter() {
+    public void testDisableModeNoQueryParameter() throws ConfigurationError {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(request.getQueryString()).andReturn(null);
         EasyMock.replay(request);
@@ -17,7 +17,7 @@ public class RequestOptionsTest extends TestCase {
         assertEquals(false, sut.getDisableMode());
     }
 
-    public void testDisableModeNonmatchingQueryParameter() {
+    public void testDisableModeNonmatchingQueryParameter() throws ConfigurationError {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(request.getQueryString()).andReturn("pen&pineapple&apple&pen");
         EasyMock.replay(request);
@@ -26,7 +26,7 @@ public class RequestOptionsTest extends TestCase {
         assertEquals(false, sut.getDisableMode());
     }
 
-    public void testDisableModeMatchingQueryParameter() {
+    public void testDisableModeMatchingQueryParameter() throws ConfigurationError {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(request.getQueryString()).andReturn("pen&wovnDisable&pen");
         EasyMock.replay(request);
@@ -35,7 +35,7 @@ public class RequestOptionsTest extends TestCase {
         assertEquals(true, sut.getDisableMode());
     }
 
-    public void testNoQueryParameter() {
+    public void testNoQueryParameter() throws ConfigurationError {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(request.getQueryString()).andReturn(null);
         EasyMock.replay(request);
@@ -45,7 +45,7 @@ public class RequestOptionsTest extends TestCase {
         assertEquals(false, sut.getDebugMode());
     }
 
-    public void testCacheDisable() {
+    public void testCacheDisable() throws ConfigurationError {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(request.getQueryString()).andReturn("user=Ceb&wovnCacheDisable");
         EasyMock.replay(request);
@@ -55,7 +55,7 @@ public class RequestOptionsTest extends TestCase {
         assertEquals(false, sut.getDebugMode());
     }
 
-    public void testDebugMode() {
+    public void testDebugMode() throws ConfigurationError {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(request.getQueryString()).andReturn("wovnDebugMode&user=Ceb");
         EasyMock.replay(request);
@@ -65,7 +65,7 @@ public class RequestOptionsTest extends TestCase {
         assertEquals(true, sut.getDebugMode());
     }
 
-    public void testQueryParameteresWithoutDebugModeSettings() {
+    public void testQueryParameteresWithoutDebugModeSettings() throws ConfigurationError {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(request.getQueryString()).andReturn("wovnDebugMode&wovnDisableCache");
         EasyMock.replay(request);
@@ -75,14 +75,14 @@ public class RequestOptionsTest extends TestCase {
         assertEquals(false, sut.getDebugMode());
     }
 
-    private Settings debugModeSettings() {
+    private Settings debugModeSettings() throws ConfigurationError {
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("debugMode", "true");
         }});
         return settings;
     }
 
-    private Settings defaultSettings() {
+    private Settings defaultSettings() throws ConfigurationError {
         return TestUtil.makeSettings();
     }
 }

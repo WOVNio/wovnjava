@@ -32,11 +32,11 @@ public class TestUtil {
         return mock;
     }
 
-    public static Settings makeSettings() {
+    public static Settings makeSettings() throws ConfigurationError {
         return makeSettings(emptyOption);
     }
 
-    public static Settings makeSettings(HashMap<String, String> option) {
+    public static Settings makeSettings(HashMap<String, String> option) throws ConfigurationError {
         return new Settings(makeConfig(option));
     }
 
