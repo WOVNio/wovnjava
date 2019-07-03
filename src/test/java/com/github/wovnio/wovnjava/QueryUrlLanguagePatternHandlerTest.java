@@ -13,6 +13,7 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("", sut.getLang("en.site.com/pre/fix/index.html"));
         assertEquals("", sut.getLang("/page?language=en"));
         assertEquals("", sut.getLang("/en/?wovn=Nederlands"));
+        assertEquals("", sut.getLang("http://site.com?wovn="));
     }
 
     public void testGetLang__MatchingQuery__ReturnLangCode() {
@@ -21,6 +22,9 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("fr", sut.getLang("/?wovn=fr"));
         assertEquals("fr", sut.getLang("/en/?wovn=fr"));
         assertEquals("fr", sut.getLang("/en/?lang=es&wovn=fr&country=vi"));
+        assertEquals("fr", sut.getLang("site.com?wovn=fr"));
+        assertEquals("fr", sut.getLang("site.com/?lang=en&wovn=fr"));
+        assertEquals("fr", sut.getLang("http://site.com/?wovn=fr"));
         assertEquals("fr", sut.getLang("en.site.com/es/page/index.html?wovn=fr"));
     }
 
