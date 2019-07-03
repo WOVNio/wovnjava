@@ -12,15 +12,17 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("", sut.getLang("en.site.com/pre/fix/index.html"));
         assertEquals("", sut.getLang("/page?wovn=en"));
         assertEquals("", sut.getLang("site.com/French/"));
-        assertEquals("", sut.getLang("site.com/Suomi/page/index.html"));
+        assertEquals("", sut.getLang("http://site.com/Suomi/page/index.html"));
     }
 
     public void testGetLang__MatchingPath__ReturnLangCode() {
         PathUrlLanguagePatternHandler sut = createWithParams("");
         assertEquals("fr", sut.getLang("/fr"));
         assertEquals("fr", sut.getLang("/fr/"));
-        assertEquals("fr", sut.getLang("/fr/page"));
-        assertEquals("fr", sut.getLang("site.com/fr/page/index.html"));
+        assertEquals("fr", sut.getLang("/fr?wovn=en"));
+        assertEquals("fr", sut.getLang("/fr/?wovn=en"));
+        assertEquals("fr", sut.getLang("http://site.com/fr/page"));
+        assertEquals("fr", sut.getLang("https://site.com/fr/page/index.html"));
         assertEquals("fr", sut.getLang("en.site.com/fr/page/index.html?wovn=es"));
     }
 
@@ -33,6 +35,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("", sut.getLang("/pre/en/fix/page/index.html"));
         assertEquals("", sut.getLang("/pre/fix/page/en/index.html"));
         assertEquals("", sut.getLang("/pre/fix/french/page/index.html"));
+        assertEquals("", sut.getLang("https://en.site.com/en/page/"));
     }
 
     public void testGetLang__SitePrefixPath__MatchingPath__ReturnLangCode() {
@@ -42,6 +45,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("fr", sut.getLang("en.site.com/pre/fix/fr/index.html?wovn=es"));
         assertEquals("fr", sut.getLang("/pre/fix/fr/index.html"));
         assertEquals("fr", sut.getLang("/pre/fix/fr/page/index.html"));
+        assertEquals("fr", sut.getLang("https://en.site.com/pre/fix/fr/page/"));
     }
 
     public void testRemoveLang__NonMatchingPath__DoNotModify() {
