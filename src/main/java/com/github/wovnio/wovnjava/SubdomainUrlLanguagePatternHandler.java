@@ -3,12 +3,10 @@ package com.github.wovnio.wovnjava;
 import java.util.regex.Pattern;
 
 class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
-    static final String SUBDOMAIN_GET_LANG_PATTERN_REGEX = "^([^.]+)\\.";
-
     private Pattern getLangPattern;
 
     SubdomainUrlLanguagePatternHandler() {
-        this.getLangPattern = Pattern.compile(SUBDOMAIN_GET_LANG_PATTERN_REGEX);
+        this.getLangPattern = this.buildGetLangPattern();
     }
 
     String getLang(String url) {
@@ -22,6 +20,14 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     String insertLang(String url, String lang) {
         return "en.site.com/path";
+    }
+
+    private Pattern buildGetLangPattern() {
+        Pattern p = Pattern.compile(
+                "^(?:.*://)?" + /* schema, optional non-capturing group */
+                "([^.]+)\\." /* capture first subdomain, before first `.` */
+        );
+        return p;
     }
 }
 

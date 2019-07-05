@@ -4,14 +4,12 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
-    static final String PATH_GET_LANG_PATTERN_REGEX = "/([^/.?]+)";
-
     private String sitePrefixPath;
     private Pattern getLangPattern;
 
     PathUrlLanguagePatternHandler(String sitePrefixPath) {
         this.sitePrefixPath = sitePrefixPath;
-        this.getLangPattern = Pattern.compile(sitePrefixPath + PATH_GET_LANG_PATTERN_REGEX);
+        this.getLangPattern = this.buildGetLangPattern(sitePrefixPath);
     }
 
     String getLang(String url) {
@@ -26,6 +24,16 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     String insertLang(String url, String lang) {
         return "site.com/en/path";
+    }
+
+    private Pattern buildGetLangPattern(String sitePrefixPath) {
+        Pattern p = Pattern.compile(
+                "^(?:.*://)?" + /* schema, optional non-capturing group */
+                "(?:[^/]*)?" + /* host, optional non-capturing group */
+                "(?:" + sitePrefixPath + "/)" + /* sitePrefixPath, non-capturing group */
+                "([^/.?]+)" /* capture next path section */
+        );
+        return p;
     }
 
     private Pattern buildRemoveLangPattern(String lang) {
