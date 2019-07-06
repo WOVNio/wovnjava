@@ -10,13 +10,13 @@ import org.easymock.EasyMock;
 public class UrlResolverTest extends TestCase {
     public void testComputeClientRequestUrl__defaultSettings__requestNotForwarded__returnUrl() {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(r.getScheme()).andReturn("http").times(1);
-        EasyMock.expect(r.getServerName()).andReturn("site.com").times(1);
-        EasyMock.expect(r.getServerPort()).andReturn(443).times(1);
-        EasyMock.expect(r.getAttribute("javax.servlet.forward.request_uri")).andReturn("").times(1);
-        EasyMock.expect(r.getRequestURI()).andReturn("/page/index.html").times(1);
-        EasyMock.expect(r.getAttribute("javax.servlet.forward.query_string")).andReturn("").times(1);
-        EasyMock.expect(r.getQueryString()).andReturn("user=Elvis").times(1);
+        EasyMock.expect(r.getScheme()).andReturn("http").times(0,1);
+        EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
+        EasyMock.expect(r.getServerPort()).andReturn(443).times(0,1);
+        EasyMock.expect(r.getRequestURI()).andReturn("/page/index.html").times(0,1);
+        EasyMock.expect(r.getQueryString()).andReturn("user=Elvis").times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.request_uri")).andReturn("").times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.query_string")).andReturn("").times(0,1);
         EasyMock.replay(r);
 
         Settings s = TestUtil.makeSettings();
@@ -26,13 +26,13 @@ public class UrlResolverTest extends TestCase {
 
     public void testComputeClientRequestUrl__defaultSettings__requestNotForwarded__nonDefaultPort__NoQuery__returnUrl() {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(r.getScheme()).andReturn("https").times(1);
-        EasyMock.expect(r.getServerName()).andReturn("site.com").times(1);
-        EasyMock.expect(r.getServerPort()).andReturn(8080).times(1);
-        EasyMock.expect(r.getAttribute("javax.servlet.forward.request_uri")).andReturn("").times(1);
-        EasyMock.expect(r.getRequestURI()).andReturn("/").times(1);
-        EasyMock.expect(r.getAttribute("javax.servlet.forward.query_string")).andReturn("").times(1);
-        EasyMock.expect(r.getQueryString()).andReturn(null).times(1);
+        EasyMock.expect(r.getScheme()).andReturn("https").times(0,1);
+        EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
+        EasyMock.expect(r.getServerPort()).andReturn(8080).times(0,1);
+        EasyMock.expect(r.getRequestURI()).andReturn("/").times(0,1);
+        EasyMock.expect(r.getQueryString()).andReturn(null).times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.request_uri")).andReturn("").times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.query_string")).andReturn("").times(0,1);
         EasyMock.replay(r);
 
         Settings s = TestUtil.makeSettings();
@@ -42,13 +42,13 @@ public class UrlResolverTest extends TestCase {
 
     public void testComputeClientRequestUrl__defaultSettings__requestForwardedInternally__returnOriginalUrl() {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(r.getScheme()).andReturn("https").times(1);
-        EasyMock.expect(r.getServerName()).andReturn("site.com").times(1);
-        EasyMock.expect(r.getServerPort()).andReturn(80).times(1);
-        EasyMock.expect(r.getAttribute("javax.servlet.forward.request_uri")).andReturn("/search").times(1);
-        EasyMock.expect(r.getRequestURI()).andReturn("/internal/search/korean+food/index.html").times(1);
-        EasyMock.expect(r.getAttribute("javax.servlet.forward.query_string")).andReturn("user=Elvis&q=korean+food").times(1);
-        EasyMock.expect(r.getQueryString()).andReturn("user=Elvis").times(1);
+        EasyMock.expect(r.getScheme()).andReturn("https").times(0,1);
+        EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
+        EasyMock.expect(r.getServerPort()).andReturn(80).times(0,1);
+        EasyMock.expect(r.getRequestURI()).andReturn("/internal/search/korean+food/index.html").times(0,1);
+        EasyMock.expect(r.getQueryString()).andReturn("user=Elvis").times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.request_uri")).andReturn("/search").times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.query_string")).andReturn("user=Elvis&q=korean+food").times(0,1);
         EasyMock.replay(r);
 
         Settings s = TestUtil.makeSettings();
@@ -58,13 +58,15 @@ public class UrlResolverTest extends TestCase {
 
     public void testComputeClientRequestUrl__useProxy__returnUrlByHttpHeaders() {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(r.getScheme()).andReturn("https").times(1);
-        EasyMock.expect(r.getHeader("X-Forwarded-Host")).andReturn("global.co.jp").times(1);
-        EasyMock.expect(r.getHeader("X-Forwarded-Port")).andReturn("777").times(1);
-        EasyMock.expect(r.getAttribute("javax.servlet.forward.request_uri")).andReturn("").times(1);
-        EasyMock.expect(r.getRequestURI()).andReturn("/en/tokyo").times(1);
-        EasyMock.expect(r.getAttribute("javax.servlet.forward.query_string")).andReturn("").times(1);
-        EasyMock.expect(r.getQueryString()).andReturn(null).times(1);
+        EasyMock.expect(r.getScheme()).andReturn("https").times(0,1);
+        EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
+        EasyMock.expect(r.getServerPort()).andReturn(80).times(0,1);
+        EasyMock.expect(r.getRequestURI()).andReturn("/en/tokyo").times(0,1);
+        EasyMock.expect(r.getQueryString()).andReturn(null).times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.request_uri")).andReturn("").times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.query_string")).andReturn("").times(0,1);
+        EasyMock.expect(r.getHeader("X-Forwarded-Host")).andReturn("global.co.jp").times(0,1);
+        EasyMock.expect(r.getHeader("X-Forwarded-Port")).andReturn("777").times(0,1);
         EasyMock.replay(r);
 
         Settings s = TestUtil.makeSettings(new HashMap<String, String>() {{
@@ -76,11 +78,15 @@ public class UrlResolverTest extends TestCase {
 
     public void testComputeClientRequestUrl__customHeaderPathAndQuery__customHeadersNotSet__returnEmptyPathAndQuery() {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(r.getScheme()).andReturn("https").times(1);
-        EasyMock.expect(r.getServerName()).andReturn("site.com").times(1);
-        EasyMock.expect(r.getServerPort()).andReturn(80).times(1);
-        EasyMock.expect(r.getHeader("X-My-Url")).andReturn(null).times(1);
-        EasyMock.expect(r.getHeader("X-My-Query")).andReturn(null).times(1);
+        EasyMock.expect(r.getScheme()).andReturn("https").times(0,1);
+        EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
+        EasyMock.expect(r.getServerPort()).andReturn(80).times(0,1);
+        EasyMock.expect(r.getRequestURI()).andReturn("/internal/forward/index.html").times(0,1);
+        EasyMock.expect(r.getQueryString()).andReturn("q=internal").times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.request_uri")).andReturn("/en/tokyo").times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.query_string")).andReturn("q=original").times(0,1);
+        EasyMock.expect(r.getHeader("X-My-Url")).andReturn(null).times(0,1);
+        EasyMock.expect(r.getHeader("X-My-Query")).andReturn(null).times(0,1);
         EasyMock.replay(r);
 
         Settings s = TestUtil.makeSettings(new HashMap<String, String>() {{
@@ -93,11 +99,15 @@ public class UrlResolverTest extends TestCase {
 
     public void testComputeClientRequestUrl__customHeaderPathAndQuery__customHeadersSet__returnPathAndQueryFromHeaders() {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(r.getScheme()).andReturn("https").times(1);
-        EasyMock.expect(r.getServerName()).andReturn("site.com").times(1);
-        EasyMock.expect(r.getServerPort()).andReturn(80).times(1);
-        EasyMock.expect(r.getHeader("X-My-Url")).andReturn("/global/").times(1);
-        EasyMock.expect(r.getHeader("X-My-Query")).andReturn("wovn=vi").times(1);
+        EasyMock.expect(r.getScheme()).andReturn("https").times(0,1);
+        EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
+        EasyMock.expect(r.getServerPort()).andReturn(80).times(0,1);
+        EasyMock.expect(r.getRequestURI()).andReturn("/internal/forward/index.html").times(0,1);
+        EasyMock.expect(r.getQueryString()).andReturn("q=internal").times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.request_uri")).andReturn("/en/tokyo").times(0,1);
+        EasyMock.expect(r.getAttribute("javax.servlet.forward.query_string")).andReturn("q=original").times(0,1);
+        EasyMock.expect(r.getHeader("X-My-Url")).andReturn("/global/").times(0,1);
+        EasyMock.expect(r.getHeader("X-My-Query")).andReturn("wovn=vi").times(0,1);
         EasyMock.replay(r);
 
         Settings s = TestUtil.makeSettings(new HashMap<String, String>() {{
