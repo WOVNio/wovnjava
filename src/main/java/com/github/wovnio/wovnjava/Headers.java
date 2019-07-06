@@ -21,16 +21,14 @@ class Headers {
     private HttpServletRequest request;
     private String requestLang;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
-    private String clientRequestUrl;
 
     Headers(HttpServletRequest r, Settings s, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = s;
         this.request = r;
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
-        this.requestLang = this.computeRequestLang();
-
-        this.clientRequestUrl = UrlResolver.computeClientRequestUrl(r, s);
+        String clientRequestUrl = UrlResolver.computeClientRequestUrl(r, s);
+        this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
 
         this.protocol = this.request.getScheme();
 
@@ -264,18 +262,5 @@ class Headers {
 
     boolean isValidPath() {
         return this.pathName.startsWith(this.settings.sitePrefixPath);
-    }
-
-    private String computeRequestLang() {
-        String path;
-        if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
-            path = this.request.getHeader("X-Forwarded-Host") + this.request.getRequestURI();
-        } else {
-            path = this.request.getServerName() + this.request.getRequestURI();
-        }
-        if (this.request.getQueryString() != null && this.request.getQueryString().length() > 0) {
-            path += "?" + this.request.getQueryString();
-        }
-        return this.urlLanguagePatternHandler.getLang(path);
     }
 }
