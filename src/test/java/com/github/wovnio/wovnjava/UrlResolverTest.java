@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 
 public class UrlResolverTest extends TestCase {
-    public void testComputeClientRequestUrl__defaultSettings__requestNotForwarded__returnUrl() {
+    public void testComputeClientRequestUrl__defaultSettings__requestNotForwarded__returnUrl() throws ConfigurationError {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(r.getScheme()).andReturn("http").times(0,1);
         EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
@@ -24,7 +24,7 @@ public class UrlResolverTest extends TestCase {
         assertEquals("http://site.com/page/index.html?user=Elvis", UrlResolver.computeClientRequestUrl(r, s));
     }
 
-    public void testComputeClientRequestUrl__defaultSettings__requestNotForwarded__nonDefaultPort__NoQuery__returnUrl() {
+    public void testComputeClientRequestUrl__defaultSettings__requestNotForwarded__nonDefaultPort__NoQuery__returnUrl() throws ConfigurationError {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(r.getScheme()).andReturn("https").times(0,1);
         EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
@@ -40,7 +40,7 @@ public class UrlResolverTest extends TestCase {
         assertEquals("https://site.com:8080/", UrlResolver.computeClientRequestUrl(r, s));
     }
 
-    public void testComputeClientRequestUrl__defaultSettings__requestForwardedInternally__returnOriginalUrl() {
+    public void testComputeClientRequestUrl__defaultSettings__requestForwardedInternally__returnOriginalUrl() throws ConfigurationError {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(r.getScheme()).andReturn("https").times(0,1);
         EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
@@ -56,7 +56,7 @@ public class UrlResolverTest extends TestCase {
         assertEquals("https://site.com/search?user=Elvis&q=korean+food", UrlResolver.computeClientRequestUrl(r, s));
     }
 
-    public void testComputeClientRequestUrl__useProxy__proxyHeadersNotSet__returnUrlAsNormal() {
+    public void testComputeClientRequestUrl__useProxy__proxyHeadersNotSet__returnUrlAsNormal() throws ConfigurationError {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(r.getScheme()).andReturn("https").times(0,1);
         EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
@@ -76,7 +76,7 @@ public class UrlResolverTest extends TestCase {
         assertEquals("https://site.com/en/tokyo", UrlResolver.computeClientRequestUrl(r, s));
     }
 
-    public void testComputeClientRequestUrl__useProxy__proxyHeadersPresent__returnUrlByHttpHeaders() {
+    public void testComputeClientRequestUrl__useProxy__proxyHeadersPresent__returnUrlByHttpHeaders() throws ConfigurationError {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(r.getScheme()).andReturn("https").times(0,1);
         EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
@@ -96,7 +96,7 @@ public class UrlResolverTest extends TestCase {
         assertEquals("https://global.co.jp:777/en/tokyo", UrlResolver.computeClientRequestUrl(r, s));
     }
 
-    public void testComputeClientRequestUrl__customHeaderPathAndQuery__customHeadersNotSet__returnUrlAsNormal() {
+    public void testComputeClientRequestUrl__customHeaderPathAndQuery__customHeadersNotSet__returnUrlAsNormal() throws ConfigurationError {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(r.getScheme()).andReturn("https").times(0,1);
         EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
@@ -117,7 +117,7 @@ public class UrlResolverTest extends TestCase {
         assertEquals("https://site.com/en/global/?q=original", UrlResolver.computeClientRequestUrl(r, s));
     }
 
-    public void testComputeClientRequestUrl__customHeaderPathAndQuery__customHeadersSet__returnPathAndQueryFromHeaders() {
+    public void testComputeClientRequestUrl__customHeaderPathAndQuery__customHeadersSet__returnPathAndQueryFromHeaders() throws ConfigurationError {
         HttpServletRequest r = EasyMock.createMock(HttpServletRequest.class);
         EasyMock.expect(r.getScheme()).andReturn("https").times(0,1);
         EasyMock.expect(r.getServerName()).andReturn("site.com").times(0,1);
