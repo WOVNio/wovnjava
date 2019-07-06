@@ -23,8 +23,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         EasyMock.expect(mock.getServletPath()).andReturn("/en/test").atLeastOnce();
         EasyMock.expect(mock.getHeaderNames()).andReturn(new Vector<String>().elements());
         EasyMock.expect(mock.getHeader("X-Header-Key")).andReturn("x-header-value");
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.replay(mock);
         return mock;
     }
@@ -41,8 +41,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         EasyMock.expect(mock.getServletPath()).andReturn("/test").atLeastOnce();
         EasyMock.expect(mock.getHeaderNames()).andReturn(new Vector<String>().elements());
         EasyMock.expect(mock.getHeader("X-Header-Key")).andReturn("x-header-value");
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.replay(mock);
         return mock;
     }
@@ -59,8 +59,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         EasyMock.expect(mock.getServletPath()).andReturn("/test").atLeastOnce();
         EasyMock.expect(mock.getHeaderNames()).andReturn(new Vector<String>().elements());
         EasyMock.expect(mock.getHeader("X-Header-Key")).andReturn("x-header-value");
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.replay(mock);
         return mock;
     }
