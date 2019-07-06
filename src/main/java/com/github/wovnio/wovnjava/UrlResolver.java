@@ -14,27 +14,22 @@ final class UrlResolver {
     }
 
     private static String clientRequestHostAndPort(HttpServletRequest request, boolean useProxy) {
-        String host;
-        int port;
+        String host = null;
+        Integer port = null;
         if (useProxy) {
             /* request.getHeader returns String or null */
-            String forwardedHost = request.getHeader("X-Forwarded-Host");
-            if (forwardedHost != null) {
-                host = forwardedHost;
-            } else {
-                /* X-Fowarded-Host is required for `useProxy`. Set empty string to avoid crashing. */
-                host = "";
-            }
+            host = request.getHeader("X-Forwarded-Host");
             /* request.getHeader returns String or null */
             String forwardedPort = request.getHeader("X-Forwarded-Port");
-            if (forwardedPort == null || forwardedPort.isEmpty()) {
-                port = 80;
-            } else {
+            if (forwardedPort != null && !forwardedPort.isEmpty()) {
                 port = Integer.parseInt(forwardedPort);
             }
-        } else {
+        }
+        if (host == null) {
             /* request.getServerName returns String */
             host = request.getServerName();
+        }
+        if (port == null) {
             /* request.getServerPort returns int */
             port = request.getServerPort();
         }
@@ -47,17 +42,21 @@ final class UrlResolver {
     }
 
     private static String clientRequestPath(HttpServletRequest request, String originalUrlHeaderSetting) {
-        String path;
+        String path = null;
         if (!originalUrlHeaderSetting.isEmpty()) {
             /* request.getHeader returns String or null */
             path = request.getHeader(originalUrlHeaderSetting);
-        } else {
-            /* request.getAttribute returns Object */
-            path = (String) request.getAttribute("javax.servlet.forward.request_uri").toString();
-            if (path == null || path.isEmpty()) {
-                /* request.getRequestURI returns String */
-                path = request.getRequestURI();
+        }
+        if (path == null) {
+            /* request.getAttribute returns Object or null */
+            Object forwardedPath = request.getAttribute("javax.servlet.forward.request_uri");
+            if (forwardedPath != null) {
+                path = forwardedPath.toString();
             }
+        }
+        if (path == null) {
+            /* request.getRequestURI returns String */
+            path = request.getRequestURI();
         }
 
         if (path == null) {
@@ -68,16 +67,20 @@ final class UrlResolver {
     }
 
     private static String clientRequestQuery(HttpServletRequest request, String originalQueryStringHeaderSetting) {
-        String query;
+        String query = null;
         if (!originalQueryStringHeaderSetting.isEmpty()) {
             query = request.getHeader(originalQueryStringHeaderSetting);
-        } else {
-            /* request.getAttribute returns Object */
-            query = request.getAttribute("javax.servlet.forward.query_string").toString();
-            if (query == null || query.isEmpty()) {
-                /* request.getQueryString returns String or null */
-                query = request.getQueryString();
+        }
+        if (query == null) {
+            /* request.getAttribute returns Object or null */
+            Object forwardedQuery = request.getAttribute("javax.servlet.forward.query_string");
+            if (forwardedQuery != null) {
+                query = forwardedQuery.toString();
             }
+        }
+        if (query == null) {
+            /* request.getQueryString returns String or null */
+            query = request.getQueryString();
         }
 
         if (query == null || query.isEmpty()) {
