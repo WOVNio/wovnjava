@@ -83,10 +83,10 @@ public class HeadersTest extends TestCase {
         EasyMock.expect(mock.getRemoteHost()).andReturn(host);
         EasyMock.expect(mock.getRequestURI()).andReturn(path).atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn(host).atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
+        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn("").anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn("").anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
         EasyMock.replay(mock);
 
         return mock;
@@ -97,10 +97,10 @@ public class HeadersTest extends TestCase {
         EasyMock.expect(mock.getRemoteHost()).andReturn("ja.example.com");
         EasyMock.expect(mock.getRequestURI()).andReturn("/test").atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn("ja.example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
+        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn("").anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn("").anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
         EasyMock.replay(mock);
 
         return mock;
@@ -113,8 +113,8 @@ public class HeadersTest extends TestCase {
         EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
         EasyMock.expect(mock.getQueryString()).andReturn("wovn=ja").atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn("").anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn("").anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
         EasyMock.replay(mock);
 
         return mock;
@@ -128,8 +128,8 @@ public class HeadersTest extends TestCase {
         EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
         EasyMock.expect(mock.getQueryString()).andReturn("def=456&wovn=ja&abc=123").atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn("").anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn("").anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
         EasyMock.replay(mock);
 
         return mock;
@@ -141,10 +141,10 @@ public class HeadersTest extends TestCase {
         EasyMock.expect(mock.getRemoteHost()).andReturn("example.com");
         EasyMock.expect(mock.getRequestURI()).andReturn("/ja/test").atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
+        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(8080).atLeastOnce();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn("").anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn("").anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
         EasyMock.replay(mock);
 
         return mock;
@@ -156,12 +156,12 @@ public class HeadersTest extends TestCase {
         EasyMock.expect(mock.getRemoteHost()).andReturn("example.com");
         EasyMock.expect(mock.getRequestURI()).andReturn("/ja/test").atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
+        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
         EasyMock.expect(mock.getHeader("REDIRECT_URL")).andReturn("/foo/bar").atLeastOnce();
         EasyMock.expect(mock.getHeader("REDIRECT_QUERY_STRING")).andReturn("baz=123").atLeastOnce();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn("").anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn("").anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
         EasyMock.replay(mock);
 
         return mock;

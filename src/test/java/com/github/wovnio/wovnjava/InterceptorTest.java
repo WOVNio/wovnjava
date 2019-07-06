@@ -99,10 +99,10 @@ public class InterceptorTest extends TestCase {
         EasyMock.expect(mock.getRemoteHost()).andReturn("example.com");
         EasyMock.expect(mock.getRequestURI()).andReturn(path).atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
+        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn("").anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn("").anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
         EasyMock.replay(mock);
         return mock;
     }
