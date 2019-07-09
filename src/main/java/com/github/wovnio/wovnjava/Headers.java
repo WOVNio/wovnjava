@@ -22,12 +22,12 @@ class Headers {
     private String requestLang;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
 
-    Headers(HttpServletRequest r, Settings s, UrlLanguagePatternHandler urlLanguagePatternHandler) {
-        this.settings = s;
-        this.request = r;
+    Headers(HttpServletRequest request, Settings settings, UrlLanguagePatternHandler urlLanguagePatternHandler) {
+        this.settings = settings;
+        this.request = request;
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
-        String clientRequestUrl = UrlResolver.computeClientRequestUrl(r, s);
+        String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
         this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
 
         this.protocol = this.request.getScheme();
@@ -49,7 +49,7 @@ class Headers {
         }
         // Both getRequestURI() and getPathInfo() do not have query parameters.
         if (this.settings.originalQueryStringHeader.isEmpty()) {
-            if (r.getQueryString() != null && !this.request.getQueryString().isEmpty()) {
+            if (request.getQueryString() != null && !this.request.getQueryString().isEmpty()) {
                 requestUri += "?" + this.request.getQueryString();
             }
         } else {
