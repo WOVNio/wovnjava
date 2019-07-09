@@ -22,12 +22,13 @@ class Headers {
     private String requestLang;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
 
-    Headers(HttpServletRequest r, Settings s, UrlLanguagePatternHandler urlLanguagePatternHandler) {
-        this.settings = s;
-        this.request = r;
+    Headers(HttpServletRequest request, Settings settings, UrlLanguagePatternHandler urlLanguagePatternHandler) {
+        this.settings = settings;
+        this.request = request;
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
-        this.requestLang = this.computeRequestLang();
+        String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
+        this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
 
         this.protocol = this.request.getScheme();
 
@@ -48,7 +49,7 @@ class Headers {
         }
         // Both getRequestURI() and getPathInfo() do not have query parameters.
         if (this.settings.originalQueryStringHeader.isEmpty()) {
-            if (r.getQueryString() != null && !this.request.getQueryString().isEmpty()) {
+            if (request.getQueryString() != null && !this.request.getQueryString().isEmpty()) {
                 requestUri += "?" + this.request.getQueryString();
             }
         } else {
@@ -261,18 +262,5 @@ class Headers {
 
     boolean isValidPath() {
         return this.pathName.startsWith(this.settings.sitePrefixPath);
-    }
-
-    private String computeRequestLang() {
-        String path;
-        if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
-            path = this.request.getHeader("X-Forwarded-Host") + this.request.getRequestURI();
-        } else {
-            path = this.request.getServerName() + this.request.getRequestURI();
-        }
-        if (this.request.getQueryString() != null && this.request.getQueryString().length() > 0) {
-            path += "?" + this.request.getQueryString();
-        }
-        return this.urlLanguagePatternHandler.getLang(path);
     }
 }

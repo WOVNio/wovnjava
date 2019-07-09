@@ -179,12 +179,14 @@ public class HtmlConverterTest extends TestCase {
 
     private static HttpServletRequest mockRequestPath(String path, String host) {
         HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https");
+        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
         EasyMock.expect(mock.getRemoteHost()).andReturn(host);
         EasyMock.expect(mock.getRequestURI()).andReturn(path).atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn(host).atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
+        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.replay(mock);
 
         return mock;
