@@ -32,11 +32,10 @@ class Headers {
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
         String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
+
         this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
-        this.clientRequestUrlWithoutLangCode = this.urlLanguagePatternHandler.removeLang(clientRequestUrl);
-
+        this.clientRequestUrlWithoutLangCode = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang);
         this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang)
-
         this.isValidPath = this.urlLanguagePatternHandler.isMatchSitePrefixPath(clientRequestUrl)
 
         this.protocol = this.request.getScheme();

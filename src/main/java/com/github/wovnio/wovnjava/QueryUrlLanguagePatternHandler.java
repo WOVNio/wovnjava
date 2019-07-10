@@ -22,6 +22,10 @@ class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         return "site.com/path?wovn=en";
     }
 
+    boolean isMatchSitePrefixPath(String url) {
+        return true;
+    }
+
     private Pattern buildGetLangPattern() {
         Pattern p = Pattern.compile(
                 "(?:(?:\\?.*&)|\\?)" + /* `?` or `?.*&`, non-capturing group */
