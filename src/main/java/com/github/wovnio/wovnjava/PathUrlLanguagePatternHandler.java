@@ -19,6 +19,8 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     String removeLang(String url, String lang) {
+        if (lang.isEmpty()) return url;
+
         Pattern removeLangPattern = buildRemoveLangPattern(lang);
         Matcher matcher = removeLangPattern.matcher(url);
         return matcher.replaceFirst("$1$2$3");

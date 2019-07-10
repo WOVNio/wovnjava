@@ -43,4 +43,12 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("http://site.com/", sut.removeLang("http://es.site.com/", "es"));
         assertEquals("site.com/fr/index.html?lang=fr&wovn=fr", sut.removeLang("fr.site.com/fr/index.html?lang=fr&wovn=fr", "fr"));
     }
+
+    public void testRemoveLang__EmptyLanguage__DoNotModify() {
+        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler();
+        assertEquals("/", sut.removeLang("/", ""));
+        assertEquals("site.com?wovn=en", sut.removeLang("site.com?wovn=en", ""));
+        assertEquals("site.com/no/index.html", sut.removeLang("site.com/no/index.html", ""));
+        assertEquals("http://fr.site.com/ja", sut.removeLang("http://fr.site.com/ja", ""));
+    }
 }

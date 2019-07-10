@@ -14,6 +14,8 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     String removeLang(String url, String lang) {
+        if (lang.isEmpty()) return url;
+
         return Pattern.compile("(^|(//))" + lang + "\\.", Pattern.CASE_INSENSITIVE)
                       .matcher(url).replaceFirst("$1");
     }
