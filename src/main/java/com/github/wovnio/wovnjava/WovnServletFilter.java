@@ -41,7 +41,7 @@ public class WovnServletFilter implements Filter {
         RequestOptions requestOptions = new RequestOptions(this.settings, request);
         Headers headers = new Headers((HttpServletRequest)request, this.settings, this.urlLanguagePatternHandler);
 
-        boolean canProcessRequest = !requestOptions.getDisableMode() && headers.isValidPath() && htmlChecker.canTranslatePath(headers.pathName);
+        boolean canProcessRequest = !requestOptions.getDisableMode() && headers.isValidPath && htmlChecker.canTranslatePath(headers.pathName);
 
         if (headers.shouldRedirectToDefaultLang) {
             /* Send 302 redirect to equivalent URL without default language code */
