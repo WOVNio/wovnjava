@@ -6,10 +6,12 @@ import java.util.regex.Matcher;
 class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     private String sitePrefixPath;
     private Pattern getLangPattern;
+    private Pattern matchSitePrefixPathPattern;
 
     PathUrlLanguagePatternHandler(String sitePrefixPath) {
         this.sitePrefixPath = sitePrefixPath;
         this.getLangPattern = this.buildGetLangPattern(sitePrefixPath);
+        this.matchSitePrefixPathPattern = this.buildMatchSitePrefixPathPattern(sitePrefixPath);
     }
 
     String getLang(String url) {
@@ -17,6 +19,8 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     String removeLang(String url, String lang) {
+        if (lang.isEmpty()) return url;
+
         Pattern removeLangPattern = buildRemoveLangPattern(lang);
         Matcher matcher = removeLangPattern.matcher(url);
         return matcher.replaceFirst("$1$2$3");
@@ -24,6 +28,10 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     String insertLang(String url, String lang) {
         return "site.com/en/path";
+    }
+
+    public boolean isMatchingSitePrefixPath(String url) {
+        return this.matchSitePrefixPathPattern.matcher(url).lookingAt();
     }
 
     private Pattern buildGetLangPattern(String sitePrefixPath) {
@@ -43,6 +51,15 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
                 "(" + this.sitePrefixPath + "/)" + /* sitePrefixPath */
                 "(" + lang + ")" + /* lang code */
                 "(/|$)"
+        );
+        return p;
+    }
+
+    private Pattern buildMatchSitePrefixPathPattern(String sitePrefixPath) {
+        Pattern p = Pattern.compile(
+                "^(.*://)?" + /* schema, optional */
+                "([^/]*)?" + /* host, optional */
+                sitePrefixPath
         );
         return p;
     }

@@ -100,6 +100,36 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("http://www.site.com/pre/fix/", sut.removeLang("http://www.site.com/pre/fix/ja", "ja"));
     }
 
+    public void testRemoveLang__EmptyLanguage__DoNotModify() {
+        PathUrlLanguagePatternHandler sut = createWithParams("");
+        assertEquals("/", sut.removeLang("/", ""));
+        assertEquals("site.com?wovn=en", sut.removeLang("site.com?wovn=en", ""));
+        assertEquals("site.com/no/index.html", sut.removeLang("site.com/no/index.html", ""));
+        assertEquals("http://fr.site.com/ja", sut.removeLang("http://fr.site.com/ja", ""));
+    }
+
+    public void testIsMatchSitePrefixPath__DefaultSettings() {
+        PathUrlLanguagePatternHandler sut = createWithParams("");
+        assertEquals(true, sut.isMatchingSitePrefixPath(""));
+        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/ja"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("http://www.site.com"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("https://site.com/pre/fix/en/"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("site.com/no/page/index.html"));
+    }
+
+    public void testIsMatchSitePrefixPath__UsingSitePrefixPath() {
+        PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
+        assertEquals(false, sut.isMatchingSitePrefixPath(""));
+        assertEquals(false, sut.isMatchingSitePrefixPath("site.com"));
+        assertEquals(false, sut.isMatchingSitePrefixPath("www.site.com/pre"));
+        assertEquals(false, sut.isMatchingSitePrefixPath("http://www.site.com/en/pre/fix"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/ja"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("https://site.com/pre/fix/en/"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("site.com/pre/fix/page/index.html"));
+    }
+
     private PathUrlLanguagePatternHandler createWithParams(String sitePrefixPath) {
         return new PathUrlLanguagePatternHandler(sitePrefixPath);
     }

@@ -14,6 +14,8 @@ class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     String removeLang(String url, String lang) {
+        if (lang.isEmpty()) return url;
+
         return url.replaceFirst("(^|\\?|&)wovn=" + lang + "(&|$)", "$1")
                   .replaceAll("(\\?|&)$", "");
     }

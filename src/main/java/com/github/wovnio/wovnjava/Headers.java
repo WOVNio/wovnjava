@@ -19,8 +19,12 @@ class Headers {
     String url;
 
     private HttpServletRequest request;
-    private String requestLang;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
+
+    private final String requestLang;
+    private final String clientRequestUrlWithoutLangCode;
+    private final boolean shouldRedirectToDefaultLang;
+    private final boolean isValidPath;
 
     Headers(HttpServletRequest request, Settings settings, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = settings;
@@ -28,7 +32,11 @@ class Headers {
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
         String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
+
         this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
+        this.clientRequestUrlWithoutLangCode = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang);
+        this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang);
+        this.isValidPath = this.urlLanguagePatternHandler.isMatchingSitePrefixPath(clientRequestUrl);
 
         this.protocol = this.request.getScheme();
 
@@ -139,10 +147,6 @@ class Headers {
         } else {
             return settings.defaultLang;
         }
-    }
-
-    String getRequestLang() {
-        return this.requestLang;
     }
 
     /**
@@ -260,7 +264,19 @@ class Headers {
         return this.urlLanguagePatternHandler.removeLang(uri, lang);
     }
 
-    boolean isValidPath() {
-        return this.pathName.startsWith(this.settings.sitePrefixPath);
+    public String getRequestLang() {
+        return this.requestLang;
+    }
+
+    public String getClientRequestUrlWithoutLangCode() {
+        return this.clientRequestUrlWithoutLangCode;
+    }
+
+    public boolean getShouldRedirectToDefaultLang() {
+        return this.shouldRedirectToDefaultLang;
+    }
+
+    public boolean getIsValidPath() {
+        return this.isValidPath;
     }
 }

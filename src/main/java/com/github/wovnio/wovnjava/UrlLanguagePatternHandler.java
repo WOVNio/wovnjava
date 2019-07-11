@@ -10,6 +10,10 @@ abstract class UrlLanguagePatternHandler {
 
     abstract String insertLang(String url, String lang);
 
+    public boolean isMatchingSitePrefixPath(String url) {
+        return true;
+    }
+
     protected String getLangMatch(String url, Pattern pattern) {
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {
