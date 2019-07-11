@@ -21,10 +21,10 @@ class Headers {
     private HttpServletRequest request;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
 
-    public final String requestLang;
-    public final String clientRequestUrlWithoutLangCode;
-    public final boolean shouldRedirectToDefaultLang;
-    public final boolean isValidPath;
+    private final String requestLang;
+    private final String clientRequestUrlWithoutLangCode;
+    private final boolean shouldRedirectToDefaultLang;
+    private final boolean isValidPath;
 
     Headers(HttpServletRequest request, Settings settings, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = settings;
@@ -262,5 +262,21 @@ class Headers {
             lang = this.requestLang;
         }
         return this.urlLanguagePatternHandler.removeLang(uri, lang);
+    }
+
+    public String getRequestLang() {
+        return this.requestLang;
+    }
+
+    public String getClientRequestUrlWithoutLangCode() {
+        return this.clientRequestUrlWithoutLangCode;
+    }
+
+    public boolean getShouldRedirectToDefaultLang() {
+        return this.shouldRedirectToDefaultLang;
+    }
+
+    public boolean getIsValidPath() {
+        return this.isValidPath;
     }
 }

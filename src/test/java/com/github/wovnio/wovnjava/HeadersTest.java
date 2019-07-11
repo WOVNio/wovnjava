@@ -211,7 +211,7 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.requestLang);
+        assertEquals("ja", h.getRequestLang());
     }
 
     public void testGetRequestLangSubdomain() throws ConfigurationError {
@@ -222,7 +222,7 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.requestLang);
+        assertEquals("ja", h.getRequestLang());
     }
 
     public void testGetRequestLangQuery() throws ConfigurationError {
@@ -233,7 +233,7 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.requestLang);
+        assertEquals("ja", h.getRequestLang());
     }
 
     public void testRedirectLocationPathTop() throws ConfigurationError {
