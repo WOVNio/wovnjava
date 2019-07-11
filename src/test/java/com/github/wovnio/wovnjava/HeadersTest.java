@@ -470,16 +470,16 @@ public class HeadersTest extends TestCase {
     public void testIsValidPath() throws ConfigurationError {
         Headers h;
         h = makeHeaderWithSitePrefixPath("/", "global");
-        assertEquals(false, h.isValidPath);
+        assertEquals(false, h.getIsValidPath());
 
         h = makeHeaderWithSitePrefixPath("/global", "global");
-        assertEquals(true, h.isValidPath);
+        assertEquals(true, h.getIsValidPath());
 
         h = makeHeaderWithSitePrefixPath("/global/ja/foo", "global");
-        assertEquals(true, h.isValidPath);
+        assertEquals(true, h.getIsValidPath());
 
         h = makeHeaderWithSitePrefixPath("/ja/global/foo", "global");
-        assertEquals(false, h.isValidPath);
+        assertEquals(false, h.getIsValidPath());
     }
 
     private Headers makeHeaderWithSitePrefixPath(String requestPath, String sitePrefixPath) throws ConfigurationError {
