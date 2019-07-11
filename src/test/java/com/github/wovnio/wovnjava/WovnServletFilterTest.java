@@ -62,6 +62,22 @@ public class WovnServletFilterTest extends TestCase {
         assertEquals("/image.png", mock.req.getRequestURI());
     }
 
+    //public static FilterChainMock doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option) throws ServletException, IOException {
+    public void testProcessRequestOnce__RequestNotProcessed() {
+        RequestDispatcherMock dispatcher = new RequestDispatcherMock();
+        HttpServletRequest req = TestUtil.mockRequestPath("/", "/", dispatcher);
+        HttpServletResponse res = TestUtil.mockResponse("text/html", "", "");
+        FilterConfig filterConfig = makeConfig(option);
+        FilterChainMock filterChain = new FilterChainMock();
+        WovnServletFilter filter = new WovnServletFilter();
+        filter.init(filterConfig);
+        filter.doFilter(req, res, filterChain);
+        filterChain.req = filterChain.req == null ? dispatcher.req : filterChain.req;
+        filterChain.res = filterChain.res == null ? dispatcher.res : filterChain.res;
+        return filterChain;
+
+    }
+
     private final HashMap<String, String> queryOption = new HashMap<String, String>() {{
         put("urlPattern", "query");
     }};
