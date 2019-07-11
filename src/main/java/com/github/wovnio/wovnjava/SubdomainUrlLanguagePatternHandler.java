@@ -24,10 +24,6 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         return "en.site.com/path";
     }
 
-    boolean isMatchSitePrefixPath(String url) {
-        return true;
-    }
-
     private Pattern buildGetLangPattern() {
         Pattern p = Pattern.compile(
                 "^(?:.*://)?" + /* schema, optional non-capturing group */

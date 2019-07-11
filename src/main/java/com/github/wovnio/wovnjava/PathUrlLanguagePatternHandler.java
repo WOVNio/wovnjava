@@ -30,7 +30,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         return "site.com/en/path";
     }
 
-    boolean isMatchSitePrefixPath(String url) {
+    public boolean isMatchingSitePrefixPath(String url) {
         return this.matchSitePrefixPathPattern.matcher(url).lookingAt();
     }
 

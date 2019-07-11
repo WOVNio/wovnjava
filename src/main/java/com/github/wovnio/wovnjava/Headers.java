@@ -36,7 +36,7 @@ class Headers {
         this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
         this.clientRequestUrlWithoutLangCode = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang);
         this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang);
-        this.isValidPath = this.urlLanguagePatternHandler.isMatchSitePrefixPath(clientRequestUrl);
+        this.isValidPath = this.urlLanguagePatternHandler.isMatchingSitePrefixPath(clientRequestUrl);
 
         this.protocol = this.request.getScheme();
 

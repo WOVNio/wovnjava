@@ -110,24 +110,24 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
 
     public void testIsMatchSitePrefixPath__DefaultSettings() {
         PathUrlLanguagePatternHandler sut = createWithParams("");
-        assertEquals(true, sut.isMatchSitePrefixPath(""));
-        assertEquals(true, sut.isMatchSitePrefixPath("/pre/fix/ja"));
-        assertEquals(true, sut.isMatchSitePrefixPath("http://www.site.com"));
-        assertEquals(true, sut.isMatchSitePrefixPath("https://site.com/pre/fix/en/"));
-        assertEquals(true, sut.isMatchSitePrefixPath("site.com/no/page/index.html"));
+        assertEquals(true, sut.isMatchingSitePrefixPath(""));
+        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/ja"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("http://www.site.com"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("https://site.com/pre/fix/en/"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("site.com/no/page/index.html"));
     }
 
     public void testIsMatchSitePrefixPath__UsingSitePrefixPath() {
         PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
-        assertEquals(false, sut.isMatchSitePrefixPath(""));
-        assertEquals(false, sut.isMatchSitePrefixPath("site.com"));
-        assertEquals(false, sut.isMatchSitePrefixPath("www.site.com/pre"));
-        assertEquals(false, sut.isMatchSitePrefixPath("http://www.site.com/en/pre/fix"));
-        assertEquals(true, sut.isMatchSitePrefixPath("/pre/fix"));
-        assertEquals(true, sut.isMatchSitePrefixPath("/pre/fix/"));
-        assertEquals(true, sut.isMatchSitePrefixPath("/pre/fix/ja"));
-        assertEquals(true, sut.isMatchSitePrefixPath("https://site.com/pre/fix/en/"));
-        assertEquals(true, sut.isMatchSitePrefixPath("site.com/pre/fix/page/index.html"));
+        assertEquals(false, sut.isMatchingSitePrefixPath(""));
+        assertEquals(false, sut.isMatchingSitePrefixPath("site.com"));
+        assertEquals(false, sut.isMatchingSitePrefixPath("www.site.com/pre"));
+        assertEquals(false, sut.isMatchingSitePrefixPath("http://www.site.com/en/pre/fix"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/ja"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("https://site.com/pre/fix/en/"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("site.com/pre/fix/page/index.html"));
     }
 
     private PathUrlLanguagePatternHandler createWithParams(String sitePrefixPath) {
