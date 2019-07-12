@@ -62,11 +62,27 @@ public class WovnServletFilterTest extends TestCase {
         assertEquals("/image.png", mock.req.getRequestURI());
     }
 
+    public void testProcessRequestOnce__RequestNotProcessed() throws ServletException, IOException {
+        HashMap<String, String> config = new HashMap<String, String>() {{
+            put("urlPattern", "path");
+            put("defaultLang", "ja");
+            put("location", "https://example.com/ja/search/");
+        }};
+        boolean requestIsAlreadyProcessed = false;
+        FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", TestUtil.emptyOption, requestIsAlreadyProcessed);
+        HttpServletResponse res = (HttpServletResponse)mock.res;
+        // WovnServletFilter will always set API status HTTP header when processing the request
+        assertEquals(true, res.getHeader("X-Wovn-Api-Status") != null); // Cannot check this because `getHeader` is mocked
+    }
+    /*
+     */
+
+    /*
     //public static FilterChainMock doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option) throws ServletException, IOException {
     public void testProcessRequestOnce__RequestNotProcessed() {
         RequestDispatcherMock dispatcher = new RequestDispatcherMock();
         HttpServletRequest req = TestUtil.mockRequestPath("/", "/", dispatcher);
-        HttpServletResponse res = TestUtil.mockResponse("text/html", "", "");
+        HttpServletResponse res = TestUtil.mockResponse("text/html; charset=utf-8", "", "");
         FilterConfig filterConfig = makeConfig(option);
         FilterChainMock filterChain = new FilterChainMock();
         WovnServletFilter filter = new WovnServletFilter();
@@ -77,6 +93,12 @@ public class WovnServletFilterTest extends TestCase {
         return filterChain;
 
     }
+    public void blrblrblr() throws ServletException, IOException {
+        FilterChainMock mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/ja/", "/");
+        assertEquals("text/html; charset=utf-8", mock.res.getContentType());
+        assertEquals("/", mock.req.getRequestURI());
+    }
+    */
 
     private final HashMap<String, String> queryOption = new HashMap<String, String>() {{
         put("urlPattern", "query");

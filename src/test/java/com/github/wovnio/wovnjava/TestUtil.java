@@ -13,7 +13,7 @@ import org.easymock.EasyMock;
 
 
 public class TestUtil {
-    private static final HashMap<String, String> emptyOption = new HashMap<String, String>();
+    public static final HashMap<String, String> emptyOption = new HashMap<String, String>();
 
     public static FilterConfig makeConfig() {
         return makeConfig(emptyOption);
@@ -60,6 +60,9 @@ public class TestUtil {
     }
 
     public static HttpServletResponse mockResponse(String contentType, String encoding) throws IOException {
+        return mockResponse(contentType, encoding, false);
+
+    public static HttpServletResponse mockResponse(String contentType, String encoding, boolean isPreviouslyProcessed) throws IOException {
         HttpServletResponse mock = EasyMock.createMock(HttpServletResponse.class);
         mock.setContentLength(EasyMock.anyInt());
         EasyMock.expectLastCall();
@@ -70,6 +73,11 @@ public class TestUtil {
         EasyMock.expect(mock.getCharacterEncoding()).andReturn(encoding);
         mock.setHeader(EasyMock.anyString(), EasyMock.anyString());
         EasyMock.expectLastCall().atLeastOnce();
+        if (isPreviouslyProcessed) {
+            EasyMock.expect(mock.getHeader("X-Wovn-Handler")).andReturn("wovnjava").times(0,1);
+        } else {
+            EasyMock.expect(mock.getHeader("X-Wovn-Handler")).andReturn(null).times(0,1);
+        }
         EasyMock.replay(mock);
         return mock;
     }
@@ -92,9 +100,13 @@ public class TestUtil {
     }
 
     public static FilterChainMock doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option) throws ServletException, IOException {
+        return doServletFilter(contentType, path, forwardPath, option, false);
+    }
+
+    public static FilterChainMock doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option, boolean isPreviouslyProcessed) throws ServletException, IOException {
         RequestDispatcherMock dispatcher = new RequestDispatcherMock();
         HttpServletRequest req = mockRequestPath(path, forwardPath, dispatcher);
-        HttpServletResponse res = mockResponse(contentType, "");
+        HttpServletResponse res = mockResponse(contentType, "", isPreviouslyProcessed);
         FilterConfig filterConfig = makeConfig(option);
         FilterChainMock filterChain = new FilterChainMock();
         WovnServletFilter filter = new WovnServletFilter();
