@@ -1,5 +1,6 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -278,5 +279,18 @@ class Headers {
 
     public boolean getIsValidPath() {
         return this.isValidPath;
+    }
+
+    public HashMap<String, String> getHreflangUrlMap() {
+        HashMap<String, String> hreflangs = new HashMap<String, String>();
+        for (String supportedLang : this.settings.supportedLangs) {
+            String code = Lang.get(supportedLang).hreflangCode;
+            String url = this.urlLanguagePatternHandler.insertLang(this.clientRequestUrlWithoutLangCode, supportedLang);
+            hreflangs.put(code, url);
+        }
+        String defaultCode = Lang.get(this.settings.defaultLang).hreflangCode;
+        String defaultUrl = this.clientRequestUrlWithoutLangCode;
+        hreflangs.put(defaultCode, defaultUrl);
+        return hreflangs;
     }
 }
