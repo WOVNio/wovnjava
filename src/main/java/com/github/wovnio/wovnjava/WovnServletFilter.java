@@ -34,13 +34,12 @@ public class WovnServletFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException
-    {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         boolean isRequestAlreadyProcessed = false;
-        if (((HttpServletResponse)response).getHeader("X-Wovn-Handler") == null) {
-            ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
-        } else {
+        if (((HttpServletResponse)response).containsHeader("X-Wovn-Handler")) {
             isRequestAlreadyProcessed = true;
+        } else {
+            ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
         }
 
         RequestOptions requestOptions = new RequestOptions(this.settings, request);

@@ -75,9 +75,9 @@ public class TestUtil {
         mock.setHeader(EasyMock.anyString(), EasyMock.anyString());
         EasyMock.expectLastCall().atLeastOnce();
         if (isPreviouslyProcessed) {
-            EasyMock.expect(mock.getHeader("X-Wovn-Handler")).andReturn("wovnjava").times(0,1);
+            EasyMock.expect(mock.containsHeader("X-Wovn-Handler")).andReturn(true).times(0,1);
         } else {
-            EasyMock.expect(mock.getHeader("X-Wovn-Handler")).andReturn(null).times(0,1);
+            EasyMock.expect(mock.containsHeader("X-Wovn-Handler")).andReturn(false).times(0,1);
         }
         EasyMock.replay(mock);
         return mock;
