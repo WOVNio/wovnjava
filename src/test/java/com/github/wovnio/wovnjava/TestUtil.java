@@ -61,6 +61,7 @@ public class TestUtil {
 
     public static HttpServletResponse mockResponse(String contentType, String encoding) throws IOException {
         return mockResponse(contentType, encoding, false);
+    }
 
     public static HttpServletResponse mockResponse(String contentType, String encoding, boolean isPreviouslyProcessed) throws IOException {
         HttpServletResponse mock = EasyMock.createMock(HttpServletResponse.class);
