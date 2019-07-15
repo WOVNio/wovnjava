@@ -111,23 +111,30 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     public void testIsMatchSitePrefixPath__DefaultSettings() {
         PathUrlLanguagePatternHandler sut = createWithParams("");
         assertEquals(true, sut.isMatchingSitePrefixPath(""));
+        assertEquals(true, sut.isMatchingSitePrefixPath("?query"));
         assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/ja"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/ja?query"));
         assertEquals(true, sut.isMatchingSitePrefixPath("http://www.site.com"));
         assertEquals(true, sut.isMatchingSitePrefixPath("https://site.com/pre/fix/en/"));
         assertEquals(true, sut.isMatchingSitePrefixPath("site.com/no/page/index.html"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("site.com/no/page/index.html?query"));
     }
 
     public void testIsMatchSitePrefixPath__UsingSitePrefixPath() {
         PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
         assertEquals(false, sut.isMatchingSitePrefixPath(""));
         assertEquals(false, sut.isMatchingSitePrefixPath("site.com"));
+        assertEquals(false, sut.isMatchingSitePrefixPath("site.com?query"));
         assertEquals(false, sut.isMatchingSitePrefixPath("www.site.com/pre"));
         assertEquals(false, sut.isMatchingSitePrefixPath("http://www.site.com/en/pre/fix"));
         assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix"));
         assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix?query"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/?query"));
         assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/ja"));
         assertEquals(true, sut.isMatchingSitePrefixPath("https://site.com/pre/fix/en/"));
         assertEquals(true, sut.isMatchingSitePrefixPath("site.com/pre/fix/page/index.html"));
+        assertEquals(true, sut.isMatchingSitePrefixPath("site.com/pre/fix/page/index.html?query"));
     }
 
     public void testInsertLang__DefaultSettings() {
