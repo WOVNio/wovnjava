@@ -6,7 +6,9 @@ import org.easymock.EasyMock;
 public class PathUrlLanguagePatternHandlerTest extends TestCase {
     public void testGetLang__NonMatchingPath__ReturnEmptyLang() {
         PathUrlLanguagePatternHandler sut = createWithParams("");
+        assertEquals("", sut.getLang(""));
         assertEquals("", sut.getLang("/"));
+        assertEquals("", sut.getLang("?query"));
         assertEquals("", sut.getLang("/page"));
         assertEquals("", sut.getLang("site.com/page/index.html"));
         assertEquals("", sut.getLang("en.site.com/pre/fix/index.html"));
@@ -42,6 +44,8 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
         assertEquals("fr", sut.getLang("site.com/pre/fix/fr"));
         assertEquals("fr", sut.getLang("site.com/pre/fix/fr/"));
+        assertEquals("fr", sut.getLang("site.com/pre/fix/fr?query"));
+        assertEquals("fr", sut.getLang("site.com/pre/fix/fr/?query"));
         assertEquals("fr", sut.getLang("en.site.com/pre/fix/fr/index.html?wovn=es"));
         assertEquals("fr", sut.getLang("/pre/fix/fr/index.html"));
         assertEquals("fr", sut.getLang("/pre/fix/fr/page/index.html"));
