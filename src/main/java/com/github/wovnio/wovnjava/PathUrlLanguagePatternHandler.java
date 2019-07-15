@@ -23,7 +23,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
         Pattern removeLangPattern = buildRemoveLangPattern(lang);
         Matcher matcher = removeLangPattern.matcher(url);
-        return matcher.replaceFirst("$1$2$3");
+        return matcher.replaceFirst("$1$2$3$5");
     }
 
     String insertLang(String url, String lang) {
@@ -47,10 +47,10 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     private Pattern buildRemoveLangPattern(String lang) {
         Pattern p = Pattern.compile(
                 "^(.*://)?" + /* optional schema */
-                "([^/]*)?" + /* optional host */
-                "(" + this.sitePrefixPath + "/)" + /* sitePrefixPath */
-                "(" + lang + ")" + /* lang code */
-                "(/|$)"
+                "([^/?]*)?" + /* optional host */
+                "(" + this.sitePrefixPath + ")" +
+                "(/" + lang + ")" +
+                "(/|\\?|$)" /* next path, query, or end-of-string */
         );
         return p;
     }

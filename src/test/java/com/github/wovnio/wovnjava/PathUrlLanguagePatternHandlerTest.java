@@ -50,12 +50,15 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
 
     public void testRemoveLang__NonMatchingPath__DoNotModify() {
         PathUrlLanguagePatternHandler sut = createWithParams("");
+        assertEquals("", sut.removeLang("", "ja"));
+        assertEquals("?query", sut.removeLang("?query", "ja"));
         assertEquals("/", sut.removeLang("/", "ja"));
+        assertEquals("/?query", sut.removeLang("/?query", "ja"));
         assertEquals("site.com", sut.removeLang("site.com", "ja"));
+        assertEquals("site.com?query", sut.removeLang("site.com?query", "ja"));
         assertEquals("site.com/", sut.removeLang("site.com/", "ja"));
         assertEquals("site.com/page/", sut.removeLang("site.com/page/", "ja"));
         assertEquals("/global/en/page/", sut.removeLang("/global/en/page/", "ja"));
-        assertEquals("site.com", sut.removeLang("site.com", "ja"));
         assertEquals("site.com/en/page/", sut.removeLang("site.com/en/page/", "ja"));
         assertEquals("site.com/english/page/", sut.removeLang("site.com/english/page/", "en"));
         assertEquals("site.com/en/ja/page/", sut.removeLang("site.com/en/ja/page/", "ja"));
@@ -64,17 +67,22 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("https://test.com/en/path/", sut.removeLang("https://test.com/en/path/", "ja"));
     }
 
-    public void testRemoveLang__MatchingLang__RemoveLangCode() {
+    public void testRemoveLang__MatchingSupportedLang__RemoveLangCode() {
         PathUrlLanguagePatternHandler sut = createWithParams("");
-        assertEquals("/", sut.removeLang("/ja", "ja"));
-        assertEquals("site.com/", sut.removeLang("site.com/en", "en"));
+        assertEquals("", sut.removeLang("/ja", "ja"));
+        assertEquals("/", sut.removeLang("/ja/", "ja"));
+        assertEquals("?query", sut.removeLang("/ja?query", "ja"));
+        assertEquals("/?query", sut.removeLang("/ja/?query", "ja"));
+        assertEquals("site.com", sut.removeLang("site.com/en", "en"));
         assertEquals("site.com/", sut.removeLang("site.com/ja/", "ja"));
+        assertEquals("site.com/?query", sut.removeLang("site.com/ja/?query", "ja"));
         assertEquals("site.com/index.html", sut.removeLang("site.com/no/index.html", "no"));
         assertEquals("site.com/page/index.html", sut.removeLang("site.com/en/page/index.html", "en"));
         assertEquals("/page/index.html", sut.removeLang("/en/page/index.html", "en"));
+        assertEquals("/page/index.html?query", sut.removeLang("/en/page/index.html?query", "en"));
         assertEquals("site.com/en/page/", sut.removeLang("site.com/ja/en/page/", "ja"));
         assertEquals("site.com/ja/page/", sut.removeLang("site.com/ja/ja/page/", "ja"));
-        assertEquals("http://www.site.com/", sut.removeLang("http://www.site.com/ja", "ja"));
+        assertEquals("http://www.site.com", sut.removeLang("http://www.site.com/ja", "ja"));
         assertEquals("https://test.com/path/index.html", sut.removeLang("https://test.com/en/path/index.html", "en"));
     }
 
@@ -82,8 +90,10 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
         assertEquals("/", sut.removeLang("/", "ja"));
         assertEquals("site.com", sut.removeLang("site.com", "ja"));
+        assertEquals("site.com?query", sut.removeLang("site.com?query", "ja"));
         assertEquals("site.com/pre/fix/", sut.removeLang("site.com/pre/fix/", "ja"));
         assertEquals("site.com/no/index.html", sut.removeLang("site.com/no/index.html", "no"));
+        assertEquals("site.com/no/index.html?query", sut.removeLang("site.com/no/index.html?query", "no"));
         assertEquals("site.com/fr/pre/fix/", sut.removeLang("site.com/fr/pre/fix/", "fr"));
         assertEquals("site.com/pre/ja/fix/", sut.removeLang("site.com/pre/ja/fix/", "ja"));
         assertEquals("site.com/prefix/no", sut.removeLang("site.com/prefix/no", "no"));
@@ -94,10 +104,14 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
 
     public void testRemoveLang__SitePrefixPath__MatchingSupportedLang__RemoveLangCode() {
         PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
-        assertEquals("/pre/fix/", sut.removeLang("/pre/fix/ja", "ja"));
+        assertEquals("/pre/fix", sut.removeLang("/pre/fix/ja", "ja"));
+        assertEquals("/pre/fix?query", sut.removeLang("/pre/fix/ja?query", "ja"));
+        assertEquals("/pre/fix/", sut.removeLang("/pre/fix/ja/", "ja"));
+        assertEquals("/pre/fix/?query", sut.removeLang("/pre/fix/ja/?query", "ja"));
         assertEquals("http://site.com/pre/fix/", sut.removeLang("http://site.com/pre/fix/en/", "en"));
         assertEquals("site.com/pre/fix/page/index.html", sut.removeLang("site.com/pre/fix/no/page/index.html", "no"));
-        assertEquals("http://www.site.com/pre/fix/", sut.removeLang("http://www.site.com/pre/fix/ja", "ja"));
+        assertEquals("site.com/pre/fix/page/index.html?query", sut.removeLang("site.com/pre/fix/no/page/index.html?query", "no"));
+        assertEquals("http://www.site.com/pre/fix", sut.removeLang("http://www.site.com/pre/fix/ja", "ja"));
     }
 
     public void testRemoveLang__EmptyLanguage__DoNotModify() {
