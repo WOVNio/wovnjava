@@ -59,5 +59,7 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("ja.site.com?q=none", sut.insertLang("site.com?q=none", "ja"));
         assertEquals("http://ja.site.com?q=none", sut.insertLang("http://site.com?q=none", "ja"));
         assertEquals("https://ja.user13.sub.site.co.jp/home", sut.insertLang("https://user13.sub.site.co.jp/home", "ja"));
+        // note that insertLang assumes URL without language code
+        assertEquals("ja.ja.site.com", sut.insertLang("ja.site.com", "ja"));
     }
 }

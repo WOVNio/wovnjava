@@ -53,4 +53,14 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("site.com/no/index.html", sut.removeLang("site.com/no/index.html", ""));
         assertEquals("http://fr.site.com/ja", sut.removeLang("http://fr.site.com/ja", ""));
     }
+
+    public void testInsertLang() {
+        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler();
+        assertEquals("/?wovn=ja", sut.insertLang("/", "ja"));
+        assertEquals("/path/index.html?wovn=ja", sut.insertLang("/path/index.html", "ja"));
+        assertEquals("site.com/home?q=123&wovn=ja", sut.insertLang("site.com/home?q=123", "ja"));
+        assertEquals("http://site.com?wovn=ja", sut.insertLang("http://site.com", "ja"));
+        // note that insertLang assumes URL without language code
+        assertEquals("http://site.com?wovn=fr&wovn=ja", sut.insertLang("http://site.com?wovn=fr", "ja"));
+    }
 }
