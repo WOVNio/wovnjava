@@ -504,4 +504,59 @@ public class HeadersTest extends TestCase {
         assertEquals("?baz=123", h.query);
         assertEquals("example.com/foo/bar?baz=123", h.pageUrl);
     }
+
+    public void testGetHreflangUrlMap__PathPattern() throws ConfigurationError {
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,fr");
+            put("urlPattern", "path");
+        }});
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+		HttpServletRequest request = TestUtil.mockRequestPath("/home?user=123");
+        Headers sut = new Headers(request, settings, patternHandler);
+
+		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
+
+		assertEquals(3, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("en"));
+		assertEquals("https://example.com/ja/home?user=123", hreflangs.get("ja"));
+		assertEquals("https://example.com/fr/home?user=123", hreflangs.get("fr"));
+    }
+
+    public void testGetHreflangUrlMap__QueryPattern() throws ConfigurationError {
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ko");
+            put("urlPattern", "query");
+        }});
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+		HttpServletRequest request = TestUtil.mockRequestPath("/home?user=123");
+        Headers sut = new Headers(request, settings, patternHandler);
+
+		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
+
+		assertEquals(2, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("ja"));
+		assertEquals("https://example.com/home?user=123&wovn=ko", hreflangs.get("ko"));
+    }
+
+    public void testGetHreflangUrlMap__SubdomainPattern__WithChineseSupportedLangs() throws ConfigurationError {
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ko,th, zh-CHT, zh-CHS");
+            put("urlPattern", "subdomain");
+        }});
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+		HttpServletRequest request = TestUtil.mockRequestPath("/home?user=123");
+        Headers sut = new Headers(request, settings, patternHandler);
+
+		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
+
+		assertEquals(5, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("ja"));
+		assertEquals("https://ko.example.com/home?user=123", hreflangs.get("ko"));
+		assertEquals("https://th.example.com/home?user=123", hreflangs.get("th"));
+		assertEquals("https://zh-CHT.example.com/home?user=123", hreflangs.get("zh-Hant"));
+		assertEquals("https://zh-CHS.example.com/home?user=123", hreflangs.get("zh-Hans"));
+    }
 }
