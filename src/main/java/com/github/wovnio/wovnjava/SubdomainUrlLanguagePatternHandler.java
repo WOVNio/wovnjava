@@ -21,7 +21,13 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     String insertLang(String url, String lang) {
-        return "en.site.com/path";
+        if (url.contains("://")) {
+            return url.replaceFirst("://", "://" + lang + ".");
+        } else if (url.startsWith("/")) {
+            return url;
+        } else {
+            return lang + "." + url;
+        }
     }
 
     private Pattern buildGetLangPattern() {
