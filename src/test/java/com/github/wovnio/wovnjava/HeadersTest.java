@@ -442,6 +442,7 @@ public class HeadersTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
             put("urlPattern", "path");
+            put("sitePrefixPath", "/home");
         }});
         UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
 		HttpServletRequest request = TestUtil.mockRequestPath("/home?user=123");
@@ -451,8 +452,8 @@ public class HeadersTest extends TestCase {
 
 		assertEquals(3, hreflangs.size());
 		assertEquals("https://example.com/home?user=123", hreflangs.get("en"));
-		assertEquals("https://example.com/ja/home?user=123", hreflangs.get("ja"));
-		assertEquals("https://example.com/fr/home?user=123", hreflangs.get("fr"));
+		assertEquals("https://example.com/home/ja?user=123", hreflangs.get("ja"));
+		assertEquals("https://example.com/home/fr?user=123", hreflangs.get("fr"));
     }
 
     public void testGetHreflangUrlMap__QueryPattern() throws ConfigurationError {
