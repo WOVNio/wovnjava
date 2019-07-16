@@ -132,7 +132,7 @@ class Api {
 
     private String getApiBody(String lang, String body) throws UnsupportedEncodingException {
         StringBuilder sb = new StringBuilder();
-        appendKeyValue(sb, "url=", headers.getUrlWithoutLanguageCode());
+        appendKeyValue(sb, "url=", headers.getClientRequestUrlWithoutLangCode());
         appendKeyValue(sb, "&token=", settings.projectToken);
         appendKeyValue(sb, "&lang_code=", lang);
         appendKeyValue(sb, "&url_pattern=", settings.urlPattern);
@@ -155,7 +155,7 @@ class Api {
         appendValue(sb, "&body_hash=");
         appendValue(sb, hash(body.getBytes()));
         appendValue(sb, "&path=");
-        appendValue(sb, headers.pathName);
+        appendValue(sb, headers.pathName); // TODO: fix now!
         appendValue(sb, "&lang=");
         appendValue(sb, lang);
         appendValue(sb, "&version=wovnjava_");

@@ -3,6 +3,14 @@ package com.github.wovnio.wovnjava;
 final class UrlPath {
     private UrlPath() {}
 
+    public static String getPathAndQuery(String url) {
+        Pattern schemePattern = Pattern.compile("^[a-zA-Z]://");
+        Pattern hostPattern = Pattern.compile("^[^/?]*");
+        String hostPathQuery = schemePattern.matcher(url).replaceFirst("");
+        String pathQuery = hostPattern.matcher(url).replaceFirst("");
+        return pathQuery;
+    }
+
     public static String removeFile(String path) {
         if (path.endsWith("/")) {
             return path;
