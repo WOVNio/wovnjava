@@ -34,14 +34,21 @@ public class WovnServletFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException
-    {
-        ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+        boolean isRequestAlreadyProcessed = false;
+        if (((HttpServletResponse)response).containsHeader("X-Wovn-Handler")) {
+            isRequestAlreadyProcessed = true;
+        } else {
+            ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
+        }
 
         RequestOptions requestOptions = new RequestOptions(this.settings, request);
         Headers headers = new Headers((HttpServletRequest)request, this.settings, this.urlLanguagePatternHandler);
 
-        boolean canProcessRequest = !requestOptions.getDisableMode() && headers.getIsValidPath() && htmlChecker.canTranslatePath(headers.pathName);
+        boolean canProcessRequest = !isRequestAlreadyProcessed &&
+                                    !requestOptions.getDisableMode() &&
+                                    headers.getIsValidPath() &&
+                                    htmlChecker.canTranslatePath(headers.pathName);
 
         if (headers.getShouldRedirectToDefaultLang()) {
             /* Send 302 redirect to equivalent URL without default language code */
