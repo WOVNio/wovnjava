@@ -4,9 +4,11 @@ import java.util.regex.Pattern;
 
 class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     private Pattern getLangPattern;
+    private Pattern hasQueryPattern;
 
     QueryUrlLanguagePatternHandler() {
         this.getLangPattern = this.buildGetLangPattern();
+        this.hasQueryPattern = Pattern.compile("\\?");
     }
 
     String getLang(String url) {
@@ -21,7 +23,11 @@ class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     String insertLang(String url, String lang) {
-        return "site.com/path?wovn=en";
+        if (this.hasQueryPattern.matcher(url).find()) {
+            return url + "&wovn=" + lang;
+        } else {
+            return url + "?wovn=" + lang;
+        }
     }
 
     private Pattern buildGetLangPattern() {

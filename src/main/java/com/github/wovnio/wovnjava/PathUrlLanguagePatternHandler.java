@@ -27,7 +27,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     String insertLang(String url, String lang) {
-        return "site.com/en/path";
+        return this.matchSitePrefixPathPattern.matcher(url).replaceFirst("$1$2$3/" + lang + "$4");
     }
 
     public boolean isMatchingSitePrefixPath(String url) {
@@ -58,8 +58,9 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     private Pattern buildMatchSitePrefixPathPattern(String sitePrefixPath) {
         Pattern p = Pattern.compile(
                 "^(.*://)?" + /* schema, optional */
-                "([^/]*)?" + /* host, optional */
-                sitePrefixPath
+                "([^/?]*)?" + /* host, optional */
+                "(" + sitePrefixPath + ")" +
+                "(/|\\?|$)" /* next path, query, or end-of-string */
         );
         return p;
     }
