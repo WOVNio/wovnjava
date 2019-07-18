@@ -42,12 +42,14 @@ class Lang {
         LANG = Collections.unmodifiableMap(map);
     }
 
+    /* `code` is the primary language code used by Wovn */
     String code;
-    String hreflangCode;
+    /* `codeISO639_1` is the "ISO639_1" standard for language code used in hreflangs */
+    String codeISO639_1;
 
-    Lang(String code, String hreflangCode, String englishName, String nativeName) {
+    Lang(String code, String codeISO639_1, String englishName, String nativeName) {
         this.code = code;
-        this.hreflangCode = hreflangCode;
+        this.codeISO639_1 = codeISO639_1;
     }
 
     static Lang get(String langCode) {
