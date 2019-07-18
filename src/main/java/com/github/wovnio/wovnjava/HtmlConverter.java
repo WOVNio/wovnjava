@@ -1,6 +1,7 @@
 package com.github.wovnio.wovnjava;
 
 import java.lang.StringBuilder;
+import java.util.Map;
 import java.util.ArrayList;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -144,11 +145,11 @@ class HtmlConverter {
     }
 
     private void appendHrefLang(Headers headers) {
-        for (String lang : settings.supportedLangs) {
+        for (Map.Entry<String, String> hreflang : headers.getHreflangUrlMap().entrySet()) {
             Element link = new Element(Tag.valueOf("link"), "");
             link.attr("ref", "alternate");
-            link.attr("hreflang", Lang.normalizeIso639_1(lang));
-            link.attr("href", headers.redirectLocation(lang));
+            link.attr("hreflang", hreflang.getKey());
+            link.attr("href", hreflang.getValue());
             doc.head().appendChild(link);
         }
     }

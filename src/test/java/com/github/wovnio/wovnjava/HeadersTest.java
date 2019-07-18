@@ -79,36 +79,42 @@ public class HeadersTest extends TestCase {
     }
     private static HttpServletRequest mockRequestPath(String path, String host) {
         HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https");
+        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
         EasyMock.expect(mock.getRemoteHost()).andReturn(host);
         EasyMock.expect(mock.getRequestURI()).andReturn(path).atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn(host).atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
+        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.replay(mock);
 
         return mock;
     }
     private static HttpServletRequest mockRequestSubdomain() {
         HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https");
+        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
         EasyMock.expect(mock.getRemoteHost()).andReturn("ja.example.com");
         EasyMock.expect(mock.getRequestURI()).andReturn("/test").atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn("ja.example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
+        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.replay(mock);
 
         return mock;
     }
     private static HttpServletRequest mockRequestQuery() {
         HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https");
+        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
         EasyMock.expect(mock.getRemoteHost()).andReturn("example.com");
         EasyMock.expect(mock.getRequestURI()).andReturn("/test").atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
         EasyMock.expect(mock.getQueryString()).andReturn("wovn=ja").atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.replay(mock);
 
         return mock;
@@ -116,12 +122,14 @@ public class HeadersTest extends TestCase {
 
     private static HttpServletRequest mockRequestQueryParameter() {
         HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https");
+        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
         EasyMock.expect(mock.getRemoteHost()).andReturn("example.com");
         EasyMock.expect(mock.getRequestURI()).andReturn("/test").atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
         EasyMock.expect(mock.getQueryString()).andReturn("def=456&wovn=ja&abc=123").atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.replay(mock);
 
         return mock;
@@ -129,12 +137,14 @@ public class HeadersTest extends TestCase {
 
     private static HttpServletRequest mockRequestServerPort() {
         HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https");
+        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
         EasyMock.expect(mock.getRemoteHost()).andReturn("example.com");
         EasyMock.expect(mock.getRequestURI()).andReturn("/ja/test").atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
+        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(8080).atLeastOnce();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.replay(mock);
 
         return mock;
@@ -142,209 +152,166 @@ public class HeadersTest extends TestCase {
 
     private static HttpServletRequest mockRequestOriginalHeaders() {
         HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https");
+        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
         EasyMock.expect(mock.getRemoteHost()).andReturn("example.com");
         EasyMock.expect(mock.getRequestURI()).andReturn("/ja/test").atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
+        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
         EasyMock.expect(mock.getHeader("REDIRECT_URL")).andReturn("/foo/bar").atLeastOnce();
         EasyMock.expect(mock.getHeader("REDIRECT_QUERY_STRING")).andReturn("baz=123").atLeastOnce();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.replay(mock);
 
         return mock;
 
     }
 
-    public void testHeaders() {
+    public void testHeaders() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
         assertNotNull(h);
     }
 
-    public void testHeadersWithoutQueryParameter() {
+    public void testHeadersWithoutQueryParameter() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQueryParameter();
         FilterConfig mockConfig = mockConfigQuery();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
         assertNotNull(h);
         assertEquals("", h.query);
     }
 
-    public void testHeadersWithQueryParameter() {
+    public void testHeadersWithQueryParameter() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQueryParameter();
         FilterConfig mockConfig = mockConfigQueryParameter();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
         assertNotNull(h);
         assertEquals("?abc=123", h.query);
     }
 
-    public void testGetPathLangPath() {
+    public void testGetRequestLangPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getPathLang());
+        assertEquals("ja", h.getRequestLang());
     }
 
-    public void testGetPathLangSubdomain() {
+    public void testGetRequestLangSubdomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestSubdomain();
         FilterConfig mockConfig = mockConfigSubdomain();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getPathLang());
+        assertEquals("ja", h.getRequestLang());
     }
 
-    public void testGetPathLangQuery() {
+    public void testGetRequestLangQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getPathLang());
+        assertEquals("ja", h.getRequestLang());
     }
 
-    public void testRedirectLocationPathTop() {
-        Headers h = new Headers(TestUtil.mockRequestPath("/"), TestUtil.makeSettings());
-        assertEquals("https://example.com/", h.redirectLocation("en"));
-        assertEquals("https://example.com/ja/", h.redirectLocation("ja"));
-    }
-
-    public void testRedirectLocationPathDirectory() {
-        Headers h = new Headers(TestUtil.mockRequestPath("/test/"), TestUtil.makeSettings());
-        assertEquals("https://example.com/test/", h.redirectLocation("en"));
-        assertEquals("https://example.com/ja/test/", h.redirectLocation("ja"));
-    }
-
-    public void testRedirectLocationPathFile() {
-        Headers h = new Headers(TestUtil.mockRequestPath("/foo.html"), TestUtil.makeSettings());
-        assertEquals("https://example.com/foo.html", h.redirectLocation("en"));
-        assertEquals("https://example.com/ja/foo.html", h.redirectLocation("ja"));
-    }
-
-    public void testRedirectLocationPathDirectoryAndFile() {
-        Headers h = new Headers(TestUtil.mockRequestPath("/dir/foo.html"), TestUtil.makeSettings());
-        assertEquals("https://example.com/dir/foo.html", h.redirectLocation("en"));
-        assertEquals("https://example.com/ja/dir/foo.html", h.redirectLocation("ja"));
-    }
-
-    public void testRedirectLocationPathNestedDirectory() {
-        Headers h = new Headers(TestUtil.mockRequestPath("/dir1/dir2/"), TestUtil.makeSettings());
-        assertEquals("https://example.com/dir1/dir2/", h.redirectLocation("en"));
-        assertEquals("https://example.com/ja/dir1/dir2/", h.redirectLocation("ja"));
-    }
-
-    public void testRedirectLocation_WithSitePrefixPathBasePathOnly_AddsLanguageToUrl() {
-        Headers h = makeHeaderWithSitePrefixPath("/global", "/global/");
-        assertEquals("https://example.com/global", h.redirectLocation("en")); // `en` is defaultLang
-        assertEquals("https://example.com/global/ja/", h.redirectLocation("ja"));
-        assertEquals("https://example.com/global/garbage/", h.redirectLocation("garbage"));
-    }
-
-    public void testRedirectLocation_WithSitePrefixPathMatchingPath_AddsLanguageToUrl() {
-        Headers h = makeHeaderWithSitePrefixPath("/global/tokyo/", "/global/");
-        assertEquals("https://example.com/global/tokyo/", h.redirectLocation("en")); // `en` is defaultLang
-        assertEquals("https://example.com/global/ja/tokyo/", h.redirectLocation("ja"));
-        assertEquals("https://example.com/global/garbage/tokyo/", h.redirectLocation("garbage"));
-    }
-
-    public void testRedirectLocation_WithSitePrefixPathNonmatchingPath_DoesNotModifyUrl() {
-        Headers h = makeHeaderWithSitePrefixPath("/tokyo/global/", "/global/");
-        assertEquals("https://example.com/tokyo/global/", h.redirectLocation("en")); // `en` is defaultLang
-        assertEquals("https://example.com/tokyo/global/", h.redirectLocation("ja"));
-        assertEquals("https://example.com/tokyo/global/", h.redirectLocation("garbage"));
-    }
-
-    public void testRedirectLocationSubdomain() {
-
-    }
-    public void testRedirectLocationQuery() {
-
-    }
-
-    public void testRemoveLangPath() {
+    public void testRemoveLangPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
         assertEquals("example.com/test", h.removeLang("example.com/ja/test", null));
     }
-    public void testRemoveLangSubdomain() {
+    public void testRemoveLangSubdomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestSubdomain();
         FilterConfig mockConfig = mockConfigSubdomain();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
         assertEquals("example.com/test", h.removeLang("ja.example.com/test", null));
     }
-    public void testRemoveLangQuery() {
+    public void testRemoveLangQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQuery();
         FilterConfig mockConfig = mockConfigQuery();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
         assertEquals("example.com/test", h.removeLang("example.com/test?wovn=ja", null));
     }
 
-    public void testNotMatchQuery() {
+    public void testNotMatchQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQueryParameter();
         FilterConfig mockConfig = mockConfigQueryParameterAAA();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
         assertEquals("", h.query);
     }
 
-    public void testServerPort() {
+    public void testServerPort() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestServerPort();
         FilterConfig mockConfig = mockConfigPath();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
         assertEquals("example.com:8080/test", h.pageUrl);
     }
 
-    public void testSitePrefixPath() {
+    public void testSitePrefixPath() throws ConfigurationError {
         Headers h = makeHeaderWithSitePrefixPath("/global/en/foo", "/global/");
         assertEquals("/global/", h.removeLang("/global/en/", null));
         assertEquals("/en/global/", h.removeLang("/en/global/", null));
     }
 
-    public void testLocationWithDefaultLangCode() {
+    public void testLocationWithDefaultLangCode() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/signin");
         FilterConfig mockConfig = mockConfigPath();
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
         assertEquals("http://example.com/", h.locationWithLangCode("http://example.com/"));
         assertEquals("https://example.com/", h.locationWithLangCode("https://example.com/"));
         assertEquals("https://example.com/dir/file", h.locationWithLangCode("https://example.com/dir/file"));
     }
 
-    public void testLocationWithPath() {
+    public void testLocationWithPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/ja/dir/signin");
         FilterConfig mockConfig = mockConfigPath();
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
         assertEquals("http://example.com/ja/", h.locationWithLangCode("http://example.com/"));
         assertEquals("https://example.com/ja/", h.locationWithLangCode("https://example.com/"));
         assertEquals("https://example.com/ja/dir/file", h.locationWithLangCode("https://example.com/dir/file"));
@@ -356,30 +323,33 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/ja/file", h.locationWithLangCode("../../file"));
     }
 
-    public void testLocationWithPathAndTrailingSlash() {
+    public void testLocationWithPathAndTrailingSlash() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/ja/dir/signin/");
         FilterConfig mockConfig = mockConfigPath();
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
         assertEquals("https://example.com/ja/dir/signin/file", h.locationWithLangCode("./file"));
         assertEquals("https://example.com/ja/dir/file", h.locationWithLangCode("../file"));
         assertEquals("https://example.com/ja/file", h.locationWithLangCode("../../file"));
         assertEquals("https://example.com/ja/file", h.locationWithLangCode("../../../file"));
     }
 
-    public void testLocationWithPathAndTopLevel() {
+    public void testLocationWithPathAndTopLevel() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/location.jsp?wovn=ja");
         FilterConfig mockConfig = mockConfigQuery();
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
         assertEquals("https://example.com/index.jsp?wovn=ja", h.locationWithLangCode("./index.jsp"));
     }
 
-    public void testLocationWithQuery() {
+    public void testLocationWithQuery() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/dir/signin?wovn=ja");
         FilterConfig mockConfig = mockConfigQuery();
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
         assertEquals("http://example.com/?wovn=ja", h.locationWithLangCode("http://example.com/"));
         assertEquals("https://example.com/?wovn=ja", h.locationWithLangCode("https://example.com/"));
         assertEquals("https://example.com/dir/file?wovn=ja", h.locationWithLangCode("https://example.com/dir/file"));
@@ -393,11 +363,12 @@ public class HeadersTest extends TestCase {
         assertEquals("../../file?wovn=zh-CHS", h.locationWithLangCode("../../file?wovn=zh-CHS"));
     }
 
-    public void testLocationWithSubdomain() {
+    public void testLocationWithSubdomain() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath("/dir/signin", "ja.example.com");
         FilterConfig mockConfig = mockConfigSubdomain();
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
         assertEquals("http://ja.example.com/", h.locationWithLangCode("http://example.com/"));
         assertEquals("https://ja.example.com/", h.locationWithLangCode("https://example.com/"));
         assertEquals("https://ja.example.com/dir/file", h.locationWithLangCode("https://example.com/dir/file"));
@@ -410,7 +381,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://ja.example.com/file", h.locationWithLangCode("../../file"));
     }
 
-    public void testLocationWithSitePrefixPath() {
+    public void testLocationWithSitePrefixPath() throws ConfigurationError {
         Headers h = makeHeaderWithSitePrefixPath("/global/ja/foo", "/global/");
         assertEquals("http://example.com/", h.locationWithLangCode("http://example.com/"));
         assertEquals("http://example.com/global/ja/", h.locationWithLangCode("http://example.com/global/"));
@@ -428,39 +399,97 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/th/", h.locationWithLangCode("https://example.com/th/"));
     }
 
-    public void testIsValidPath() {
+    public void testIsValidPath() throws ConfigurationError {
         Headers h;
         h = makeHeaderWithSitePrefixPath("/", "global");
-        assertEquals(false, h.isValidPath());
+        assertEquals(false, h.getIsValidPath());
 
         h = makeHeaderWithSitePrefixPath("/global", "global");
-        assertEquals(true, h.isValidPath());
+        assertEquals(true, h.getIsValidPath());
 
         h = makeHeaderWithSitePrefixPath("/global/ja/foo", "global");
-        assertEquals(true, h.isValidPath());
+        assertEquals(true, h.getIsValidPath());
 
         h = makeHeaderWithSitePrefixPath("/ja/global/foo", "global");
-        assertEquals(false, h.isValidPath());
+        assertEquals(false, h.getIsValidPath());
     }
 
-    private Headers makeHeaderWithSitePrefixPath(String requestPath, String sitePrefixPath) {
+    private Headers makeHeaderWithSitePrefixPath(String requestPath, String sitePrefixPath) throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath(requestPath);
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("sitePrefixPath", sitePrefixPath);
         }};
         Settings s = TestUtil.makeSettings(option);
-        return new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        return new Headers(mockRequest, s, ulph);
     }
 
-    public void testOriginalHeaders() {
+    public void testOriginalHeaders() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestOriginalHeaders();
         FilterConfig mockConfig = mockConfigOriginalHeaders();
 
         Settings s = new Settings(mockConfig);
-        Headers h = new Headers(mockRequest, s);
+        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
+        Headers h = new Headers(mockRequest, s, ulph);
 
         assertEquals("/foo/bar", h.pathName);
         assertEquals("?baz=123", h.query);
         assertEquals("example.com/foo/bar?baz=123", h.pageUrl);
+    }
+
+    public void testGetHreflangUrlMap__PathPattern() throws ConfigurationError {
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,fr");
+            put("urlPattern", "path");
+            put("sitePrefixPath", "/home");
+        }});
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+		HttpServletRequest request = TestUtil.mockRequestPath("/home?user=123");
+        Headers sut = new Headers(request, settings, patternHandler);
+
+		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
+
+		assertEquals(3, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("en"));
+		assertEquals("https://example.com/home/ja?user=123", hreflangs.get("ja"));
+		assertEquals("https://example.com/home/fr?user=123", hreflangs.get("fr"));
+    }
+
+    public void testGetHreflangUrlMap__QueryPattern() throws ConfigurationError {
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ko");
+            put("urlPattern", "query");
+        }});
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+		HttpServletRequest request = TestUtil.mockRequestPath("/home?user=123");
+        Headers sut = new Headers(request, settings, patternHandler);
+
+		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
+
+		assertEquals(2, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("ja"));
+		assertEquals("https://example.com/home?user=123&wovn=ko", hreflangs.get("ko"));
+    }
+
+    public void testGetHreflangUrlMap__SubdomainPattern__WithChineseSupportedLangs() throws ConfigurationError {
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ko,th, zh-CHT, zh-CHS");
+            put("urlPattern", "subdomain");
+        }});
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+		HttpServletRequest request = TestUtil.mockRequestPath("/home?user=123");
+        Headers sut = new Headers(request, settings, patternHandler);
+
+		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
+
+		assertEquals(5, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("ja"));
+		assertEquals("https://ko.example.com/home?user=123", hreflangs.get("ko"));
+		assertEquals("https://th.example.com/home?user=123", hreflangs.get("th"));
+		assertEquals("https://zh-CHT.example.com/home?user=123", hreflangs.get("zh-Hant"));
+		assertEquals("https://zh-CHS.example.com/home?user=123", hreflangs.get("zh-Hans"));
     }
 }

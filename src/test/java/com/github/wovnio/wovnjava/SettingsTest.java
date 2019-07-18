@@ -21,7 +21,6 @@ public class SettingsTest extends TestCase {
             put("projectToken", "2Wle3");
             put("secretKey", "secret");
             put("urlPattern", "query");
-            put("urlPatternReg", "aaa");
             put("query", "foo,bar");
             put("apiUrl", "https://example.com/v0/values");
             put("defaultLang", "ja");
@@ -38,7 +37,6 @@ public class SettingsTest extends TestCase {
             put("projectToken", "3elW2");
             put("secretKey", "secret");
             put("urlPattern", "query");
-            put("urlPatternReg", "aaa");
             put("query", "foo,bar");
             put("apiUrl", "https://example.com/v0/values");
             put("defaultLang", "ja");
@@ -60,7 +58,7 @@ public class SettingsTest extends TestCase {
     }
 
     // urlPattern is "path".
-    public void testSettingsWithEmptyConfig() {
+    public void testSettingsWithEmptyConfig() throws ConfigurationError {
         FilterConfig mock = mockEmptyConfig();
         Settings s = new Settings(mock);
 
@@ -68,7 +66,6 @@ public class SettingsTest extends TestCase {
         assertEquals("", s.projectToken);
         assertEquals("", s.secretKey);
         assertEquals("path", s.urlPattern);
-        assertEquals(Settings.UrlPatternRegPath, s.urlPatternReg);
         assertEquals(new ArrayList<String>(), s.query);
         assertEquals("https://wovn.global.ssl.fastly.net/v0/", s.apiUrl);
         assertEquals("en", s.defaultLang);
@@ -80,7 +77,7 @@ public class SettingsTest extends TestCase {
         assertEquals("", s.originalQueryStringHeader);
     }
     // urlPattern is "subdomain".
-    public void testSettingsWithValidConfig() {
+    public void testSettingsWithValidConfig() throws ConfigurationError {
         FilterConfig mock = mockValidConfig();
         Settings s = new Settings(mock);
 
@@ -88,7 +85,6 @@ public class SettingsTest extends TestCase {
         assertEquals("2Wle3", s.projectToken);
         assertEquals("secret", s.secretKey);
         assertEquals("query", s.urlPattern);
-        assertEquals(Settings.UrlPatternRegQuery, s.urlPatternReg);
         ArrayList<String> query = new ArrayList<String>();
         query.add("foo");
         query.add("bar");
@@ -103,24 +99,57 @@ public class SettingsTest extends TestCase {
         assertEquals("REDIRECT_URL", s.originalUrlHeader);
         assertEquals("REDIRECT_QUERY_STRING", s.originalQueryStringHeader);
     }
-    public void testSettingsWithQueryConfig() {
+    public void testSettingsWithQueryConfig() throws ConfigurationError {
         FilterConfig mock = mockQueryConfig();
         Settings s = new Settings(mock);
 
         assertNotNull(s);
         assertEquals("query", s.urlPattern);
-        assertEquals(Settings.UrlPatternRegQuery, s.urlPatternReg);
     }
 
-    public void testIsValidWithEmptyConfig() {
+    public void testIsValidWithEmptyConfig() throws ConfigurationError {
         FilterConfig mock = mockEmptyConfig();
         Settings s = new Settings(mock);
         assertFalse(s.isValid());
     }
-    public void testIsValidWithValidConfig() {
+    public void testIsValidWithValidConfig() throws ConfigurationError {
         FilterConfig mock = mockValidConfig();
         Settings s = new Settings(mock);
         assertTrue(s.isValid());
+    }
+
+    public void testSettings__invalidDefaultLang() throws ConfigurationError {
+        HashMap<String, String> parametersWithInvalidDefaultLang = new HashMap<String, String>() {{
+            put("projectToken", "2Wle3");
+            put("secretKey", "secret");
+            put("urlPattern", "query");
+            put("supportedLangs", "en,ja");
+            put("defaultLang", "INVALID");
+        }};
+        boolean exceptionThrown = false;
+        try {
+            TestUtil.makeSettings(parametersWithInvalidDefaultLang);
+        } catch (ConfigurationError e) {
+            exceptionThrown = true;
+        }
+        assertEquals(true, exceptionThrown);
+    }
+
+    public void testSettings__invalidSupportedLangs() throws ConfigurationError {
+        HashMap<String, String> parametersWithInvalidSupportedLangs = new HashMap<String, String>() {{
+            put("projectToken", "2Wle3");
+            put("secretKey", "secret");
+            put("urlPattern", "query");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,japan,korean");
+        }};
+        boolean exceptionThrown = false;
+        try {
+            TestUtil.makeSettings(parametersWithInvalidSupportedLangs);
+        } catch (ConfigurationError e) {
+            exceptionThrown = true;
+        }
+        assertEquals(true, exceptionThrown);
     }
 
     public void testGetBoolParameter() {
@@ -165,7 +194,7 @@ public class SettingsTest extends TestCase {
         assertEquals(13, Settings.getIntParameter("13"));
     }
 
-    public void testSettingsWithValidConfigMultipleToken() {
+    public void testSettingsWithValidConfigMultipleToken() throws ConfigurationError {
         FilterConfig mock = mockValidConfigMultipleToken();
         Settings s = new Settings(mock);
 
@@ -173,7 +202,6 @@ public class SettingsTest extends TestCase {
         assertEquals("3elW2", s.projectToken);
         assertEquals("secret", s.secretKey);
         assertEquals("query", s.urlPattern);
-        assertEquals(Settings.UrlPatternRegQuery, s.urlPatternReg);
         ArrayList<String> query = new ArrayList<String>();
         query.add("foo");
         query.add("bar");
@@ -189,13 +217,13 @@ public class SettingsTest extends TestCase {
         assertEquals("REDIRECT_QUERY_STRING", s.originalQueryStringHeader);
     }
 
-    public void testSettingsWithoutSitePrefix() {
+    public void testSettingsWithoutSitePrefix() throws ConfigurationError {
         Settings s = TestUtil.makeSettings();
         assertFalse(s.hasSitePrefixPath);
         assertEquals("", s.sitePrefixPath);
     }
 
-    public void testSettingsWithSitePrefix() {
+    public void testSettingsWithSitePrefix() throws ConfigurationError {
         HashMap<String, String> option = new HashMap<String, String>();
         option.put("sitePrefixPath", "/global/");
         Settings s = TestUtil.makeSettings(option);

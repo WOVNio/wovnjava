@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javax.servlet.FilterConfig;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -62,15 +63,34 @@ public class WovnServletFilterTest extends TestCase {
         assertEquals("/image.png", mock.req.getRequestURI());
     }
 
-    public void testLocation() throws ServletException, IOException {
-        HashMap<String, String> testQuery = new HashMap<String, String>() {{
-            put("urlPattern", "query");
+    public void testProcessRequestOnce__RequestNotProcessed__ProcessRequest() throws ServletException, IOException {
+        HashMap<String, String> config = new HashMap<String, String>() {{
+            put("urlPattern", "path");
             put("defaultLang", "ja");
-            put("location", "https://example.com/search/?abc=123&wovn=ja");
+            put("location", "https://example.com/ja/search/");
         }};
-        FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/?abc=123&wovn=ja", testQuery);
-        HttpServletResponse res = (HttpServletResponse)mock.res;
-        assertEquals("https://example.com/search/?abc=123&wovn=ja", res.getHeader("Location"));
+        boolean requestIsAlreadyProcessed = false;
+        FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", TestUtil.emptyOption, requestIsAlreadyProcessed);
+
+        ServletResponse responseObjectPassedToFilterChain = mock.res;
+        // If wovnjava is intercepting the request, the response object should be wrapped in a WovnHttpServletResponse
+        assertEquals(true, responseObjectPassedToFilterChain instanceof HttpServletResponse);
+        assertEquals(true, responseObjectPassedToFilterChain instanceof WovnHttpServletResponse);
+    }
+
+    public void testProcessRequestOnce__RequestAlreadyProcessed__DoNotProcessRequestAgain() throws ServletException, IOException {
+        HashMap<String, String> config = new HashMap<String, String>() {{
+            put("urlPattern", "path");
+            put("defaultLang", "ja");
+            put("location", "https://example.com/ja/search/");
+        }};
+        boolean requestIsAlreadyProcessed = true;
+        FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", TestUtil.emptyOption, requestIsAlreadyProcessed);
+
+        ServletResponse responseObjectPassedToFilterChain = mock.res;
+        // If wovnjava is ignoring the request, the response object should NOT be wrapped in a WovnHttpServletResponse
+        assertEquals(true, responseObjectPassedToFilterChain instanceof HttpServletResponse);
+        assertEquals(false, responseObjectPassedToFilterChain instanceof WovnHttpServletResponse);
     }
 
     private final HashMap<String, String> queryOption = new HashMap<String, String>() {{
@@ -83,5 +103,4 @@ public class WovnServletFilterTest extends TestCase {
             put("host", host);
         }};
     }
-
 }

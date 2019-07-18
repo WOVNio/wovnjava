@@ -1,5 +1,6 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -19,11 +20,24 @@ class Headers {
     String url;
 
     private HttpServletRequest request;
-    private String pathLang;
+    private UrlLanguagePatternHandler urlLanguagePatternHandler;
 
-    Headers(HttpServletRequest r, Settings s) {
-        this.settings = s;
-        this.request = r;
+    private final String requestLang;
+    private final String clientRequestUrlWithoutLangCode;
+    private final boolean shouldRedirectToDefaultLang;
+    private final boolean isValidPath;
+
+    Headers(HttpServletRequest request, Settings settings, UrlLanguagePatternHandler urlLanguagePatternHandler) {
+        this.settings = settings;
+        this.request = request;
+        this.urlLanguagePatternHandler = urlLanguagePatternHandler;
+
+        String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
+
+        this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
+        this.clientRequestUrlWithoutLangCode = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang);
+        this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang);
+        this.isValidPath = this.urlLanguagePatternHandler.isMatchingSitePrefixPath(clientRequestUrl);
 
         this.protocol = this.request.getScheme();
 
@@ -44,7 +58,7 @@ class Headers {
         }
         // Both getRequestURI() and getPathInfo() do not have query parameters.
         if (this.settings.originalQueryStringHeader.isEmpty()) {
-            if (r.getQueryString() != null && !this.request.getQueryString().isEmpty()) {
+            if (request.getQueryString() != null && !this.request.getQueryString().isEmpty()) {
                 requestUri += "?" + this.request.getQueryString();
             }
         } else {
@@ -128,77 +142,11 @@ class Headers {
     }
 
     String langCode() {
-        String pl = getPathLang();
+        String pl = this.requestLang;
         if (pl != null && pl.length() > 0) {
             return pl;
         } else {
             return settings.defaultLang;
-        }
-    }
-
-    String getPathLang() {
-        if (this.pathLang == null || this.pathLang.length() == 0) {
-            Pattern p = Pattern.compile(settings.urlPatternReg);
-            String path;
-            if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
-                path = this.request.getHeader("X-Forwarded-Host") + this.request.getRequestURI();
-            } else {
-                path = this.request.getServerName() + this.request.getRequestURI();
-            }
-            if (this.request.getQueryString() != null && this.request.getQueryString().length() > 0) {
-                path += "?" + this.request.getQueryString();
-            }
-            Matcher m = p.matcher(path);
-            if (m.find()) {
-                String l = m.group(1);
-                if (l != null && l.length() > 0 && Lang.getLang(l) != null) {
-                    String lc = Lang.getCode(l);
-                    if (lc != null && lc.length() > 0) {
-                        this.pathLang = lc;
-                        return this.pathLang;
-                    }
-                }
-            }
-            this.pathLang = "";
-        }
-        return this.pathLang;
-    }
-
-    /**
-     * @return String Returns request URL with new language code added
-     */
-    String redirectLocation(String lang) {
-        if (lang.equals(this.settings.defaultLang)) {
-            return this.protocol + "://" + this.url;
-        } else {
-            String location = this.url;
-            if (this.settings.urlPattern.equals("query")) {
-                if (!Pattern.compile("\\?").matcher(location).find()) {
-                    location = location + "?wovn=" + lang;
-                } else if (!Pattern.compile("(\\?|&)wovn=").matcher(this.request.getRequestURI()).find()) {
-                    location = location + "&wovn=" + lang;
-                }
-            } else if (this.settings.urlPattern.equals("subdomain")) {
-                location = lang.toLowerCase() + "." + location;
-            } else {
-                // path
-                if (settings.hasSitePrefixPath) {
-                    String sitePrefixPath = this.settings.sitePrefixPath;
-                    if (this.pathName.startsWith(sitePrefixPath)) {
-                        location = location.replaceFirst(sitePrefixPath, sitePrefixPath + "/" + lang);
-                        if (!location.endsWith("/")) {
-                          location += "/";
-                        }
-                    }
-                } else {
-                    if (location.contains("/")) {
-                        location = location.replaceFirst("/", "/" + lang + "/");
-                    } else {
-                        location += "/" + lang + "/";
-                    }
-                }
-            }
-            return protocol + "://" + location;
         }
     }
 
@@ -238,13 +186,9 @@ class Headers {
         if (settings.urlPattern.equals("query") && location.contains("wovn=")) {
             return location;
         } else if (settings.urlPattern.equals("path")) {
-            Pattern p = Pattern.compile(settings.urlPatternReg);
-            Matcher m = p.matcher(path);
-            if (m.find()) {
-                String l = m.group(1);
-                if (l != null && l.length() > 0 && Lang.getLang(l) != null) {
-                    return location;
-                }
+            String pathLang = this.urlLanguagePatternHandler.getLang(path);
+            if (pathLang != null && pathLang.length() > 0) {
+                return location;
             }
         }
 
@@ -278,21 +222,41 @@ class Headers {
 
     String removeLang(String uri, String lang) {
         if (lang == null || lang.length() == 0) {
-            lang = this.getPathLang();
+            lang = this.requestLang;
         }
-        if (this.settings.urlPattern.equals("query")) {
-            return uri.replaceFirst("(^|\\?|&)wovn=" + lang + "(&|$)", "$1")
-                    .replaceAll("(\\?|&)$", "");
-        } else if (this.settings.urlPattern.equals("subdomain")) {
-            return Pattern.compile("(^|(//))" + lang + "\\.", Pattern.CASE_INSENSITIVE)
-                    .matcher(uri).replaceFirst("$1");
-        } else {
-            String prefix = this.settings.sitePrefixPath + "/";
-            return uri.replaceFirst(prefix + lang + "(/|$)", prefix);
-        }
+        return this.urlLanguagePatternHandler.removeLang(uri, lang);
     }
 
-    boolean isValidPath() {
-        return this.pathName.startsWith(this.settings.sitePrefixPath);
+    public String getRequestLang() {
+        return this.requestLang;
+    }
+
+    public String getClientRequestUrlWithoutLangCode() {
+        return this.clientRequestUrlWithoutLangCode;
+    }
+
+    public String getClientRequestPathWithoutLangCode() {
+        return UrlPath.getPath(this.clientRequestUrlWithoutLangCode);
+    }
+
+    public boolean getShouldRedirectToDefaultLang() {
+        return this.shouldRedirectToDefaultLang;
+    }
+
+    public boolean getIsValidPath() {
+        return this.isValidPath;
+    }
+
+    public HashMap<String, String> getHreflangUrlMap() {
+        HashMap<String, String> hreflangs = new HashMap<String, String>();
+        for (String supportedLang : this.settings.supportedLangs) {
+            String hreflangCode = Lang.get(supportedLang).codeISO639_1;
+            String url = this.urlLanguagePatternHandler.insertLang(this.clientRequestUrlWithoutLangCode, supportedLang);
+            hreflangs.put(hreflangCode, url);
+        }
+        String hreflangCodeDefaultLang = Lang.get(this.settings.defaultLang).codeISO639_1;
+        String urlDefaultLang = this.clientRequestUrlWithoutLangCode;
+        hreflangs.put(hreflangCodeDefaultLang, urlDefaultLang);
+        return hreflangs;
     }
 }

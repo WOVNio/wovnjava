@@ -26,7 +26,7 @@ import org.easymock.EasyMock;
 
 public class ApiTest extends TestCase {
 
-    public void testTranslateWithGzipResponse() throws ApiException, IOException, ProtocolException {
+    public void testTranslateWithGzipResponse() throws ApiException, IOException, ProtocolException, ConfigurationError {
         byte[] apiServerResponse = gzip("{\"body\": \"<html><body>response html</body></html>\"}".getBytes());
         String encoding = "gzip";
         String resultingHtml = testTranslate(apiServerResponse, encoding);
@@ -34,7 +34,7 @@ public class ApiTest extends TestCase {
         assertEquals(expectedHtml, resultingHtml);
     }
 
-    public void testTranslateWithPlainTextResponse() throws ApiException, IOException, ProtocolException {
+    public void testTranslateWithPlainTextResponse() throws ApiException, IOException, ProtocolException, ConfigurationError {
         byte[] apiServerResponse = "{\"body\": \"<html><body>response html</body></html>\"}".getBytes();
         String encoding = "";
         String resultingHtml = testTranslate(apiServerResponse, encoding);
@@ -42,7 +42,7 @@ public class ApiTest extends TestCase {
         assertEquals(expectedHtml, resultingHtml);
     }
 
-    private String testTranslate(byte[] apiServerResponse, String encoding) throws ApiException, IOException, ProtocolException {
+    private String testTranslate(byte[] apiServerResponse, String encoding) throws ApiException, IOException, ProtocolException, ConfigurationError {
         String html = "<html>much content</html>";
 
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
@@ -50,11 +50,12 @@ public class ApiTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
         }});
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
 
         HttpServletRequest request = TestUtil.mockRequestPath("/ja/somepage/"); // mocks "https://example.com"
         ResponseHeaders responseHeaders = mockResponseHeaders();
 
-        Headers headers = new Headers(request, settings);
+        Headers headers = new Headers(request, settings, urlLanguagePatternHandler);
         RequestOptions requestOptions = new RequestOptions(settings, request);
 
         Api api = new Api(settings, headers, requestOptions, responseHeaders);

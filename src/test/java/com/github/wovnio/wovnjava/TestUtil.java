@@ -13,7 +13,7 @@ import org.easymock.EasyMock;
 
 
 public class TestUtil {
-    private static final HashMap<String, String> emptyOption = new HashMap<String, String>();
+    public static final HashMap<String, String> emptyOption = new HashMap<String, String>();
 
     public static FilterConfig makeConfig() {
         return makeConfig(emptyOption);
@@ -21,7 +21,7 @@ public class TestUtil {
 
     public static FilterConfig makeConfig(HashMap<String, String> option) {
         FilterConfig mock = EasyMock.createMock(FilterConfig.class);
-        String[] keys = {"userToken", "projectToken", "sitePrefixPath", "secretKey", "urlPattern", "urlPatternReg", "query", "apiUrl", "defaultLang", "supportedLangs", "testMode", "testUrl", "useProxy", "debugMode", "originalUrlHeader", "originalQueryStringHeader", "strictHtmlCheck", "deleteInvalidClosingTag", "deleteInvalidUTF8", "connectTimeout", "readTimeout", "ignoreClasses", "devMode", "enableFlushBuffer"};
+        String[] keys = {"userToken", "projectToken", "sitePrefixPath", "secretKey", "urlPattern", "query", "apiUrl", "defaultLang", "supportedLangs", "testMode", "testUrl", "useProxy", "debugMode", "originalUrlHeader", "originalQueryStringHeader", "strictHtmlCheck", "deleteInvalidClosingTag", "deleteInvalidUTF8", "connectTimeout", "readTimeout", "ignoreClasses", "devMode", "enableFlushBuffer"};
         for (int i=0; i<keys.length; ++i) {
             String key = keys[i];
             String val = option.get(key);
@@ -32,11 +32,11 @@ public class TestUtil {
         return mock;
     }
 
-    public static Settings makeSettings() {
+    public static Settings makeSettings() throws ConfigurationError {
         return makeSettings(emptyOption);
     }
 
-    public static Settings makeSettings(HashMap<String, String> option) {
+    public static Settings makeSettings(HashMap<String, String> option) throws ConfigurationError {
         return new Settings(makeConfig(option));
     }
 
@@ -46,29 +46,39 @@ public class TestUtil {
 
     public static HttpServletRequest mockRequestPath(String path, String replacedPath, RequestDispatcherMock dispatcher) {
         HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https");
+        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
         EasyMock.expect(mock.getRemoteHost()).andReturn("example.com");
         EasyMock.expect(mock.getRequestURI()).andReturn(path).atLeastOnce();
         EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
         EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
         EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
+        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.expect(mock.getRequestDispatcher(replacedPath == null ? EasyMock.anyString() : replacedPath)).andReturn(dispatcher);
         EasyMock.replay(mock);
         return mock;
     }
 
-    public static HttpServletResponse mockResponse(String contentType, String encoding, String location) throws IOException {
+    public static HttpServletResponse mockResponse(String contentType, String encoding) throws IOException {
+        return mockResponse(contentType, encoding, false);
+    }
+
+    public static HttpServletResponse mockResponse(String contentType, String encoding, boolean isPreviouslyProcessed) throws IOException {
         HttpServletResponse mock = EasyMock.createMock(HttpServletResponse.class);
         mock.setContentLength(EasyMock.anyInt());
         EasyMock.expectLastCall();
         mock.setCharacterEncoding("utf-8");
-        EasyMock.expect(mock.getHeader("Location")).andReturn(location);
         EasyMock.expectLastCall();
         EasyMock.expect(mock.getWriter()).andReturn(new PrintWriter(new StringWriter()));
         EasyMock.expect(mock.getContentType()).andReturn(contentType).atLeastOnce();
         EasyMock.expect(mock.getCharacterEncoding()).andReturn(encoding);
         mock.setHeader(EasyMock.anyString(), EasyMock.anyString());
         EasyMock.expectLastCall().atLeastOnce();
+        if (isPreviouslyProcessed) {
+            EasyMock.expect(mock.containsHeader("X-Wovn-Handler")).andReturn(true).times(0,1);
+        } else {
+            EasyMock.expect(mock.containsHeader("X-Wovn-Handler")).andReturn(false).times(0,1);
+        }
         EasyMock.replay(mock);
         return mock;
     }
@@ -91,9 +101,13 @@ public class TestUtil {
     }
 
     public static FilterChainMock doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option) throws ServletException, IOException {
+        return doServletFilter(contentType, path, forwardPath, option, false);
+    }
+
+    public static FilterChainMock doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option, boolean isPreviouslyProcessed) throws ServletException, IOException {
         RequestDispatcherMock dispatcher = new RequestDispatcherMock();
         HttpServletRequest req = mockRequestPath(path, forwardPath, dispatcher);
-        HttpServletResponse res = mockResponse(contentType, "", option.getOrDefault("location", ""));
+        HttpServletResponse res = mockResponse(contentType, "", isPreviouslyProcessed);
         FilterConfig filterConfig = makeConfig(option);
         FilterChainMock filterChain = new FilterChainMock();
         WovnServletFilter filter = new WovnServletFilter();

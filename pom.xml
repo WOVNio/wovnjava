@@ -7,7 +7,7 @@
     <groupId>com.github.wovnio</groupId>
     <artifactId>wovnjava</artifactId>
     <name>wovnjava</name>
-    <version>0.5.0</version>
+    <version>0.6.0</version>
     <url>https://github.com/WOVNio/wovnjava</url>
 
     <licenses>
