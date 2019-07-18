@@ -24,7 +24,6 @@ class Headers {
 
     private final String requestLang;
     private final String clientRequestUrlWithoutLangCode;
-    private final String clientRequestPathWithoutLangCode;
     private final boolean shouldRedirectToDefaultLang;
     private final boolean isValidPath;
 
@@ -37,7 +36,6 @@ class Headers {
 
         this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
         this.clientRequestUrlWithoutLangCode = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang);
-        this.clientRequestPathWithoutLangCode = UrlPath.getPath(this.clientRequestUrlWithoutLangCode);
         this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang);
         this.isValidPath = this.urlLanguagePatternHandler.isMatchingSitePrefixPath(clientRequestUrl);
 
@@ -238,7 +236,7 @@ class Headers {
     }
 
     public String getClientRequestPathWithoutLangCode() {
-        return this.clientRequestPathWithoutLangCode;
+        return UrlPath.getPath(this.clientRequestUrlWithoutLangCode);
     }
 
     public boolean getShouldRedirectToDefaultLang() {
