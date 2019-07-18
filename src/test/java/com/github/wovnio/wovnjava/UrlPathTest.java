@@ -5,6 +5,26 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 
 public class UrlPathTest extends TestCase {
+    public void testGetPathAndQuery() {
+        assertEquals("", UrlPath.getPathAndQuery(""));
+        assertEquals("/", UrlPath.getPathAndQuery("/"));
+        assertEquals("?query", UrlPath.getPathAndQuery("?query"));
+        assertEquals("/path/a.html", UrlPath.getPathAndQuery("/path/a.html"));
+        assertEquals("/path/a.html?query", UrlPath.getPathAndQuery("/path/a.html?query"));
+
+        assertEquals("", UrlPath.getPathAndQuery("site.com"));
+        assertEquals("/", UrlPath.getPathAndQuery("site.com/"));
+        assertEquals("?query", UrlPath.getPathAndQuery("site.com?query"));
+        assertEquals("/path/a.html", UrlPath.getPathAndQuery("site.com/path/a.html"));
+        assertEquals("/path/a.html?query", UrlPath.getPathAndQuery("site.com/path/a.html?query"));
+
+        assertEquals("", UrlPath.getPathAndQuery("http://site.com"));
+        assertEquals("/", UrlPath.getPathAndQuery("http://site.com/"));
+        assertEquals("?query", UrlPath.getPathAndQuery("http://site.com?query"));
+        assertEquals("/path/a.html", UrlPath.getPathAndQuery("http://site.com/path/a.html"));
+        assertEquals("/path/a.html?query", UrlPath.getPathAndQuery("http://site.com/path/a.html?query"));
+    }
+
     public void testRemoveFile() {
         assertEquals("/", UrlPath.removeFile(""));
         assertEquals("/", UrlPath.removeFile("/"));

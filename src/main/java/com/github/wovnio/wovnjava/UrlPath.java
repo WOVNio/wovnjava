@@ -1,13 +1,13 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.regex.Pattern;
+
 final class UrlPath {
     private UrlPath() {}
 
     public static String getPathAndQuery(String url) {
-        Pattern schemePattern = Pattern.compile("^[a-zA-Z]://");
-        Pattern hostPattern = Pattern.compile("^[^/?]*");
-        String hostPathQuery = schemePattern.matcher(url).replaceFirst("");
-        String pathQuery = hostPattern.matcher(url).replaceFirst("");
+        String hostPathQuery = Pattern.compile("^https?://").matcher(url).replaceFirst("");
+        String pathQuery = Pattern.compile("^[^/?]*").matcher(hostPathQuery).replaceFirst("");
         return pathQuery;
     }
 
