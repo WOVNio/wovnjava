@@ -1,5 +1,6 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -151,44 +152,6 @@ class Headers {
         }
     }
 
-    /**
-     * @return String Returns request URL with new language code added
-     */
-    String redirectLocation(String lang) {
-        if (lang.equals(this.settings.defaultLang)) {
-            return this.protocol + "://" + this.url;
-        } else {
-            String location = this.url;
-            if (this.settings.urlPattern.equals("query")) {
-                if (!Pattern.compile("\\?").matcher(location).find()) {
-                    location = location + "?wovn=" + lang;
-                } else if (!Pattern.compile("(\\?|&)wovn=").matcher(this.request.getRequestURI()).find()) {
-                    location = location + "&wovn=" + lang;
-                }
-            } else if (this.settings.urlPattern.equals("subdomain")) {
-                location = lang.toLowerCase() + "." + location;
-            } else {
-                // path
-                if (settings.hasSitePrefixPath) {
-                    String sitePrefixPath = this.settings.sitePrefixPath;
-                    if (this.pathName.startsWith(sitePrefixPath)) {
-                        location = location.replaceFirst(sitePrefixPath, sitePrefixPath + "/" + lang);
-                        if (!location.endsWith("/")) {
-                          location += "/";
-                        }
-                    }
-                } else {
-                    if (location.contains("/")) {
-                        location = location.replaceFirst("/", "/" + lang + "/");
-                    } else {
-                        location += "/" + lang + "/";
-                    }
-                }
-            }
-            return protocol + "://" + location;
-        }
-    }
-
     public String locationWithLangCode(String location) {
         // check if needed
         if (location == null) {
@@ -284,5 +247,18 @@ class Headers {
 
     public boolean getIsValidPath() {
         return this.isValidPath;
+    }
+
+    public HashMap<String, String> getHreflangUrlMap() {
+        HashMap<String, String> hreflangs = new HashMap<String, String>();
+        for (String supportedLang : this.settings.supportedLangs) {
+            String code = Lang.get(supportedLang).hreflangCode;
+            String url = this.urlLanguagePatternHandler.insertLang(this.clientRequestUrlWithoutLangCode, supportedLang);
+            hreflangs.put(code, url);
+        }
+        String defaultCode = Lang.get(this.settings.defaultLang).hreflangCode;
+        String defaultUrl = this.clientRequestUrlWithoutLangCode;
+        hreflangs.put(defaultCode, defaultUrl);
+        return hreflangs;
     }
 }

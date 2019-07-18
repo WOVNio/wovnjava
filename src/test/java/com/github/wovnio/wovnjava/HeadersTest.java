@@ -236,74 +236,6 @@ public class HeadersTest extends TestCase {
         assertEquals("ja", h.getRequestLang());
     }
 
-    public void testRedirectLocationPathTop() throws ConfigurationError {
-        Settings s = TestUtil.makeSettings();
-        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
-        Headers h = new Headers(TestUtil.mockRequestPath("/"), s, ulph);
-        assertEquals("https://example.com/", h.redirectLocation("en"));
-        assertEquals("https://example.com/ja/", h.redirectLocation("ja"));
-    }
-
-    public void testRedirectLocationPathDirectory() throws ConfigurationError {
-        Settings s = TestUtil.makeSettings();
-        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
-        Headers h = new Headers(TestUtil.mockRequestPath("/test/"), s, ulph);
-        assertEquals("https://example.com/test/", h.redirectLocation("en"));
-        assertEquals("https://example.com/ja/test/", h.redirectLocation("ja"));
-    }
-
-    public void testRedirectLocationPathFile() throws ConfigurationError {
-        Settings s = TestUtil.makeSettings();
-        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
-        Headers h = new Headers(TestUtil.mockRequestPath("/foo.html"), s, ulph);
-        assertEquals("https://example.com/foo.html", h.redirectLocation("en"));
-        assertEquals("https://example.com/ja/foo.html", h.redirectLocation("ja"));
-    }
-
-    public void testRedirectLocationPathDirectoryAndFile() throws ConfigurationError {
-        Settings s = TestUtil.makeSettings();
-        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
-        Headers h = new Headers(TestUtil.mockRequestPath("/dir/foo.html"), s, ulph);
-        assertEquals("https://example.com/dir/foo.html", h.redirectLocation("en"));
-        assertEquals("https://example.com/ja/dir/foo.html", h.redirectLocation("ja"));
-    }
-
-    public void testRedirectLocationPathNestedDirectory() throws ConfigurationError {
-        Settings s = TestUtil.makeSettings();
-        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
-        Headers h = new Headers(TestUtil.mockRequestPath("/dir1/dir2/"), s, ulph);
-        assertEquals("https://example.com/dir1/dir2/", h.redirectLocation("en"));
-        assertEquals("https://example.com/ja/dir1/dir2/", h.redirectLocation("ja"));
-    }
-
-    public void testRedirectLocation_WithSitePrefixPathBasePathOnly_AddsLanguageToUrl() throws ConfigurationError {
-        Headers h = makeHeaderWithSitePrefixPath("/global", "/global/");
-        assertEquals("https://example.com/global", h.redirectLocation("en")); // `en` is defaultLang
-        assertEquals("https://example.com/global/ja/", h.redirectLocation("ja"));
-        assertEquals("https://example.com/global/garbage/", h.redirectLocation("garbage"));
-    }
-
-    public void testRedirectLocation_WithSitePrefixPathMatchingPath_AddsLanguageToUrl() throws ConfigurationError {
-        Headers h = makeHeaderWithSitePrefixPath("/global/tokyo/", "/global/");
-        assertEquals("https://example.com/global/tokyo/", h.redirectLocation("en")); // `en` is defaultLang
-        assertEquals("https://example.com/global/ja/tokyo/", h.redirectLocation("ja"));
-        assertEquals("https://example.com/global/garbage/tokyo/", h.redirectLocation("garbage"));
-    }
-
-    public void testRedirectLocation_WithSitePrefixPathNonmatchingPath_DoesNotModifyUrl() throws ConfigurationError {
-        Headers h = makeHeaderWithSitePrefixPath("/tokyo/global/", "/global/");
-        assertEquals("https://example.com/tokyo/global/", h.redirectLocation("en")); // `en` is defaultLang
-        assertEquals("https://example.com/tokyo/global/", h.redirectLocation("ja"));
-        assertEquals("https://example.com/tokyo/global/", h.redirectLocation("garbage"));
-    }
-
-    public void testRedirectLocationSubdomain() {
-
-    }
-    public void testRedirectLocationQuery() {
-
-    }
-
     public void testRemoveLangPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
@@ -503,5 +435,61 @@ public class HeadersTest extends TestCase {
         assertEquals("/foo/bar", h.pathName);
         assertEquals("?baz=123", h.query);
         assertEquals("example.com/foo/bar?baz=123", h.pageUrl);
+    }
+
+    public void testGetHreflangUrlMap__PathPattern() throws ConfigurationError {
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,fr");
+            put("urlPattern", "path");
+            put("sitePrefixPath", "/home");
+        }});
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+		HttpServletRequest request = TestUtil.mockRequestPath("/home?user=123");
+        Headers sut = new Headers(request, settings, patternHandler);
+
+		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
+
+		assertEquals(3, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("en"));
+		assertEquals("https://example.com/home/ja?user=123", hreflangs.get("ja"));
+		assertEquals("https://example.com/home/fr?user=123", hreflangs.get("fr"));
+    }
+
+    public void testGetHreflangUrlMap__QueryPattern() throws ConfigurationError {
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ko");
+            put("urlPattern", "query");
+        }});
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+		HttpServletRequest request = TestUtil.mockRequestPath("/home?user=123");
+        Headers sut = new Headers(request, settings, patternHandler);
+
+		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
+
+		assertEquals(2, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("ja"));
+		assertEquals("https://example.com/home?user=123&wovn=ko", hreflangs.get("ko"));
+    }
+
+    public void testGetHreflangUrlMap__SubdomainPattern__WithChineseSupportedLangs() throws ConfigurationError {
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ko,th, zh-CHT, zh-CHS");
+            put("urlPattern", "subdomain");
+        }});
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+		HttpServletRequest request = TestUtil.mockRequestPath("/home?user=123");
+        Headers sut = new Headers(request, settings, patternHandler);
+
+		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
+
+		assertEquals(5, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("ja"));
+		assertEquals("https://ko.example.com/home?user=123", hreflangs.get("ko"));
+		assertEquals("https://th.example.com/home?user=123", hreflangs.get("th"));
+		assertEquals("https://zh-CHT.example.com/home?user=123", hreflangs.get("zh-Hant"));
+		assertEquals("https://zh-CHS.example.com/home?user=123", hreflangs.get("zh-Hans"));
     }
 }
