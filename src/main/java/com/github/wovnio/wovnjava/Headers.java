@@ -235,6 +235,10 @@ class Headers {
         return this.clientRequestUrlWithoutLangCode;
     }
 
+    public String getClientRequestPathWithoutLangCode() {
+        return UrlPath.getPath(this.clientRequestUrlWithoutLangCode);
+    }
+
     public boolean getShouldRedirectToDefaultLang() {
         return this.shouldRedirectToDefaultLang;
     }
