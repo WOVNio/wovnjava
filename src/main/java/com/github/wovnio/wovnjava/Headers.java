@@ -246,13 +246,13 @@ class Headers {
     public HashMap<String, String> getHreflangUrlMap() {
         HashMap<String, String> hreflangs = new HashMap<String, String>();
         for (String supportedLang : this.settings.supportedLangs) {
-            String code = Lang.get(supportedLang).hreflangCode;
+            String hreflangCode = Lang.get(supportedLang).codeISO639_1;
             String url = this.urlLanguagePatternHandler.insertLang(this.clientRequestUrlWithoutLangCode, supportedLang);
-            hreflangs.put(code, url);
+            hreflangs.put(hreflangCode, url);
         }
-        String defaultCode = Lang.get(this.settings.defaultLang).hreflangCode;
-        String defaultUrl = this.clientRequestUrlWithoutLangCode;
-        hreflangs.put(defaultCode, defaultUrl);
+        String hreflangCodeDefaultLang = Lang.get(this.settings.defaultLang).codeISO639_1;
+        String urlDefaultLang = this.clientRequestUrlWithoutLangCode;
+        hreflangs.put(hreflangCodeDefaultLang, urlDefaultLang);
         return hreflangs;
     }
 }
