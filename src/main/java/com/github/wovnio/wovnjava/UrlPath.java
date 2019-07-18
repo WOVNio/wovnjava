@@ -5,10 +5,11 @@ import java.util.regex.Pattern;
 final class UrlPath {
     private UrlPath() {}
 
-    public static String getPathAndQuery(String url) {
+    public static String getPath(String url) {
         String hostPathQuery = Pattern.compile("^https?://").matcher(url).replaceFirst("");
         String pathQuery = Pattern.compile("^[^/?]*").matcher(hostPathQuery).replaceFirst("");
-        return pathQuery;
+        String path = Pattern.compile("\\?.*$").matcher(pathQuery).replaceFirst("");
+        return path;
     }
 
     public static String removeFile(String path) {

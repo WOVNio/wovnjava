@@ -155,7 +155,7 @@ class Api {
         appendValue(sb, "&body_hash=");
         appendValue(sb, hash(body.getBytes()));
         appendValue(sb, "&path=");
-        appendValue(sb, headers.getClientRequestPathAndQueryWithoutLangCode());
+        appendValue(sb, headers.getClientRequestPathWithoutLangCode());
         appendValue(sb, "&lang=");
         appendValue(sb, lang);
         appendValue(sb, "&version=wovnjava_");
