@@ -69,7 +69,6 @@ public class WovnHttpServletRequestTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
         }};
         return TestUtil.makeConfig(parameters);
     }
@@ -78,7 +77,6 @@ public class WovnHttpServletRequestTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
             put("urlPattern", "subdomain");
         }};
         return TestUtil.makeConfig(parameters);
@@ -88,7 +86,6 @@ public class WovnHttpServletRequestTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
             put("urlPattern", "query");
         }};
         return TestUtil.makeConfig(parameters);

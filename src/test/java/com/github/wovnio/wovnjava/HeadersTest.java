@@ -14,7 +14,6 @@ public class HeadersTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
         }};
         return TestUtil.makeConfig(parameters);
     }
@@ -22,7 +21,6 @@ public class HeadersTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
             put("urlPattern", "subdomain");
         }};
         return TestUtil.makeConfig(parameters);
@@ -31,7 +29,6 @@ public class HeadersTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
             put("urlPattern", "query");
         }};
         return TestUtil.makeConfig(parameters);
@@ -41,7 +38,6 @@ public class HeadersTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
             put("urlPattern", "query");
             put("query", "abc");
         }};
@@ -52,7 +48,6 @@ public class HeadersTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
             put("urlPattern", "query");
             put("query", "AAA");
         }};
@@ -63,7 +58,6 @@ public class HeadersTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
             put("query", "baz");
             put("originalUrlHeader", "REDIRECT_URL");
             put("originalQueryStringHeader", "REDIRECT_QUERY_STRING");

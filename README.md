@@ -87,15 +87,11 @@ originalUrlHeader         |          | ''
 originalQueryStringHeader |          | ''
 ignoreClasses             |          | ''
 
-* A required parameter with a default setting does not need to be set within the web.xml. (Only the projectToken and secretKey parameters must be set in order for the library to work)
+* A required parameter with a default setting does not need to be set within the web.xml. (Only the projectToken parameter must be set in order for the library to work)
 
 ### 2.1. projectToken
 
 Set your WOVN.io Account's project token. This parameter is required.
-
-### 2.2. secretKey
-
-This parameter is currently in development and is not being used. However, it is a required parameter, so make to sure to include a value in it (e.g. "secret").
 
 ### 2.3. urlPattern
 

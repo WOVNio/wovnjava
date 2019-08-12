@@ -18,7 +18,6 @@ class Settings {
     String projectToken = "";
     boolean hasSitePrefixPath = false;
     String sitePrefixPath = "";
-    String secretKey = "";
     String urlPattern = "path";
     ArrayList<String> query;
     String snippetUrl = "//j.wovn.io/1";
@@ -65,11 +64,6 @@ class Settings {
             } else {
                 this.sitePrefixPath = p;
             }
-        }
-
-        p = config.getInitParameter("secretKey");
-        if (p != null && p.length() > 0) {
-            this.secretKey = p;
         }
 
         p = config.getInitParameter("urlPattern");
@@ -216,10 +210,6 @@ class Settings {
         if (projectToken == null || projectToken.length() < 5 || projectToken.length() > 6) {
             valid = false;
             errors.add("Project token is not valid: " + projectToken);
-        }
-        if (secretKey == null || secretKey.length() == 0) {
-            valid = false;
-            errors.add("Secret key is not configured.");
         }
         if (urlPattern == null || urlPattern.length() == 0) {
             valid = false;
