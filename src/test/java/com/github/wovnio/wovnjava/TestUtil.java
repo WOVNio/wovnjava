@@ -10,7 +10,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import org.easymock.EasyMock;
-
+import org.easymock.IAnswer;
 
 public class TestUtil {
     public static final HashMap<String, String> emptyOption = new HashMap<String, String>();
@@ -19,15 +19,17 @@ public class TestUtil {
         return makeConfig(emptyOption);
     }
 
-    public static FilterConfig makeConfig(HashMap<String, String> option) {
+    public static FilterConfig makeConfig(HashMap<String, String> options) {
         FilterConfig mock = EasyMock.createMock(FilterConfig.class);
-        String[] keys = {"userToken", "projectToken", "sitePrefixPath", "urlPattern", "query", "apiUrl", "defaultLang", "supportedLangs", "testMode", "testUrl", "useProxy", "debugMode", "originalUrlHeader", "originalQueryStringHeader", "strictHtmlCheck", "deleteInvalidClosingTag", "deleteInvalidUTF8", "connectTimeout", "readTimeout", "ignoreClasses", "devMode", "enableFlushBuffer"};
-        for (int i=0; i<keys.length; ++i) {
-            String key = keys[i];
-            String val = option.get(key);
-            val = val == null ? "" : val;
-            EasyMock.expect(mock.getInitParameter(key)).andReturn(val);
-        }
+        EasyMock.expect(mock.getInitParameter(EasyMock.anyString())).andAnswer(
+            new IAnswer<String>() {
+                @Override
+                public String answer() throws Throwable {
+                    String arg = (String) EasyMock.getCurrentArguments()[0];
+                    return options.get(arg);
+                }
+            }
+        ).anyTimes();
         EasyMock.replay(mock);
         return mock;
     }
