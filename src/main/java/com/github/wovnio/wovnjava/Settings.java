@@ -28,7 +28,6 @@ class Settings {
     boolean useProxy = false;
     String originalUrlHeader = "";
     String originalQueryStringHeader = "";
-    boolean strictHtmlCheck = false;
     final String version = VERSION;
     int connectTimeout = 1000;
     int readTimeout = 1000;
@@ -119,11 +118,6 @@ class Settings {
         p = config.getInitParameter("readTimeout");
         if (p != null && !p.isEmpty()) {
             this.readTimeout = getIntParameter(p);
-        }
-
-        p = config.getInitParameter("strictHtmlCheck");
-        if (p != null && !p.isEmpty()) {
-            this.strictHtmlCheck = getBoolParameter(p);
         }
 
         p = config.getInitParameter("devMode");
