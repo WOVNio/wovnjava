@@ -19,7 +19,6 @@ class Settings {
     boolean hasSitePrefixPath = false;
     String sitePrefixPath = "";
     String urlPattern = "path";
-    ArrayList<String> query;
     String snippetUrl = "//j.wovn.io/1";
     String apiUrl = DefaultApiUrl;
     String defaultLang = "en";
@@ -39,7 +38,6 @@ class Settings {
     Settings(FilterConfig config) throws ConfigurationError {
         super();
 
-        this.query = new ArrayList<String>();
         this.supportedLangs = new ArrayList<String>();
         this.ignoreClasses = new ArrayList<String>();
 
@@ -69,11 +67,6 @@ class Settings {
         p = config.getInitParameter("urlPattern");
         if (p != null && p.length() > 0) {
             this.urlPattern = p;
-        }
-
-        p = config.getInitParameter("query");
-        if (p != null && p.length() > 0) {
-            this.query = getArrayParameter(p);
         }
 
         p = config.getInitParameter("apiUrl");
@@ -243,9 +236,6 @@ class Settings {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(projectToken.getBytes());
         md.update(urlPattern.getBytes());
-        for (String q : query) {
-            md.update(q.getBytes());
-        }
         md.update(sitePrefixPath.getBytes());
         md.update(defaultLang.getBytes());
         for (String lang : supportedLangs) {
