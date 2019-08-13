@@ -211,7 +211,6 @@ public class SettingsTest extends TestCase {
 
     public void testSettingsWithoutSitePrefix() throws ConfigurationError {
         Settings s = TestUtil.makeSettings();
-        assertFalse(s.hasSitePrefixPath);
         assertEquals("", s.sitePrefixPath);
     }
 
@@ -219,7 +218,6 @@ public class SettingsTest extends TestCase {
         HashMap<String, String> option = new HashMap<String, String>();
         option.put("sitePrefixPath", "/global/");
         Settings s = TestUtil.makeSettings(option);
-        assertTrue(s.hasSitePrefixPath);
         assertEquals("/global", s.sitePrefixPath);
     }
 }
