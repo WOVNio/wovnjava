@@ -19,7 +19,6 @@ public class SettingsTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
             put("urlPattern", "query");
             put("query", "foo,bar");
             put("apiUrl", "https://example.com/v0/values");
@@ -35,7 +34,6 @@ public class SettingsTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "3elW2");
-            put("secretKey", "secret");
             put("urlPattern", "query");
             put("query", "foo,bar");
             put("apiUrl", "https://example.com/v0/values");
@@ -51,7 +49,6 @@ public class SettingsTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
             put("urlPattern", "query");
         }};
         return TestUtil.makeConfig(parameters);
@@ -64,7 +61,6 @@ public class SettingsTest extends TestCase {
 
         assertNotNull(s);
         assertEquals("", s.projectToken);
-        assertEquals("", s.secretKey);
         assertEquals("path", s.urlPattern);
         assertEquals(new ArrayList<String>(), s.query);
         assertEquals("https://wovn.global.ssl.fastly.net/v0/", s.apiUrl);
@@ -83,7 +79,6 @@ public class SettingsTest extends TestCase {
 
         assertNotNull(s);
         assertEquals("2Wle3", s.projectToken);
-        assertEquals("secret", s.secretKey);
         assertEquals("query", s.urlPattern);
         ArrayList<String> query = new ArrayList<String>();
         query.add("foo");
@@ -121,7 +116,6 @@ public class SettingsTest extends TestCase {
     public void testSettings__invalidDefaultLang() throws ConfigurationError {
         HashMap<String, String> parametersWithInvalidDefaultLang = new HashMap<String, String>() {{
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
             put("urlPattern", "query");
             put("supportedLangs", "en,ja");
             put("defaultLang", "INVALID");
@@ -138,7 +132,6 @@ public class SettingsTest extends TestCase {
     public void testSettings__invalidSupportedLangs() throws ConfigurationError {
         HashMap<String, String> parametersWithInvalidSupportedLangs = new HashMap<String, String>() {{
             put("projectToken", "2Wle3");
-            put("secretKey", "secret");
             put("urlPattern", "query");
             put("defaultLang", "en");
             put("supportedLangs", "en,japan,korean");
@@ -200,7 +193,6 @@ public class SettingsTest extends TestCase {
 
         assertNotNull(s);
         assertEquals("3elW2", s.projectToken);
-        assertEquals("secret", s.secretKey);
         assertEquals("query", s.urlPattern);
         ArrayList<String> query = new ArrayList<String>();
         query.add("foo");
