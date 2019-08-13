@@ -102,17 +102,6 @@ public class SettingsTest extends TestCase {
         assertEquals("query", s.urlPattern);
     }
 
-    public void testIsValidWithEmptyConfig() throws ConfigurationError {
-        FilterConfig mock = mockEmptyConfig();
-        Settings s = new Settings(mock);
-        assertFalse(s.isValid());
-    }
-    public void testIsValidWithValidConfig() throws ConfigurationError {
-        FilterConfig mock = mockValidConfig();
-        Settings s = new Settings(mock);
-        assertTrue(s.isValid());
-    }
-
     public void testSettings__invalidDefaultLang() throws ConfigurationError {
         HashMap<String, String> parametersWithInvalidDefaultLang = new HashMap<String, String>() {{
             put("projectToken", "2Wle3");
@@ -143,48 +132,6 @@ public class SettingsTest extends TestCase {
             exceptionThrown = true;
         }
         assertEquals(true, exceptionThrown);
-    }
-
-    public void testGetBoolParameter() {
-        assertTrue(Settings.getBoolParameter("on"));
-        assertTrue(Settings.getBoolParameter("true"));
-        assertTrue(Settings.getBoolParameter("1"));
-
-        assertFalse(Settings.getBoolParameter(null));
-        assertFalse(Settings.getBoolParameter(""));
-        assertFalse(Settings.getBoolParameter("0"));
-    }
-
-    public void testGetArrayParameterWithoutComma() {
-        ArrayList<String> expected = new ArrayList<String>();
-        expected.add("foo");
-        assertEquals(expected, Settings.getArrayParameter("foo"));
-    }
-    public void testGetArrayParameterWithComma() {
-        ArrayList<String> expected = new ArrayList<String>();
-        expected.add("foo");
-        expected.add("bar");
-        expected.add("baz");
-        assertEquals(expected, Settings.getArrayParameter("foo,bar,baz"));
-    }
-    public void testGetArrayParameterWithNull() {
-        assertNull(Settings.getArrayParameter(null));
-    }
-    public void testGetArrayParameterWithEmptyString() {
-        assertNull(Settings.getArrayParameter(""));
-    }
-
-    public void testGetIntParamterWithInvalidString() {
-        assertEquals(0, Settings.getIntParameter(null));
-        assertEquals(0, Settings.getIntParameter(""));
-        assertEquals(0, Settings.getIntParameter("a"));
-        assertEquals(0, Settings.getIntParameter("3.14"));
-    }
-    public void testGetIntParameter() {
-        assertEquals(0, Settings.getIntParameter("0"));
-        assertEquals(1, Settings.getIntParameter("1"));
-        assertEquals(2, Settings.getIntParameter("2"));
-        assertEquals(13, Settings.getIntParameter("13"));
     }
 
     public void testSettingsWithValidConfigMultipleToken() throws ConfigurationError {

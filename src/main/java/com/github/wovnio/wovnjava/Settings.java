@@ -1,9 +1,6 @@
 package com.github.wovnio.wovnjava;
 
-import org.jetbrains.annotations.Contract;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -13,232 +10,133 @@ import javax.xml.bind.DatatypeConverter;
 class Settings {
     public static final String VERSION = Version.readProjectVersion();
 
-    static final String DefaultApiUrl = "https://wovn.global.ssl.fastly.net/v0/";
+    static final int DefaultTimeout = 1000;
+    static final String DefaultApiUrlProduction  = "https://wovn.global.ssl.fastly.net/v0/";
+    static final String DefaultApiUrlDevelopment = "http://localhost:3001/v0/";
+    static final String DefaultSnippetUrlProduction  = "//j.wovn.io/1";
+    static final String DefaultSnippetUrlDevelopment = "//j.dev-wovn.io:3000/1";
 
-    String projectToken = "";
-    boolean hasSitePrefixPath = false;
-    String sitePrefixPath = "";
-    String urlPattern = "path";
-    ArrayList<String> query;
-    String snippetUrl = "//j.wovn.io/1";
-    String apiUrl = DefaultApiUrl;
-    String defaultLang = "en";
-    ArrayList<String> supportedLangs;
-    ArrayList<String> ignoreClasses;
-    boolean useProxy = false;
-    String originalUrlHeader = "";
-    String originalQueryStringHeader = "";
-    int connectTimeout = 1000;
-    int readTimeout = 1000;
-    boolean devMode = false;
-    boolean debugMode = false;
-    boolean enableFlushBuffer = false;
+    // Required settings
+    public final String projectToken;
+    public final String urlPattern;
+    public final String defaultLang;
+    public final ArrayList<String> supportedLangs;
+
+    // Optional settings
+    public final boolean devMode;
+    public final boolean debugMode;
+    public final boolean useProxy;
+    public final boolean enableFlushBuffer;
+
+    public final String sitePrefixPath;
+    public final String originalUrlHeader;
+    public final String originalQueryStringHeader;
+
+    public final ArrayList<String> ignoreClasses;
+
+    public final String snippetUrl;
+    public final String apiUrl;
+
+    public final int connectTimeout;
+    public final int readTimeout;
+
+    public final ArrayList<String> query = new ArrayList<String>(); // TODO REMOVE
 
     Settings(FilterConfig config) throws ConfigurationError {
-        super();
+        FilterConfigReader reader = new FilterConfigReader(config);
 
-        this.query = new ArrayList<String>();
-        this.supportedLangs = new ArrayList<String>();
-        this.ignoreClasses = new ArrayList<String>();
+        // Required settings
+        this.projectToken = verifyToken(reader.getStringParameter("userToken"), reader.getStringParameter("projectToken"));
+        this.urlPattern = verifyUrlPattern(reader.getStringParameter("urlPattern"));
+        this.defaultLang = verifyDefaultLang(reader.getStringParameter("defaultLang"));
+        this.supportedLangs = verifySupportedLangs(reader.getArrayParameter("supportedLangs"), this.defaultLang);
 
-        String p;
+        // Optional settings
+        this.sitePrefixPath = verifySitePrefixPath(reader.getStringParameter("sitePrefixPath"));
 
-        p = config.getInitParameter("userToken");
-        if (p != null && p.length() > 0) {
-            this.projectToken = p;
+        this.devMode = reader.getBoolParameterDefaultFalse("devMode");
+        this.debugMode = reader.getBoolParameterDefaultFalse("debugMode");
+        this.useProxy = reader.getBoolParameterDefaultFalse("useProxy");
+        this.enableFlushBuffer = reader.getBoolParameterDefaultFalse("enableFlushBuffer");
+
+        String defaultApiUrl = this.devMode ? DefaultApiUrlDevelopment : DefaultApiUrlProduction;
+        String declaredApiUrl = reader.getStringParameter("apiUrl");
+        this.apiUrl = declaredApiUrl.isEmpty() ? defaultApiUrl : declaredApiUrl;
+
+        this.snippetUrl = this.devMode ? DefaultSnippetUrlDevelopment : DefaultSnippetUrlProduction;
+
+        this.ignoreClasses = reader.getArrayParameter("ignoreClasses");
+
+        this.originalUrlHeader = reader.getStringParameter("originalUrlHeader");
+        this.originalQueryStringHeader = reader.getStringParameter("originalQueryStringHeader");
+
+        int declaredConnectTimeout = reader.getIntParameter("connectTimeout");
+        this.connectTimeout = declaredConnectTimeout > 0 ? declaredConnectTimeout : DefaultTimeout;
+
+        int declaredReadTimeout = reader.getIntParameter("readTimeout");
+        this.readTimeout = declaredReadTimeout > 0 ? declaredReadTimeout : DefaultTimeout;
+    }
+
+    private String verifyToken(String declaredUserToken, String declaredProjectToken) throws ConfigurationError {
+        String value = declaredProjectToken.isEmpty() ? declaredUserToken : declaredProjectToken;
+        if (value.isEmpty()) {
+            throw new ConfigurationError("Missing required configuration for \"projectToken\".");
+        } else if (value.length() < 5 || value.length() > 6) {
+            throw new ConfigurationError("Invalid configuration for \"projecToken\", must be 5 or 6 characters long.");
         }
+        return value;
+    }
 
-        p = config.getInitParameter("projectToken");
-        if (p != null && p.length() > 0) {
-            this.projectToken = p;
+    private String verifyUrlPattern(String value) throws ConfigurationError {
+        if (value.isEmpty()) {
+            throw new ConfigurationError("Missing required configuration for \"urlPattern\".");
         }
+        return value;
+    }
 
-        p = config.getInitParameter("sitePrefixPath");
-        if (p != null && p.length() > 0) {
-            this.hasSitePrefixPath = true;
-            if (!p.startsWith("/")) p = "/" + p;
-            if (p.endsWith("/")) {
-                this.sitePrefixPath = p.substring(0, p.length() - 1);
-            } else {
-                this.sitePrefixPath = p;
+    private String verifyDefaultLang(String value) throws ConfigurationError {
+        if (value.isEmpty()) {
+            throw new ConfigurationError("Missing required configuration for \"defaultLang\".");
+        }
+        String code = Lang.get(value).code;
+        if (code == null) {
+            throw new ConfigurationError("Invalid configuration for \"defaultLang\", must match a supported language code.");
+        }
+        return code;
+    }
+
+    private ArrayList<String> verifySupportedLangs(ArrayList<String> values, String defaultLangCode) throws ConfigurationError {
+        if (values.isEmpty()) {
+            throw new ConfigurationError("Missing required configuration for \"supportedLangs\".");
+        }
+        ArrayList<String> verifiedLangs = new ArrayList<String>();
+        String code;
+        for (String val : values) {
+            code = Lang.get(val).code;
+            if (code == null) {
+                throw new ConfigurationError("Invalid configuration for \"supportedLangs\", each value must match a supported language code.");
             }
+            verifiedLangs.add(code);
         }
-
-        p = config.getInitParameter("urlPattern");
-        if (p != null && p.length() > 0) {
-            this.urlPattern = p;
+        if (!verifiedLangs.contains(defaultLangCode)) {
+            verifiedLangs.add(defaultLangCode);
         }
-
-        p = config.getInitParameter("query");
-        if (p != null && p.length() > 0) {
-            this.query = getArrayParameter(p);
-        }
-
-        p = config.getInitParameter("apiUrl");
-        if (p != null && p.length() > 0) {
-            this.apiUrl = p;
-        }
-
-        p = config.getInitParameter("defaultLang");
-        if (p != null && p.length() > 0) {
-            this.defaultLang = p;
-        }
-
-        p = config.getInitParameter("supportedLangs");
-        if (p != null && p.length() > 0) {
-            this.supportedLangs = getArrayParameter(p);
-        }
-
-        p = config.getInitParameter("ignoreClasses");
-        if (p != null && p.length() > 0) {
-            this.ignoreClasses = getArrayParameter(p);
-        }
-
-        p = config.getInitParameter("useProxy");
-        if (p != null && p.length() > 0) {
-            this.useProxy = getBoolParameter(p);
-        }
-
-        p = config.getInitParameter("originalUrlHeader");
-        if (p != null && !p.isEmpty()) {
-            this.originalUrlHeader = p;
-        }
-
-        p = config.getInitParameter("originalQueryStringHeader");
-        if (p != null && !p.isEmpty()) {
-            this.originalQueryStringHeader = p;
-        }
-
-        p = config.getInitParameter("connectTimeout");
-        if (p != null && !p.isEmpty()) {
-            this.connectTimeout = getIntParameter(p);
-        }
-
-        p = config.getInitParameter("readTimeout");
-        if (p != null && !p.isEmpty()) {
-            this.readTimeout = getIntParameter(p);
-        }
-
-        p = config.getInitParameter("devMode");
-        if (p != null && !p.isEmpty()) {
-            this.devMode = getBoolParameter(p);
-        }
-
-        p = config.getInitParameter("debugMode");
-        if (p != null && !p.isEmpty()) {
-            this.debugMode = getBoolParameter(p);
-        }
-
-        p = config.getInitParameter("enableFlushBuffer");
-        if (p != null && !p.isEmpty()) {
-            this.enableFlushBuffer = getBoolParameter(p);
-        }
-
-        this.initialize();
+        return verifiedLangs;
     }
 
-    static int getIntParameter(String param) {
-        if (param == null || param.isEmpty()) {
-            return 0;
+    private String verifySitePrefixPath(String value) throws ConfigurationError {
+        if (!value.startsWith("/")) value = "/" + value;
+        if (value.endsWith("/")) {
+            return value.substring(0, value.length() - 1);
+        } else {
+            return value;
         }
-        int n;
-        try {
-            n = Integer.parseInt(param);
-        } catch (NumberFormatException e) {
-            Logger.log.error("NumberFormatException while parsing int parameter", e);
-            n = 0;
-        }
-        return n;
-    }
-
-    @Contract("null -> null")
-    static ArrayList<String> getArrayParameter(String param) {
-        if (param == null || param.length() == 0) {
-            return null;
-        }
-
-        param = param.replaceAll("^\\s+(.+)\\s+$", "$1");
-        String[] params = param.split("\\s*,\\s*");
-        ArrayList<String> al = new ArrayList<String>();
-        Collections.addAll(al, params);
-        return al;
-    }
-
-    @Contract("null -> false")
-    static boolean getBoolParameter(String param) {
-        if (param == null) {
-            return false;
-        }
-        param = param.toLowerCase();
-        return param.equals("on") || param.equals("true") || param.equals("1");
-    }
-
-    private void initialize() throws ConfigurationError {
-        if (Lang.get(this.defaultLang) == null) {
-            throw new ConfigurationError("Invalid language code for defaultLang: " + this.defaultLang);
-        }
-
-        for (String supportedLang : this.supportedLangs) {
-            if (Lang.get(supportedLang) == null) {
-                throw new ConfigurationError("Invalid language code for supportedLangs: " + supportedLang);
-            }
-        }
-
-        if (this.supportedLangs.size() == 0) {
-            this.supportedLangs.add(this.defaultLang);
-        }
-
-        if (this.devMode) {
-            this.snippetUrl = "//j.dev-wovn.io:3000/1";
-            if (this.apiUrl == DefaultApiUrl) {
-              this.apiUrl = "http://localhost:3001/v0/";
-            }
-        }
-    }
-
-    boolean isValid() {
-        boolean valid = true;
-        ArrayList<String> errors = new ArrayList<String>();
-
-        if (projectToken == null || projectToken.length() < 5 || projectToken.length() > 6) {
-            valid = false;
-            errors.add("Project token is not valid: " + projectToken);
-        }
-        if (urlPattern == null || urlPattern.length() == 0) {
-            valid = false;
-            errors.add("Url pattern is not configured.");
-        }
-        if (apiUrl == null || apiUrl.length() == 0) {
-            valid = false;
-            errors.add("API URL is not configured.");
-        }
-        if (defaultLang == null || defaultLang.length() == 0) {
-            valid = false;
-            errors.add("Default lang is not configured.");
-        }
-        if (supportedLangs.size() < 1) {
-            valid = false;
-            errors.add("Supported langs is not configured.");
-        }
-        if (hasSitePrefixPath && urlPattern != "path") {
-            valid = false;
-            errors.add("sitePrefixPath must be used together with urlPattern=path.");
-        }
-
-        if (errors.size() > 0) {
-            Logger.log.error("Settings is invalid: " + errors.toString());
-        }
-
-        return valid;
     }
 
     String hash() throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(projectToken.getBytes());
         md.update(urlPattern.getBytes());
-        for (String q : query) {
-            md.update(q.getBytes());
-        }
         md.update(sitePrefixPath.getBytes());
         md.update(defaultLang.getBytes());
         for (String lang : supportedLangs) {
