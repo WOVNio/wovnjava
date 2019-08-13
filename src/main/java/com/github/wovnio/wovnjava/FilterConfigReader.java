@@ -34,7 +34,7 @@ class FilterConfigReader {
         return n;
     }
 
-    boolean getBoolParameter(String paramName) {
+    boolean getBoolParameterDefaultFalse(String paramName) {
         String param = this.config.getInitParameter(paramName);
         if (param == null) {
             return false;

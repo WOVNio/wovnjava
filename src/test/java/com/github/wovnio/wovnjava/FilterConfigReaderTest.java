@@ -50,7 +50,7 @@ public class FilterConfigReaderTest extends TestCase {
         assertEquals(true, errorOnString);
     }
 
-    public void testGetBoolParameter() {
+    public void testGetBoolParameterDefaultFalse() {
         FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
             put("on", "on");
             put("true", "true");
@@ -60,14 +60,14 @@ public class FilterConfigReaderTest extends TestCase {
         }});
         FilterConfigReader reader = new FilterConfigReader(config);
 
-        assertEquals(true, reader.getBoolParameter("on"));
-        assertEquals(true, reader.getBoolParameter("true"));
-        assertEquals(true, reader.getBoolParameter("1"));
+        assertEquals(true, reader.getBoolParameterDefaultFalse("on"));
+        assertEquals(true, reader.getBoolParameterDefaultFalse("true"));
+        assertEquals(true, reader.getBoolParameterDefaultFalse("1"));
 
-        assertEquals(false, reader.getBoolParameter(null));
-        assertEquals(false, reader.getBoolParameter("(empty)"));
-        assertEquals(false, reader.getBoolParameter("0"));
-        assertEquals(false, reader.getBoolParameter("hoge"));
+        assertEquals(false, reader.getBoolParameterDefaultFalse(null));
+        assertEquals(false, reader.getBoolParameterDefaultFalse("(empty)"));
+        assertEquals(false, reader.getBoolParameterDefaultFalse("0"));
+        assertEquals(false, reader.getBoolParameterDefaultFalse("hoge"));
     }
 
     public void testGetArrayParameter() {
