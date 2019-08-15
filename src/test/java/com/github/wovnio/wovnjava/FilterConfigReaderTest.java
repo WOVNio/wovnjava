@@ -8,30 +8,43 @@ import javax.servlet.FilterConfig;
 public class FilterConfigReaderTest extends TestCase {
     public void testGetStringParameter() {
         FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
-            put("(empty)", "");
+            put("empty-string", "");
             put("projectToken", "123456");
             put("urlPattern", " path  ");
         }});
         FilterConfigReader reader = new FilterConfigReader(config);
 
-        assertEquals("", reader.getStringParameter(null));
+        assertEquals(null, reader.getStringParameter(null));
+        assertEquals(null, reader.getStringParameter("not-set"));
+        assertEquals("", reader.getStringParameter("empty-string"));
         assertEquals("123456", reader.getStringParameter("projectToken"));
         assertEquals("path", reader.getStringParameter("urlPattern"));
     }
 
     public void testGetIntParameter() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
-            put("(empty)", "");
+            put("empty-string", "");
             put("0", "0");
             put("876", "876");
+            put("-1", "-1");
             put("float", "1.6");
             put("string", "hoge");
         }});
         FilterConfigReader reader = new FilterConfigReader(config);
 
         assertEquals(0, reader.getIntParameter(null));
+        assertEquals(0, reader.getIntParameter("not-set"));
         assertEquals(0, reader.getIntParameter("0"));
         assertEquals(876, reader.getIntParameter("876"));
+        assertEquals(-1, reader.getIntParameter("-1"));
+
+        boolean errorOnEmptyString = false;
+        try {
+            reader.getIntParameter("empty-string");
+        } catch (ConfigurationError e) {
+            errorOnEmptyString = true;
+        }
+        assertEquals(true, errorOnEmptyString);
 
         boolean errorOnFloat = false;
         try {
@@ -56,7 +69,7 @@ public class FilterConfigReaderTest extends TestCase {
             put("true", "true");
             put("1", "1");
             put("0", "0");
-            put("(empty)", "");
+            put("empty-string", "");
         }});
         FilterConfigReader reader = new FilterConfigReader(config);
 
@@ -65,14 +78,14 @@ public class FilterConfigReaderTest extends TestCase {
         assertEquals(true, reader.getBoolParameterDefaultFalse("1"));
 
         assertEquals(false, reader.getBoolParameterDefaultFalse(null));
-        assertEquals(false, reader.getBoolParameterDefaultFalse("(empty)"));
+        assertEquals(false, reader.getBoolParameterDefaultFalse("not-set"));
+        assertEquals(false, reader.getBoolParameterDefaultFalse("empty-string"));
         assertEquals(false, reader.getBoolParameterDefaultFalse("0"));
-        assertEquals(false, reader.getBoolParameterDefaultFalse("hoge"));
     }
 
     public void testGetArrayParameter() {
         FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
-            put("(empty)", "");
+            put("empty-string", "");
             put("first", "one");
             put("second", "one,two");
             put("third", "  one,two ,  three");
@@ -81,7 +94,8 @@ public class FilterConfigReaderTest extends TestCase {
 
         ArrayList<String> al = new ArrayList<String>();
         assertEquals(al, reader.getArrayParameter(null));
-        assertEquals(al, reader.getArrayParameter("(empty)"));
+        assertEquals(al, reader.getArrayParameter("not-set"));
+        assertEquals(al, reader.getArrayParameter("empty-string"));
 
         al.add("one");
         assertEquals(al, reader.getArrayParameter("first"));

@@ -14,7 +14,7 @@ class FilterConfigReader {
     String getStringParameter(String paramName) {
         String param = this.config.getInitParameter(paramName);
         if (param == null) {
-            return "";
+            return null;
         } else {
             return param.trim();
         }
@@ -22,7 +22,7 @@ class FilterConfigReader {
 
     int getIntParameter(String paramName) throws ConfigurationError {
         String param = this.config.getInitParameter(paramName);
-        if (param == null || param.isEmpty()) {
+        if (param == null) {
             return 0;
         }
         int n;
@@ -44,9 +44,9 @@ class FilterConfigReader {
     }
 
     ArrayList<String> getArrayParameter(String paramName) {
-        ArrayList<String> al = new ArrayList<String>();
         String param = this.getStringParameter(paramName);
-        if (!param.isEmpty()) {
+        ArrayList<String> al = new ArrayList<String>();
+        if (param != null && !param.isEmpty()) {
             String[] params = param.split("\\s*,\\s*");
             Collections.addAll(al, params);
         }
