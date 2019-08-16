@@ -78,7 +78,6 @@ WOVN.io Java ライブラリに設定可能なパラメータは以下の通り�
 ------------------------- | ------------ | ------------
 projectToken              | yes          | ''
 urlPattern                | yes          | 'path'
-query                     |              | ''
 defaultLang               | yes          | 'en'
 useProxy                  |              | 'false'
 debugMode                 |              | '0'

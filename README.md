@@ -79,7 +79,6 @@ Parameter Name            | Required | Default Setting
 ------------------------- | -------- | ------------
 projectToken              | yes      | ''
 urlPattern                | yes      | 'path'
-query                     |          | ''
 defaultLang               | yes      | 'en'
 useProxy                  |          | 'false'
 debugMode                 |          | 'false'
@@ -106,22 +105,6 @@ parameters  | Translated page's URL           | Notes
 ※ The previously mentioned URL's are examples of the following URL translated via the WOVN.io library. As can be seen, depending on the URL Parameter the url will change.
 
     https://wovn.io/contact
-
-### 2.4. query
-
-When WOVN.io identifies a page for translation, it ignores the query parameter. If you want to include a query parameter within the URL, you must set it using the "query" parameter. (You must set this on WOVN.io's side)
-
-    https://wovn.io/ja/contact?os=mac&keyboard=us
-
-If the defualt_lang is 'en', and the query is \[\] (unset), the above URL will be modified into the following URL to search for the page's translation.
-
-    https://wovn.io/contact
-
-If the default_lang is 'en', and the query is set to ['os'], the above URL will be modified into the following URL to search for the page's translation.
-
-    https://wovn.io/contact?os=mac
-
-If you want to set multiple queries, you can separate them via a comma.
 
 ### 2.5. defaultLang
 
