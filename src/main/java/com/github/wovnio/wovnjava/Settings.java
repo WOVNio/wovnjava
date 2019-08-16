@@ -120,6 +120,7 @@ class Settings {
         if (value == null || value.isEmpty()) {
             return "";
         }
+        value = value.toLowerCase();
         if (!value.startsWith("/")) value = "/" + value;
         if (value.endsWith("/")) {
             return value.substring(0, value.length() - 1);
