@@ -39,8 +39,6 @@ class Settings {
     public final int connectTimeout;
     public final int readTimeout;
 
-    public final ArrayList<String> query = new ArrayList<String>(); // TODO REMOVE
-
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
 

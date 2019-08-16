@@ -111,29 +111,8 @@ class Headers {
         }
         this.url += this.removeLang(this.query, this.langCode());
         this.url = this.url.length() == 0 ? "/" : this.url;
-        if (this.settings.query.size() > 0) {
-            ArrayList<String> queryVals = new ArrayList<String>();
-            for (String q : this.settings.query) {
-                Pattern p = Pattern.compile("(^|&)(" + q + "[^&]+)(&|$)");
-                Matcher m = p.matcher(this.query);
-                if (m.find() && m.group(2) != null && m.group(2).length() > 0) {
-                    queryVals.add(m.group(2));
-                }
-            }
-            if (queryVals.isEmpty()) {
-                // ignore all query parameters.
-                this.query = "";
-            } else {
-                this.query = "?";
-                Collections.sort(queryVals);
-                for (String q : queryVals) {
-                    this.query += q + "&";
-                }
-                // remove last ampersand.
-                this.query = Pattern.compile("&$").matcher(this.query).replaceFirst("");
-            }
-        } else {
-            this.query = "";
+        if (!this.query.isEmpty() && !this.query.startsWith("?")) {
+            this.query = "?" + this.query;
         }
         this.query = this.removeLang(this.query, this.langCode());
         this.pathNameKeepTrailingSlash = this.pathName;

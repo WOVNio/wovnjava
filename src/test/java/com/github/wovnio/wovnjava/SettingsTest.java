@@ -20,7 +20,6 @@ public class SettingsTest extends TestCase {
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
             put("urlPattern", "query");
-            put("query", "foo,bar");
             put("apiUrl", "https://example.com/v0/values");
             put("defaultLang", "ja");
             put("supportedLangs", "en,ja");
@@ -35,7 +34,6 @@ public class SettingsTest extends TestCase {
             put("userToken", "2Wle3");
             put("projectToken", "3elW2");
             put("urlPattern", "query");
-            put("query", "foo,bar");
             put("apiUrl", "https://example.com/v0/values");
             put("defaultLang", "ja");
             put("supportedLangs", "en,ja");
@@ -62,7 +60,6 @@ public class SettingsTest extends TestCase {
         assertNotNull(s);
         assertEquals("", s.projectToken);
         assertEquals("path", s.urlPattern);
-        assertEquals(new ArrayList<String>(), s.query);
         assertEquals("https://wovn.global.ssl.fastly.net/v0/", s.apiUrl);
         assertEquals("en", s.defaultLang);
         ArrayList<String> supportedLangs = new ArrayList<String>();
@@ -80,10 +77,6 @@ public class SettingsTest extends TestCase {
         assertNotNull(s);
         assertEquals("2Wle3", s.projectToken);
         assertEquals("query", s.urlPattern);
-        ArrayList<String> query = new ArrayList<String>();
-        query.add("foo");
-        query.add("bar");
-        assertEquals(query, s.query);
         assertEquals("https://example.com/v0/values", s.apiUrl);
         assertEquals("ja", s.defaultLang);
         ArrayList<String> supportedLangs = new ArrayList<String>();
@@ -141,10 +134,6 @@ public class SettingsTest extends TestCase {
         assertNotNull(s);
         assertEquals("3elW2", s.projectToken);
         assertEquals("query", s.urlPattern);
-        ArrayList<String> query = new ArrayList<String>();
-        query.add("foo");
-        query.add("bar");
-        assertEquals(query, s.query);
         assertEquals("https://example.com/v0/values", s.apiUrl);
         assertEquals("ja", s.defaultLang);
         ArrayList<String> supportedLangs = new ArrayList<String>();

@@ -34,31 +34,10 @@ public class HeadersTest extends TestCase {
         return TestUtil.makeConfig(parameters);
     }
 
-    private static FilterConfig mockConfigQueryParameter() {
-        HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "2Wle3");
-            put("urlPattern", "query");
-            put("query", "abc");
-        }};
-        return TestUtil.makeConfig(parameters);
-    }
-
-    private static FilterConfig mockConfigQueryParameterAAA() {
-        HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "2Wle3");
-            put("urlPattern", "query");
-            put("query", "AAA");
-        }};
-        return TestUtil.makeConfig(parameters);
-    }
-
     private static FilterConfig mockConfigOriginalHeaders() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("userToken", "2Wle3");
             put("projectToken", "2Wle3");
-            put("query", "baz");
             put("originalUrlHeader", "REDIRECT_URL");
             put("originalQueryStringHeader", "REDIRECT_QUERY_STRING");
         }};
@@ -173,7 +152,7 @@ public class HeadersTest extends TestCase {
         assertNotNull(h);
     }
 
-    public void testHeadersWithoutQueryParameter() throws ConfigurationError {
+    public void testHeadersWithQueryParameters() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestQueryParameter();
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -182,19 +161,7 @@ public class HeadersTest extends TestCase {
         Headers h = new Headers(mockRequest, s, ulph);
 
         assertNotNull(h);
-        assertEquals("", h.query);
-    }
-
-    public void testHeadersWithQueryParameter() throws ConfigurationError {
-        HttpServletRequest mockRequest = mockRequestQueryParameter();
-        FilterConfig mockConfig = mockConfigQueryParameter();
-
-        Settings s = new Settings(mockConfig);
-        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
-        Headers h = new Headers(mockRequest, s, ulph);
-
-        assertNotNull(h);
-        assertEquals("?abc=123", h.query);
+        assertEquals("?def=456&abc=123", h.query);
     }
 
     public void testGetRequestLangPath() throws ConfigurationError {
@@ -259,17 +226,6 @@ public class HeadersTest extends TestCase {
         Headers h = new Headers(mockRequest, s, ulph);
 
         assertEquals("example.com/test", h.removeLang("example.com/test?wovn=ja", null));
-    }
-
-    public void testNotMatchQuery() throws ConfigurationError {
-        HttpServletRequest mockRequest = mockRequestQueryParameter();
-        FilterConfig mockConfig = mockConfigQueryParameterAAA();
-
-        Settings s = new Settings(mockConfig);
-        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
-        Headers h = new Headers(mockRequest, s, ulph);
-
-        assertEquals("", h.query);
     }
 
     public void testServerPort() throws ConfigurationError {
