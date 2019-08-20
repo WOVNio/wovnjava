@@ -34,6 +34,17 @@ public class TestUtil {
         return mock;
     }
 
+    public static FilterConfig makeConfigWithValidBase(HashMap<String, String> options) {
+        HashMap<String, String> settings = new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("urlPattern", "path");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja");
+        }};
+        settings.putAll(options);
+        return TestUtil.makeConfig(settings);
+    }
+
     public static Settings makeSettings() throws ConfigurationError {
         return makeSettings(emptyOption);
     }
