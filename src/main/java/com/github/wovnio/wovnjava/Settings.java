@@ -10,6 +10,7 @@ import javax.xml.bind.DatatypeConverter;
 class Settings {
     public static final String VERSION = Version.readProjectVersion();
 
+    // Default configuration values
     public static final int DefaultTimeout = 1000;
     public static final String DefaultApiUrlProduction  = "https://wovn.global.ssl.fastly.net/v0/";
     public static final String DefaultApiUrlDevelopment = "http://localhost:3001/v0/";
@@ -80,6 +81,8 @@ class Settings {
     }
 
     private String verifyUrlPattern(String value) throws ConfigurationError {
+        // Valid value for `urlPattern` is checked in UrlLanguagePatternHandlerFactory,
+        // so here we only assert that some string is declared for this setting.
         if (value == null || value.isEmpty()) {
             throw new ConfigurationError("Missing required configuration for \"urlPattern\".");
         }
