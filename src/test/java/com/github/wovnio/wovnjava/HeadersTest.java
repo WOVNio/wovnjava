@@ -12,36 +12,29 @@ public class HeadersTest extends TestCase {
 
     private static FilterConfig mockConfigPath() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "2Wle3");
+            put("urlPattern", "path");
         }};
-        return TestUtil.makeConfig(parameters);
+        return TestUtil.makeConfigWithValidDefaults(parameters);
     }
     private static FilterConfig mockConfigSubdomain() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "2Wle3");
             put("urlPattern", "subdomain");
         }};
-        return TestUtil.makeConfig(parameters);
+        return TestUtil.makeConfigWithValidDefaults(parameters);
     }
     private static FilterConfig mockConfigQuery() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "2Wle3");
             put("urlPattern", "query");
         }};
-        return TestUtil.makeConfig(parameters);
+        return TestUtil.makeConfigWithValidDefaults(parameters);
     }
 
     private static FilterConfig mockConfigOriginalHeaders() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "2Wle3");
             put("originalUrlHeader", "REDIRECT_URL");
             put("originalQueryStringHeader", "REDIRECT_QUERY_STRING");
         }};
-        return TestUtil.makeConfig(parameters);
+        return TestUtil.makeConfigWithValidDefaults(parameters);
     }
 
     private static HttpServletRequest mockRequestPath() {
