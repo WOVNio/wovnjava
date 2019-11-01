@@ -119,6 +119,8 @@ class Settings {
         return verifiedLangs;
     }
 
+    // Empty string means `sitePrefixPath` is not used (default)
+    // If set, `sitePrefixPath` must start with "/", and must not end with "/"
     private String normalizeSitePrefixPath(String value) throws ConfigurationError {
         if (value == null || value.isEmpty()) {
             return "";
