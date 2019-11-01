@@ -28,7 +28,7 @@ public class FilterConfigReaderTest extends TestCase {
             put("876", "876");
             put("-1", "-1");
             put("float", "1.6");
-            put("string", "hoge");
+            put("text", "hoge");
         }});
         FilterConfigReader reader = new FilterConfigReader(config);
 
@@ -54,13 +54,13 @@ public class FilterConfigReaderTest extends TestCase {
         }
         assertEquals(true, errorOnFloat);
 
-        boolean errorOnString = false;
+        boolean errorOnText = false;
         try {
-            reader.getIntParameter("string");
+            reader.getIntParameter("text");
         } catch (ConfigurationError e) {
-            errorOnString = true;
+            errorOnText = true;
         }
-        assertEquals(true, errorOnString);
+        assertEquals(true, errorOnText);
     }
 
     public void testGetBoolParameterDefaultFalse() {
