@@ -67,28 +67,23 @@ public class WovnHttpServletRequestTest extends TestCase {
 
     private static FilterConfig mockConfigPath() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "2Wle3");
+            put("urlPattern", "path");
         }};
-        return TestUtil.makeConfig(parameters);
+        return TestUtil.makeConfigWithValidBase(parameters);
     }
 
     private static FilterConfig mockConfigSubDomain() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "2Wle3");
             put("urlPattern", "subdomain");
         }};
-        return TestUtil.makeConfig(parameters);
+        return TestUtil.makeConfigWithValidBase(parameters);
     }
 
     private static FilterConfig mockConfigQuery() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "2Wle3");
             put("urlPattern", "query");
         }};
-        return TestUtil.makeConfig(parameters);
+        return TestUtil.makeConfigWithValidBase(parameters);
     }
 
     public void testWovnHttpServletRequest() throws ConfigurationError {
