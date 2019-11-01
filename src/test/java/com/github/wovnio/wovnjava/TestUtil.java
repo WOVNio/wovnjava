@@ -34,6 +34,10 @@ public class TestUtil {
         return mock;
     }
 
+    public static FilterConfig makeConfigWithValidDefaults() {
+        return makeConfigWithValidDefaults(emptyOption);
+    }
+
     public static FilterConfig makeConfigWithValidDefaults(HashMap<String, String> options) {
         HashMap<String, String> settings = new HashMap<String, String>() {{
             put("projectToken", "123456");
@@ -49,8 +53,8 @@ public class TestUtil {
         return makeSettings(emptyOption);
     }
 
-    public static Settings makeSettings(HashMap<String, String> option) throws ConfigurationError {
-        return new Settings(makeConfig(option));
+    public static Settings makeSettings(HashMap<String, String> options) throws ConfigurationError {
+        return new Settings(makeConfigWithValidDefaults(options));
     }
 
     public static HttpServletRequest mockRequestPath(String path) {
