@@ -125,7 +125,7 @@ public class TestUtil {
         RequestDispatcherMock dispatcher = new RequestDispatcherMock();
         HttpServletRequest req = mockRequestPath(path, forwardPath, dispatcher);
         HttpServletResponse res = mockResponse(contentType, "", isPreviouslyProcessed);
-        FilterConfig filterConfig = makeConfig(option);
+        FilterConfig filterConfig = makeConfigWithValidDefaults(option);
         FilterChainMock filterChain = new FilterChainMock();
         WovnServletFilter filter = new WovnServletFilter();
         filter.init(filterConfig);
