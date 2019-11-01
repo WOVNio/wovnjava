@@ -69,21 +69,21 @@ public class WovnHttpServletRequestTest extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("urlPattern", "path");
         }};
-        return TestUtil.makeConfigWithValidBase(parameters);
+        return TestUtil.makeConfigWithValidDefaults(parameters);
     }
 
     private static FilterConfig mockConfigSubDomain() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("urlPattern", "subdomain");
         }};
-        return TestUtil.makeConfigWithValidBase(parameters);
+        return TestUtil.makeConfigWithValidDefaults(parameters);
     }
 
     private static FilterConfig mockConfigQuery() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("urlPattern", "query");
         }};
-        return TestUtil.makeConfigWithValidBase(parameters);
+        return TestUtil.makeConfigWithValidDefaults(parameters);
     }
 
     public void testWovnHttpServletRequest() throws ConfigurationError {

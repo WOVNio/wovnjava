@@ -178,14 +178,14 @@ public class SettingsTest extends TestCase {
     }
 
     public void testSettings__ConfigWithValidBase__DoesNotRaiseError() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
         }});
         Settings s = new Settings(config);
         assertEquals(true, true); // no error
     }
 
     public void testBooleanSettings__CorrectlyIdentifyTrue() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("devMode", "true");
             put("debugMode", "on");
             put("useProxy", "1");
@@ -199,7 +199,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testSitePrefixPath__DeclareEmptyString__UseEmptyString() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("sitePrefixPath", "");
         }});
         Settings s = new Settings(config);
@@ -207,7 +207,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testSitePrefixPath__DeclareEmptySlash__UseEmptyString() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("sitePrefixPath", "/");
         }});
         Settings s = new Settings(config);
@@ -215,7 +215,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testSitePrefixPath__DeclareStringWithoutSlashes() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("sitePrefixPath", "global");
         }});
         Settings s = new Settings(config);
@@ -223,7 +223,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testSitePrefixPath__DeclareStringWithLeadingSlash() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("sitePrefixPath", "/global");
         }});
         Settings s = new Settings(config);
@@ -231,7 +231,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testSitePrefixPath__DeclareStringWithTrailingSlash() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("sitePrefixPath", "global/");
         }});
         Settings s = new Settings(config);
@@ -239,7 +239,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testSitePrefixPath__DeclareStringWithLeadingAndTrailingSlash() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("sitePrefixPath", "/global/");
         }});
         Settings s = new Settings(config);
@@ -247,7 +247,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testSitePrefixPath__DeclareDeepPath() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("sitePrefixPath", "deep/pre/fix");
         }});
         Settings s = new Settings(config);
@@ -255,7 +255,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testApiUrl__ProductionMode__DefaultValue() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("devMode", "false");
         }});
         Settings s = new Settings(config);
@@ -263,7 +263,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testApiUrl__ProductionMode__OverrideValue() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("devMode", "false");
             put("apiUrl", "http://test.test");
         }});
@@ -272,7 +272,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testApiUrl__DevelopmentMode__DefaultValue() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("devMode", "true");
         }});
         Settings s = new Settings(config);
@@ -280,7 +280,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testApiUrl__DevelopmentMode__OverrideValue() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("devMode", "true");
             put("apiUrl", "http://test.test");
         }});
@@ -289,7 +289,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testSnippetUrl__ProductionMode__DefaultValue() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("devMode", "false");
         }});
         Settings s = new Settings(config);
@@ -297,7 +297,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testSnippetUrl__DevelopmentMode__DefaultValue() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("devMode", "true");
         }});
         Settings s = new Settings(config);
@@ -305,7 +305,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testIgnoreClasses__DeclareEmptyString__UseDefaultEmptyArray() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("ignoreClasses", "");
         }});
         Settings s = new Settings(config);
@@ -314,7 +314,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testIgnoreClasses__DeclareSimpleString() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("ignoreClasses", "ignore-me");
         }});
         Settings s = new Settings(config);
@@ -324,7 +324,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testIgnoreClasses__DeclareCommaSeparatedStrings() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("ignoreClasses", "ignore-me,svgicon,user-name");
         }});
         Settings s = new Settings(config);
@@ -336,7 +336,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testOriginalUrlHeader__AcceptSetting() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("originalUrlHeader", "X-Netflix-Original-Url");
         }});
         Settings s = new Settings(config);
@@ -344,7 +344,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testOriginalQueryStringHeader__AcceptSetting() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("originalQueryStringHeader", "X-Netflix-Original-Query-String");
         }});
         Settings s = new Settings(config);
@@ -352,7 +352,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testTimeouts__ValidPositiveInteger__AcceptSetting() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("connectTimeout", "1500");
             put("readTimeout", "1");
         }});
@@ -362,7 +362,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testTimeouts__InvalidNumberRange__UseDefaultValue() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("connectTimeout", "-20");
             put("readTimeout", "0");
         }});
@@ -372,7 +372,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testConnectTimeout__InvalidInteger__ThrowError() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("connectTimeout", "hoge");
         }});
         boolean errorThrown = false;
@@ -385,7 +385,7 @@ public class SettingsTest extends TestCase {
     }
 
     public void testReadTimeout__InvalidInteger__ThrowError() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidBase(new HashMap<String, String>() {{
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("readTimeout", "");
         }});
         boolean errorThrown = false;

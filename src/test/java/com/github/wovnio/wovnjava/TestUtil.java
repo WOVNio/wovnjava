@@ -34,7 +34,7 @@ public class TestUtil {
         return mock;
     }
 
-    public static FilterConfig makeConfigWithValidBase(HashMap<String, String> options) {
+    public static FilterConfig makeConfigWithValidDefaults(HashMap<String, String> options) {
         HashMap<String, String> settings = new HashMap<String, String>() {{
             put("projectToken", "123456");
             put("urlPattern", "path");

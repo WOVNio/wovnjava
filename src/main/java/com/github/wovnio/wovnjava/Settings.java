@@ -71,7 +71,7 @@ class Settings {
     }
 
     private String verifyToken(String declaredUserToken, String declaredProjectToken) throws ConfigurationError {
-        String value = declaredProjectToken != null ? declaredProjectToken : declaredUserToken;
+        String value = declaredProjectToken == null ? declaredUserToken : declaredProjectToken;
         if (value == null || value.isEmpty()) {
             throw new ConfigurationError("Missing required configuration for \"projectToken\".");
         } else if (value.length() < 5 || value.length() > 6) {
