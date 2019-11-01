@@ -49,6 +49,7 @@ public class ApiTest extends TestCase {
             put("projectToken", "token0");
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
+            put("urlPattern", "path");
         }});
         UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
 
