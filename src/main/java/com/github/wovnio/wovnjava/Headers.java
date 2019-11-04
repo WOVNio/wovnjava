@@ -192,12 +192,6 @@ class Headers {
         }
         return locationProtocol + "://" + subdomainLangCode + host + sitePrefixPath + pathLangCode + path + queryLangCode;
     }
-    /**
-     * @return String Returns request URL without any language code
-     */
-    String getUrlWithoutLanguageCode() {
-        return this.protocol + "://" + this.url;
-    }
 
     String removeLang(String uri, String lang) {
         if (lang == null || lang.length() == 0) {
