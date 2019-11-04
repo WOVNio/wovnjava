@@ -137,6 +137,22 @@ public class SettingsTest extends TestCase {
         assertEquals(true, errorThrown);
     }
 
+    public void testRequiredSettings__SupportedLangDeclaredMultipleTimes__throwError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("urlPattern", "path");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,ja");
+        }});
+        boolean errorThrown = false;
+        try {
+            Settings s = new Settings(config);
+        } catch (ConfigurationError e) {
+            errorThrown = true;
+        }
+        assertEquals(true, errorThrown);
+    }
+
     public void testRequiredSettings__LegacyUserTokenDeclared__SetProjectTokenAsUserToken() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
             put("userToken", "98765");

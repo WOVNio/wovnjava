@@ -111,6 +111,9 @@ class Settings {
             if (lang == null) {
                 throw new ConfigurationError("Invalid configuration for \"supportedLangs\", each value must match a supported language code.");
             }
+            if (verifiedLangs.contains(lang.code)) {
+                throw new ConfigurationError("Invalid configuration for \"supportedLangs\", each language must only be specified once.");
+            }
             verifiedLangs.add(lang.code);
         }
         if (!verifiedLangs.contains(defaultLangCode)) {
