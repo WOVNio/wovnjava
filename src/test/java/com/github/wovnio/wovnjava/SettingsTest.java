@@ -2,213 +2,398 @@ package com.github.wovnio.wovnjava;
 
 import junit.framework.TestCase;
 
-import org.easymock.EasyMock;
-
 import java.util.HashMap;
 import java.util.ArrayList;
 
 import javax.servlet.FilterConfig;
 
 public class SettingsTest extends TestCase {
-
-    private static FilterConfig mockEmptyConfig() {
-        return TestUtil.makeConfig();
-    }
-
-    private static FilterConfig mockValidConfig() {
-        HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "2Wle3");
-            put("urlPattern", "query");
-            put("apiUrl", "https://example.com/v0/values");
-            put("defaultLang", "ja");
+    public void testDefaultSettings__MinimalConfiguration__DefaultValuesOK() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("urlPattern", "path");
+            put("defaultLang", "en");
             put("supportedLangs", "en,ja");
-            put("originalUrlHeader", "REDIRECT_URL");
-            put("originalQueryStringHeader", "REDIRECT_QUERY_STRING");
-        }};
-        return TestUtil.makeConfig(parameters);
-    }
+        }});
+        Settings s = new Settings(config);
 
-    private static FilterConfig mockValidConfigMultipleToken() {
-        HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "3elW2");
-            put("urlPattern", "query");
-            put("apiUrl", "https://example.com/v0/values");
-            put("defaultLang", "ja");
-            put("supportedLangs", "en,ja");
-            put("originalUrlHeader", "REDIRECT_URL");
-            put("originalQueryStringHeader", "REDIRECT_QUERY_STRING");
-        }};
-        return TestUtil.makeConfig(parameters);
-    }
-
-    private static FilterConfig mockQueryConfig() {
-        HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("userToken", "2Wle3");
-            put("projectToken", "2Wle3");
-            put("urlPattern", "query");
-        }};
-        return TestUtil.makeConfig(parameters);
-    }
-
-    // urlPattern is "path".
-    public void testSettingsWithEmptyConfig() throws ConfigurationError {
-        FilterConfig mock = mockEmptyConfig();
-        Settings s = new Settings(mock);
-
-        assertNotNull(s);
-        assertEquals("", s.projectToken);
+        assertEquals("123456", s.projectToken);
         assertEquals("path", s.urlPattern);
-        assertEquals("https://wovn.global.ssl.fastly.net/v0/", s.apiUrl);
         assertEquals("en", s.defaultLang);
-        ArrayList<String> supportedLangs = new ArrayList<String>();
-        supportedLangs.add("en");
-        assertEquals(supportedLangs, s.supportedLangs);
 
+        ArrayList<String> expectedSupportedLangs = new ArrayList<String>();
+        expectedSupportedLangs.add("en");
+        expectedSupportedLangs.add("ja");
+        assertEquals(expectedSupportedLangs, s.supportedLangs);
+
+        assertEquals(false, s.devMode);
+        assertEquals(false, s.debugMode);
+        assertEquals(false, s.useProxy);
+        assertEquals(false, s.enableFlushBuffer);
+
+        assertEquals("", s.sitePrefixPath);
         assertEquals("", s.originalUrlHeader);
         assertEquals("", s.originalQueryStringHeader);
-    }
-    // urlPattern is "subdomain".
-    public void testSettingsWithValidConfig() throws ConfigurationError {
-        FilterConfig mock = mockValidConfig();
-        Settings s = new Settings(mock);
 
-        assertNotNull(s);
-        assertEquals("2Wle3", s.projectToken);
-        assertEquals("query", s.urlPattern);
-        assertEquals("https://example.com/v0/values", s.apiUrl);
-        assertEquals("ja", s.defaultLang);
-        ArrayList<String> supportedLangs = new ArrayList<String>();
-        supportedLangs.add("en");
-        supportedLangs.add("ja");
-        assertEquals(supportedLangs, s.supportedLangs);
+        ArrayList<String> emptyArrayList = new ArrayList<String>();
+        assertEquals(emptyArrayList, s.ignoreClasses);
 
-        assertEquals("REDIRECT_URL", s.originalUrlHeader);
-        assertEquals("REDIRECT_QUERY_STRING", s.originalQueryStringHeader);
-    }
-    public void testSettingsWithQueryConfig() throws ConfigurationError {
-        FilterConfig mock = mockQueryConfig();
-        Settings s = new Settings(mock);
+        assertEquals(Settings.DefaultSnippetUrlProduction, s.snippetUrl);
+        assertEquals(Settings.DefaultApiUrlProduction, s.apiUrl);
 
-        assertNotNull(s);
-        assertEquals("query", s.urlPattern);
+        assertEquals(Settings.DefaultTimeout, s.connectTimeout);
+        assertEquals(Settings.DefaultTimeout, s.readTimeout);
     }
 
-    public void testIsValidWithEmptyConfig() throws ConfigurationError {
-        FilterConfig mock = mockEmptyConfig();
-        Settings s = new Settings(mock);
-        assertFalse(s.isValid());
-    }
-    public void testIsValidWithValidConfig() throws ConfigurationError {
-        FilterConfig mock = mockValidConfig();
-        Settings s = new Settings(mock);
-        assertTrue(s.isValid());
-    }
-
-    public void testSettings__invalidDefaultLang() throws ConfigurationError {
-        HashMap<String, String> parametersWithInvalidDefaultLang = new HashMap<String, String>() {{
-            put("projectToken", "2Wle3");
-            put("urlPattern", "query");
-            put("supportedLangs", "en,ja");
-            put("defaultLang", "INVALID");
-        }};
-        boolean exceptionThrown = false;
-        try {
-            TestUtil.makeSettings(parametersWithInvalidDefaultLang);
-        } catch (ConfigurationError e) {
-            exceptionThrown = true;
-        }
-        assertEquals(true, exceptionThrown);
-    }
-
-    public void testSettings__invalidSupportedLangs() throws ConfigurationError {
-        HashMap<String, String> parametersWithInvalidSupportedLangs = new HashMap<String, String>() {{
-            put("projectToken", "2Wle3");
-            put("urlPattern", "query");
+    public void testRequiredSettings__MissingProjectToken__ThrowError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("urlPattern", "path");
             put("defaultLang", "en");
-            put("supportedLangs", "en,japan,korean");
-        }};
-        boolean exceptionThrown = false;
+            put("supportedLangs", "en,ja");
+        }});
+        boolean errorThrown = false;
         try {
-            TestUtil.makeSettings(parametersWithInvalidSupportedLangs);
+            Settings s = new Settings(config);
         } catch (ConfigurationError e) {
-            exceptionThrown = true;
+            errorThrown = true;
         }
-        assertEquals(true, exceptionThrown);
+        assertEquals(true, errorThrown);
     }
 
-    public void testGetBoolParameter() {
-        assertTrue(Settings.getBoolParameter("on"));
-        assertTrue(Settings.getBoolParameter("true"));
-        assertTrue(Settings.getBoolParameter("1"));
-
-        assertFalse(Settings.getBoolParameter(null));
-        assertFalse(Settings.getBoolParameter(""));
-        assertFalse(Settings.getBoolParameter("0"));
+    public void testRequiredSettings__MissingUrlPattern__ThrowError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja");
+        }});
+        boolean errorThrown = false;
+        try {
+            Settings s = new Settings(config);
+        } catch (ConfigurationError e) {
+            errorThrown = true;
+        }
+        assertEquals(true, errorThrown);
     }
 
-    public void testGetArrayParameterWithoutComma() {
-        ArrayList<String> expected = new ArrayList<String>();
-        expected.add("foo");
-        assertEquals(expected, Settings.getArrayParameter("foo"));
-    }
-    public void testGetArrayParameterWithComma() {
-        ArrayList<String> expected = new ArrayList<String>();
-        expected.add("foo");
-        expected.add("bar");
-        expected.add("baz");
-        assertEquals(expected, Settings.getArrayParameter("foo,bar,baz"));
-    }
-    public void testGetArrayParameterWithNull() {
-        assertNull(Settings.getArrayParameter(null));
-    }
-    public void testGetArrayParameterWithEmptyString() {
-        assertNull(Settings.getArrayParameter(""));
+    public void testRequiredSettings__MissingDefaultLang__ThrowError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("urlPattern", "path");
+            put("supportedLangs", "en,ja");
+        }});
+        boolean errorThrown = false;
+        try {
+            Settings s = new Settings(config);
+        } catch (ConfigurationError e) {
+            errorThrown = true;
+        }
+        assertEquals(true, errorThrown);
     }
 
-    public void testGetIntParamterWithInvalidString() {
-        assertEquals(0, Settings.getIntParameter(null));
-        assertEquals(0, Settings.getIntParameter(""));
-        assertEquals(0, Settings.getIntParameter("a"));
-        assertEquals(0, Settings.getIntParameter("3.14"));
-    }
-    public void testGetIntParameter() {
-        assertEquals(0, Settings.getIntParameter("0"));
-        assertEquals(1, Settings.getIntParameter("1"));
-        assertEquals(2, Settings.getIntParameter("2"));
-        assertEquals(13, Settings.getIntParameter("13"));
-    }
-
-    public void testSettingsWithValidConfigMultipleToken() throws ConfigurationError {
-        FilterConfig mock = mockValidConfigMultipleToken();
-        Settings s = new Settings(mock);
-
-        assertNotNull(s);
-        assertEquals("3elW2", s.projectToken);
-        assertEquals("query", s.urlPattern);
-        assertEquals("https://example.com/v0/values", s.apiUrl);
-        assertEquals("ja", s.defaultLang);
-        ArrayList<String> supportedLangs = new ArrayList<String>();
-        supportedLangs.add("en");
-        supportedLangs.add("ja");
-        assertEquals(supportedLangs, s.supportedLangs);
-
-        assertEquals("REDIRECT_URL", s.originalUrlHeader);
-        assertEquals("REDIRECT_QUERY_STRING", s.originalQueryStringHeader);
+    public void testRequiredSettings__InvalidDefaultLangCode__ThrowError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("urlPattern", "path");
+            put("defaultLang", "English");
+            put("supportedLangs", "en,ja");
+        }});
+        boolean errorThrown = false;
+        try {
+            Settings s = new Settings(config);
+        } catch (ConfigurationError e) {
+            errorThrown = true;
+        }
+        assertEquals(true, errorThrown);
     }
 
-    public void testSettingsWithoutSitePrefix() throws ConfigurationError {
-        Settings s = TestUtil.makeSettings();
-        assertFalse(s.hasSitePrefixPath);
+    public void testRequiredSettings__MissingSupportedLangs__ThrowError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("urlPattern", "path");
+            put("defaultLang", "en");
+        }});
+        boolean errorThrown = false;
+        try {
+            Settings s = new Settings(config);
+        } catch (ConfigurationError e) {
+            errorThrown = true;
+        }
+        assertEquals(true, errorThrown);
+    }
+
+    public void testRequiredSettings__InvalidSupportedLangCode__ThrowError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("urlPattern", "path");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,Japanese");
+        }});
+        boolean errorThrown = false;
+        try {
+            Settings s = new Settings(config);
+        } catch (ConfigurationError e) {
+            errorThrown = true;
+        }
+        assertEquals(true, errorThrown);
+    }
+
+    public void testRequiredSettings__LegacyUserTokenDeclared__SetProjectTokenAsUserToken() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("userToken", "98765");
+            put("urlPattern", "path");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja");
+        }});
+        Settings s = new Settings(config);
+
+        assertEquals("98765", s.projectToken);
+    }
+
+    public void testRequiredSettings__BothProjectTokenAndUserTokenDeclared__PreferProjectToken() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("userToken", "98765");
+            put("urlPattern", "path");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja");
+        }});
+        Settings s = new Settings(config);
+
+        assertEquals("123456", s.projectToken);
+    }
+
+    public void testRequiredSettings__DefaultLangNotInSupportedLangs__AddDefaultLangToList() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("urlPattern", "path");
+            put("defaultLang", "en");
+            put("supportedLangs", "ja");
+        }});
+        Settings s = new Settings(config);
+
+        ArrayList<String> expectedSupportedLangs = new ArrayList<String>();
+        expectedSupportedLangs.add("ja");
+        expectedSupportedLangs.add("en");
+        assertEquals(expectedSupportedLangs, s.supportedLangs);
+    }
+
+    public void testSettings__ConfigWithValidBase__DoesNotRaiseError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+        }});
+        Settings s = new Settings(config);
+        assertEquals(true, true); // no error
+    }
+
+    public void testBooleanSettings__CorrectlyIdentifyTrue() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("devMode", "true");
+            put("debugMode", "on");
+            put("useProxy", "1");
+            put("enableFlushBuffer", "false");
+        }});
+        Settings s = new Settings(config);
+        assertEquals(true, s.devMode);
+        assertEquals(true, s.debugMode);
+        assertEquals(true, s.useProxy);
+        assertEquals(false, s.enableFlushBuffer);
+    }
+
+    public void testSitePrefixPath__DeclareEmptyString__UseEmptyString() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("sitePrefixPath", "");
+        }});
+        Settings s = new Settings(config);
         assertEquals("", s.sitePrefixPath);
     }
 
-    public void testSettingsWithSitePrefix() throws ConfigurationError {
-        HashMap<String, String> option = new HashMap<String, String>();
-        option.put("sitePrefixPath", "/global/");
-        Settings s = TestUtil.makeSettings(option);
-        assertTrue(s.hasSitePrefixPath);
+    public void testSitePrefixPath__DeclareEmptySlash__UseEmptyString() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("sitePrefixPath", "/");
+        }});
+        Settings s = new Settings(config);
+        assertEquals("", s.sitePrefixPath);
+    }
+
+    public void testSitePrefixPath__DeclareStringWithoutSlashes() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("sitePrefixPath", "global");
+        }});
+        Settings s = new Settings(config);
         assertEquals("/global", s.sitePrefixPath);
+    }
+
+    public void testSitePrefixPath__DeclareStringWithLeadingSlash() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("sitePrefixPath", "/global");
+        }});
+        Settings s = new Settings(config);
+        assertEquals("/global", s.sitePrefixPath);
+    }
+
+    public void testSitePrefixPath__DeclareStringWithTrailingSlash() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("sitePrefixPath", "global/");
+        }});
+        Settings s = new Settings(config);
+        assertEquals("/global", s.sitePrefixPath);
+    }
+
+    public void testSitePrefixPath__DeclareStringWithLeadingAndTrailingSlash() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("sitePrefixPath", "/global/");
+        }});
+        Settings s = new Settings(config);
+        assertEquals("/global", s.sitePrefixPath);
+    }
+
+    public void testSitePrefixPath__DeclareDeepPath() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("sitePrefixPath", "deep/pre/fix");
+        }});
+        Settings s = new Settings(config);
+        assertEquals("/deep/pre/fix", s.sitePrefixPath);
+    }
+
+    public void testApiUrl__ProductionMode__DefaultValue() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("devMode", "false");
+        }});
+        Settings s = new Settings(config);
+        assertEquals(Settings.DefaultApiUrlProduction, s.apiUrl);
+    }
+
+    public void testApiUrl__ProductionMode__OverrideValue() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("devMode", "false");
+            put("apiUrl", "http://test.test");
+        }});
+        Settings s = new Settings(config);
+        assertEquals("http://test.test", s.apiUrl);
+    }
+
+    public void testApiUrl__DevelopmentMode__DefaultValue() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("devMode", "true");
+        }});
+        Settings s = new Settings(config);
+        assertEquals(Settings.DefaultApiUrlDevelopment, s.apiUrl);
+    }
+
+    public void testApiUrl__DevelopmentMode__OverrideValue() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("devMode", "true");
+            put("apiUrl", "http://test.test");
+        }});
+        Settings s = new Settings(config);
+        assertEquals("http://test.test", s.apiUrl);
+    }
+
+    public void testSnippetUrl__ProductionMode__DefaultValue() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("devMode", "false");
+        }});
+        Settings s = new Settings(config);
+        assertEquals(Settings.DefaultSnippetUrlProduction, s.snippetUrl);
+    }
+
+    public void testSnippetUrl__DevelopmentMode__DefaultValue() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("devMode", "true");
+        }});
+        Settings s = new Settings(config);
+        assertEquals(Settings.DefaultSnippetUrlDevelopment, s.snippetUrl);
+    }
+
+    public void testIgnoreClasses__DeclareEmptyString__UseDefaultEmptyArray() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("ignoreClasses", "");
+        }});
+        Settings s = new Settings(config);
+        ArrayList<String> emptyArrayList = new ArrayList<String>();
+        assertEquals(emptyArrayList, s.ignoreClasses);
+    }
+
+    public void testIgnoreClasses__DeclareSimpleString() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("ignoreClasses", "ignore-me");
+        }});
+        Settings s = new Settings(config);
+        ArrayList<String> arrayList = new ArrayList<String>();
+        arrayList.add("ignore-me");
+        assertEquals(arrayList, s.ignoreClasses);
+    }
+
+    public void testIgnoreClasses__DeclareCommaSeparatedStrings() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("ignoreClasses", "ignore-me,svgicon,user-name");
+        }});
+        Settings s = new Settings(config);
+        ArrayList<String> arrayList = new ArrayList<String>();
+        arrayList.add("ignore-me");
+        arrayList.add("svgicon");
+        arrayList.add("user-name");
+        assertEquals(arrayList, s.ignoreClasses);
+    }
+
+    public void testOriginalUrlHeader__AcceptSetting() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("originalUrlHeader", "X-Netflix-Original-Url");
+        }});
+        Settings s = new Settings(config);
+        assertEquals("X-Netflix-Original-Url", s.originalUrlHeader);
+    }
+
+    public void testOriginalQueryStringHeader__AcceptSetting() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("originalQueryStringHeader", "X-Netflix-Original-Query-String");
+        }});
+        Settings s = new Settings(config);
+        assertEquals("X-Netflix-Original-Query-String", s.originalQueryStringHeader);
+    }
+
+    public void testTimeouts__ValidPositiveInteger__AcceptSetting() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("connectTimeout", "1500");
+            put("readTimeout", "1");
+        }});
+        Settings s = new Settings(config);
+        assertEquals(1500, s.connectTimeout);
+        assertEquals(1, s.readTimeout);
+    }
+
+    public void testTimeouts__InvalidNumberRange__UseDefaultValue() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("connectTimeout", "-20");
+            put("readTimeout", "0");
+        }});
+        Settings s = new Settings(config);
+        assertEquals(Settings.DefaultTimeout, s.connectTimeout);
+        assertEquals(Settings.DefaultTimeout, s.readTimeout);
+    }
+
+    public void testConnectTimeout__InvalidInteger__ThrowError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("connectTimeout", "hoge");
+        }});
+        boolean errorThrown = false;
+        try {
+            Settings s = new Settings(config);
+        } catch (ConfigurationError e) {
+            errorThrown = true;
+        }
+        assertEquals(true, errorThrown);
+    }
+
+    public void testReadTimeout__InvalidInteger__ThrowError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("readTimeout", "");
+        }});
+        boolean errorThrown = false;
+        try {
+            Settings s = new Settings(config);
+        } catch (ConfigurationError e) {
+            errorThrown = true;
+        }
+        assertEquals(true, errorThrown);
     }
 }

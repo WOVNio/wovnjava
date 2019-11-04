@@ -132,7 +132,7 @@ class HtmlConverter {
         sb.append(settings.urlPattern);
         sb.append("&langCodeAliases={}&version=");
         sb.append(Settings.VERSION);
-        if (settings.hasSitePrefixPath) {
+        if (!settings.sitePrefixPath.isEmpty()) {
             sb.append("&sitePrefixPath=");
             sb.append(settings.sitePrefixPath.replaceFirst("/", ""));
         }

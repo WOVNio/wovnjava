@@ -10,7 +10,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import org.easymock.EasyMock;
-
+import org.easymock.IAnswer;
 
 public class TestUtil {
     public static final HashMap<String, String> emptyOption = new HashMap<String, String>();
@@ -19,25 +19,42 @@ public class TestUtil {
         return makeConfig(emptyOption);
     }
 
-    public static FilterConfig makeConfig(HashMap<String, String> option) {
+    public static FilterConfig makeConfig(HashMap<String, String> options) {
         FilterConfig mock = EasyMock.createMock(FilterConfig.class);
-        String[] keys = {"userToken", "projectToken", "sitePrefixPath", "urlPattern", "query", "apiUrl", "defaultLang", "supportedLangs", "testMode", "testUrl", "useProxy", "debugMode", "originalUrlHeader", "originalQueryStringHeader", "strictHtmlCheck", "deleteInvalidClosingTag", "deleteInvalidUTF8", "connectTimeout", "readTimeout", "ignoreClasses", "devMode", "enableFlushBuffer"};
-        for (int i=0; i<keys.length; ++i) {
-            String key = keys[i];
-            String val = option.get(key);
-            val = val == null ? "" : val;
-            EasyMock.expect(mock.getInitParameter(key)).andReturn(val);
-        }
+        EasyMock.expect(mock.getInitParameter(EasyMock.anyString())).andAnswer(
+            new IAnswer<String>() {
+                @Override
+                public String answer() throws Throwable {
+                    String arg = (String) EasyMock.getCurrentArguments()[0];
+                    return options.get(arg);
+                }
+            }
+        ).anyTimes();
         EasyMock.replay(mock);
         return mock;
+    }
+
+    public static FilterConfig makeConfigWithValidDefaults() {
+        return makeConfigWithValidDefaults(emptyOption);
+    }
+
+    public static FilterConfig makeConfigWithValidDefaults(HashMap<String, String> options) {
+        HashMap<String, String> settings = new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("urlPattern", "path");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja");
+        }};
+        settings.putAll(options);
+        return TestUtil.makeConfig(settings);
     }
 
     public static Settings makeSettings() throws ConfigurationError {
         return makeSettings(emptyOption);
     }
 
-    public static Settings makeSettings(HashMap<String, String> option) throws ConfigurationError {
-        return new Settings(makeConfig(option));
+    public static Settings makeSettings(HashMap<String, String> options) throws ConfigurationError {
+        return new Settings(makeConfigWithValidDefaults(options));
     }
 
     public static HttpServletRequest mockRequestPath(String path) {
@@ -108,7 +125,7 @@ public class TestUtil {
         RequestDispatcherMock dispatcher = new RequestDispatcherMock();
         HttpServletRequest req = mockRequestPath(path, forwardPath, dispatcher);
         HttpServletResponse res = mockResponse(contentType, "", isPreviouslyProcessed);
-        FilterConfig filterConfig = makeConfig(option);
+        FilterConfig filterConfig = makeConfigWithValidDefaults(option);
         FilterChainMock filterChain = new FilterChainMock();
         WovnServletFilter filter = new WovnServletFilter();
         filter.init(filterConfig);
