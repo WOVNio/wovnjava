@@ -387,6 +387,14 @@ public class SettingsTest extends TestCase {
         assertEquals(Settings.DefaultTimeout, s.readTimeout);
     }
 
+    public void testCustomDomainLangs__AcceptRawCustomDomainLangsString() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("customDomainLangs", "site.com:en");
+        }});
+        Settings s = new Settings(config);
+        assertEquals("site.com:en", s.rawCustomDomainLangs);
+    }
+
     public void testConnectTimeout__InvalidInteger__ThrowError() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("connectTimeout", "hoge");

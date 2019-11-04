@@ -30,6 +30,8 @@ class Settings {
     public final boolean enableFlushBuffer;
 
     public final String sitePrefixPath;
+    public final String rawCustomDomainLangs;
+
     public final String snippetUrl;
     public final String apiUrl;
     public final String originalUrlHeader;
@@ -56,6 +58,7 @@ class Settings {
         this.enableFlushBuffer = reader.getBoolParameterDefaultFalse("enableFlushBuffer");
 
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
+        this.rawCustomDomainLangs = reader.getStringParameter("customDomainLangs");
 
         String defaultApiUrl = this.devMode ? DefaultApiUrlDevelopment : DefaultApiUrlProduction;
         this.apiUrl = stringOrDefault(reader.getStringParameter("apiUrl"), defaultApiUrl);
