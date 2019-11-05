@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +23,7 @@ class Headers {
 
     private HttpServletRequest request;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
+    private UrlContext urlContext;
 
     private final String requestLang;
     private final String clientRequestUrlWithoutLangCode;
@@ -36,6 +39,13 @@ class Headers {
 
         this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
         this.clientRequestUrlWithoutLangCode = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang);
+
+        try {
+            this.urlContext = new UrlContext(new URL(this.clientRequestUrlWithoutLangCode));
+        } catch (MalformedURLException e) {
+            this.urlContext = null;
+        }
+
         this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang);
         this.isValidPath = this.urlLanguagePatternHandler.isMatchingSitePrefixPath(clientRequestUrl);
 
@@ -127,6 +137,19 @@ class Headers {
         } else {
             return settings.defaultLang;
         }
+    }
+
+    /*
+     * Take as input a location of any form (relative path, absolute path, absolute URL),
+     * and return a URL of that location for the current request language.
+     */
+    public String convertToUrlForCurrentLanguage(String location) {
+        if (location == null || this.urlContext == null) return location;
+
+        if (this.requestLang == settings.defaultLang) return location;
+
+        URL url = this.urlContext.createAbsoluteUrl(location);
+        return this.urlLanguagePatternHandler.insertLang(url.toString(), this.requestLang);
     }
 
     public String locationWithLangCode(String location) {
