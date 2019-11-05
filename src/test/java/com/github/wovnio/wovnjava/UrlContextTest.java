@@ -22,6 +22,13 @@ public class UrlContextTest extends TestCase {
         assertEquals("http://site.com/dir/img/cat.png", this.contextPathAndQuery.createAbsoluteUrl(location).toString());
     }
 
+    public void testCreateAbsoluteUrl__InvalidRelativePath() {
+        String location = "../../img/cat.png";
+        assertEquals("http://site.com/img/cat.png", this.contextRootPath.createAbsoluteUrl(location).toString());
+        assertEquals("http://site.com/img/cat.png", this.contextFilePath.createAbsoluteUrl(location).toString());
+        assertEquals("http://site.com/img/cat.png", this.contextPathAndQuery.createAbsoluteUrl(location).toString());
+    }
+
     public void testCreateAbsoluteUrl__AbsolutePath() {
         String location = "/img/cat.png";
         assertEquals("http://site.com/img/cat.png", this.contextRootPath.createAbsoluteUrl(location).toString());

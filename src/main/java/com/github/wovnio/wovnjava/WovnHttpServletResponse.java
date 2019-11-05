@@ -76,13 +76,13 @@ class WovnHttpServletResponse extends HttpServletResponseWrapper {
 
     @Override
     public void sendRedirect(String location) throws java.io.IOException {
-        super.sendRedirect(headers.convertToAbsoluteUrlForCurrentLanguage(location));
+        super.sendRedirect(headers.locationWithLangCode(location));
     }
 
     @Override
     public void setHeader(String name, String value) {
         if (name.toLowerCase() == "location") {
-            value = headers.convertToAbsoluteUrlForCurrentLanguage(value);
+            value = headers.locationWithLangCode(value);
         }
         super.setHeader(name, value);
     }

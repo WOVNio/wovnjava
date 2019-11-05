@@ -142,17 +142,29 @@ class Headers {
     /*
      * Take as input a location of any form (relative path, absolute path, absolute URL),
      * and return a URL of that location for the current request language.
+     *
+     * Do not modify `location` if
+     *  - current request does not specify language
+     *  - current request language is explicitly default language
+     *  - `location` is absolute URL with an external host
+     *  - `location` already includes a Wovn language code
+     *  - `location` does not match sitePrefixPath
      */
-    public String convertToUrlForCurrentLanguage(String location) {
+    public String locationWithLangCode(String location) {
         if (location == null || this.urlContext == null) return location;
 
-        if (this.requestLang == settings.defaultLang) return location;
+        if (this.requestLang.isEmpty() || this.requestLang == settings.defaultLang) return location;
 
         URL url = this.urlContext.createAbsoluteUrl(location);
+
+        if (!this.urlContext.isSameHost(url)) return location;
+        if (!this.urlLanguagePatternHandler.getLang(url.toString()).isEmpty()) return location;
+        if (!this.urlLanguagePatternHandler.isMatchingSitePrefixPath(url.toString())) return location;
+
         return this.urlLanguagePatternHandler.insertLang(url.toString(), this.requestLang);
     }
 
-    public String locationWithLangCode(String location) {
+    public String oldLocationWithLangCode(String location) {
         // check if needed
         if (location == null) {
             return null;
