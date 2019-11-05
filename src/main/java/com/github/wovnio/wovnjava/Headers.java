@@ -140,8 +140,9 @@ class Headers {
     }
 
     /*
-     * Take as input a location of any form (relative path, absolute path, absolute URL),
-     * and return a URL of that location for the current request language.
+     * Take as input a location string of any form (relative path, absolute path, absolute URL).
+     * If the location needs a Wovn language code, return an absolute URL string of that location
+     * with language code of the current request language. Else return the location as-is.
      *
      * Do not modify `location` if
      *  - current request language is default language
@@ -156,7 +157,7 @@ class Headers {
         boolean isRequestDefaultLang = this.requestLang.isEmpty() || this.requestLang == settings.defaultLang;
         if (isRequestDefaultLang) return location;
 
-        URL url = this.urlContext.createAbsoluteUrl(location);
+        URL url = this.urlContext.resolve(location);
 
         boolean shouldAddLanguageCode = url != null
                                         && this.urlContext.isSameHost(url)

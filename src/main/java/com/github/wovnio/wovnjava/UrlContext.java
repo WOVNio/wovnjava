@@ -10,12 +10,12 @@ class UrlContext {
         this.context = currentLocation;
     }
 
-    public URL createAbsoluteUrl(String location) {
+    public URL resolve(String location) {
         try {
             URL url = new URL(this.context, location);
             return this.stripSlashDotDot(url);
         } catch (MalformedURLException e) {
-            return null; // return `this.context` instead?
+            return null;
         }
     }
 

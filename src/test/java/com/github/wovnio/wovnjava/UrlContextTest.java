@@ -17,50 +17,50 @@ public class UrlContextTest extends TestCase {
 
     public void testCreateAbsoluteUrl__RelativePath() {
         String location = "img/cat.png";
-        assertEquals("http://site.com/img/cat.png", this.contextRootPath.createAbsoluteUrl(location).toString());
-        assertEquals("http://site.com/dir/img/cat.png", this.contextFilePath.createAbsoluteUrl(location).toString());
-        assertEquals("http://site.com/dir/img/cat.png", this.contextPathAndQuery.createAbsoluteUrl(location).toString());
+        assertEquals("http://site.com/img/cat.png", this.contextRootPath.resolve(location).toString());
+        assertEquals("http://site.com/dir/img/cat.png", this.contextFilePath.resolve(location).toString());
+        assertEquals("http://site.com/dir/img/cat.png", this.contextPathAndQuery.resolve(location).toString());
     }
 
-    public void testCreateAbsoluteUrl__InvalidRelativePath() {
+    public void testCreateAbsoluteUrl__InvalidDotDotRelativePath() {
         String location = "../../img/cat.png";
-        assertEquals("http://site.com/img/cat.png", this.contextRootPath.createAbsoluteUrl(location).toString());
-        assertEquals("http://site.com/img/cat.png", this.contextFilePath.createAbsoluteUrl(location).toString());
-        assertEquals("http://site.com/img/cat.png", this.contextPathAndQuery.createAbsoluteUrl(location).toString());
+        assertEquals("http://site.com/img/cat.png", this.contextRootPath.resolve(location).toString());
+        assertEquals("http://site.com/img/cat.png", this.contextFilePath.resolve(location).toString());
+        assertEquals("http://site.com/img/cat.png", this.contextPathAndQuery.resolve(location).toString());
     }
 
     public void testCreateAbsoluteUrl__AbsolutePath() {
         String location = "/img/cat.png";
-        assertEquals("http://site.com/img/cat.png", this.contextRootPath.createAbsoluteUrl(location).toString());
-        assertEquals("http://site.com/img/cat.png", this.contextFilePath.createAbsoluteUrl(location).toString());
-        assertEquals("http://site.com/img/cat.png", this.contextPathAndQuery.createAbsoluteUrl(location).toString());
+        assertEquals("http://site.com/img/cat.png", this.contextRootPath.resolve(location).toString());
+        assertEquals("http://site.com/img/cat.png", this.contextFilePath.resolve(location).toString());
+        assertEquals("http://site.com/img/cat.png", this.contextPathAndQuery.resolve(location).toString());
     }
 
     public void testCreateAbsoluteUrl__AbsoluteUrl() {
         String location = "https://otherdomain.com/img/cat.png";
-        assertEquals("https://otherdomain.com/img/cat.png", this.contextRootPath.createAbsoluteUrl(location).toString());
-        assertEquals("https://otherdomain.com/img/cat.png", this.contextFilePath.createAbsoluteUrl(location).toString());
-        assertEquals("https://otherdomain.com/img/cat.png", this.contextPathAndQuery.createAbsoluteUrl(location).toString());
+        assertEquals("https://otherdomain.com/img/cat.png", this.contextRootPath.resolve(location).toString());
+        assertEquals("https://otherdomain.com/img/cat.png", this.contextFilePath.resolve(location).toString());
+        assertEquals("https://otherdomain.com/img/cat.png", this.contextPathAndQuery.resolve(location).toString());
     }
 
     public void testCreateAbsoluteUrl__AbsoluteUrlWithoutSchema() {
         String location = "//otherdomain.com/img/cat.png";
-        assertEquals("http://otherdomain.com/img/cat.png", this.contextRootPath.createAbsoluteUrl(location).toString());
-        assertEquals("http://otherdomain.com/img/cat.png", this.contextFilePath.createAbsoluteUrl(location).toString());
-        assertEquals("http://otherdomain.com/img/cat.png", this.contextPathAndQuery.createAbsoluteUrl(location).toString());
+        assertEquals("http://otherdomain.com/img/cat.png", this.contextRootPath.resolve(location).toString());
+        assertEquals("http://otherdomain.com/img/cat.png", this.contextFilePath.resolve(location).toString());
+        assertEquals("http://otherdomain.com/img/cat.png", this.contextPathAndQuery.resolve(location).toString());
     }
 
     public void testCreateAbsoluteUrl__PathAndQuery() {
         String location = "/img/cat.png?country=japan";
-        assertEquals("http://site.com/img/cat.png?country=japan", this.contextRootPath.createAbsoluteUrl(location).toString());
-        assertEquals("http://site.com/img/cat.png?country=japan", this.contextFilePath.createAbsoluteUrl(location).toString());
-        assertEquals("http://site.com/img/cat.png?country=japan", this.contextPathAndQuery.createAbsoluteUrl(location).toString());
+        assertEquals("http://site.com/img/cat.png?country=japan", this.contextRootPath.resolve(location).toString());
+        assertEquals("http://site.com/img/cat.png?country=japan", this.contextFilePath.resolve(location).toString());
+        assertEquals("http://site.com/img/cat.png?country=japan", this.contextPathAndQuery.resolve(location).toString());
     }
 
     public void testCreateAbsoluteUrl__OnlyQuery() {
         String location = "?country=japan";
-        assertEquals("http://site.com/?country=japan", this.contextRootPath.createAbsoluteUrl(location).toString());
-        assertEquals("http://site.com/dir/?country=japan", this.contextFilePath.createAbsoluteUrl(location).toString());
-        assertEquals("http://site.com/dir/?country=japan", this.contextPathAndQuery.createAbsoluteUrl(location).toString());
+        assertEquals("http://site.com/?country=japan", this.contextRootPath.resolve(location).toString());
+        assertEquals("http://site.com/dir/?country=japan", this.contextFilePath.resolve(location).toString());
+        assertEquals("http://site.com/dir/?country=japan", this.contextPathAndQuery.resolve(location).toString());
     }
 }
