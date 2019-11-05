@@ -144,8 +144,8 @@ class Headers {
      * and return a URL of that location for the current request language.
      *
      * Do not modify `location` if
-     *  - current request does not specify language
-     *  - current request language is explicitly default language
+     *  - current request language is default language
+     *  - `location` is malformed and cannot be parsed by java.net.URL
      *  - `location` is absolute URL with an external host
      *  - `location` already includes a Wovn language code
      *  - `location` does not match sitePrefixPath
@@ -153,13 +153,17 @@ class Headers {
     public String locationWithLangCode(String location) {
         if (location == null || this.urlContext == null) return location;
 
-        if (this.requestLang.isEmpty() || this.requestLang == settings.defaultLang) return location;
+        boolean isRequestDefaultLang = this.requestLang.isEmpty() || this.requestLang == settings.defaultLang;
+        if (isRequestDefaultLang) return location;
 
         URL url = this.urlContext.createAbsoluteUrl(location);
 
-        if (!this.urlContext.isSameHost(url)) return location;
-        if (!this.urlLanguagePatternHandler.getLang(url.toString()).isEmpty()) return location;
-        if (!this.urlLanguagePatternHandler.isMatchingSitePrefixPath(url.toString())) return location;
+        boolean shouldAddLanguageCode = url != null
+                                        && this.urlContext.isSameHost(url)
+                                        && this.urlLanguagePatternHandler.getLang(url.toString()).isEmpty()
+                                        && this.urlLanguagePatternHandler.isMatchingSitePrefixPath(url.toString());
+
+        if (!shouldAddLanguageCode) return location;
 
         return this.urlLanguagePatternHandler.insertLang(url.toString(), this.requestLang);
     }
