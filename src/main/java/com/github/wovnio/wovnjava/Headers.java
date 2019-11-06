@@ -1,32 +1,25 @@
 package com.github.wovnio.wovnjava;
 
 import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.net.URL;
 import java.net.MalformedURLException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 class Headers {
     Settings settings;
-    String host;
-    String pathName;
-    String pathNameKeepTrailingSlash;
-    String protocol;
-    String pageUrl;
-    String query;
-    String url;
 
     private HttpServletRequest request;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
     private UrlContext urlContext;
 
+    /* The language code found in the client request URL */
     private final String requestLang;
+    /* The URL that the client originally requested */
     private final String clientRequestUrlWithoutLangCode;
+    /* The path of the current servlet context */
+    private final String currentRequestPathWithoutLangCode;
+
     private final boolean shouldRedirectToDefaultLang;
     private final boolean isValidPath;
 
@@ -46,88 +39,11 @@ class Headers {
             this.urlContext = null;
         }
 
+        String currentRequestPath = request.getRequestURI();
+        this.currentRequestPathWithoutLangCode = this.urlLanguagePatternHandler.removeLang(currentRequestPath, this.requestLang);
+
         this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang);
         this.isValidPath = this.urlLanguagePatternHandler.isMatchingSitePrefixPath(clientRequestUrl);
-
-        this.protocol = this.request.getScheme();
-
-        String requestUri = null;
-        if (!this.settings.originalUrlHeader.isEmpty()) {
-            requestUri = this.request.getHeader(this.settings.originalUrlHeader);
-        }
-        if (requestUri == null || requestUri.isEmpty()) {
-            requestUri = this.request.getRequestURI();
-            if (requestUri == null || requestUri.length() == 0) {
-                if (Pattern.compile("^[^/]").matcher(this.request.getPathInfo()).find()) {
-                    requestUri = "/";
-                } else {
-                    requestUri = "";
-                }
-                requestUri += this.request.getPathInfo();
-            }
-        }
-        // Both getRequestURI() and getPathInfo() do not have query parameters.
-        if (this.settings.originalQueryStringHeader.isEmpty()) {
-            if (request.getQueryString() != null && !this.request.getQueryString().isEmpty()) {
-                requestUri += "?" + this.request.getQueryString();
-            }
-        } else {
-            String query = this.request.getHeader(this.settings.originalQueryStringHeader);
-            if (query != null && !query.isEmpty()) {
-                requestUri += "?" + query;
-            }
-        }
-        if (Pattern.compile("://").matcher(requestUri).find()) {
-            requestUri = Pattern.compile("^.*://[^/]+").matcher(requestUri).replaceFirst("");
-        }
-
-        if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
-            this.host = this.request.getHeader("X-Forwarded-Host");
-        } else {
-            this.host = this.request.getServerName();
-        }
-        if (this.settings.urlPattern.equals("subdomain")) {
-            this.host = this.removeLang(this.host, this.langCode());
-        }
-        String[] split = requestUri.split("\\?");
-        this.pathName = split[0];
-        if (split.length == 2) {
-            this.query = split[1];
-        }
-        if (this.settings.urlPattern.equals("path")) {
-            this.pathName = this.removeLang(this.pathName, this.langCode());
-        }
-        if (this.query == null) {
-            this.query = "";
-        }
-
-        int port;
-        if (this.settings.useProxy) {
-            if (this.request.getHeader("X-Forwarded-Port") == null || this.request.getHeader("X-Forwarded-Port").isEmpty()) {
-                port = 80;
-            } else {
-                port = Integer.parseInt(request.getHeader("X-Forwarded-Port"));
-            }
-        } else {
-            port = this.request.getServerPort();
-        }
-        if (port != 80 && port != 443) {
-            this.host += ":" + port;
-        }
-
-        this.url = this.host + this.pathName;
-        if (this.query != null && this.query.length() > 0) {
-            this.url += "?";
-        }
-        this.url += this.removeLang(this.query, this.langCode());
-        this.url = this.url.length() == 0 ? "/" : this.url;
-        if (!this.query.isEmpty() && !this.query.startsWith("?")) {
-            this.query = "?" + this.query;
-        }
-        this.query = this.removeLang(this.query, this.langCode());
-        this.pathNameKeepTrailingSlash = this.pathName;
-        this.pathName = Pattern.compile("/$").matcher(this.pathName).replaceAll("");
-        this.pageUrl = this.host + this.pathName + this.query;
     }
 
     String langCode() {
@@ -179,6 +95,10 @@ class Headers {
 
     public String getClientRequestPathWithoutLangCode() {
         return UrlPath.getPath(this.clientRequestUrlWithoutLangCode);
+    }
+
+    public String getCurrentRequestPathWithoutLangCode() {
+        return this.currentRequestPathWithoutLangCode;
     }
 
     public boolean getShouldRedirectToDefaultLang() {

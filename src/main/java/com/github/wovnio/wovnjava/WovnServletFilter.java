@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 public class WovnServletFilter implements Filter {
     private Settings settings;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
+    private FileExtensionMatcher fileExtensionMatcher;
     private final HtmlChecker htmlChecker = new HtmlChecker();
 
     public static final String VERSION = Settings.VERSION;  // for backward compatibility
@@ -28,6 +29,7 @@ public class WovnServletFilter implements Filter {
         try {
             this.settings = new Settings(config);
             this.urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+            this.fileExtensionMatcher = new FileExtensionMatcher();
         } catch (ConfigurationError e) {
             throw new ServletException("WovnServletFilter ConfigurationError: " + e.getMessage());
         }
@@ -48,7 +50,7 @@ public class WovnServletFilter implements Filter {
         boolean canProcessRequest = !isRequestAlreadyProcessed &&
                                     !requestOptions.getDisableMode() &&
                                     headers.getIsValidPath() &&
-                                    htmlChecker.canTranslatePath(headers.pathName);
+                                    !this.fileExtensionMatcher.isFile(headers.getCurrentRequestPathWithoutLangCode());
 
         if (headers.getShouldRedirectToDefaultLang()) {
             /* Send 302 redirect to equivalent URL without default language code */
@@ -75,7 +77,7 @@ public class WovnServletFilter implements Filter {
         responseHeaders.setApiStatus("Unused");
 
         if (settings.urlPattern.equals("path") && headers.getRequestLang().length() > 0) {
-            wovnRequest.getRequestDispatcher(headers.pathNameKeepTrailingSlash).forward(wovnRequest, wovnResponse);
+            wovnRequest.getRequestDispatcher(headers.getCurrentRequestPathWithoutLangCode()).forward(wovnRequest, wovnResponse);
         } else {
             chain.doFilter(wovnRequest, wovnResponse);
         }
@@ -84,7 +86,7 @@ public class WovnServletFilter implements Filter {
         if (originalBody != null) {
             // text
             String body = null;
-            if (htmlChecker.canTranslate(response.getContentType(), headers.pathName, originalBody)) {
+            if (htmlChecker.canTranslate(response.getContentType(), originalBody)) {
                 // html
                 Api api = new Api(settings, headers, requestOptions, responseHeaders);
                 Interceptor interceptor = new Interceptor(headers, settings, api, responseHeaders);
