@@ -143,13 +143,6 @@ class Headers {
      * Take as input a location string of any form (relative path, absolute path, absolute URL).
      * If the location needs a Wovn language code, return an absolute URL string of that location
      * with language code of the current request language. Else return the location as-is.
-     *
-     * Do not modify `location` if
-     *  - current request language is default language
-     *  - `location` is malformed and cannot be parsed by java.net.URL
-     *  - `location` is absolute URL with an external host
-     *  - `location` already includes a Wovn language code
-     *  - `location` does not match sitePrefixPath
      */
     public String locationWithLangCode(String location) {
         if (location == null || this.urlContext == null) return location;
