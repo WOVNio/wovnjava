@@ -21,7 +21,7 @@ class Headers {
     private final String currentRequestPathWithoutLangCode;
 
     private final boolean shouldRedirectToDefaultLang;
-    private final boolean isValidPath;
+    private final boolean isValidRequest;
 
     Headers(HttpServletRequest request, Settings settings, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = settings;
@@ -43,7 +43,8 @@ class Headers {
         this.currentRequestPathWithoutLangCode = this.urlLanguagePatternHandler.removeLang(currentRequestPath, this.requestLang);
 
         this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang);
-        this.isValidPath = this.urlLanguagePatternHandler.isMatchingSitePrefixPath(clientRequestUrl);
+
+        this.isValidRequest = this.urlContext != null && this.urlLanguagePatternHandler.canInterceptUrl(clientRequestUrl);
     }
 
     String langCode() {
@@ -61,7 +62,7 @@ class Headers {
      * with language code of the current request language. Else return the location as-is.
      */
     public String locationWithLangCode(String location) {
-        if (location == null || this.urlContext == null) return location;
+        if (location == null || !this.isValidRequest) return location;
 
         boolean isRequestDefaultLang = this.requestLang.isEmpty() || this.requestLang == settings.defaultLang;
         if (isRequestDefaultLang) return location;
@@ -70,8 +71,7 @@ class Headers {
 
         boolean shouldAddLanguageCode = url != null
                                         && this.urlContext.isSameHost(url)
-                                        && this.urlLanguagePatternHandler.getLang(url.toString()).isEmpty()
-                                        && this.urlLanguagePatternHandler.isMatchingSitePrefixPath(url.toString());
+                                        && this.urlLanguagePatternHandler.getLang(url.toString()).isEmpty();
 
         if (!shouldAddLanguageCode) return location;
 
@@ -105,8 +105,8 @@ class Headers {
         return this.shouldRedirectToDefaultLang;
     }
 
-    public boolean getIsValidPath() {
-        return this.isValidPath;
+    public boolean getIsValidRequest() {
+        return this.isValidRequest;
     }
 
     public HashMap<String, String> getHreflangUrlMap() {

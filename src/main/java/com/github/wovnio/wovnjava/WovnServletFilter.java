@@ -47,16 +47,17 @@ public class WovnServletFilter implements Filter {
         RequestOptions requestOptions = new RequestOptions(this.settings, request);
         Headers headers = new Headers((HttpServletRequest)request, this.settings, this.urlLanguagePatternHandler);
 
-        boolean canProcessRequest = !isRequestAlreadyProcessed &&
-                                    !requestOptions.getDisableMode() &&
-                                    headers.getIsValidPath() &&
-                                    !this.fileExtensionMatcher.isFile(headers.getCurrentRequestPathWithoutLangCode());
+        boolean canTranslateRequest = !requestOptions.getDisableMode() &&
+                                      !this.fileExtensionMatcher.isFile(headers.getCurrentRequestPathWithoutLangCode());
 
-        if (headers.getShouldRedirectToDefaultLang()) {
-            /* Send 302 redirect to equivalent URL without default language code */
+        if (isRequestAlreadyProcessed || !headers.getIsValidRequest()) {
+            /* Do nothing */
+            chain.doFilter(request, response);
+        } else if (headers.getShouldRedirectToDefaultLang()) {
+            /* Send HTTP 302 redirect to equivalent URL without default language code */
             ((HttpServletResponse) response).sendRedirect(headers.getClientRequestUrlWithoutLangCode());
-        } else if (canProcessRequest) {
-            /* Process the request */
+        } else if (canTranslateRequest) {
+            /* Strip language code, pass on request, and attempt to translate the resulting response */
             tryTranslate(headers, requestOptions, (HttpServletRequest)request, (HttpServletResponse)response, chain);
         } else {
             /* Strip language code and pass through the request and response untouched */

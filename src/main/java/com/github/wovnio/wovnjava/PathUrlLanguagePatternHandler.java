@@ -30,7 +30,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         return this.matchSitePrefixPathPattern.matcher(url).replaceFirst("$1$2$3/" + lang + "$4");
     }
 
-    public boolean isMatchingSitePrefixPath(String url) {
+    public boolean canInterceptUrl(String url) {
         return this.matchSitePrefixPathPattern.matcher(url).lookingAt();
     }
 

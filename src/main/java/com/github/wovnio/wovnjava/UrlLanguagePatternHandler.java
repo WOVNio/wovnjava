@@ -10,7 +10,7 @@ abstract class UrlLanguagePatternHandler {
 
     abstract String insertLang(String url, String lang);
 
-    public boolean isMatchingSitePrefixPath(String url) {
+    public boolean canInterceptUrl(String url) {
         return true;
     }
 
