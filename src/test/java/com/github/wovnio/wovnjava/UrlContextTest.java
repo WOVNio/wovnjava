@@ -16,6 +16,13 @@ public class UrlContextTest extends TestCase {
         this.contextPathAndQuery = new UrlContext(new URL("http://site.com/dir/?user=tom"));
     }
 
+    public void testResolve__EmptyString() {
+        String location = "";
+        assertEquals("http://site.com", this.contextRootPath.resolve(location).toString());
+        assertEquals("http://site.com/dir/index.html", this.contextFilePath.resolve(location).toString());
+        assertEquals("http://site.com/dir/?user=tom", this.contextPathAndQuery.resolve(location).toString());
+    }
+
     public void testResolve__RelativePath() {
         String location = "img/cat.png";
         assertEquals("http://site.com/img/cat.png", this.contextRootPath.resolve(location).toString());
@@ -63,6 +70,14 @@ public class UrlContextTest extends TestCase {
         assertEquals("http://site.com/?country=japan", this.contextRootPath.resolve(location).toString());
         assertEquals("http://site.com/dir/?country=japan", this.contextFilePath.resolve(location).toString());
         assertEquals("http://site.com/dir/?country=japan", this.contextPathAndQuery.resolve(location).toString());
+    }
+
+    public void testResolve__OnlyHost__InterpretAsPath() {
+        // For the purpose of illustrating behavior
+        String location = "example.com";
+        assertEquals("http://site.com/example.com", this.contextRootPath.resolve(location).toString());
+        assertEquals("http://site.com/dir/example.com", this.contextFilePath.resolve(location).toString());
+        assertEquals("http://site.com/dir/example.com", this.contextPathAndQuery.resolve(location).toString());
     }
 
     public void testIsSameHost() throws MalformedURLException {
