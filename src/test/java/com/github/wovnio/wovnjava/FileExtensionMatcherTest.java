@@ -12,7 +12,6 @@ public class FileExtensionMatcherTest extends TestCase {
     public void testIsFile() {
         assertIsFile(false, "");
         assertIsFile(false, "/");
-        assertIsFile(false, "/");
         assertIsFile(false, "html");
         assertIsFile(false, "jp");
         assertIsFile(true, "png");
