@@ -337,6 +337,7 @@ public class HeadersTest extends TestCase {
     private Headers makeHeaderWithSitePrefixPath(String requestPath, String sitePrefixPath) throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath(requestPath);
         HashMap<String, String> option = new HashMap<String, String>() {{
+            put("urlPattern", "path");
             put("sitePrefixPath", sitePrefixPath);
         }};
         Settings s = TestUtil.makeSettings(option);
