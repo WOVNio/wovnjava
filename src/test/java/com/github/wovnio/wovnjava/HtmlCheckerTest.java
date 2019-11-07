@@ -2,7 +2,6 @@ package com.github.wovnio.wovnjava;
 
 import junit.framework.TestCase;
 
-
 public class HtmlCheckerTest extends TestCase {
     private final HtmlChecker htmlChecker = new HtmlChecker();
 
@@ -12,29 +11,6 @@ public class HtmlCheckerTest extends TestCase {
         assertEquals(true, htmlChecker.canTranslateContentType("text/html"));
         assertEquals(true, htmlChecker.canTranslateContentType("text/xhtml"));
         assertEquals(false, htmlChecker.canTranslateContentType("text/plain"));
-    }
-
-    public void testCanTranslatePath() {
-        assertCanTranslatePath(true, null);
-        assertCanTranslatePath(true, "");
-        assertCanTranslatePath(true, "/");
-        assertCanTranslatePath(true, "html");
-        assertCanTranslatePath(false, "png");
-        assertCanTranslatePath(false, "jpg");
-        assertCanTranslatePath(false, "gif");
-        assertCanTranslatePath(false, "mp3");
-        assertCanTranslatePath(false, "mp4");
-        assertCanTranslatePath(false, "zip");
-        assertCanTranslatePath(false, "7zip");
-        assertCanTranslatePath(false, "7z");
-        assertCanTranslatePath(false, "gzip");
-        assertCanTranslatePath(false, "tar");
-        assertCanTranslatePath(false, "gz");
-        assertCanTranslatePath(false, "rar");
-        assertCanTranslatePath(false, "pdf");
-        assertCanTranslatePath(false, "js");
-        assertCanTranslatePath(false, "css");
-        assertCanTranslatePath(true, "unknown");
     }
 
     public void testCanTranslate() {
@@ -73,24 +49,6 @@ public class HtmlCheckerTest extends TestCase {
         assertCanTranslate(true, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
         assertCanTranslate(true, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
         assertCanTranslate(true, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">");
-    }
-
-    private void assertCanTranslatePath(boolean expect, String ext) {
-        assertEquals(expect, htmlChecker.canTranslatePath("foo." + ext));
-        assertEquals(expect, htmlChecker.canTranslatePath("/foo." + ext));
-        assertEquals(expect, htmlChecker.canTranslatePath("/dir/foo." + ext));
-        assertEquals(expect, htmlChecker.canTranslatePath("/dir/foo." + ext + "?query=1"));
-        assertEquals(expect, htmlChecker.canTranslatePath("/dir/foo." + ext + "?query=file.html"));
-        assertEquals(expect, htmlChecker.canTranslatePath("/dir/foo." + ext + "?query=file.png"));
-        assertEquals(expect, htmlChecker.canTranslatePath("/dir/foo." + ext + "#hash"));
-        assertEquals(expect, htmlChecker.canTranslatePath("/dir/foo." + ext + "#hash.html"));
-        assertEquals(expect, htmlChecker.canTranslatePath("/dir/foo." + ext + "#hash.png"));
-        assertEquals(expect, htmlChecker.canTranslatePath("/dir/foo." + ext + "#hash.png?query=file.png&upload=file.html"));
-        assertEquals(true, htmlChecker.canTranslatePath("foo" + ext));
-        assertEquals(true, htmlChecker.canTranslatePath("/foo." + ext + "unknown"));
-        assertEquals(true, htmlChecker.canTranslatePath("/foo." + ext + "/"));
-        assertEquals(expect, htmlChecker.canTranslatePath("/foo.html/bar." + ext));
-        assertEquals(expect, htmlChecker.canTranslatePath("/foo.png/bar." + ext));
     }
 
     private void assertCanTranslate(boolean expect, String prefix) {

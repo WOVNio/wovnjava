@@ -145,18 +145,6 @@ public class HeadersTest extends TestCase {
         assertNotNull(h);
     }
 
-    public void testHeadersWithQueryParameters() throws ConfigurationError {
-        HttpServletRequest mockRequest = mockRequestQueryParameter();
-        FilterConfig mockConfig = mockConfigQuery();
-
-        Settings s = new Settings(mockConfig);
-        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
-        Headers h = new Headers(mockRequest, s, ulph);
-
-        assertNotNull(h);
-        assertEquals("?def=456&abc=123", h.query);
-    }
-
     public void testGetRequestLangPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
@@ -219,17 +207,6 @@ public class HeadersTest extends TestCase {
         Headers h = new Headers(mockRequest, s, ulph);
 
         assertEquals("example.com/test", h.removeLang("example.com/test?wovn=ja", null));
-    }
-
-    public void testServerPort() throws ConfigurationError {
-        HttpServletRequest mockRequest = mockRequestServerPort();
-        FilterConfig mockConfig = mockConfigPath();
-
-        Settings s = new Settings(mockConfig);
-        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
-        Headers h = new Headers(mockRequest, s, ulph);
-
-        assertEquals("example.com:8080/test", h.pageUrl);
     }
 
     public void testSitePrefixPath() throws ConfigurationError {
@@ -365,19 +342,6 @@ public class HeadersTest extends TestCase {
         Settings s = TestUtil.makeSettings(option);
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         return new Headers(mockRequest, s, ulph);
-    }
-
-    public void testOriginalHeaders() throws ConfigurationError {
-        HttpServletRequest mockRequest = mockRequestOriginalHeaders();
-        FilterConfig mockConfig = mockConfigOriginalHeaders();
-
-        Settings s = new Settings(mockConfig);
-        UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
-        Headers h = new Headers(mockRequest, s, ulph);
-
-        assertEquals("/foo/bar", h.pathName);
-        assertEquals("?baz=123", h.query);
-        assertEquals("example.com/foo/bar?baz=123", h.pageUrl);
     }
 
     public void testGetHreflangUrlMap__PathPattern() throws ConfigurationError {
