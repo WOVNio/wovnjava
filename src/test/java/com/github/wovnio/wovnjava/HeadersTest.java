@@ -333,8 +333,8 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/global/th/", h.locationWithLangCode("https://example.com/global/th/"));
         assertEquals("https://example.com/global/ja/tokyo/", h.locationWithLangCode("https://example.com/global/tokyo/"));
         assertEquals("https://example.com/global/ja/file.html", h.locationWithLangCode("https://example.com/global/file.html"));
-        assertEquals("https://example.com/pics/../global/file.html", h.locationWithLangCode("https://example.com/pics/../global/file.html"));
-        assertEquals("https://example.com/global/ja/../../file.html", h.locationWithLangCode("https://example.com/global/../../file.html"));
+        assertEquals("https://example.com/global/ja/file.html", h.locationWithLangCode("https://example.com/pics/../global/file.html"));
+        assertEquals("https://example.com/global/../../file.html", h.locationWithLangCode("https://example.com/global/../../file.html"));
         assertEquals("https://example.com/tokyo/", h.locationWithLangCode("https://example.com/tokyo/"));
         assertEquals("https://example.com/tokyo/global/", h.locationWithLangCode("https://example.com/tokyo/global/"));
         assertEquals("https://example.com/ja/global/", h.locationWithLangCode("https://example.com/ja/global/"));

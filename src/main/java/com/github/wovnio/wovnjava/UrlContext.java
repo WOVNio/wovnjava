@@ -2,6 +2,8 @@ package com.github.wovnio.wovnjava;
 
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 class UrlContext {
     private final URL context;
@@ -13,8 +15,11 @@ class UrlContext {
     public URL resolve(String location) {
         try {
             URL url = new URL(this.context, location);
+            url = new URI(url.toString()).normalize().toURL();
             return this.stripSlashDotDot(url);
         } catch (MalformedURLException e) {
+            return null;
+        } catch (URISyntaxException e) {
             return null;
         }
     }
