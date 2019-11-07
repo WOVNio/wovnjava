@@ -319,7 +319,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/th/", h.locationWithLangCode("https://example.com/th/"));
     }
 
-    public void testIsValidPath() throws ConfigurationError {
+    public void testGetIsValidRequest() throws ConfigurationError {
         Headers h;
         h = makeHeaderWithSitePrefixPath("/", "global");
         assertEquals(false, h.getIsValidRequest());
