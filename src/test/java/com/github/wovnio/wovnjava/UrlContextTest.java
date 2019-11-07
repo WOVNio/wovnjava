@@ -30,8 +30,8 @@ public class UrlContextTest extends TestCase {
         assertEquals("http://site.com/dir/img/cat.png", this.contextPathAndQuery.resolve(location).toString());
     }
 
-    public void testResolve__InvalidDotDotRelativePath() {
-        String location = "../../img/cat.png";
+    public void testResolve__DotDotRelativePath() {
+        String location = "../img/cat.png";
         assertEquals("http://site.com/img/cat.png", this.contextRootPath.resolve(location).toString());
         assertEquals("http://site.com/img/cat.png", this.contextFilePath.resolve(location).toString());
         assertEquals("http://site.com/img/cat.png", this.contextPathAndQuery.resolve(location).toString());
