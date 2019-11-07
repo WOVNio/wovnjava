@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +23,7 @@ class Headers {
 
     private HttpServletRequest request;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
+    private UrlContext urlContext;
 
     private final String requestLang;
     private final String clientRequestUrlWithoutLangCode;
@@ -36,6 +39,13 @@ class Headers {
 
         this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
         this.clientRequestUrlWithoutLangCode = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang);
+
+        try {
+            this.urlContext = new UrlContext(new URL(this.clientRequestUrlWithoutLangCode));
+        } catch (MalformedURLException e) {
+            this.urlContext = null;
+        }
+
         this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang);
         this.isValidPath = this.urlLanguagePatternHandler.isMatchingSitePrefixPath(clientRequestUrl);
 
@@ -129,74 +139,27 @@ class Headers {
         }
     }
 
-    public String locationWithLangCode(String location) {
-        // check if needed
-        if (location == null) {
-            return null;
-        }
-        if (langCode().equals(settings.defaultLang)) {
-            return location;
-        }
-
-        // catprue protocl and path
-        String locationProtocol = protocol;
-        String path;
-        if (location.contains("://")) {
-            if (!location.contains("://" + host)) {
-                return location;
-            }
-            String[] protocolAndRemaining = location.split("://", 2);
-            locationProtocol = protocolAndRemaining[0];
-            path = "/" + protocolAndRemaining[1].split("/", 2)[1];
-        } else {
-            if (location.startsWith("/")) {
-                path = location;
-            } else {
-                path = UrlPath.join("/", UrlPath.join(UrlPath.removeFile(pathNameKeepTrailingSlash), location));
-            }
-        }
-        path = UrlPath.normalize(path);
-
-        if (!path.startsWith(this.settings.sitePrefixPath)) {
-            return location;
-        }
-
-        // check location already have language code
-        if (settings.urlPattern.equals("query") && location.contains("wovn=")) {
-            return location;
-        } else if (settings.urlPattern.equals("path")) {
-            String pathLang = this.urlLanguagePatternHandler.getLang(path);
-            if (pathLang != null && pathLang.length() > 0) {
-                return location;
-            }
-        }
-
-        // build new location
-        String lang = langCode();
-        String queryLangCode = "";
-        String subdomainLangCode = "";
-        String pathLangCode = "";
-        String sitePrefixPath = "";
-        if (settings.urlPattern.equals("query")) {
-            if (location.contains("?")) {
-                queryLangCode = "&wovn=" + lang;
-            } else {
-                queryLangCode = "?wovn=" + lang;
-            }
-        } else if (settings.urlPattern.equals("subdomain")) {
-            subdomainLangCode = lang + ".";
-        } else {
-            pathLangCode = "/" + lang;
-            sitePrefixPath = this.settings.sitePrefixPath;
-            path = path.replaceFirst(sitePrefixPath, "");
-        }
-        return locationProtocol + "://" + subdomainLangCode + host + sitePrefixPath + pathLangCode + path + queryLangCode;
-    }
-    /**
-     * @return String Returns request URL without any language code
+    /*
+     * Take as input a location string of any form (relative path, absolute path, absolute URL).
+     * If the location needs a Wovn language code, return an absolute URL string of that location
+     * with language code of the current request language. Else return the location as-is.
      */
-    String getUrlWithoutLanguageCode() {
-        return this.protocol + "://" + this.url;
+    public String locationWithLangCode(String location) {
+        if (location == null || this.urlContext == null) return location;
+
+        boolean isRequestDefaultLang = this.requestLang.isEmpty() || this.requestLang == settings.defaultLang;
+        if (isRequestDefaultLang) return location;
+
+        URL url = this.urlContext.resolve(location);
+
+        boolean shouldAddLanguageCode = url != null
+                                        && this.urlContext.isSameHost(url)
+                                        && this.urlLanguagePatternHandler.getLang(url.toString()).isEmpty()
+                                        && this.urlLanguagePatternHandler.isMatchingSitePrefixPath(url.toString());
+
+        if (!shouldAddLanguageCode) return location;
+
+        return this.urlLanguagePatternHandler.insertLang(url.toString(), this.requestLang);
     }
 
     String removeLang(String uri, String lang) {
