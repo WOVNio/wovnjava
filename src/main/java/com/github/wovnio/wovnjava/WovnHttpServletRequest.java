@@ -68,17 +68,6 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     @Override
-    public String getRequestURI() {
-        String uri = super.getRequestURI();
-        if (!headers.settings.urlPattern.equals("subdomain")) {
-            if (uri != null && uri.length() > 0) {
-                uri = headers.removeLang(uri, null);
-            }
-        }
-        return uri;
-    }
-
-    @Override
     public StringBuffer getRequestURL() {
         String url = super.getRequestURL().toString();
         url = this.headers.removeLang(url, null);

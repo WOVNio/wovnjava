@@ -136,45 +136,6 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertEquals("example.com", wovnRequest.getServerName());
     }
 
-    public void testGetRequestURIWithPath() throws ConfigurationError {
-        HttpServletRequest mockRequest = mockRequestPath();
-        FilterConfig mockConfig = mockConfigPath();
-
-        Settings settings = new Settings(mockConfig);
-        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
-
-        WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
-
-        assertEquals("/test", wovnRequest.getRequestURI());
-    }
-
-    public void testGetRequestURIWithSubDomain() throws ConfigurationError {
-        HttpServletRequest mockRequest = mockRequestSubDomain();
-        FilterConfig mockConfig = mockConfigSubDomain();
-
-        Settings settings = new Settings(mockConfig);
-        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
-
-        WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
-
-        assertEquals("/test", wovnRequest.getRequestURI());
-    }
-
-    public void testGetRequestURIWithQuery() throws ConfigurationError {
-        HttpServletRequest mockRequest = mockRequestQuery();
-        FilterConfig mockConfig = mockConfigQuery();
-
-        Settings settings = new Settings(mockConfig);
-        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
-
-        WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
-
-        assertEquals("/test", wovnRequest.getRequestURI());
-    }
-
     public void testGetRequestURLWithPath() throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath();
         FilterConfig mockConfig = mockConfigPath();
