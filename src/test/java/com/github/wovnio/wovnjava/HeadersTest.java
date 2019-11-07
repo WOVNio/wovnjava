@@ -319,24 +319,25 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/th/", h.locationWithLangCode("https://example.com/th/"));
     }
 
-    public void testIsValidPath() throws ConfigurationError {
+    public void testGetIsValidRequest() throws ConfigurationError {
         Headers h;
         h = makeHeaderWithSitePrefixPath("/", "global");
-        assertEquals(false, h.getIsValidPath());
+        assertEquals(false, h.getIsValidRequest());
 
         h = makeHeaderWithSitePrefixPath("/global", "global");
-        assertEquals(true, h.getIsValidPath());
+        assertEquals(true, h.getIsValidRequest());
 
         h = makeHeaderWithSitePrefixPath("/global/ja/foo", "global");
-        assertEquals(true, h.getIsValidPath());
+        assertEquals(true, h.getIsValidRequest());
 
         h = makeHeaderWithSitePrefixPath("/ja/global/foo", "global");
-        assertEquals(false, h.getIsValidPath());
+        assertEquals(false, h.getIsValidRequest());
     }
 
     private Headers makeHeaderWithSitePrefixPath(String requestPath, String sitePrefixPath) throws ConfigurationError {
         HttpServletRequest mockRequest = mockRequestPath(requestPath);
         HashMap<String, String> option = new HashMap<String, String>() {{
+            put("urlPattern", "path");
             put("sitePrefixPath", sitePrefixPath);
         }};
         Settings s = TestUtil.makeSettings(option);

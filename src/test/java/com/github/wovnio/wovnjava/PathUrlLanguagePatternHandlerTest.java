@@ -128,31 +128,31 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
 
     public void testIsMatchSitePrefixPath__DefaultSettings() {
         PathUrlLanguagePatternHandler sut = createWithParams("");
-        assertEquals(true, sut.isMatchingSitePrefixPath(""));
-        assertEquals(true, sut.isMatchingSitePrefixPath("?query"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/ja"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/ja?query"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("http://www.site.com"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("https://site.com/pre/fix/en/"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("site.com/no/page/index.html"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("site.com/no/page/index.html?query"));
+        assertEquals(true, sut.canInterceptUrl(""));
+        assertEquals(true, sut.canInterceptUrl("?query"));
+        assertEquals(true, sut.canInterceptUrl("/pre/fix/ja"));
+        assertEquals(true, sut.canInterceptUrl("/pre/fix/ja?query"));
+        assertEquals(true, sut.canInterceptUrl("http://www.site.com"));
+        assertEquals(true, sut.canInterceptUrl("https://site.com/pre/fix/en/"));
+        assertEquals(true, sut.canInterceptUrl("site.com/no/page/index.html"));
+        assertEquals(true, sut.canInterceptUrl("site.com/no/page/index.html?query"));
     }
 
     public void testIsMatchSitePrefixPath__UsingSitePrefixPath() {
         PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
-        assertEquals(false, sut.isMatchingSitePrefixPath(""));
-        assertEquals(false, sut.isMatchingSitePrefixPath("site.com"));
-        assertEquals(false, sut.isMatchingSitePrefixPath("site.com?query"));
-        assertEquals(false, sut.isMatchingSitePrefixPath("www.site.com/pre"));
-        assertEquals(false, sut.isMatchingSitePrefixPath("http://www.site.com/en/pre/fix"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix?query"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/?query"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("/pre/fix/ja"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("https://site.com/pre/fix/en/"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("site.com/pre/fix/page/index.html"));
-        assertEquals(true, sut.isMatchingSitePrefixPath("site.com/pre/fix/page/index.html?query"));
+        assertEquals(false, sut.canInterceptUrl(""));
+        assertEquals(false, sut.canInterceptUrl("site.com"));
+        assertEquals(false, sut.canInterceptUrl("site.com?query"));
+        assertEquals(false, sut.canInterceptUrl("www.site.com/pre"));
+        assertEquals(false, sut.canInterceptUrl("http://www.site.com/en/pre/fix"));
+        assertEquals(true, sut.canInterceptUrl("/pre/fix"));
+        assertEquals(true, sut.canInterceptUrl("/pre/fix/"));
+        assertEquals(true, sut.canInterceptUrl("/pre/fix?query"));
+        assertEquals(true, sut.canInterceptUrl("/pre/fix/?query"));
+        assertEquals(true, sut.canInterceptUrl("/pre/fix/ja"));
+        assertEquals(true, sut.canInterceptUrl("https://site.com/pre/fix/en/"));
+        assertEquals(true, sut.canInterceptUrl("site.com/pre/fix/page/index.html"));
+        assertEquals(true, sut.canInterceptUrl("site.com/pre/fix/page/index.html?query"));
     }
 
     public void testInsertLang__DefaultSettings() {
