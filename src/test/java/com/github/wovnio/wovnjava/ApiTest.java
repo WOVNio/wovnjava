@@ -53,7 +53,7 @@ public class ApiTest extends TestCase {
         }});
         UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
 
-        HttpServletRequest request = TestUtil.mockRequestPath("/ja/somepage/"); // mocks "https://example.com"
+        HttpServletRequest request = MockHttpServletRequest.create("https://example.com/ja/somepage/");
         ResponseHeaders responseHeaders = mockResponseHeaders();
 
         Headers headers = new Headers(request, settings, urlLanguagePatternHandler);

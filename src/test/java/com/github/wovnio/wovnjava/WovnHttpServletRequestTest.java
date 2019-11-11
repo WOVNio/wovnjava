@@ -2,7 +2,8 @@ package com.github.wovnio.wovnjava;
 
 import junit.framework.TestCase;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Enumeration;
 
 import org.easymock.EasyMock;
 
@@ -12,57 +13,15 @@ import javax.servlet.http.HttpServletRequest;
 public class WovnHttpServletRequestTest extends TestCase {
 
     private static HttpServletRequest mockRequestPath() {
-        HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
-        EasyMock.expect(mock.getRemoteHost()).andReturn("example.com").atLeastOnce();
-        EasyMock.expect(mock.getRequestURI()).andReturn("/en/test").atLeastOnce();
-        EasyMock.expect(mock.getRequestURL()).andReturn(new StringBuffer("/en/test")).atLeastOnce();
-        EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
-        EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getServletPath()).andReturn("/en/test").atLeastOnce();
-        EasyMock.expect(mock.getHeaderNames()).andReturn(new Vector<String>().elements());
-        EasyMock.expect(mock.getHeader("X-Header-Key")).andReturn("x-header-value");
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
-        EasyMock.replay(mock);
-        return mock;
+        return MockHttpServletRequest.create("https://example.com/en/test");
     }
 
     private static HttpServletRequest mockRequestSubDomain() {
-        HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
-        EasyMock.expect(mock.getRemoteHost()).andReturn("en.example.com").atLeastOnce();
-        EasyMock.expect(mock.getRequestURI()).andReturn("/test").atLeastOnce();
-        EasyMock.expect(mock.getRequestURL()).andReturn(new StringBuffer("/test")).atLeastOnce();
-        EasyMock.expect(mock.getServerName()).andReturn("en.example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
-        EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getServletPath()).andReturn("/test").atLeastOnce();
-        EasyMock.expect(mock.getHeaderNames()).andReturn(new Vector<String>().elements());
-        EasyMock.expect(mock.getHeader("X-Header-Key")).andReturn("x-header-value");
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
-        EasyMock.replay(mock);
-        return mock;
+        return MockHttpServletRequest.create("https://en.example.com/test");
     }
 
     private static HttpServletRequest mockRequestQuery() {
-        HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
-        EasyMock.expect(mock.getRemoteHost()).andReturn("example.com").atLeastOnce();
-        EasyMock.expect(mock.getRequestURI()).andReturn("/test").atLeastOnce();
-        EasyMock.expect(mock.getRequestURL()).andReturn(new StringBuffer("/test")).atLeastOnce();
-        EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("wovn=en").atLeastOnce();
-        EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getServletPath()).andReturn("/test").atLeastOnce();
-        EasyMock.expect(mock.getHeaderNames()).andReturn(new Vector<String>().elements());
-        EasyMock.expect(mock.getHeader("X-Header-Key")).andReturn("x-header-value");
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
-        EasyMock.replay(mock);
-        return mock;
+        return MockHttpServletRequest.create("https://example.com/test?wovn=en");
     }
 
     private static FilterConfig mockConfigPath() {
@@ -226,7 +185,7 @@ public class WovnHttpServletRequestTest extends TestCase {
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
-        assertEquals("/test", wovnRequest.getRequestURL().toString());
+        assertEquals("https://example.com/test", wovnRequest.getRequestURL().toString());
     }
 
     public void testGetRequestURLWithSubDomain() throws ConfigurationError {
@@ -239,7 +198,7 @@ public class WovnHttpServletRequestTest extends TestCase {
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
-        assertEquals("/test", wovnRequest.getRequestURL().toString());
+        assertEquals("https://example.com/test", wovnRequest.getRequestURL().toString());
     }
 
     public void testGetRequestURLWithQuery() throws ConfigurationError {
@@ -252,7 +211,7 @@ public class WovnHttpServletRequestTest extends TestCase {
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
-        assertEquals("/test", wovnRequest.getRequestURL().toString());
+        assertEquals("https://example.com/test", wovnRequest.getRequestURL().toString());
     }
 
     public void testGetServletPathWithPath() throws ConfigurationError {
@@ -305,9 +264,11 @@ public class WovnHttpServletRequestTest extends TestCase {
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
         assertEquals("en", wovnRequest.getHeader("X-Wovn-Lang"));
-        assertEquals("x-header-value", wovnRequest.getHeader("X-Header-Key"));
+        assertEquals("x-header-test-value", wovnRequest.getHeader("X-Header-Test"));
 
         Enumeration<String> reqHeaders = wovnRequest.getHeaderNames();
+        assertEquals(true, reqHeaders.hasMoreElements());
+        assertEquals("X-Header-Test", reqHeaders.nextElement());
         assertEquals(true, reqHeaders.hasMoreElements());
         assertEquals("X-Wovn-Lang", reqHeaders.nextElement());
     }
@@ -323,9 +284,11 @@ public class WovnHttpServletRequestTest extends TestCase {
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
         assertEquals("en", wovnRequest.getHeader("X-Wovn-Lang"));
-        assertEquals("x-header-value", wovnRequest.getHeader("X-Header-Key"));
+        assertEquals("x-header-test-value", wovnRequest.getHeader("X-Header-Test"));
 
         Enumeration<String> reqHeaders = wovnRequest.getHeaderNames();
+        assertEquals(true, reqHeaders.hasMoreElements());
+        assertEquals("X-Header-Test", reqHeaders.nextElement());
         assertEquals(true, reqHeaders.hasMoreElements());
         assertEquals("X-Wovn-Lang", reqHeaders.nextElement());
     }

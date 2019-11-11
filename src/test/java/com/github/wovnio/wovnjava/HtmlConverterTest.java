@@ -116,7 +116,7 @@ public class HtmlConverterTest extends TestCase {
             put("sitePrefixPath", "global");
         }};
         Settings settings = TestUtil.makeSettings(option);
-        HttpServletRequest mockRequest = mockRequestPath("/global/tokyo/", "site.com");
+        HttpServletRequest mockRequest = MockHttpServletRequest.create("https://site.com/global/tokyo/");
         UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
         Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
         HtmlConverter converter = new HtmlConverter(settings, original);
@@ -175,20 +175,5 @@ public class HtmlConverterTest extends TestCase {
 
     private String stripExtraSpaces(String html) {
         return html.replaceAll("\\s +", "").replaceAll(">\\s+<", "><");
-    }
-
-    private static HttpServletRequest mockRequestPath(String path, String host) {
-        HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
-        EasyMock.expect(mock.getRemoteHost()).andReturn(host);
-        EasyMock.expect(mock.getRequestURI()).andReturn(path).atLeastOnce();
-        EasyMock.expect(mock.getServerName()).andReturn(host).atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
-        EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
-        EasyMock.replay(mock);
-
-        return mock;
     }
 }
