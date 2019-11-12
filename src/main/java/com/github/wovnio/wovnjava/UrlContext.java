@@ -12,10 +12,6 @@ class UrlContext {
         this.context = currentLocation;
     }
 
-    public URL getURL() {
-        return this.context;
-    }
-
     public URL resolve(String location) {
         try {
             URL url = new URL(this.context, location);
