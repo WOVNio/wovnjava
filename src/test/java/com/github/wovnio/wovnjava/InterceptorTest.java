@@ -2,7 +2,6 @@ package com.github.wovnio.wovnjava;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.lang.IllegalArgumentException;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +22,7 @@ public class InterceptorTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
         }});
-        String html = translate("/ja/", originalHtml, settings, mockApiSuccess(), mockResponseHeadersSuccess());
+        String html = translate("https://example.com/ja/", originalHtml, settings, mockApiSuccess(), mockResponseHeadersSuccess());
         String expect = "replaced html";
         assertEquals(expect, stripExtraSpaces(html));
     }
@@ -35,7 +34,7 @@ public class InterceptorTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
         }});
-        String html = translate("/ja/", originalHtml, settings, mockApiTimeout(), mockResponseHeadersTimeout());
+        String html = translate("https://example.com/ja/", originalHtml, settings, mockApiTimeout(), mockResponseHeadersTimeout());
         String expect = "<!doctype html><html><head><title>test</title>" +
                         "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
                         "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
@@ -53,7 +52,7 @@ public class InterceptorTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
         }});
-        String html = translate("/", originalHtml, settings, null, null);
+        String html = translate("https://example.com/", originalHtml, settings, null, null);
         String expect = "<!doctype html><html><head><title>test</title>" +
                         "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
                         "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
@@ -64,8 +63,8 @@ public class InterceptorTest extends TestCase {
         assertEquals(expect, stripExtraSpaces(html));
     }
 
-    private String translate(String path, String html, Settings settings, Api api, ResponseHeaders responseHeaders) throws NoSuchMethodException, IllegalAccessException, IOException, ServletException, ConfigurationError {
-        HttpServletRequest request = mockRequestPath(path);
+    private String translate(String url, String html, Settings settings, Api api, ResponseHeaders responseHeaders) throws NoSuchMethodException, IllegalAccessException, IOException, ServletException, ConfigurationError {
+        HttpServletRequest request = MockHttpServletRequest.create(url);
         UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
         Interceptor interceptor = new Interceptor(new Headers(request, settings, urlLanguagePatternHandler), settings, api, responseHeaders);
         return interceptor.translate(html);
@@ -89,20 +88,6 @@ public class InterceptorTest extends TestCase {
         } catch (ApiException _) {
             throw new RuntimeException("Fail create mock");
         }
-        EasyMock.replay(mock);
-        return mock;
-    }
-
-    private HttpServletRequest mockRequestPath(String path) {
-        HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
-        EasyMock.expect(mock.getRemoteHost()).andReturn("example.com");
-        EasyMock.expect(mock.getRequestURI()).andReturn(path).atLeastOnce();
-        EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
-        EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
         EasyMock.replay(mock);
         return mock;
     }

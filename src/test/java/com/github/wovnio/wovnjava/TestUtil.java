@@ -57,25 +57,6 @@ public class TestUtil {
         return new Settings(makeConfigWithValidDefaults(options));
     }
 
-    public static HttpServletRequest mockRequestPath(String path) {
-        return mockRequestPath(path, null, new RequestDispatcherMock());
-    }
-
-    public static HttpServletRequest mockRequestPath(String path, String replacedPath, RequestDispatcherMock dispatcher) {
-        HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
-        EasyMock.expect(mock.getRemoteHost()).andReturn("example.com");
-        EasyMock.expect(mock.getRequestURI()).andReturn(path).atLeastOnce();
-        EasyMock.expect(mock.getServerName()).andReturn("example.com").atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn("").atLeastOnce();
-        EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
-        EasyMock.expect(mock.getRequestDispatcher(replacedPath == null ? EasyMock.anyString() : replacedPath)).andReturn(dispatcher);
-        EasyMock.replay(mock);
-        return mock;
-    }
-
     public static HttpServletResponse mockResponse(String contentType, String encoding) throws IOException {
         return mockResponse(contentType, encoding, false);
     }
@@ -123,7 +104,8 @@ public class TestUtil {
 
     public static FilterChainMock doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option, boolean isPreviouslyProcessed) throws ServletException, IOException {
         RequestDispatcherMock dispatcher = new RequestDispatcherMock();
-        HttpServletRequest req = mockRequestPath(path, forwardPath, dispatcher);
+        String requestUrl = "https://example.com" + path;
+        HttpServletRequest req = MockHttpServletRequest.createWithForwardingDispatcher(requestUrl, forwardPath, dispatcher);
         HttpServletResponse res = mockResponse(contentType, "", isPreviouslyProcessed);
         FilterConfig filterConfig = makeConfigWithValidDefaults(option);
         FilterChainMock filterChain = new FilterChainMock();
