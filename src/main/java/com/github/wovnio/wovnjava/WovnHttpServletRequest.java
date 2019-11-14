@@ -84,13 +84,4 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
         url = this.headers.removeLang(url, null);
         return new StringBuffer(url);
     }
-
-    @Override
-    public String getServletPath() {
-        String path = super.getServletPath();
-        if (this.headers.settings.urlPattern.equals("path")) {
-            path = this.headers.removeLang(path, null);
-        }
-        return path;
-    }
 }

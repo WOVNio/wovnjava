@@ -58,7 +58,7 @@ public class WovnServletFilterTest extends TestCase {
     }
 
     public void testImageWithLang() throws ServletException, IOException {
-        FilterChainMock mock = TestUtil.doServletFilter("image/png", "/ja/image.png", "image.png");
+        FilterChainMock mock = TestUtil.doServletFilter("image/png", "/ja/image.png", "/image.png");
         assertEquals("image/png", mock.res.getContentType());
         assertEquals("/image.png", mock.req.getRequestURI());
     }

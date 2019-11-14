@@ -18,7 +18,11 @@ class Headers {
     /* The URL that the client originally requested */
     private final String clientRequestUrlInDefaultLanguage;
 
+    /* Should send HTTP 302 redirect to page in default language */
     private final boolean shouldRedirectToDefaultLang;
+    /* Should forward the request internally to equivalent path in default language */
+    private boolean shouldForwardToPathInDefaultLanguage;
+
     private final boolean isValidRequest;
 
     Headers(HttpServletRequest request, Settings settings, UrlLanguagePatternHandler urlLanguagePatternHandler) {
@@ -37,6 +41,13 @@ class Headers {
             this.urlContext = new UrlContext(new URL(currentContextUrlInDefaultLanguage));
         } catch (MalformedURLException e) {
             this.urlContext = null;
+        }
+
+        try {
+            String currentContextPath = new URL(currentContextUrl).getPath();
+            this.shouldForwardToPathInDefaultLanguage = !currentContextPath.equalsIgnoreCase(this.getCurrentContextPathInDefaultLanguage());
+        } catch (MalformedURLException e) {
+            this.shouldForwardToPathInDefaultLanguage = false;
         }
 
         this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang);
@@ -101,6 +112,10 @@ class Headers {
 
     public boolean getShouldRedirectToDefaultLang() {
         return this.shouldRedirectToDefaultLang;
+    }
+
+    public boolean getShouldForwardToPathInDefaultLanguage() {
+        return this.shouldForwardToPathInDefaultLanguage;
     }
 
     public boolean getIsValidRequest() {
