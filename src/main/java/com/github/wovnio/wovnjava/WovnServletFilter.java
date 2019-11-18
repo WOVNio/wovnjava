@@ -48,7 +48,7 @@ public class WovnServletFilter implements Filter {
         Headers headers = new Headers((HttpServletRequest)request, this.settings, this.urlLanguagePatternHandler);
 
         boolean canTranslateRequest = !requestOptions.getDisableMode() &&
-                                      !this.fileExtensionMatcher.isFile(headers.getCurrentContextPathInDefaultLanguage());
+                                      !this.fileExtensionMatcher.isFile(headers.getCurrentContextUrlInDefaultLanguage().getPath());
 
         if (isRequestAlreadyProcessed || !headers.getIsValidRequest()) {
             /* Do nothing */
@@ -63,7 +63,7 @@ public class WovnServletFilter implements Filter {
             /* Strip language code and pass through the request and response untouched */
             WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest((HttpServletRequest)request, headers);
             if (headers.getShouldForwardToPathInDefaultLanguage()) {
-                wovnRequest.getRequestDispatcher(headers.getCurrentContextPathInDefaultLanguage()).forward(wovnRequest, response);
+                wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, response);
             } else {
                 chain.doFilter(wovnRequest, response);
             }
@@ -82,7 +82,7 @@ public class WovnServletFilter implements Filter {
         responseHeaders.setApiStatus("Unused");
 
         if (headers.getShouldForwardToPathInDefaultLanguage()) {
-            wovnRequest.getRequestDispatcher(headers.getCurrentContextPathInDefaultLanguage()).forward(wovnRequest, wovnResponse);
+            wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, wovnResponse);
         } else {
             chain.doFilter(wovnRequest, wovnResponse);
         }

@@ -45,7 +45,7 @@ class Headers {
 
         try {
             String currentContextPath = new URL(currentContextUrl).getPath();
-            this.shouldForwardToPathInDefaultLanguage = !currentContextPath.equalsIgnoreCase(this.getCurrentContextPathInDefaultLanguage());
+            this.shouldForwardToPathInDefaultLanguage = !currentContextPath.equalsIgnoreCase(this.getCurrentContextUrlInDefaultLanguage().getPath());
         } catch (MalformedURLException e) {
             this.shouldForwardToPathInDefaultLanguage = false;
         }
@@ -106,8 +106,8 @@ class Headers {
         return UrlPath.getPath(this.clientRequestUrlInDefaultLanguage);
     }
 
-    public String getCurrentContextPathInDefaultLanguage() {
-        return this.urlContext.getURL().getPath();
+    public URL getCurrentContextUrlInDefaultLanguage() {
+        return this.urlContext.getURL();
     }
 
     public boolean getShouldRedirectToDefaultLang() {
