@@ -20,7 +20,7 @@ class Headers {
 
     /* Should send HTTP 302 redirect to page in default language */
     private final boolean shouldRedirectToDefaultLang;
-    /* Should forward the request internally to equivalent path in default language */
+    /* Is current context URL path the same as the equivalent path in default language */
     private boolean isPathInDefaultLanguage;
 
     private final boolean isValidRequest;
