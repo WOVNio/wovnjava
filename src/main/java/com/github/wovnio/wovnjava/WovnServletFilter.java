@@ -62,10 +62,10 @@ public class WovnServletFilter implements Filter {
         } else {
             /* Strip language code and pass through the request and response untouched */
             WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest((HttpServletRequest)request, headers);
-            if (headers.getShouldForwardToPathInDefaultLanguage()) {
-                wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, response);
-            } else {
+            if (headers.getIsPathInDefaultLanguage()) {
                 chain.doFilter(wovnRequest, response);
+            } else {
+                wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, response);
             }
         }
     }
@@ -81,10 +81,10 @@ public class WovnServletFilter implements Filter {
         ResponseHeaders responseHeaders = new ResponseHeaders(response);
         responseHeaders.setApiStatus("Unused");
 
-        if (headers.getShouldForwardToPathInDefaultLanguage()) {
-            wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, wovnResponse);
-        } else {
+        if (headers.getIsPathInDefaultLanguage()) {
             chain.doFilter(wovnRequest, wovnResponse);
+        } else {
+            wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, wovnResponse);
         }
 
         String originalBody = wovnResponse.toString();
