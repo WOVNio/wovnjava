@@ -1,14 +1,19 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
+    private Lang defaultLang;
+    private ArrayList<Lang> supportedLangs;
     private String sitePrefixPath;
     private Pattern getLangPattern;
     private Pattern matchSitePrefixPathPattern;
 
-    PathUrlLanguagePatternHandler(String sitePrefixPath) {
+    PathUrlLanguagePatternHandler(Lang defaultLang, ArrayList<Lang> supportedLangs, String sitePrefixPath) {
+        this.defaultLang = defaultLang;
+        this.supportedLangs = supportedLangs;
         this.sitePrefixPath = sitePrefixPath;
         this.getLangPattern = this.buildGetLangPattern(sitePrefixPath);
         this.matchSitePrefixPathPattern = this.buildMatchSitePrefixPathPattern(sitePrefixPath);

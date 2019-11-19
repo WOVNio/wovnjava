@@ -1,11 +1,23 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 import org.easymock.EasyMock;
 
 public class QueryUrlLanguagePatternHandlerTest extends TestCase {
+    private Lang defaultLang;
+    private ArrayList<Lang> supportedLangs;
+
+    protected void setUp() throws Exception {
+        this.defaultLang = Lang.get("en");
+        this.supportedLangs = new ArrayList<Lang>();
+        this.supportedLangs.add(Lang.get("en"));
+        this.supportedLangs.add(Lang.get("ja"));
+    }
+
     public void testGetLang__NonMatchingQuery__ReturnEmptyLang() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler();
+        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("", sut.getLang("/"));
         assertEquals("", sut.getLang("/en"));
         assertEquals("", sut.getLang("/en/page?wovn&en"));
@@ -17,7 +29,7 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testGetLang__MatchingQuery__ReturnLangCode() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler();
+        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("fr", sut.getLang("?wovn=fr"));
         assertEquals("fr", sut.getLang("/?wovn=fr"));
         assertEquals("fr", sut.getLang("/en/?wovn=fr"));
@@ -29,7 +41,7 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testRemoveLang__NonMatchingQuery__DoNotModify() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler();
+        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("/", sut.removeLang("/", "ja"));
         assertEquals("/page/index.html", sut.removeLang("/page/index.html", "ja"));
         assertEquals("?wovn=en", sut.removeLang("?wovn=en", "ja"));
@@ -39,7 +51,7 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testRemoveLang__MatchingQuery__RemoveLangCode() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler();
+        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("", sut.removeLang("?wovn=ja", "ja"));
         assertEquals("/?search=pizza&lang=ja", sut.removeLang("/?search=pizza&wovn=ja&lang=ja", "ja"));
         assertEquals("site.com/page/index.html?wovn", sut.removeLang("site.com/page/index.html?wovn&wovn=ja", "ja"));
@@ -47,7 +59,7 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testRemoveLang__EmptyLanguage__DoNotModify() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler();
+        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("/", sut.removeLang("/", ""));
         assertEquals("site.com?wovn=en", sut.removeLang("site.com?wovn=en", ""));
         assertEquals("site.com/no/index.html", sut.removeLang("site.com/no/index.html", ""));
@@ -55,7 +67,7 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testInsertLang() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler();
+        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("/?wovn=ja", sut.insertLang("/", "ja"));
         assertEquals("/path/index.html?wovn=ja", sut.insertLang("/path/index.html", "ja"));
         assertEquals("site.com/home?q=123&wovn=ja", sut.insertLang("site.com/home?q=123", "ja"));

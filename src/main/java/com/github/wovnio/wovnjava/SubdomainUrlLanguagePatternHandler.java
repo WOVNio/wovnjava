@@ -1,11 +1,16 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
+    private Lang defaultLang;
+    private ArrayList<Lang> supportedLangs;
     private Pattern getLangPattern;
 
-    SubdomainUrlLanguagePatternHandler() {
+    SubdomainUrlLanguagePatternHandler(Lang defaultLang, ArrayList<Lang> supportedLangs) {
+        this.defaultLang = defaultLang;
+        this.supportedLangs = supportedLangs;
         this.getLangPattern = this.buildGetLangPattern();
     }
 

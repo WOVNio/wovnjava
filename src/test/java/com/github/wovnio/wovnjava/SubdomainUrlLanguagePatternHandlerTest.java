@@ -1,11 +1,23 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 import org.easymock.EasyMock;
 
 public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
+    private Lang defaultLang;
+    private ArrayList<Lang> supportedLangs;
+
+    protected void setUp() throws Exception {
+        this.defaultLang = Lang.get("en");
+        this.supportedLangs = new ArrayList<Lang>();
+        this.supportedLangs.add(Lang.get("en"));
+        this.supportedLangs.add(Lang.get("ja"));
+    }
+
     public void testGetLang__NonMatchingSubdomain__ReturnEmptyLang() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler();
+        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("", sut.getLang("/"));
         assertEquals("", sut.getLang("/en"));
         assertEquals("", sut.getLang("/en/page"));
@@ -17,7 +29,7 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testGetLang__MatchingSubdomain__ReturnLangCode() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler();
+        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("en", sut.getLang("en.site.com"));
         assertEquals("es", sut.getLang("es.site.com/"));
         assertEquals("fr", sut.getLang("fr.site.com/en/page/index.html?lang=it&wovn=en"));
@@ -26,7 +38,7 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testRemoveLang__NonMatchingSubdomain__DoNotModify() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler();
+        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("/", sut.removeLang("/", "en"));
         assertEquals("/en/path/index.php", sut.removeLang("/en/path/index.php", "en"));
         assertEquals("?lang=english", sut.removeLang("?lang=english", "en"));
@@ -37,7 +49,7 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testRemoveLang__MatchingSubdomain__RemoveLangCode() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler();
+        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("site.com", sut.removeLang("en.site.com", "en"));
         assertEquals("site.com/", sut.removeLang("es.site.com/", "es"));
         assertEquals("http://site.com/", sut.removeLang("http://es.site.com/", "es"));
@@ -45,7 +57,7 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testRemoveLang__EmptyLanguage__DoNotModify() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler();
+        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("/", sut.removeLang("/", ""));
         assertEquals("site.com?wovn=en", sut.removeLang("site.com?wovn=en", ""));
         assertEquals("site.com/no/index.html", sut.removeLang("site.com/no/index.html", ""));
@@ -53,7 +65,7 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testInsertLang() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler();
+        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
         assertEquals("/", sut.insertLang("/", "ja"));
         assertEquals("/path/index.html", sut.insertLang("/path/index.html", "ja"));
         assertEquals("ja.site.com?q=none", sut.insertLang("site.com?q=none", "ja"));

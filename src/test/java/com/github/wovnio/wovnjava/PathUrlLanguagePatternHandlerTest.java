@@ -1,9 +1,25 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 import org.easymock.EasyMock;
 
 public class PathUrlLanguagePatternHandlerTest extends TestCase {
+    private Lang defaultLang;
+    private ArrayList<Lang> supportedLangs;
+
+    protected void setUp() throws Exception {
+        this.defaultLang = Lang.get("en");
+        this.supportedLangs = new ArrayList<Lang>();
+        this.supportedLangs.add(Lang.get("en"));
+        this.supportedLangs.add(Lang.get("ja"));
+    }
+
+    private PathUrlLanguagePatternHandler createWithParams(String sitePrefixPath) {
+        return new PathUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs, sitePrefixPath);
+    }
+
     public void testGetLang__NonMatchingPath__ReturnEmptyLang() {
         PathUrlLanguagePatternHandler sut = createWithParams("");
         assertEquals("", sut.getLang(""));
@@ -182,9 +198,5 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("site.com/", sut.insertLang("site.com/", "ja"));
         assertEquals("http://site.com/home", sut.insertLang("http://site.com/home", "ja"));
         assertEquals("https://fr.site.co.uk?query", sut.insertLang("https://fr.site.co.uk?query", "ja"));
-    }
-
-    private PathUrlLanguagePatternHandler createWithParams(String sitePrefixPath) {
-        return new PathUrlLanguagePatternHandler(sitePrefixPath);
     }
 }
