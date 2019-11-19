@@ -50,7 +50,7 @@ class Headers {
             this.isPathInDefaultLanguage = false;
         }
 
-        this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang);
+        this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang.code);
 
         this.isValidRequest = this.urlContext != null && this.urlLanguagePatternHandler.canInterceptUrl(clientRequestUrl);
     }
@@ -60,7 +60,7 @@ class Headers {
         if (pl != null && pl.length() > 0) {
             return pl;
         } else {
-            return settings.defaultLang;
+            return settings.defaultLang.code;
         }
     }
 
@@ -72,7 +72,7 @@ class Headers {
     public String locationWithLangCode(String location) {
         if (location == null || !this.isValidRequest) return location;
 
-        boolean isRequestDefaultLang = this.requestLang.isEmpty() || this.requestLang == settings.defaultLang;
+        boolean isRequestDefaultLang = this.requestLang.isEmpty() || this.requestLang == settings.defaultLang.code;
         if (isRequestDefaultLang) return location;
 
         URL url = this.urlContext.resolve(location);
@@ -129,7 +129,7 @@ class Headers {
             String url = this.urlLanguagePatternHandler.insertLang(this.clientRequestUrlInDefaultLanguage, supportedLang);
             hreflangs.put(hreflangCode, url);
         }
-        String hreflangCodeDefaultLang = Lang.get(this.settings.defaultLang).codeISO639_1;
+        String hreflangCodeDefaultLang = this.settings.defaultLang.codeISO639_1;
         String urlDefaultLang = this.clientRequestUrlInDefaultLanguage;
         hreflangs.put(hreflangCodeDefaultLang, urlDefaultLang);
         return hreflangs;

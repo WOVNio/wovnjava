@@ -20,7 +20,7 @@ class Settings {
     // Required settings
     public final String projectToken;
     public final String urlPattern;
-    public final String defaultLang;
+    public final Lang defaultLang;
     public final ArrayList<String> supportedLangs;
 
     // Optional settings
@@ -47,7 +47,7 @@ class Settings {
         this.projectToken = verifyToken(reader.getStringParameter("userToken"), reader.getStringParameter("projectToken"));
         this.urlPattern = verifyUrlPattern(reader.getStringParameter("urlPattern"));
         this.defaultLang = verifyDefaultLang(reader.getStringParameter("defaultLang"));
-        this.supportedLangs = verifySupportedLangs(reader.getArrayParameter("supportedLangs"), this.defaultLang);
+        this.supportedLangs = verifySupportedLangs(reader.getArrayParameter("supportedLangs"), this.defaultLang.code);
 
         // Optional settings
         this.devMode = reader.getBoolParameterDefaultFalse("devMode");
@@ -89,7 +89,7 @@ class Settings {
         return value;
     }
 
-    private String verifyDefaultLang(String value) throws ConfigurationError {
+    private Lang verifyDefaultLang(String value) throws ConfigurationError {
         if (value == null || value.isEmpty()) {
             throw new ConfigurationError("Missing required configuration for \"defaultLang\".");
         }
@@ -97,7 +97,7 @@ class Settings {
         if (lang == null) {
             throw new ConfigurationError("Invalid configuration for \"defaultLang\", must match a supported language code.");
         }
-        return lang.code;
+        return lang;
     }
 
     private ArrayList<String> verifySupportedLangs(ArrayList<String> values, String defaultLangCode) throws ConfigurationError {
@@ -147,7 +147,7 @@ class Settings {
         md.update(projectToken.getBytes());
         md.update(urlPattern.getBytes());
         md.update(sitePrefixPath.getBytes());
-        md.update(defaultLang.getBytes());
+        md.update(defaultLang.code.getBytes());
         for (String lang : supportedLangs) {
             md.update(lang.getBytes());
         }

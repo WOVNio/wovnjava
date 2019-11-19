@@ -8,6 +8,12 @@ import java.util.ArrayList;
 import javax.servlet.FilterConfig;
 
 public class SettingsTest extends TestCase {
+    private Lang english;
+
+    protected void setUp() throws Exception {
+        this.english = Lang.get("en");
+    }
+
     public void testDefaultSettings__MinimalConfiguration__DefaultValuesOK() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
             put("projectToken", "123456");
@@ -19,7 +25,7 @@ public class SettingsTest extends TestCase {
 
         assertEquals("123456", s.projectToken);
         assertEquals("path", s.urlPattern);
-        assertEquals("en", s.defaultLang);
+        assertEquals(this.english, s.defaultLang);
 
         ArrayList<String> expectedSupportedLangs = new ArrayList<String>();
         expectedSupportedLangs.add("en");

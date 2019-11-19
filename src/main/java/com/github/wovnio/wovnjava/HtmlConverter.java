@@ -127,7 +127,7 @@ class HtmlConverter {
         sb.append("&backend=true&currentLang=");
         sb.append(lang);
         sb.append("&defaultLang=");
-        sb.append(settings.defaultLang);
+        sb.append(settings.defaultLang.code);
         sb.append("&urlPattern=");
         sb.append(settings.urlPattern);
         sb.append("&langCodeAliases={}&version=");
