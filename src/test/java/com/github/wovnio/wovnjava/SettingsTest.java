@@ -9,9 +9,11 @@ import javax.servlet.FilterConfig;
 
 public class SettingsTest extends TestCase {
     private Lang english;
+    private Lang japanese;
 
     protected void setUp() throws Exception {
         this.english = Lang.get("en");
+        this.japanese = Lang.get("ja");
     }
 
     public void testDefaultSettings__MinimalConfiguration__DefaultValuesOK() throws ConfigurationError {
@@ -27,9 +29,9 @@ public class SettingsTest extends TestCase {
         assertEquals("path", s.urlPattern);
         assertEquals(this.english, s.defaultLang);
 
-        ArrayList<String> expectedSupportedLangs = new ArrayList<String>();
-        expectedSupportedLangs.add("en");
-        expectedSupportedLangs.add("ja");
+        ArrayList<Lang> expectedSupportedLangs = new ArrayList<Lang>();
+        expectedSupportedLangs.add(this.english);
+        expectedSupportedLangs.add(this.japanese);
         assertEquals(expectedSupportedLangs, s.supportedLangs);
 
         assertEquals(false, s.devMode);
@@ -177,9 +179,9 @@ public class SettingsTest extends TestCase {
         }});
         Settings s = new Settings(config);
 
-        ArrayList<String> expectedSupportedLangs = new ArrayList<String>();
-        expectedSupportedLangs.add("ja");
-        expectedSupportedLangs.add("en");
+        ArrayList<Lang> expectedSupportedLangs = new ArrayList<Lang>();
+        expectedSupportedLangs.add(this.japanese);
+        expectedSupportedLangs.add(this.english);
         assertEquals(expectedSupportedLangs, s.supportedLangs);
     }
 

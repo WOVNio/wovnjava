@@ -27,7 +27,7 @@ class Interceptor {
 
     private String apiTranslate(String lang, String body) {
         try {
-            HtmlConverter converter = new HtmlConverter(settings, body);
+            HtmlConverter converter = new HtmlConverter(this.settings, this.headers, body);
             String convertedBody = converter.strip();
             String translatedBody = api.translate(lang, convertedBody);
             responseHeaders.setApiStatus("Success");
@@ -40,10 +40,10 @@ class Interceptor {
     }
 
     private String apiTranslateFail(String body, String lang) {
-        return new HtmlConverter(settings, body).convert(headers, lang);
+        return new HtmlConverter(this.settings, this.headers, body).convert(lang);
     }
 
     private String localTranslate(String lang, String body) {
-        return new HtmlConverter(settings, body).convert(headers, lang);
+        return new HtmlConverter(this.settings, this.headers, body).convert(lang);
     }
 }

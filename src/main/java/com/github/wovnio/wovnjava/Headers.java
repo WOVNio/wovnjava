@@ -124,9 +124,9 @@ class Headers {
 
     public HashMap<String, String> getHreflangUrlMap() {
         HashMap<String, String> hreflangs = new HashMap<String, String>();
-        for (String supportedLang : this.settings.supportedLangs) {
-            String hreflangCode = Lang.get(supportedLang).codeISO639_1;
-            String url = this.urlLanguagePatternHandler.insertLang(this.clientRequestUrlInDefaultLanguage, supportedLang);
+        for (Lang supportedLang : this.settings.supportedLangs) {
+            String hreflangCode = supportedLang.codeISO639_1;
+            String url = this.urlLanguagePatternHandler.insertLang(this.clientRequestUrlInDefaultLanguage, supportedLang.code);
             hreflangs.put(hreflangCode, url);
         }
         String hreflangCodeDefaultLang = this.settings.defaultLang.codeISO639_1;
