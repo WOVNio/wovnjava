@@ -6,35 +6,53 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 
 public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
+    private Lang english;
+    private Lang japanese;
+    private Lang french;
+
     private Lang defaultLang;
     private ArrayList<Lang> supportedLangs;
 
     protected void setUp() throws Exception {
-        this.defaultLang = Lang.get("en");
+        this.english = Lang.get("en");
+        this.japanese = Lang.get("ja");
+        this.french = Lang.get("fr");
+
+        this.defaultLang = this.english;
         this.supportedLangs = new ArrayList<Lang>();
-        this.supportedLangs.add(Lang.get("en"));
-        this.supportedLangs.add(Lang.get("ja"));
+        this.supportedLangs.add(this.english);
+        this.supportedLangs.add(this.japanese);
+        this.supportedLangs.add(this.french);
     }
 
-    public void testGetLang__NonMatchingSubdomain__ReturnEmptyLang() {
+    public void testGetLang__NonMatchingSubdomain__ReturnNull() {
         SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
-        assertEquals("", sut.getLang("/"));
-        assertEquals("", sut.getLang("/en"));
-        assertEquals("", sut.getLang("/en/page"));
-        assertEquals("", sut.getLang("site.com/page/index.html"));
-        assertEquals("", sut.getLang("site.com/en/pre/fix/index.html"));
-        assertEquals("", sut.getLang("/page?language=en&wovn=fr"));
-        assertEquals("", sut.getLang("deutsch.site.com/page"));
-        assertEquals("", sut.getLang("http://site.com"));
+        assertEquals(null, sut.getLang("/"));
+        assertEquals(null, sut.getLang("/en"));
+        assertEquals(null, sut.getLang("/en/page"));
+        assertEquals(null, sut.getLang("site.com/page/index.html"));
+        assertEquals(null, sut.getLang("site.com/en/pre/fix/index.html"));
+        assertEquals(null, sut.getLang("/page?language=en&wovn=fr"));
+        assertEquals(null, sut.getLang("deutsch.site.com/page"));
+        assertEquals(null, sut.getLang("http://site.com"));
     }
 
-    public void testGetLang__MatchingSubdomain__ReturnLangCode() {
+    public void testGetLang__MatchingSubdomain__ValidSupportedLang__ReturnTargetLangObject() {
         SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
-        assertEquals("en", sut.getLang("en.site.com"));
-        assertEquals("es", sut.getLang("es.site.com/"));
-        assertEquals("fr", sut.getLang("fr.site.com/en/page/index.html?lang=it&wovn=en"));
-        assertEquals("en", sut.getLang("http://en.site.com/"));
-        assertEquals("en", sut.getLang("https://en.site.com?wovn=fr"));
+        assertEquals(this.english, sut.getLang("en.site.com"));
+        assertEquals(this.japanese, sut.getLang("ja.site.com/"));
+        assertEquals(this.french, sut.getLang("fr.site.com/en/page/index.html?lang=it&wovn=en"));
+        assertEquals(this.french, sut.getLang("http://fr.site.com/"));
+        assertEquals(this.japanese, sut.getLang("https://ja.site.com?wovn=fr"));
+    }
+
+    public void testGetLang__MatchingSubdomain__NotSupportedLang__ReturnNull() {
+        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
+        assertEquals(null, sut.getLang("th.site.com"));
+        assertEquals(null, sut.getLang("es.site.com/"));
+        assertEquals(null, sut.getLang("sv.site.com/en/page/index.html?lang=it&wovn=en"));
+        assertEquals(null, sut.getLang("http://it.site.com/"));
+        assertEquals(null, sut.getLang("https://vi.site.com?wovn=fr"));
     }
 
     public void testRemoveLang__NonMatchingSubdomain__DoNotModify() {

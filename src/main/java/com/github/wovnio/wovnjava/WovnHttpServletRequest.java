@@ -19,7 +19,7 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
         headers = h;
 
         this.customHeaders = new HashMap<String, String>() {{
-            put("X-Wovn-Lang", headers.langCode());
+            put("X-Wovn-Lang", headers.getRequestLang().code);
         }};
     }
 

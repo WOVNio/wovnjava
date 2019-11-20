@@ -13,8 +13,8 @@ class Headers {
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
     private UrlContext urlContext;
 
-    /* The language code found in the client request URL */
-    private final String requestLang;
+    /* The language of the client request URL */
+    private final Lang requestLang;
     /* The URL that the client originally requested */
     private final String clientRequestUrlInDefaultLanguage;
 
@@ -31,11 +31,12 @@ class Headers {
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
         String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
-        this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
-        this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang);
+        Lang urlLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
+        this.requestLang = urlLang == null ? settings.defaultLang : urlLang;
+        this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang.code);
 
         String currentContextUrl = request.getRequestURL().toString();
-        String currentContextUrlInDefaultLanguage = this.urlLanguagePatternHandler.removeLang(currentContextUrl, this.requestLang);
+        String currentContextUrlInDefaultLanguage = this.urlLanguagePatternHandler.removeLang(currentContextUrl, this.requestLang.code);
 
         try {
             this.urlContext = new UrlContext(new URL(currentContextUrlInDefaultLanguage));
@@ -50,18 +51,9 @@ class Headers {
             this.isPathInDefaultLanguage = false;
         }
 
-        this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang.code);
+        this.shouldRedirectToDefaultLang = this.urlLanguagePatternHandler.shouldRedirectToDefaultLang(clientRequestUrl);
 
         this.isValidRequest = this.urlContext != null && this.urlLanguagePatternHandler.canInterceptUrl(clientRequestUrl);
-    }
-
-    String langCode() {
-        String pl = this.requestLang;
-        if (pl != null && pl.length() > 0) {
-            return pl;
-        } else {
-            return settings.defaultLang.code;
-        }
     }
 
     /*
@@ -72,29 +64,28 @@ class Headers {
     public String locationWithLangCode(String location) {
         if (location == null || !this.isValidRequest) return location;
 
-        boolean isRequestDefaultLang = this.requestLang.isEmpty() || this.requestLang == settings.defaultLang.code;
-        if (isRequestDefaultLang) return location;
+        if (this.requestLang == this.settings.defaultLang) return location;
 
         URL url = this.urlContext.resolve(location);
 
         boolean shouldAddLanguageCode = url != null
                                         && this.urlContext.isSameHost(url)
-                                        && this.urlLanguagePatternHandler.getLang(url.toString()).isEmpty()
+                                        && this.urlLanguagePatternHandler.getLang(url.toString()) == null
                                         && this.urlLanguagePatternHandler.canInterceptUrl(url.toString());
 
         if (!shouldAddLanguageCode) return location;
 
-        return this.urlLanguagePatternHandler.insertLang(url.toString(), this.requestLang);
+        return this.urlLanguagePatternHandler.insertLang(url.toString(), this.requestLang.code);
     }
 
     String removeLang(String uri, String lang) {
         if (lang == null || lang.length() == 0) {
-            lang = this.requestLang;
+            lang = this.requestLang.code;
         }
         return this.urlLanguagePatternHandler.removeLang(uri, lang);
     }
 
-    public String getRequestLang() {
+    public Lang getRequestLang() {
         return this.requestLang;
     }
 

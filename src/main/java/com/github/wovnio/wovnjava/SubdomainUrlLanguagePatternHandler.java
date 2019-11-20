@@ -14,8 +14,9 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         this.getLangPattern = this.buildGetLangPattern();
     }
 
-    String getLang(String url) {
-        return this.getLangMatch(url, this.getLangPattern);
+    Lang getLang(String url) {
+        Lang lang = this.getLangMatch(url, this.getLangPattern);
+        return (lang != null && this.supportedLangs.contains(lang)) ? lang : null;
     }
 
     String removeLang(String url, String lang) {
@@ -43,4 +44,3 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         return p;
     }
 }
-

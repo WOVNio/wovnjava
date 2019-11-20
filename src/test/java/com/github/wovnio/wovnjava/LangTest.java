@@ -19,6 +19,7 @@ public class LangTest extends TestCase {
 
     public void testGetLang__invalidCode() {
         assertEquals(null, Lang.get("jp"));
+        assertEquals(null, Lang.get(""));
     }
 
     public void testGetLang__null() {

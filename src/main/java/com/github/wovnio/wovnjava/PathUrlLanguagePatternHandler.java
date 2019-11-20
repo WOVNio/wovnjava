@@ -19,8 +19,9 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         this.matchSitePrefixPathPattern = this.buildMatchSitePrefixPathPattern(sitePrefixPath);
     }
 
-    String getLang(String url) {
-        return this.getLangMatch(url, this.getLangPattern);
+    Lang getLang(String url) {
+        Lang lang = this.getLangMatch(url, this.getLangPattern);
+        return (lang != null && this.supportedLangs.contains(lang)) ? lang : null;
     }
 
     String removeLang(String url, String lang) {
@@ -37,6 +38,15 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     public boolean canInterceptUrl(String url) {
         return this.matchSitePrefixPathPattern.matcher(url).lookingAt();
+    }
+
+    /*
+     * Redirect to same URL without language code if the language code
+     * found in the URL path is for default language
+     */
+    public boolean shouldRedirectToDefaultLang(String url) {
+        Lang pathLang = this.getLangMatch(url, this.getLangPattern);
+        return pathLang == this.defaultLang;
     }
 
     private Pattern buildGetLangPattern(String sitePrefixPath) {

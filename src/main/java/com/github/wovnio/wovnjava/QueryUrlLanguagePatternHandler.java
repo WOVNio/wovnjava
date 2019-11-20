@@ -16,8 +16,9 @@ class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         this.hasQueryPattern = Pattern.compile("\\?");
     }
 
-    String getLang(String url) {
-        return this.getLangMatch(url, this.getLangPattern);
+    Lang getLang(String url) {
+        Lang lang = this.getLangMatch(url, this.getLangPattern);
+        return (lang != null && this.supportedLangs.contains(lang)) ? lang : null;
     }
 
     String removeLang(String url, String lang) {
