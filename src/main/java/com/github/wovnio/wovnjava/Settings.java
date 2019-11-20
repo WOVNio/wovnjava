@@ -20,8 +20,8 @@ class Settings {
     // Required settings
     public final String projectToken;
     public final String urlPattern;
-    public final String defaultLang;
-    public final ArrayList<String> supportedLangs;
+    public final Lang defaultLang;
+    public final ArrayList<Lang> supportedLangs;
 
     // Optional settings
     public final boolean devMode;
@@ -89,7 +89,7 @@ class Settings {
         return value;
     }
 
-    private String verifyDefaultLang(String value) throws ConfigurationError {
+    private Lang verifyDefaultLang(String value) throws ConfigurationError {
         if (value == null || value.isEmpty()) {
             throw new ConfigurationError("Missing required configuration for \"defaultLang\".");
         }
@@ -97,24 +97,24 @@ class Settings {
         if (lang == null) {
             throw new ConfigurationError("Invalid configuration for \"defaultLang\", must match a supported language code.");
         }
-        return lang.code;
+        return lang;
     }
 
-    private ArrayList<String> verifySupportedLangs(ArrayList<String> values, String defaultLangCode) throws ConfigurationError {
+    private ArrayList<Lang> verifySupportedLangs(ArrayList<String> values, Lang defaultLang) throws ConfigurationError {
         if (values.isEmpty()) {
             throw new ConfigurationError("Missing required configuration for \"supportedLangs\".");
         }
-        ArrayList<String> verifiedLangs = new ArrayList<String>();
+        ArrayList<Lang> verifiedLangs = new ArrayList<Lang>();
         Lang lang;
         for (String val : values) {
             lang = Lang.get(val);
             if (lang == null) {
                 throw new ConfigurationError("Invalid configuration for \"supportedLangs\", each value must match a supported language code.");
             }
-            verifiedLangs.add(lang.code);
+            verifiedLangs.add(lang);
         }
-        if (!verifiedLangs.contains(defaultLangCode)) {
-            verifiedLangs.add(defaultLangCode);
+        if (!verifiedLangs.contains(defaultLang)) {
+            verifiedLangs.add(defaultLang);
         }
         return verifiedLangs;
     }
@@ -147,9 +147,9 @@ class Settings {
         md.update(projectToken.getBytes());
         md.update(urlPattern.getBytes());
         md.update(sitePrefixPath.getBytes());
-        md.update(defaultLang.getBytes());
-        for (String lang : supportedLangs) {
-            md.update(lang.getBytes());
+        md.update(defaultLang.code.getBytes());
+        for (Lang lang : supportedLangs) {
+            md.update(lang.code.getBytes());
         }
         md.update(useProxy ? new byte[]{ 0 } : new byte[] { 1 });
         md.update(originalUrlHeader.getBytes());
