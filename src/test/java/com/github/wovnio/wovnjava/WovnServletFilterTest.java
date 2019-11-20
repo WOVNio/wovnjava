@@ -16,15 +16,15 @@ import org.easymock.EasyMock;
 
 public class WovnServletFilterTest extends TestCase {
     public void testHtml() throws ServletException, IOException {
-        FilterChainMock mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/");
+        FilterChainMock mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/", pathOption);
         assertEquals("text/html; charset=utf-8", mock.res.getContentType());
         assertEquals("/", mock.req.getRequestURI());
     }
 
     public void testHtmlWithLang() throws ServletException, IOException {
-        FilterChainMock mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/ja/", "/");
+        FilterChainMock mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/ja/", "/", pathOption);
         assertEquals("text/html; charset=utf-8", mock.res.getContentType());
-        assertEquals("/", mock.req.getRequestURI());
+        assertEquals("https://example.com/", mock.req.getRequestURL().toString());
     }
 
     public void testHtmlWithQueryLang() throws ServletException, IOException {
@@ -40,27 +40,27 @@ public class WovnServletFilterTest extends TestCase {
     }
 
     public void testCss() throws ServletException, IOException {
-        FilterChainMock mock = TestUtil.doServletFilter("text/css", "/dir/style.css");
+        FilterChainMock mock = TestUtil.doServletFilter("text/css", "/dir/style.css", pathOption);
         assertEquals("text/css", mock.res.getContentType());
         assertEquals("/dir/style.css", mock.req.getRequestURI());
     }
 
     public void testCssWithLang() throws ServletException, IOException {
-        FilterChainMock mock = TestUtil.doServletFilter("text/css", "/ja/style.css", "/style.css");
+        FilterChainMock mock = TestUtil.doServletFilter("text/css", "/ja/style.css", "/style.css", pathOption);
         assertEquals("text/css", mock.res.getContentType());
-        assertEquals("/style.css", mock.req.getRequestURI());
+        assertEquals("https://example.com/style.css", mock.req.getRequestURL().toString());
     }
 
     public void testImage() throws ServletException, IOException {
-        FilterChainMock mock = TestUtil.doServletFilter("image/png", "/image.png");
+        FilterChainMock mock = TestUtil.doServletFilter("image/png", "/image.png", pathOption);
         assertEquals("image/png", mock.res.getContentType());
         assertEquals("/image.png", mock.req.getRequestURI());
     }
 
     public void testImageWithLang() throws ServletException, IOException {
-        FilterChainMock mock = TestUtil.doServletFilter("image/png", "/ja/image.png", "image.png");
+        FilterChainMock mock = TestUtil.doServletFilter("image/png", "/ja/image.png", "/image.png", pathOption);
         assertEquals("image/png", mock.res.getContentType());
-        assertEquals("/image.png", mock.req.getRequestURI());
+        assertEquals("https://example.com/image.png", mock.req.getRequestURL().toString());
     }
 
     public void testProcessRequestOnce__RequestNotProcessed__ProcessRequest() throws ServletException, IOException {
@@ -92,6 +92,10 @@ public class WovnServletFilterTest extends TestCase {
         assertEquals(true, responseObjectPassedToFilterChain instanceof HttpServletResponse);
         assertEquals(false, responseObjectPassedToFilterChain instanceof WovnHttpServletResponse);
     }
+
+    private final HashMap<String, String> pathOption = new HashMap<String, String>() {{
+        put("urlPattern", "path");
+    }};
 
     private final HashMap<String, String> queryOption = new HashMap<String, String>() {{
         put("urlPattern", "query");

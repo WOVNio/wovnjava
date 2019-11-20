@@ -60,37 +60,14 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
 
     @Override
     public String getServerName() {
-        String serverName = super.getServerName();
-        if (headers.settings.urlPattern.equals("subdomain")) {
-            serverName = headers.removeLang(serverName, null);
-        }
-        return serverName;
-    }
-
-    @Override
-    public String getRequestURI() {
-        String uri = super.getRequestURI();
-        if (!headers.settings.urlPattern.equals("subdomain")) {
-            if (uri != null && uri.length() > 0) {
-                uri = headers.removeLang(uri, null);
-            }
-        }
-        return uri;
+        // `currentContextUrlInDefaultLanguage` is computed directly from `request.getRequestURL()`
+        // This implementation assumes that `getServerName()` will always give the hostname of `request.getRequestURL()`
+        return headers.getCurrentContextUrlInDefaultLanguage().getHost();
     }
 
     @Override
     public StringBuffer getRequestURL() {
-        String url = super.getRequestURL().toString();
-        url = this.headers.removeLang(url, null);
-        return new StringBuffer(url);
-    }
-
-    @Override
-    public String getServletPath() {
-        String path = super.getServletPath();
-        if (this.headers.settings.urlPattern.equals("path")) {
-            path = this.headers.removeLang(path, null);
-        }
-        return path;
+        // `currentContextUrlInDefaultLanguage` is computed directly from `request.getRequestURL()`
+        return new StringBuffer(headers.getCurrentContextUrlInDefaultLanguage().toString());
     }
 }
