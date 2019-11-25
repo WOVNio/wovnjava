@@ -61,30 +61,22 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(null, sut.getLang("en.site.com/es/page/index.html?wovn=ar"));
     }
 
-    public void testRemoveLang__NonMatchingQuery__DoNotModify() {
+    public void testConvertToDefaultLanguage__NonMatchingQuery__DoNotModify() {
         QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
-        assertEquals("/", sut.removeLang("/", "ja"));
-        assertEquals("/page/index.html", sut.removeLang("/page/index.html", "ja"));
-        assertEquals("?wovn=en", sut.removeLang("?wovn=en", "ja"));
-        assertEquals("/page/?wovn=en", sut.removeLang("/page/?wovn=en", "ja"));
-        assertEquals("ja.site.com/ja/?lang=ja", sut.removeLang("ja.site.com/ja/?lang=ja", "ja"));
-        assertEquals("http://site.com/page/?wovn=japan", sut.removeLang("http://site.com/page/?wovn=japan", "ja"));
+        assertEquals("/", sut.convertToDefaultLanguage("/"));
+        assertEquals("/page/index.html", sut.convertToDefaultLanguage("/page/index.html"));
+        assertEquals("?wovn=ru", sut.convertToDefaultLanguage("?wovn=ru"));
+        assertEquals("/page/?wovn=ru", sut.convertToDefaultLanguage("/page/?wovn=ru"));
+        assertEquals("ja.site.com/ja/?lang=ja", sut.convertToDefaultLanguage("ja.site.com/ja/?lang=ja"));
+        assertEquals("http://site.com/page/?wovn=japan", sut.convertToDefaultLanguage("http://site.com/page/?wovn=japan"));
     }
 
-    public void testRemoveLang__MatchingQuery__RemoveLangCode() {
+    public void testConvertToDefaultLanguage__MatchingQuery__RemoveLangCode() {
         QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
-        assertEquals("", sut.removeLang("?wovn=ja", "ja"));
-        assertEquals("/?search=pizza&lang=ja", sut.removeLang("/?search=pizza&wovn=ja&lang=ja", "ja"));
-        assertEquals("site.com/page/index.html?wovn", sut.removeLang("site.com/page/index.html?wovn&wovn=ja", "ja"));
-        assertEquals("https://ja.site.com/ja/", sut.removeLang("https://ja.site.com/ja/?wovn=ja", "ja"));
-    }
-
-    public void testRemoveLang__EmptyLanguage__DoNotModify() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
-        assertEquals("/", sut.removeLang("/", ""));
-        assertEquals("site.com?wovn=en", sut.removeLang("site.com?wovn=en", ""));
-        assertEquals("site.com/no/index.html", sut.removeLang("site.com/no/index.html", ""));
-        assertEquals("http://fr.site.com/ja", sut.removeLang("http://fr.site.com/ja", ""));
+        assertEquals("", sut.convertToDefaultLanguage("?wovn=ja"));
+        assertEquals("/?search=pizza&lang=ja", sut.convertToDefaultLanguage("/?search=pizza&wovn=ja&lang=ja"));
+        assertEquals("site.com/page/index.html?wovn", sut.convertToDefaultLanguage("site.com/page/index.html?wovn&wovn=ja"));
+        assertEquals("https://ja.site.com/ja/", sut.convertToDefaultLanguage("https://ja.site.com/ja/?wovn=ja"));
     }
 
     public void testInsertLang() {

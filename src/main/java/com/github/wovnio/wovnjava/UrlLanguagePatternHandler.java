@@ -10,7 +10,7 @@ abstract class UrlLanguagePatternHandler {
      */
     abstract Lang getLang(String url);
 
-    abstract String removeLang(String url, String lang);
+    abstract String convertToDefaultLanguage(String url);
 
     abstract String insertLang(String url, String lang);
 
