@@ -44,7 +44,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
      * Redirect to same URL without language code if the language code
      * found in the URL path is for default language
      */
-    public boolean shouldRedirectToDefaultLang(String url) {
+    public boolean shouldRedirectExplicitDefaultLangUrl(String url) {
         Lang pathLang = this.getLangMatch(url, this.getLangPattern);
         return pathLang == this.defaultLang;
     }

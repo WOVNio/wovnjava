@@ -18,7 +18,7 @@ abstract class UrlLanguagePatternHandler {
         return true;
     }
 
-    public boolean shouldRedirectToDefaultLang(String url) {
+    public boolean shouldRedirectExplicitDefaultLangUrl(String url) {
         return false;
     }
 
