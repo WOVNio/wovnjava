@@ -1,21 +1,27 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
+    private Lang defaultLang;
+    private ArrayList<Lang> supportedLangs;
     private String sitePrefixPath;
     private Pattern getLangPattern;
     private Pattern matchSitePrefixPathPattern;
 
-    PathUrlLanguagePatternHandler(String sitePrefixPath) {
+    PathUrlLanguagePatternHandler(Lang defaultLang, ArrayList<Lang> supportedLangs, String sitePrefixPath) {
+        this.defaultLang = defaultLang;
+        this.supportedLangs = supportedLangs;
         this.sitePrefixPath = sitePrefixPath;
         this.getLangPattern = this.buildGetLangPattern(sitePrefixPath);
         this.matchSitePrefixPathPattern = this.buildMatchSitePrefixPathPattern(sitePrefixPath);
     }
 
-    String getLang(String url) {
-        return this.getLangMatch(url, this.getLangPattern);
+    Lang getLang(String url) {
+        Lang lang = this.getLangMatch(url, this.getLangPattern);
+        return (lang != null && this.supportedLangs.contains(lang)) ? lang : null;
     }
 
     String removeLang(String url, String lang) {
@@ -32,6 +38,15 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     public boolean canInterceptUrl(String url) {
         return this.matchSitePrefixPathPattern.matcher(url).lookingAt();
+    }
+
+    /*
+     * Redirect to same URL without language code if the language code
+     * found in the URL path is for default language
+     */
+    public boolean shouldRedirectExplicitDefaultLangUrl(String url) {
+        Lang pathLang = this.getLangMatch(url, this.getLangPattern);
+        return pathLang == this.defaultLang;
     }
 
     private Pattern buildGetLangPattern(String sitePrefixPath) {

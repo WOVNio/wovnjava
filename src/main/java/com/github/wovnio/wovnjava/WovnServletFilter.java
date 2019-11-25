@@ -53,7 +53,7 @@ public class WovnServletFilter implements Filter {
         if (isRequestAlreadyProcessed || !headers.getIsValidRequest()) {
             /* Do nothing */
             chain.doFilter(request, response);
-        } else if (headers.getShouldRedirectToDefaultLang()) {
+        } else if (headers.getShouldRedirectExplicitDefaultLangUrl()) {
             /* Send HTTP 302 redirect to equivalent URL without default language code */
             ((HttpServletResponse) response).sendRedirect(headers.getClientRequestUrlInDefaultLanguage());
         } else if (canTranslateRequest) {

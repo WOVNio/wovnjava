@@ -1,18 +1,24 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
+    private Lang defaultLang;
+    private ArrayList<Lang> supportedLangs;
     private Pattern getLangPattern;
     private Pattern hasQueryPattern;
 
-    QueryUrlLanguagePatternHandler() {
+    QueryUrlLanguagePatternHandler(Lang defaultLang, ArrayList<Lang> supportedLangs) {
+        this.defaultLang = defaultLang;
+        this.supportedLangs = supportedLangs;
         this.getLangPattern = this.buildGetLangPattern();
         this.hasQueryPattern = Pattern.compile("\\?");
     }
 
-    String getLang(String url) {
-        return this.getLangMatch(url, this.getLangPattern);
+    Lang getLang(String url) {
+        Lang lang = this.getLangMatch(url, this.getLangPattern);
+        return (lang != null && this.supportedLangs.contains(lang)) ? lang : null;
     }
 
     String removeLang(String url, String lang) {

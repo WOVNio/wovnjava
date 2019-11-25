@@ -9,6 +9,11 @@ import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
 
 public class HeadersTest extends TestCase {
+    private Lang japanese;
+
+    protected void setUp() throws Exception {
+        this.japanese = Lang.get("ja");
+    }
 
     private static FilterConfig mockConfigPath() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
@@ -25,6 +30,8 @@ public class HeadersTest extends TestCase {
     private static FilterConfig mockConfigQuery() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("urlPattern", "query");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,zh-CHS");
         }};
         return TestUtil.makeConfigWithValidDefaults(parameters);
     }
@@ -56,7 +63,7 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getRequestLang());
+        assertEquals(this.japanese, h.getRequestLang());
     }
 
     public void testGetRequestLangSubdomain() throws ConfigurationError {
@@ -67,7 +74,7 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getRequestLang());
+        assertEquals(this.japanese, h.getRequestLang());
     }
 
     public void testGetRequestLangQuery() throws ConfigurationError {
@@ -78,7 +85,7 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getRequestLang());
+        assertEquals(this.japanese, h.getRequestLang());
     }
 
     public void testRemoveLangPath() throws ConfigurationError {
@@ -210,7 +217,7 @@ public class HeadersTest extends TestCase {
         assertEquals("http://example.com/global/ja/", h.locationWithLangCode("http://example.com/global/"));
         assertEquals("https://example.com/global/ja/", h.locationWithLangCode("https://example.com/global/"));
         assertEquals("https://example.com/global/ja/", h.locationWithLangCode("https://example.com/global/ja/"));
-        assertEquals("https://example.com/global/th/", h.locationWithLangCode("https://example.com/global/th/"));
+        assertEquals("https://example.com/global/ja/th/", h.locationWithLangCode("https://example.com/global/th/")); // `th` not in supportedLangs
         assertEquals("https://example.com/global/ja/tokyo/", h.locationWithLangCode("https://example.com/global/tokyo/"));
         assertEquals("https://example.com/global/ja/file.html", h.locationWithLangCode("https://example.com/global/file.html"));
         assertEquals("https://example.com/global/ja/file.html", h.locationWithLangCode("https://example.com/pics/../global/file.html"));

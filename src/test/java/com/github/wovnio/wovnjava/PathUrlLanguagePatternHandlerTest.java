@@ -1,59 +1,101 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 import org.easymock.EasyMock;
 
 public class PathUrlLanguagePatternHandlerTest extends TestCase {
-    public void testGetLang__NonMatchingPath__ReturnEmptyLang() {
-        PathUrlLanguagePatternHandler sut = createWithParams("");
-        assertEquals("", sut.getLang(""));
-        assertEquals("", sut.getLang("/"));
-        assertEquals("", sut.getLang("?query"));
-        assertEquals("", sut.getLang("/page"));
-        assertEquals("", sut.getLang("site.com/page/index.html"));
-        assertEquals("", sut.getLang("en.site.com/pre/fix/index.html"));
-        assertEquals("", sut.getLang("/page?wovn=en"));
-        assertEquals("", sut.getLang("site.com/French/"));
-        assertEquals("", sut.getLang("http://site.com/Suomi/page/index.html"));
+    private Lang english;
+    private Lang japanese;
+    private Lang french;
+
+    private Lang defaultLang;
+    private ArrayList<Lang> supportedLangs;
+
+    protected void setUp() throws Exception {
+        this.english = Lang.get("en");
+        this.japanese = Lang.get("ja");
+        this.french = Lang.get("fr");
+
+        this.defaultLang = this.english;
+        this.supportedLangs = new ArrayList<Lang>();
+        this.supportedLangs.add(this.english);
+        this.supportedLangs.add(this.japanese);
+        this.supportedLangs.add(this.french);
     }
 
-    public void testGetLang__MatchingPath__ReturnLangCode() {
-        PathUrlLanguagePatternHandler sut = createWithParams("");
-        assertEquals("fr", sut.getLang("/fr"));
-        assertEquals("fr", sut.getLang("/fr/"));
-        assertEquals("fr", sut.getLang("/fr?wovn=en"));
-        assertEquals("fr", sut.getLang("/fr/?wovn=en"));
-        assertEquals("fr", sut.getLang("http://site.com/fr/page"));
-        assertEquals("fr", sut.getLang("https://site.com/fr/page/index.html"));
-        assertEquals("fr", sut.getLang("en.site.com/fr/page/index.html?wovn=es"));
+    private PathUrlLanguagePatternHandler create(String sitePrefixPath) {
+        return new PathUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs, sitePrefixPath);
     }
 
-    public void testGetLang__SitePrefixPath__NonMatchingPath__ReturnEmptyLang() {
-        PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
-        assertEquals("", sut.getLang("site.com/fr"));
-        assertEquals("", sut.getLang("en.site.com/en/?wovn=en"));
-        assertEquals("", sut.getLang("/es/pre/fix/page/index.html"));
-        assertEquals("", sut.getLang("/pre/fr/fix/page/index.html"));
-        assertEquals("", sut.getLang("/pre/en/fix/page/index.html"));
-        assertEquals("", sut.getLang("/pre/fix/page/en/index.html"));
-        assertEquals("", sut.getLang("/pre/fix/french/page/index.html"));
-        assertEquals("", sut.getLang("https://en.site.com/en/page/"));
+    public void testGetLang__NonMatchingPath__ReturnNull() {
+        PathUrlLanguagePatternHandler sut = create("");
+        assertEquals(null, sut.getLang(""));
+        assertEquals(null, sut.getLang("/"));
+        assertEquals(null, sut.getLang("?query"));
+        assertEquals(null, sut.getLang("/page"));
+        assertEquals(null, sut.getLang("site.com/page/index.html"));
+        assertEquals(null, sut.getLang("en.site.com/pre/fix/index.html"));
+        assertEquals(null, sut.getLang("/page?wovn=en"));
+        assertEquals(null, sut.getLang("site.com/French/"));
+        assertEquals(null, sut.getLang("http://site.com/Suomi/page/index.html"));
     }
 
-    public void testGetLang__SitePrefixPath__MatchingPath__ReturnLangCode() {
-        PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
-        assertEquals("fr", sut.getLang("site.com/pre/fix/fr"));
-        assertEquals("fr", sut.getLang("site.com/pre/fix/fr/"));
-        assertEquals("fr", sut.getLang("site.com/pre/fix/fr?query"));
-        assertEquals("fr", sut.getLang("site.com/pre/fix/fr/?query"));
-        assertEquals("fr", sut.getLang("en.site.com/pre/fix/fr/index.html?wovn=es"));
-        assertEquals("fr", sut.getLang("/pre/fix/fr/index.html"));
-        assertEquals("fr", sut.getLang("/pre/fix/fr/page/index.html"));
-        assertEquals("fr", sut.getLang("https://en.site.com/pre/fix/fr/page/"));
+    public void testGetLang__MatchingPath__ValidSupportedLang__ReturnTargetLangObject() {
+        PathUrlLanguagePatternHandler sut = create("");
+        assertEquals(this.french, sut.getLang("/fr"));
+        assertEquals(this.french, sut.getLang("/fr/"));
+        assertEquals(this.french, sut.getLang("/fr?wovn=en"));
+        assertEquals(this.french, sut.getLang("/fr/?wovn=en"));
+        assertEquals(this.french, sut.getLang("http://site.com/fr/page"));
+        assertEquals(this.french, sut.getLang("https://site.com/fr/page/index.html"));
+        assertEquals(this.french, sut.getLang("en.site.com/fr/page/index.html?wovn=es"));
+    }
+
+    public void testGetLang__MatchingPath__NotSupportedLang__ReturnNull() {
+        PathUrlLanguagePatternHandler sut = create("");
+        assertEquals(null, sut.getLang("/no"));
+        assertEquals(null, sut.getLang("/sv/"));
+        assertEquals(null, sut.getLang("/pl?wovn=en"));
+        assertEquals(null, sut.getLang("/th/?wovn=en"));
+        assertEquals(null, sut.getLang("http://site.com/vi/page"));
+        assertEquals(null, sut.getLang("https://site.com/es/page/index.html"));
+        assertEquals(null, sut.getLang("en.site.com/it/page/index.html?wovn=es"));
+    }
+
+    public void testGetLang__SitePrefixPath__NonMatchingPath__ReturnNull() {
+        PathUrlLanguagePatternHandler sut = create("/pre/fix");
+        assertEquals(null, sut.getLang("site.com/fr"));
+        assertEquals(null, sut.getLang("en.site.com/en/?wovn=en"));
+        assertEquals(null, sut.getLang("/es/pre/fix/page/index.html"));
+        assertEquals(null, sut.getLang("/pre/fr/fix/page/index.html"));
+        assertEquals(null, sut.getLang("/pre/en/fix/page/index.html"));
+        assertEquals(null, sut.getLang("/pre/fix/page/en/index.html"));
+        assertEquals(null, sut.getLang("/pre/fix/french/page/index.html"));
+        assertEquals(null, sut.getLang("https://en.site.com/en/page/"));
+    }
+
+    public void testGetLang__SitePrefixPath__MatchingPath__ValidSupportedLang__ReturnTargetLangObject() {
+        PathUrlLanguagePatternHandler sut = create("/pre/fix");
+        assertEquals(this.french, sut.getLang("site.com/pre/fix/fr"));
+        assertEquals(this.french, sut.getLang("site.com/pre/fix/fr/"));
+        assertEquals(this.french, sut.getLang("site.com/pre/fix/fr?query"));
+        assertEquals(this.french, sut.getLang("site.com/pre/fix/fr/?query"));
+        assertEquals(this.french, sut.getLang("en.site.com/pre/fix/fr/index.html?wovn=es"));
+        assertEquals(this.french, sut.getLang("/pre/fix/fr/index.html"));
+        assertEquals(this.french, sut.getLang("/pre/fix/fr/page/index.html"));
+        assertEquals(this.french, sut.getLang("https://en.site.com/pre/fix/fr/page/"));
+    }
+
+    public void testGetLang__SitePrefixPath__MatchingPath__NotSupportedLang__ReturnNull() {
+        PathUrlLanguagePatternHandler sut = create("/pre/fix");
+        assertEquals(null, sut.getLang("site.com/pre/fix/vi"));
+        assertEquals(null, sut.getLang("https://en.site.com/pre/fix/th/page/"));
     }
 
     public void testRemoveLang__NonMatchingPath__DoNotModify() {
-        PathUrlLanguagePatternHandler sut = createWithParams("");
+        PathUrlLanguagePatternHandler sut = create("");
         assertEquals("", sut.removeLang("", "ja"));
         assertEquals("?query", sut.removeLang("?query", "ja"));
         assertEquals("/", sut.removeLang("/", "ja"));
@@ -72,7 +114,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testRemoveLang__MatchingSupportedLang__RemoveLangCode() {
-        PathUrlLanguagePatternHandler sut = createWithParams("");
+        PathUrlLanguagePatternHandler sut = create("");
         assertEquals("", sut.removeLang("/ja", "ja"));
         assertEquals("/", sut.removeLang("/ja/", "ja"));
         assertEquals("?query", sut.removeLang("/ja?query", "ja"));
@@ -91,7 +133,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testRemoveLang__SitePrefixPath__NonMatchingPath__DoNotModify() {
-        PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
+        PathUrlLanguagePatternHandler sut = create("/pre/fix");
         assertEquals("/", sut.removeLang("/", "ja"));
         assertEquals("site.com", sut.removeLang("site.com", "ja"));
         assertEquals("site.com?query", sut.removeLang("site.com?query", "ja"));
@@ -107,7 +149,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testRemoveLang__SitePrefixPath__MatchingSupportedLang__RemoveLangCode() {
-        PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
+        PathUrlLanguagePatternHandler sut = create("/pre/fix");
         assertEquals("/pre/fix", sut.removeLang("/pre/fix/ja", "ja"));
         assertEquals("/pre/fix?query", sut.removeLang("/pre/fix/ja?query", "ja"));
         assertEquals("/pre/fix/", sut.removeLang("/pre/fix/ja/", "ja"));
@@ -119,7 +161,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testRemoveLang__EmptyLanguage__DoNotModify() {
-        PathUrlLanguagePatternHandler sut = createWithParams("");
+        PathUrlLanguagePatternHandler sut = create("");
         assertEquals("/", sut.removeLang("/", ""));
         assertEquals("site.com?wovn=en", sut.removeLang("site.com?wovn=en", ""));
         assertEquals("site.com/no/index.html", sut.removeLang("site.com/no/index.html", ""));
@@ -127,7 +169,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testIsMatchSitePrefixPath__DefaultSettings() {
-        PathUrlLanguagePatternHandler sut = createWithParams("");
+        PathUrlLanguagePatternHandler sut = create("");
         assertEquals(true, sut.canInterceptUrl(""));
         assertEquals(true, sut.canInterceptUrl("?query"));
         assertEquals(true, sut.canInterceptUrl("/pre/fix/ja"));
@@ -139,7 +181,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testIsMatchSitePrefixPath__UsingSitePrefixPath() {
-        PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
+        PathUrlLanguagePatternHandler sut = create("/pre/fix");
         assertEquals(false, sut.canInterceptUrl(""));
         assertEquals(false, sut.canInterceptUrl("site.com"));
         assertEquals(false, sut.canInterceptUrl("site.com?query"));
@@ -156,7 +198,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testInsertLang__DefaultSettings() {
-        PathUrlLanguagePatternHandler sut = createWithParams("");
+        PathUrlLanguagePatternHandler sut = create("");
         assertEquals("/ja", sut.insertLang("", "ja"));
         assertEquals("/ja/", sut.insertLang("/", "ja"));
         assertEquals("/ja/path/index.html", sut.insertLang("/path/index.html", "ja"));
@@ -166,7 +208,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testInsertLang__UsingSitePrefixPath__MatchesSitePrefixPath() {
-        PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
+        PathUrlLanguagePatternHandler sut = create("/pre/fix");
         assertEquals("/pre/fix/ja", sut.insertLang("/pre/fix", "ja"));
         assertEquals("/pre/fix/ja/", sut.insertLang("/pre/fix/", "ja"));
         assertEquals("/pre/fix/ja/path/index.html", sut.insertLang("/pre/fix/path/index.html", "ja"));
@@ -175,7 +217,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testInsertLang__UsingSitePrefixPath__SitePrefixPathNotMatched() {
-        PathUrlLanguagePatternHandler sut = createWithParams("/pre/fix");
+        PathUrlLanguagePatternHandler sut = create("/pre/fix");
         assertEquals("", sut.insertLang("", "ja"));
         assertEquals("/", sut.insertLang("/", "ja"));
         assertEquals("/path/index.html", sut.insertLang("/path/index.html", "ja"));
@@ -184,7 +226,16 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("https://fr.site.co.uk?query", sut.insertLang("https://fr.site.co.uk?query", "ja"));
     }
 
-    private PathUrlLanguagePatternHandler createWithParams(String sitePrefixPath) {
-        return new PathUrlLanguagePatternHandler(sitePrefixPath);
+    public void testShouldRedirectExplicitDefaultLangUrl() {
+        PathUrlLanguagePatternHandler sut = create("");
+        assertEquals(true, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/en"));
+        assertEquals(true, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/en/"));
+        assertEquals(true, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/en/home"));
+
+        assertEquals(false, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/ja"));
+        assertEquals(false, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/ja/home"));
+        assertEquals(false, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/path/en/home"));
+        assertEquals(false, sut.shouldRedirectExplicitDefaultLangUrl("http://en.site.com/home"));
+        assertEquals(false, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/home?wovn=en"));
     }
 }
