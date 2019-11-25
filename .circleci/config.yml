@@ -159,7 +159,7 @@ jobs:
 
   openjdk7:
     docker:
-      - image: circleci/openjdk:7-jdk
+      - image: circleci/7-jdk
     steps:
       - checkout
 
