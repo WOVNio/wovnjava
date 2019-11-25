@@ -4,7 +4,7 @@ workflows:
   version: 2
   test:
     jobs:
-      - oraclejdk7
+      # - oraclejdk7
       - oraclejdk8
       - openjdk7
       - openjdk8
@@ -124,11 +124,26 @@ jobs:
           path: target/artifacts/
 
 
-  openjdk8:
+  openjdk7:
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/circleci-cli:latest
     steps:
       - checkout
+
+      - run:
+         name: install openjdk 7
+         command: |
+           sudo cp /etc/apt/sources.list /etc/apt/org_sources.list
+           sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+           sudo apt-get clean
+           sudo apt-get update
+           sudo apt install -y maven
+           sudo apt update; sudo apt install -y software-properties-common gnupg
+           sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB1998361219BD9C9
+           sudo apt-add-repository 'deb http://repos.azulsystems.com/debian stable main'
+           sudo apt update; sudo apt install -y zulu-7
+           export M2_HOME=~/.m2
+           export MAVEN_HOME=~/.m2
 
       - restore_cache:
           key: circleci-wovnjava-openjdk-pom-{{ checksum "pom.xml" }}
@@ -157,26 +172,11 @@ jobs:
           path: target/artifacts/
 
 
-  openjdk7:
+  openjdk8:
     docker:
-      - image: circleci/circleci-cli:latest
+      - image: circleci/openjdk:8-jdk
     steps:
       - checkout
-
-      - run:
-         name: install openjdk 7
-         command: |
-           sudo cp /etc/apt/sources.list /etc/apt/org_sources.list
-           sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
-           sudo apt-get clean
-           sudo apt-get update
-           sudo apt install -y maven
-           sudo apt update; sudo apt install -y software-properties-common gnupg
-           sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB1998361219BD9C9
-           sudo apt-add-repository 'deb http://repos.azulsystems.com/debian stable main'
-           sudo apt update; sudo apt install -y zulu-7
-           export M2_HOME=~/.m2
-           export MAVEN_HOME=~/.m2
 
       - restore_cache:
           key: circleci-wovnjava-openjdk-pom-{{ checksum "pom.xml" }}
