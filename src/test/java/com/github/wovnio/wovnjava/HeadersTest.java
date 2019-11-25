@@ -1,12 +1,13 @@
 package com.github.wovnio.wovnjava;
 
-import junit.framework.TestCase;
-
-import org.easymock.EasyMock;
-
 import java.util.HashMap;
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
+import java.net.URL;
+import java.net.MalformedURLException;
+
+import junit.framework.TestCase;
+import org.easymock.EasyMock;
 
 public class HeadersTest extends TestCase {
     private Lang japanese;
@@ -88,7 +89,7 @@ public class HeadersTest extends TestCase {
         assertEquals(this.japanese, h.getRequestLang());
     }
 
-    public void testRemoveLangPath() throws ConfigurationError {
+    public void testConvertToDefaultLanguage__PathPattern() throws ConfigurationError, MalformedURLException {
         HttpServletRequest mockRequest = MockHttpServletRequest.create("https://example.com/ja/test");
         FilterConfig mockConfig = mockConfigPath();
 
@@ -96,9 +97,10 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("example.com/test", h.removeLang("example.com/ja/test", null));
+        URL url = new URL("http://example.com/ja/test");
+        assertEquals("http://example.com/test", h.convertToDefaultLanguage(url).toString());
     }
-    public void testRemoveLangSubdomain() throws ConfigurationError {
+    public void testConvertToDefaultLanguage__SubdomainPattern() throws ConfigurationError, MalformedURLException {
         HttpServletRequest mockRequest = MockHttpServletRequest.create("https://ja.example.com/test");
         FilterConfig mockConfig = mockConfigSubdomain();
 
@@ -106,9 +108,10 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("example.com/test", h.removeLang("ja.example.com/test", null));
+        URL url = new URL("http://ja.example.com/test");
+        assertEquals("http://example.com/test", h.convertToDefaultLanguage(url).toString());
     }
-    public void testRemoveLangQuery() throws ConfigurationError {
+    public void testConvertToDefaultLanguage__QueryPattern() throws ConfigurationError, MalformedURLException {
         HttpServletRequest mockRequest = MockHttpServletRequest.create("https://example.com/test?wovn=ja");
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -116,13 +119,19 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("example.com/test", h.removeLang("example.com/test?wovn=ja", null));
+        URL url = new URL("http://example.com/test?wovn=ja");
+        assertEquals("http://example.com/test", h.convertToDefaultLanguage(url).toString());
     }
 
-    public void testSitePrefixPath() throws ConfigurationError {
+    public void testConvertToDefaultLanguage__PathPatternWithSitePrefixPath() throws ConfigurationError, MalformedURLException {
         Headers h = makeHeaderWithSitePrefixPath("/global/en/foo", "/global/");
-        assertEquals("/global/", h.removeLang("/global/en/", null));
-        assertEquals("/en/global/", h.removeLang("/en/global/", null));
+        URL url;
+
+        url = new URL("http://site.com/global/en/");
+        assertEquals("http://site.com/global/", h.convertToDefaultLanguage(url).toString());
+
+        url = new URL("http://site.com/en/global/");
+        assertEquals("http://site.com/en/global/", h.convertToDefaultLanguage(url).toString());
     }
 
     public void testLocationWithDefaultLangCode() throws ConfigurationError {

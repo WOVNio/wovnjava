@@ -29,6 +29,15 @@ public class MockHttpServletRequest {
         return mock;
     }
 
+    public static HttpServletRequest createWithRemoteHost(String urlString, String remoteHost) {
+        HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
+        stubLocation(mock, parseURL(urlString));
+        stubHeaders(mock);
+        EasyMock.expect(mock.getRemoteHost()).andReturn(remoteHost).atLeastOnce();
+        EasyMock.replay(mock);
+        return mock;
+    }
+
     private static URL parseURL(String urlString) {
         URL url;
         try {
@@ -50,7 +59,6 @@ public class MockHttpServletRequest {
         EasyMock.expect(mock.getServerName()).andReturn(url.getHost()).anyTimes();
         EasyMock.expect(mock.getQueryString()).andReturn(url.getQuery()).anyTimes();
         EasyMock.expect(mock.getServerPort()).andReturn(port).anyTimes();
-        EasyMock.expect(mock.getRemoteHost()).andReturn(url.getHost()).anyTimes();
         EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
         EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
     }

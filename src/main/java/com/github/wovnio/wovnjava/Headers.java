@@ -78,11 +78,15 @@ class Headers {
         return this.urlLanguagePatternHandler.insertLang(url.toString(), this.requestLang.code);
     }
 
-    String removeLang(String uri, String lang) {
-        if (lang == null || lang.length() == 0) {
-            lang = this.requestLang.code;
+    URL convertToDefaultLanguage(URL url) {
+        String uri = url.toString();
+        String lang = this.requestLang.code;
+        String urlInDefaultLang = this.urlLanguagePatternHandler.removeLang(uri, lang);
+        try {
+            return new URL(urlInDefaultLang);
+        } catch (MalformedURLException e) {
+            return url;
         }
-        return this.urlLanguagePatternHandler.removeLang(uri, lang);
     }
 
     public Lang getRequestLang() {
