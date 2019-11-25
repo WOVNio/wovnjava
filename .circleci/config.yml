@@ -159,9 +159,22 @@ jobs:
 
   openjdk7:
     docker:
-      - image: circleci/7-jdk
+      - image: circleci/circleci-cli:latest
     steps:
       - checkout
+
+      - run:
+         name: install openjdk 7
+         command: |
+           sudo cp /etc/apt/sources.list /etc/apt/org_sources.list
+           sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+           sudo apt-get clean
+           sudo apt-get update
+           sudo apt install -y maven
+           sudo apt-get install openjdk-7-jdk
+           export PATH=${JAVA_HOME}/bin:$PATH
+           export M2_HOME=~/.m2
+           export MAVEN_HOME=~/.m2
 
       - restore_cache:
           key: circleci-wovnjava-openjdk-pom-{{ checksum "pom.xml" }}
