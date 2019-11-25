@@ -167,7 +167,7 @@ jobs:
          name: install openjdk 7
          command: |
            sudo cp /etc/apt/sources.list /etc/apt/org_sources.list
-           sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.li
+           sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
            sudo apt-get clean
            sudo apt-get update
            sudo apt install -y maven
