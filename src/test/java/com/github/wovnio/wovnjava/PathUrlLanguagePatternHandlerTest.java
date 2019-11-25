@@ -225,4 +225,17 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("http://site.com/home", sut.insertLang("http://site.com/home", "ja"));
         assertEquals("https://fr.site.co.uk?query", sut.insertLang("https://fr.site.co.uk?query", "ja"));
     }
+
+    public void testShouldRedirectExplicitDefaultLangUrl() {
+        PathUrlLanguagePatternHandler sut = create("");
+        assertEquals(true, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/en"));
+        assertEquals(true, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/en/"));
+        assertEquals(true, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/en/home"));
+
+        assertEquals(false, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/ja"));
+        assertEquals(false, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/ja/home"));
+        assertEquals(false, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/path/en/home"));
+        assertEquals(false, sut.shouldRedirectExplicitDefaultLangUrl("http://en.site.com/home"));
+        assertEquals(false, sut.shouldRedirectExplicitDefaultLangUrl("http://site.com/home?wovn=en"));
+    }
 }
