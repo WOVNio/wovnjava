@@ -12,7 +12,7 @@ class CustomDomainLanguage {
 
     public CustomDomainLanguage(String host, String path, Lang lang) {
         this.host = host;
-        this.path = path.endsWith("/") ? path : path + "/";
+        this.path = path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
         this.lang = lang;
     }
 

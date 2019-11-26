@@ -14,7 +14,7 @@ public class CustomDomainLanguageSerializerTest extends TestCase {
 
         assertEquals("en", results.get(0).lang.code);
         assertEquals("site.com", results.get(0).host);
-        assertEquals("/", results.get(0).path);
+        assertEquals("", results.get(0).path);
     }
 
     public void testDeserialize__MultipleLanguages() throws ConfigurationError {
@@ -25,11 +25,11 @@ public class CustomDomainLanguageSerializerTest extends TestCase {
 
         assertEquals("ja", results.get(0).lang.code);
         assertEquals("site.com", results.get(0).host);
-        assertEquals("/ja/", results.get(0).path);
+        assertEquals("/ja", results.get(0).path);
 
         assertEquals("en", results.get(1).lang.code);
         assertEquals("site.com", results.get(1).host);
-        assertEquals("/", results.get(1).path);
+        assertEquals("", results.get(1).path);
     }
 
     public void testDeserialize__MultipleLanguages__DomainAndPathVarieties() throws ConfigurationError {
@@ -40,15 +40,15 @@ public class CustomDomainLanguageSerializerTest extends TestCase {
 
         assertEquals("en", results.get(0).lang.code);
         assertEquals("site.co.uk", results.get(0).host);
-        assertEquals("/english/", results.get(0).path);
+        assertEquals("/english", results.get(0).path);
 
         assertEquals("ko", results.get(1).lang.code);
         assertEquals("japan.site.com", results.get(1).host);
-        assertEquals("/ko/", results.get(1).path);
+        assertEquals("/ko", results.get(1).path);
 
         assertEquals("ja", results.get(2).lang.code);
         assertEquals("japan.site.com", results.get(2).host);
-        assertEquals("/", results.get(2).path);
+        assertEquals("", results.get(2).path);
     }
 
     public void testDeserialize__SameLanguageSpecifiedMoreThanOnce__ThrowError() throws ConfigurationError {
