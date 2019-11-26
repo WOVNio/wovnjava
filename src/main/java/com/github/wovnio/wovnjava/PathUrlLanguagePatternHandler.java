@@ -34,6 +34,10 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     String convertToTargetLanguage(String url, Lang lang) {
+        Lang currentLang = this.getLangMatch(url, this.getLangPattern);
+        if (currentLang != null && this.supportedLangs.contains(currentLang)) {
+            url = this.removeLang(url, currentLang.code);
+        }
         return this.insertLang(url, lang.code);
     }
 

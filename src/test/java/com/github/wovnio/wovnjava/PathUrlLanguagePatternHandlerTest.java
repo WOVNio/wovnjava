@@ -189,17 +189,20 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(true, sut.canInterceptUrl("site.com/pre/fix/page/index.html?query"));
     }
 
-    public void testInsertLang__DefaultSettings() {
+    public void testConvertToTargetLanguage__DefaultSettings() {
         PathUrlLanguagePatternHandler sut = create("");
         assertEquals("/ja", sut.convertToTargetLanguage("", this.japanese));
         assertEquals("/ja/", sut.convertToTargetLanguage("/", this.japanese));
         assertEquals("/ja/path/index.html", sut.convertToTargetLanguage("/path/index.html", this.japanese));
         assertEquals("site.com/ja/", sut.convertToTargetLanguage("site.com/", this.japanese));
+        assertEquals("site.com/ja/", sut.convertToTargetLanguage("site.com/ja/", this.japanese));
+        assertEquals("site.com/ja/", sut.convertToTargetLanguage("site.com/fr/", this.japanese));
+        assertEquals("site.com/ja/ru/", sut.convertToTargetLanguage("site.com/ru/", this.japanese));
         assertEquals("http://site.com/ja/home", sut.convertToTargetLanguage("http://site.com/home", this.japanese));
         assertEquals("https://fr.site.co.uk/ja?query", sut.convertToTargetLanguage("https://fr.site.co.uk?query", this.japanese));
     }
 
-    public void testInsertLang__UsingSitePrefixPath__MatchesSitePrefixPath() {
+    public void testConvertToTargetLanguage__UsingSitePrefixPath__MatchesSitePrefixPath() {
         PathUrlLanguagePatternHandler sut = create("/pre/fix");
         assertEquals("/pre/fix/ja", sut.convertToTargetLanguage("/pre/fix", this.japanese));
         assertEquals("/pre/fix/ja/", sut.convertToTargetLanguage("/pre/fix/", this.japanese));
@@ -208,7 +211,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("http://site.com/pre/fix/ja?query", sut.convertToTargetLanguage("http://site.com/pre/fix?query", this.japanese));
     }
 
-    public void testInsertLang__UsingSitePrefixPath__SitePrefixPathNotMatched() {
+    public void testConvertToTargetLanguage__UsingSitePrefixPath__SitePrefixPathNotMatched() {
         PathUrlLanguagePatternHandler sut = create("/pre/fix");
         assertEquals("", sut.convertToTargetLanguage("", this.japanese));
         assertEquals("/", sut.convertToTargetLanguage("/", this.japanese));
