@@ -76,12 +76,12 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
 
     public void testInsertLang() {
         SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
-        assertEquals("/", sut.insertLang("/", "ja"));
-        assertEquals("/path/index.html", sut.insertLang("/path/index.html", "ja"));
-        assertEquals("ja.site.com?q=none", sut.insertLang("site.com?q=none", "ja"));
-        assertEquals("http://ja.site.com?q=none", sut.insertLang("http://site.com?q=none", "ja"));
-        assertEquals("https://ja.user13.sub.site.co.jp/home", sut.insertLang("https://user13.sub.site.co.jp/home", "ja"));
-        // note that insertLang assumes URL without language code
-        assertEquals("ja.ja.site.com", sut.insertLang("ja.site.com", "ja"));
+        assertEquals("/", sut.convertToTargetLanguage("/", this.japanese));
+        assertEquals("/path/index.html", sut.convertToTargetLanguage("/path/index.html", this.japanese));
+        assertEquals("ja.site.com?q=none", sut.convertToTargetLanguage("site.com?q=none", this.japanese));
+        assertEquals("http://ja.site.com?q=none", sut.convertToTargetLanguage("http://site.com?q=none", this.japanese));
+        assertEquals("https://ja.user13.sub.site.co.jp/home", sut.convertToTargetLanguage("https://user13.sub.site.co.jp/home", this.japanese));
+        // note that convertToTargetLanguage assumes URL without language code
+        assertEquals("ja.ja.site.com", sut.convertToTargetLanguage("ja.site.com", this.japanese));
     }
 }

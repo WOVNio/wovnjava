@@ -75,7 +75,7 @@ class Headers {
 
         if (!shouldAddLanguageCode) return location;
 
-        return this.urlLanguagePatternHandler.insertLang(url.toString(), this.requestLang.code);
+        return this.urlLanguagePatternHandler.convertToTargetLanguage(url.toString(), this.requestLang);
     }
 
     URL convertToDefaultLanguage(URL url) {
@@ -119,7 +119,7 @@ class Headers {
         HashMap<String, String> hreflangs = new HashMap<String, String>();
         for (Lang supportedLang : this.settings.supportedLangs) {
             String hreflangCode = supportedLang.codeISO639_1;
-            String url = this.urlLanguagePatternHandler.insertLang(this.clientRequestUrlInDefaultLanguage, supportedLang.code);
+            String url = this.urlLanguagePatternHandler.convertToTargetLanguage(this.clientRequestUrlInDefaultLanguage, supportedLang);
             hreflangs.put(hreflangCode, url);
         }
         String hreflangCodeDefaultLang = this.settings.defaultLang.codeISO639_1;

@@ -33,6 +33,10 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         }
     }
 
+    String convertToTargetLanguage(String url, Lang lang) {
+        return this.insertLang(url, lang.code);
+    }
+
     private String removeLang(String url, String lang) {
         if (lang.isEmpty()) return url;
 
@@ -41,7 +45,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         return matcher.replaceFirst("$1$2$3$5");
     }
 
-    String insertLang(String url, String lang) {
+    private String insertLang(String url, String lang) {
         return this.matchSitePrefixPathPattern.matcher(url).replaceFirst("$1$2$3/" + lang + "$4");
     }
 

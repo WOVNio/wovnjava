@@ -12,7 +12,7 @@ abstract class UrlLanguagePatternHandler {
 
     abstract String convertToDefaultLanguage(String url);
 
-    abstract String insertLang(String url, String lang);
+    abstract String convertToTargetLanguage(String url, Lang lang);
 
     public boolean canInterceptUrl(String url) {
         return true;
