@@ -58,8 +58,8 @@ public class WovnHttpServletRequestTest extends TestCase {
         assertNotNull(wovnRequest);
     }
 
-    public void testGetRemoteHostWithPath() throws ConfigurationError {
-        HttpServletRequest mockRequest = mockRequestPath();
+    public void testGetRemoteHost__PathPattern__DoNotModify() throws ConfigurationError {
+        HttpServletRequest mockRequest = MockHttpServletRequest.createWithRemoteHost("https://site.com/en/", "proxy.com");
         FilterConfig mockConfig = mockConfigPath();
 
         Settings settings = new Settings(mockConfig);
@@ -68,11 +68,11 @@ public class WovnHttpServletRequestTest extends TestCase {
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
-        assertEquals("example.com", wovnRequest.getRemoteHost());
+        assertEquals("proxy.com", wovnRequest.getRemoteHost());
     }
 
-    public void testGetRemoteHostWithSubDomain() throws ConfigurationError {
-        HttpServletRequest mockRequest = mockRequestSubDomain();
+    public void testGetRemoteHost__SubdomainPattern__RemoveLanguageCodeFromRemoteHost() throws ConfigurationError {
+        HttpServletRequest mockRequest = MockHttpServletRequest.createWithRemoteHost("https://en.site.com/", "en.proxy.com");
         FilterConfig mockConfig = mockConfigSubDomain();
 
         Settings settings = new Settings(mockConfig);
@@ -81,11 +81,11 @@ public class WovnHttpServletRequestTest extends TestCase {
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
-        assertEquals("example.com", wovnRequest.getRemoteHost());
+        assertEquals("proxy.com", wovnRequest.getRemoteHost());
     }
 
-    public void testGetRemoteHostWithQuery() throws ConfigurationError {
-        HttpServletRequest mockRequest = mockRequestQuery();
+    public void testGetRemoteHost__QueryPattern__DoNotModify() throws ConfigurationError {
+        HttpServletRequest mockRequest = MockHttpServletRequest.createWithRemoteHost("https://site.com/?wovn=en", "proxy.com");
         FilterConfig mockConfig = mockConfigQuery();
 
         Settings settings = new Settings(mockConfig);
@@ -94,7 +94,7 @@ public class WovnHttpServletRequestTest extends TestCase {
 
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(mockRequest, headers);
 
-        assertEquals("example.com", wovnRequest.getRemoteHost());
+        assertEquals("proxy.com", wovnRequest.getRemoteHost());
     }
 
     public void testGetServerNameWithPath() throws ConfigurationError {
