@@ -30,6 +30,14 @@ class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         }
     }
 
+    String convertToTargetLanguage(String url, Lang lang) {
+        Lang currentLang = this.getLangMatch(url, this.getLangPattern);
+        if (currentLang != null) {
+            url = this.removeLang(url, currentLang.code);
+        }
+        return this.insertLang(url, lang.code);
+    }
+
     private String removeLang(String url, String lang) {
         if (lang.isEmpty()) return url;
 
@@ -37,7 +45,7 @@ class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
                   .replaceAll("(\\?|&)$", "");
     }
 
-    String insertLang(String url, String lang) {
+    private String insertLang(String url, String lang) {
         if (this.hasQueryPattern.matcher(url).find()) {
             return url + "&wovn=" + lang;
         } else {

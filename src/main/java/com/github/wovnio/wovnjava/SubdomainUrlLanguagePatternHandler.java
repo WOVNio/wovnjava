@@ -28,6 +28,14 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         }
     }
 
+    String convertToTargetLanguage(String url, Lang lang) {
+        Lang currentLang = this.getLangMatch(url, this.getLangPattern);
+        if (currentLang != null && this.supportedLangs.contains(currentLang)) {
+            url = this.removeLang(url, currentLang.code);
+        }
+        return this.insertLang(url, lang.code);
+    }
+
     private String removeLang(String url, String lang) {
         if (lang.isEmpty()) return url;
 
@@ -35,7 +43,7 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
                       .matcher(url).replaceFirst("$1");
     }
 
-    String insertLang(String url, String lang) {
+    private String insertLang(String url, String lang) {
         if (url.contains("://")) {
             return url.replaceFirst("://", "://" + lang + ".");
         } else if (url.startsWith("/")) {

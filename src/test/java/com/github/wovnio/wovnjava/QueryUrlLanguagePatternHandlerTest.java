@@ -79,13 +79,13 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("https://ja.site.com/ja/", sut.convertToDefaultLanguage("https://ja.site.com/ja/?wovn=ja"));
     }
 
-    public void testInsertLang() {
+    public void testConvertToTargetLanguage() {
         QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
-        assertEquals("/?wovn=ja", sut.insertLang("/", "ja"));
-        assertEquals("/path/index.html?wovn=ja", sut.insertLang("/path/index.html", "ja"));
-        assertEquals("site.com/home?q=123&wovn=ja", sut.insertLang("site.com/home?q=123", "ja"));
-        assertEquals("http://site.com?wovn=ja", sut.insertLang("http://site.com", "ja"));
-        // note that insertLang assumes URL without language code
-        assertEquals("http://site.com?wovn=fr&wovn=ja", sut.insertLang("http://site.com?wovn=fr", "ja"));
+        assertEquals("/?wovn=ja", sut.convertToTargetLanguage("/", this.japanese));
+        assertEquals("/path/index.html?wovn=ja", sut.convertToTargetLanguage("/path/index.html", this.japanese));
+        assertEquals("site.com/home?q=123&wovn=ja", sut.convertToTargetLanguage("site.com/home?q=123", this.japanese));
+        assertEquals("http://site.com?wovn=ja", sut.convertToTargetLanguage("http://site.com", this.japanese));
+        assertEquals("http://site.com?wovn=ja", sut.convertToTargetLanguage("http://site.com?wovn=fr", this.japanese));
+        assertEquals("http://site.com?wovn=ja", sut.convertToTargetLanguage("http://site.com?wovn=ru", this.japanese));
     }
 }
