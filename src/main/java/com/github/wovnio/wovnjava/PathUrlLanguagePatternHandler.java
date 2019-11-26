@@ -24,7 +24,16 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         return (lang != null && this.supportedLangs.contains(lang)) ? lang : null;
     }
 
-    String removeLang(String url, String lang) {
+    String convertToDefaultLanguage(String url) {
+        Lang currentLang = this.getLang(url);
+        if (currentLang == null) {
+            return url;
+        } else {
+            return this.removeLang(url, currentLang.code);
+        }
+    }
+
+    private String removeLang(String url, String lang) {
         if (lang.isEmpty()) return url;
 
         Pattern removeLangPattern = buildRemoveLangPattern(lang);

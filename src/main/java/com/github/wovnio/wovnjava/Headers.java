@@ -33,10 +33,10 @@ class Headers {
         String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
         Lang urlLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
         this.requestLang = urlLang == null ? settings.defaultLang : urlLang;
-        this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang.code);
+        this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(clientRequestUrl);
 
         String currentContextUrl = request.getRequestURL().toString();
-        String currentContextUrlInDefaultLanguage = this.urlLanguagePatternHandler.removeLang(currentContextUrl, this.requestLang.code);
+        String currentContextUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(currentContextUrl);
 
         try {
             this.urlContext = new UrlContext(new URL(currentContextUrlInDefaultLanguage));
@@ -79,9 +79,7 @@ class Headers {
     }
 
     URL convertToDefaultLanguage(URL url) {
-        String uri = url.toString();
-        String lang = this.requestLang.code;
-        String urlInDefaultLang = this.urlLanguagePatternHandler.removeLang(uri, lang);
+        String urlInDefaultLang = this.urlLanguagePatternHandler.convertToDefaultLanguage(url.toString());
         try {
             return new URL(urlInDefaultLang);
         } catch (MalformedURLException e) {

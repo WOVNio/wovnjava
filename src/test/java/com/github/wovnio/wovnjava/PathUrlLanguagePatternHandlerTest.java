@@ -94,78 +94,70 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(null, sut.getLang("https://en.site.com/pre/fix/th/page/"));
     }
 
-    public void testRemoveLang__NonMatchingPath__DoNotModify() {
+    public void testConvertToDefaultLanguage__NonMatchingPath__DoNotModify() {
         PathUrlLanguagePatternHandler sut = create("");
-        assertEquals("", sut.removeLang("", "ja"));
-        assertEquals("?query", sut.removeLang("?query", "ja"));
-        assertEquals("/", sut.removeLang("/", "ja"));
-        assertEquals("/?query", sut.removeLang("/?query", "ja"));
-        assertEquals("site.com", sut.removeLang("site.com", "ja"));
-        assertEquals("site.com?query", sut.removeLang("site.com?query", "ja"));
-        assertEquals("site.com/", sut.removeLang("site.com/", "ja"));
-        assertEquals("site.com/page/", sut.removeLang("site.com/page/", "ja"));
-        assertEquals("/global/en/page/", sut.removeLang("/global/en/page/", "ja"));
-        assertEquals("site.com/en/page/", sut.removeLang("site.com/en/page/", "ja"));
-        assertEquals("site.com/english/page/", sut.removeLang("site.com/english/page/", "en"));
-        assertEquals("site.com/en/ja/page/", sut.removeLang("site.com/en/ja/page/", "ja"));
-        assertEquals("/global/page/ja/index.html", sut.removeLang("/global/page/ja/index.html", "ja"));
-        assertEquals("http://www.site.com/global/ja", sut.removeLang("http://www.site.com/global/ja", "ja"));
-        assertEquals("https://test.com/en/path/", sut.removeLang("https://test.com/en/path/", "ja"));
+        assertEquals("", sut.convertToDefaultLanguage(""));
+        assertEquals("?query", sut.convertToDefaultLanguage("?query"));
+        assertEquals("/", sut.convertToDefaultLanguage("/"));
+        assertEquals("/?query", sut.convertToDefaultLanguage("/?query"));
+        assertEquals("site.com", sut.convertToDefaultLanguage("site.com"));
+        assertEquals("site.com?query", sut.convertToDefaultLanguage("site.com?query"));
+        assertEquals("site.com/", sut.convertToDefaultLanguage("site.com/"));
+        assertEquals("site.com/page/", sut.convertToDefaultLanguage("site.com/page/"));
+        assertEquals("/global/en/page/", sut.convertToDefaultLanguage("/global/en/page/"));
+        assertEquals("site.com/ru/page/", sut.convertToDefaultLanguage("site.com/ru/page/"));
+        assertEquals("site.com/english/page/", sut.convertToDefaultLanguage("site.com/english/page/"));
+        assertEquals("site.com/ru/ja/page/", sut.convertToDefaultLanguage("site.com/ru/ja/page/"));
+        assertEquals("/global/page/ja/index.html", sut.convertToDefaultLanguage("/global/page/ja/index.html"));
+        assertEquals("http://www.site.com/global/ja", sut.convertToDefaultLanguage("http://www.site.com/global/ja"));
+        assertEquals("https://test.com/ru/path/", sut.convertToDefaultLanguage("https://test.com/ru/path/"));
     }
 
-    public void testRemoveLang__MatchingSupportedLang__RemoveLangCode() {
+    public void testConvertToDefaultLanguage__MatchingSupportedLang__RemoveLangCode() {
         PathUrlLanguagePatternHandler sut = create("");
-        assertEquals("", sut.removeLang("/ja", "ja"));
-        assertEquals("/", sut.removeLang("/ja/", "ja"));
-        assertEquals("?query", sut.removeLang("/ja?query", "ja"));
-        assertEquals("/?query", sut.removeLang("/ja/?query", "ja"));
-        assertEquals("site.com", sut.removeLang("site.com/en", "en"));
-        assertEquals("site.com/", sut.removeLang("site.com/ja/", "ja"));
-        assertEquals("site.com/?query", sut.removeLang("site.com/ja/?query", "ja"));
-        assertEquals("site.com/index.html", sut.removeLang("site.com/no/index.html", "no"));
-        assertEquals("site.com/page/index.html", sut.removeLang("site.com/en/page/index.html", "en"));
-        assertEquals("/page/index.html", sut.removeLang("/en/page/index.html", "en"));
-        assertEquals("/page/index.html?query", sut.removeLang("/en/page/index.html?query", "en"));
-        assertEquals("site.com/en/page/", sut.removeLang("site.com/ja/en/page/", "ja"));
-        assertEquals("site.com/ja/page/", sut.removeLang("site.com/ja/ja/page/", "ja"));
-        assertEquals("http://www.site.com", sut.removeLang("http://www.site.com/ja", "ja"));
-        assertEquals("https://test.com/path/index.html", sut.removeLang("https://test.com/en/path/index.html", "en"));
+        assertEquals("", sut.convertToDefaultLanguage("/ja"));
+        assertEquals("/", sut.convertToDefaultLanguage("/ja/"));
+        assertEquals("?query", sut.convertToDefaultLanguage("/ja?query"));
+        assertEquals("/?query", sut.convertToDefaultLanguage("/ja/?query"));
+        assertEquals("site.com", sut.convertToDefaultLanguage("site.com/en"));
+        assertEquals("site.com/", sut.convertToDefaultLanguage("site.com/ja/"));
+        assertEquals("site.com/?query", sut.convertToDefaultLanguage("site.com/ja/?query"));
+        assertEquals("site.com/index.html", sut.convertToDefaultLanguage("site.com/fr/index.html"));
+        assertEquals("site.com/page/index.html", sut.convertToDefaultLanguage("site.com/en/page/index.html"));
+        assertEquals("/page/index.html", sut.convertToDefaultLanguage("/en/page/index.html"));
+        assertEquals("/page/index.html?query", sut.convertToDefaultLanguage("/en/page/index.html?query"));
+        assertEquals("site.com/en/page/", sut.convertToDefaultLanguage("site.com/ja/en/page/"));
+        assertEquals("site.com/ja/page/", sut.convertToDefaultLanguage("site.com/ja/ja/page/"));
+        assertEquals("http://www.site.com", sut.convertToDefaultLanguage("http://www.site.com/ja"));
+        assertEquals("https://test.com/path/index.html", sut.convertToDefaultLanguage("https://test.com/en/path/index.html"));
     }
 
-    public void testRemoveLang__SitePrefixPath__NonMatchingPath__DoNotModify() {
+    public void testConvertToDefaultLanguage__SitePrefixPath__NonMatchingPath__DoNotModify() {
         PathUrlLanguagePatternHandler sut = create("/pre/fix");
-        assertEquals("/", sut.removeLang("/", "ja"));
-        assertEquals("site.com", sut.removeLang("site.com", "ja"));
-        assertEquals("site.com?query", sut.removeLang("site.com?query", "ja"));
-        assertEquals("site.com/pre/fix/", sut.removeLang("site.com/pre/fix/", "ja"));
-        assertEquals("site.com/no/index.html", sut.removeLang("site.com/no/index.html", "no"));
-        assertEquals("site.com/no/index.html?query", sut.removeLang("site.com/no/index.html?query", "no"));
-        assertEquals("site.com/fr/pre/fix/", sut.removeLang("site.com/fr/pre/fix/", "fr"));
-        assertEquals("site.com/pre/ja/fix/", sut.removeLang("site.com/pre/ja/fix/", "ja"));
-        assertEquals("site.com/prefix/no", sut.removeLang("site.com/prefix/no", "no"));
-        assertEquals("/pre/fix/page/en/index.html", sut.removeLang("/pre/fix/page/en/index.html", "en"));
-        assertEquals("/pre/fix/ja/page/index.html", sut.removeLang("/pre/fix/ja/page/index.html", "en"));
-        assertEquals("http://www.site.com/ja", sut.removeLang("http://www.site.com/ja", "ja"));
+        assertEquals("/", sut.convertToDefaultLanguage("/"));
+        assertEquals("site.com", sut.convertToDefaultLanguage("site.com"));
+        assertEquals("site.com?query", sut.convertToDefaultLanguage("site.com?query"));
+        assertEquals("site.com/pre/fix/", sut.convertToDefaultLanguage("site.com/pre/fix/"));
+        assertEquals("site.com/no/index.html", sut.convertToDefaultLanguage("site.com/no/index.html"));
+        assertEquals("site.com/no/index.html?query", sut.convertToDefaultLanguage("site.com/no/index.html?query"));
+        assertEquals("site.com/fr/pre/fix/", sut.convertToDefaultLanguage("site.com/fr/pre/fix/"));
+        assertEquals("site.com/pre/ja/fix/", sut.convertToDefaultLanguage("site.com/pre/ja/fix/"));
+        assertEquals("site.com/prefix/fr", sut.convertToDefaultLanguage("site.com/prefix/fr"));
+        assertEquals("/pre/fix/page/en/index.html", sut.convertToDefaultLanguage("/pre/fix/page/en/index.html"));
+        assertEquals("/pre/fix/ru/page/index.html", sut.convertToDefaultLanguage("/pre/fix/ru/page/index.html"));
+        assertEquals("http://www.site.com/ja", sut.convertToDefaultLanguage("http://www.site.com/ja"));
     }
 
-    public void testRemoveLang__SitePrefixPath__MatchingSupportedLang__RemoveLangCode() {
+    public void testConvertToDefaultLanguage__SitePrefixPath__MatchingSupportedLang__RemoveLangCode() {
         PathUrlLanguagePatternHandler sut = create("/pre/fix");
-        assertEquals("/pre/fix", sut.removeLang("/pre/fix/ja", "ja"));
-        assertEquals("/pre/fix?query", sut.removeLang("/pre/fix/ja?query", "ja"));
-        assertEquals("/pre/fix/", sut.removeLang("/pre/fix/ja/", "ja"));
-        assertEquals("/pre/fix/?query", sut.removeLang("/pre/fix/ja/?query", "ja"));
-        assertEquals("http://site.com/pre/fix/", sut.removeLang("http://site.com/pre/fix/en/", "en"));
-        assertEquals("site.com/pre/fix/page/index.html", sut.removeLang("site.com/pre/fix/no/page/index.html", "no"));
-        assertEquals("site.com/pre/fix/page/index.html?query", sut.removeLang("site.com/pre/fix/no/page/index.html?query", "no"));
-        assertEquals("http://www.site.com/pre/fix", sut.removeLang("http://www.site.com/pre/fix/ja", "ja"));
-    }
-
-    public void testRemoveLang__EmptyLanguage__DoNotModify() {
-        PathUrlLanguagePatternHandler sut = create("");
-        assertEquals("/", sut.removeLang("/", ""));
-        assertEquals("site.com?wovn=en", sut.removeLang("site.com?wovn=en", ""));
-        assertEquals("site.com/no/index.html", sut.removeLang("site.com/no/index.html", ""));
-        assertEquals("http://fr.site.com/ja", sut.removeLang("http://fr.site.com/ja", ""));
+        assertEquals("/pre/fix", sut.convertToDefaultLanguage("/pre/fix/ja"));
+        assertEquals("/pre/fix?query", sut.convertToDefaultLanguage("/pre/fix/ja?query"));
+        assertEquals("/pre/fix/", sut.convertToDefaultLanguage("/pre/fix/ja/"));
+        assertEquals("/pre/fix/?query", sut.convertToDefaultLanguage("/pre/fix/ja/?query"));
+        assertEquals("http://site.com/pre/fix/", sut.convertToDefaultLanguage("http://site.com/pre/fix/en/"));
+        assertEquals("site.com/pre/fix/page/index.html", sut.convertToDefaultLanguage("site.com/pre/fix/fr/page/index.html"));
+        assertEquals("site.com/pre/fix/page/index.html?query", sut.convertToDefaultLanguage("site.com/pre/fix/fr/page/index.html?query"));
+        assertEquals("http://www.site.com/pre/fix", sut.convertToDefaultLanguage("http://www.site.com/pre/fix/ja"));
     }
 
     public void testIsMatchSitePrefixPath__DefaultSettings() {

@@ -55,31 +55,23 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(null, sut.getLang("https://vi.site.com?wovn=fr"));
     }
 
-    public void testRemoveLang__NonMatchingSubdomain__DoNotModify() {
+    public void testConvertToDefaultLanguage__NonMatchingSubdomain__DoNotModify() {
         SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
-        assertEquals("/", sut.removeLang("/", "en"));
-        assertEquals("/en/path/index.php", sut.removeLang("/en/path/index.php", "en"));
-        assertEquals("?lang=english", sut.removeLang("?lang=english", "en"));
-        assertEquals("site.com", sut.removeLang("site.com", "en"));
-        assertEquals("ja.site.com", sut.removeLang("ja.site.com", "fr"));
-        assertEquals("https://ja.fr.site.com", sut.removeLang("https://ja.fr.site.com", "fr"));
-        assertEquals("site.com/fr/index.html?wovn=fr", sut.removeLang("site.com/fr/index.html?wovn=fr", "fr"));
+        assertEquals("/", sut.convertToDefaultLanguage("/"));
+        assertEquals("/en/path/index.php", sut.convertToDefaultLanguage("/en/path/index.php"));
+        assertEquals("?lang=english", sut.convertToDefaultLanguage("?lang=english"));
+        assertEquals("site.com", sut.convertToDefaultLanguage("site.com"));
+        assertEquals("ru.site.com", sut.convertToDefaultLanguage("ru.site.com"));
+        assertEquals("https://ru.fr.site.com", sut.convertToDefaultLanguage("https://ru.fr.site.com"));
+        assertEquals("site.com/fr/index.html?wovn=fr", sut.convertToDefaultLanguage("site.com/fr/index.html?wovn=fr"));
     }
 
-    public void testRemoveLang__MatchingSubdomain__RemoveLangCode() {
+    public void testConvertToDefaultLanguage__MatchingSubdomain__RemoveLangCode() {
         SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
-        assertEquals("site.com", sut.removeLang("en.site.com", "en"));
-        assertEquals("site.com/", sut.removeLang("es.site.com/", "es"));
-        assertEquals("http://site.com/", sut.removeLang("http://es.site.com/", "es"));
-        assertEquals("site.com/fr/index.html?lang=fr&wovn=fr", sut.removeLang("fr.site.com/fr/index.html?lang=fr&wovn=fr", "fr"));
-    }
-
-    public void testRemoveLang__EmptyLanguage__DoNotModify() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.supportedLangs);
-        assertEquals("/", sut.removeLang("/", ""));
-        assertEquals("site.com?wovn=en", sut.removeLang("site.com?wovn=en", ""));
-        assertEquals("site.com/no/index.html", sut.removeLang("site.com/no/index.html", ""));
-        assertEquals("http://fr.site.com/ja", sut.removeLang("http://fr.site.com/ja", ""));
+        assertEquals("site.com", sut.convertToDefaultLanguage("en.site.com"));
+        assertEquals("site.com/", sut.convertToDefaultLanguage("fr.site.com/"));
+        assertEquals("http://site.com/", sut.convertToDefaultLanguage("http://fr.site.com/"));
+        assertEquals("site.com/fr/index.html?lang=fr&wovn=fr", sut.convertToDefaultLanguage("fr.site.com/fr/index.html?lang=fr&wovn=fr"));
     }
 
     public void testInsertLang() {
