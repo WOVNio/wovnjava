@@ -33,7 +33,7 @@ class CustomDomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         CustomDomainLanguage currentCDL = this.customDomainLanguages.getCustomDomainLanguageByUrl(url);
         if (currentCDL == null) return urlString;
 
-        CustomDomainLanguage targetCDL = this.customDomainLanguages.getCustomDomainLanguageByLang(lang.code); //TODO: change to pass Lang object
+        CustomDomainLanguage targetCDL = this.customDomainLanguages.getCustomDomainLanguageByLang(lang);
         if (targetCDL == null || currentCDL == targetCDL) return urlString;
 
         Pattern p = Pattern.compile("^(" + currentCDL.path + ")(/|$)");

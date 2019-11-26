@@ -30,14 +30,14 @@ public class CustomDomainLanguagesTest extends TestCase {
     }
 
     public void testGetCustomDomainLanguageByLang__UnknownLanguage__ReturnNull() throws MalformedURLException {
-        assertEquals(null, this.sut.getCustomDomainLanguageByLang("unknown"));
+        assertEquals(null, this.sut.getCustomDomainLanguageByLang(null));
     }
 
     public void testGetCustomDomainLanguageByLang__LanguageExists__ReturnMatch() throws MalformedURLException {
-        assertEquals(this.french, this.sut.getCustomDomainLanguageByLang("fr"));
-        assertEquals(this.japanese, this.sut.getCustomDomainLanguageByLang("ja"));
-        assertEquals(this.german, this.sut.getCustomDomainLanguageByLang("de"));
-        assertEquals(this.english, this.sut.getCustomDomainLanguageByLang("en"));
+        assertEquals(this.french, this.sut.getCustomDomainLanguageByLang(Lang.get("fr")));
+        assertEquals(this.japanese, this.sut.getCustomDomainLanguageByLang(Lang.get("ja")));
+        assertEquals(this.german, this.sut.getCustomDomainLanguageByLang(Lang.get("de")));
+        assertEquals(this.english, this.sut.getCustomDomainLanguageByLang(Lang.get("en")));
     }
 
     public void testGetCustomDomainLanguageByUrl__UrlMatchesDomain__ReturnsMatch() throws MalformedURLException {

@@ -13,9 +13,9 @@ class CustomDomainLanguages {
         this.customDomainLanguageList = customDomainLanguageList;
     }
 
-    public CustomDomainLanguage getCustomDomainLanguageByLang(String langCode) {
+    public CustomDomainLanguage getCustomDomainLanguageByLang(Lang lang) {
         for (CustomDomainLanguage customDomainLanguage : this.customDomainLanguageList) {
-            if (customDomainLanguage.lang.code == langCode) {
+            if (customDomainLanguage.lang == lang) {
                 return customDomainLanguage;
             }
         }
