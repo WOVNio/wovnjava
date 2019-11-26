@@ -1,29 +1,29 @@
 package com.github.wovnio.wovnjava;
 
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 class Headers {
     Settings settings;
-    String host;
-    String pathName;
-    String pathNameKeepTrailingSlash;
-    String protocol;
-    String pageUrl;
-    String query;
-    String url;
 
     private HttpServletRequest request;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
+    private UrlContext urlContext;
 
-    private final String requestLang;
-    private final String clientRequestUrlWithoutLangCode;
-    private final boolean shouldRedirectToDefaultLang;
-    private final boolean isValidPath;
+    /* The language of the client request URL */
+    private final Lang requestLang;
+    /* The URL that the client originally requested */
+    private final String clientRequestUrlInDefaultLanguage;
+
+    /* Should send HTTP 302 redirect to page in default language */
+    private final boolean shouldRedirectExplicitDefaultLangUrl;
+    /* Is current context URL path the same as the equivalent path in default language */
+    private boolean isPathInDefaultLanguage;
+
+    private final boolean isValidRequest;
 
     Headers(HttpServletRequest request, Settings settings, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = settings;
@@ -31,208 +31,99 @@ class Headers {
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
         String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
+        Lang urlLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
+        this.requestLang = urlLang == null ? settings.defaultLang : urlLang;
+        this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(clientRequestUrl);
 
-        this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
-        this.clientRequestUrlWithoutLangCode = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang);
-        this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang);
-        this.isValidPath = this.urlLanguagePatternHandler.isMatchingSitePrefixPath(clientRequestUrl);
+        String currentContextUrl = request.getRequestURL().toString();
+        String currentContextUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(currentContextUrl);
 
-        this.protocol = this.request.getScheme();
-
-        String requestUri = null;
-        if (!this.settings.originalUrlHeader.isEmpty()) {
-            requestUri = this.request.getHeader(this.settings.originalUrlHeader);
-        }
-        if (requestUri == null || requestUri.isEmpty()) {
-            requestUri = this.request.getRequestURI();
-            if (requestUri == null || requestUri.length() == 0) {
-                if (Pattern.compile("^[^/]").matcher(this.request.getPathInfo()).find()) {
-                    requestUri = "/";
-                } else {
-                    requestUri = "";
-                }
-                requestUri += this.request.getPathInfo();
-            }
-        }
-        // Both getRequestURI() and getPathInfo() do not have query parameters.
-        if (this.settings.originalQueryStringHeader.isEmpty()) {
-            if (request.getQueryString() != null && !this.request.getQueryString().isEmpty()) {
-                requestUri += "?" + this.request.getQueryString();
-            }
-        } else {
-            String query = this.request.getHeader(this.settings.originalQueryStringHeader);
-            if (query != null && !query.isEmpty()) {
-                requestUri += "?" + query;
-            }
-        }
-        if (Pattern.compile("://").matcher(requestUri).find()) {
-            requestUri = Pattern.compile("^.*://[^/]+").matcher(requestUri).replaceFirst("");
+        try {
+            this.urlContext = new UrlContext(new URL(currentContextUrlInDefaultLanguage));
+        } catch (MalformedURLException e) {
+            this.urlContext = null;
         }
 
-        if (this.settings.useProxy && this.request.getHeader("X-Forwarded-Host") != null) {
-            this.host = this.request.getHeader("X-Forwarded-Host");
-        } else {
-            this.host = this.request.getServerName();
-        }
-        if (this.settings.urlPattern.equals("subdomain")) {
-            this.host = this.removeLang(this.host, this.langCode());
-        }
-        String[] split = requestUri.split("\\?");
-        this.pathName = split[0];
-        if (split.length == 2) {
-            this.query = split[1];
-        }
-        if (this.settings.urlPattern.equals("path")) {
-            this.pathName = this.removeLang(this.pathName, this.langCode());
-        }
-        if (this.query == null) {
-            this.query = "";
+        try {
+            String currentContextPath = new URL(currentContextUrl).getPath();
+            this.isPathInDefaultLanguage = currentContextPath.equalsIgnoreCase(this.getCurrentContextUrlInDefaultLanguage().getPath());
+        } catch (MalformedURLException e) {
+            this.isPathInDefaultLanguage = false;
         }
 
-        int port;
-        if (this.settings.useProxy) {
-            if (this.request.getHeader("X-Forwarded-Port") == null || this.request.getHeader("X-Forwarded-Port").isEmpty()) {
-                port = 80;
-            } else {
-                port = Integer.parseInt(request.getHeader("X-Forwarded-Port"));
-            }
-        } else {
-            port = this.request.getServerPort();
-        }
-        if (port != 80 && port != 443) {
-            this.host += ":" + port;
-        }
+        this.shouldRedirectExplicitDefaultLangUrl = this.urlLanguagePatternHandler.shouldRedirectExplicitDefaultLangUrl(clientRequestUrl);
 
-        this.url = this.host + this.pathName;
-        if (this.query != null && this.query.length() > 0) {
-            this.url += "?";
-        }
-        this.url += this.removeLang(this.query, this.langCode());
-        this.url = this.url.length() == 0 ? "/" : this.url;
-        if (!this.query.isEmpty() && !this.query.startsWith("?")) {
-            this.query = "?" + this.query;
-        }
-        this.query = this.removeLang(this.query, this.langCode());
-        this.pathNameKeepTrailingSlash = this.pathName;
-        this.pathName = Pattern.compile("/$").matcher(this.pathName).replaceAll("");
-        this.pageUrl = this.host + this.pathName + this.query;
+        this.isValidRequest = this.urlContext != null && this.urlLanguagePatternHandler.canInterceptUrl(clientRequestUrl);
     }
 
-    String langCode() {
-        String pl = this.requestLang;
-        if (pl != null && pl.length() > 0) {
-            return pl;
-        } else {
-            return settings.defaultLang;
-        }
-    }
-
-    public String locationWithLangCode(String location) {
-        // check if needed
-        if (location == null) {
-            return null;
-        }
-        if (langCode().equals(settings.defaultLang)) {
-            return location;
-        }
-
-        // catprue protocl and path
-        String locationProtocol = protocol;
-        String path;
-        if (location.contains("://")) {
-            if (!location.contains("://" + host)) {
-                return location;
-            }
-            String[] protocolAndRemaining = location.split("://", 2);
-            locationProtocol = protocolAndRemaining[0];
-            path = "/" + protocolAndRemaining[1].split("/", 2)[1];
-        } else {
-            if (location.startsWith("/")) {
-                path = location;
-            } else {
-                path = UrlPath.join("/", UrlPath.join(UrlPath.removeFile(pathNameKeepTrailingSlash), location));
-            }
-        }
-        path = UrlPath.normalize(path);
-
-        if (!path.startsWith(this.settings.sitePrefixPath)) {
-            return location;
-        }
-
-        // check location already have language code
-        if (settings.urlPattern.equals("query") && location.contains("wovn=")) {
-            return location;
-        } else if (settings.urlPattern.equals("path")) {
-            String pathLang = this.urlLanguagePatternHandler.getLang(path);
-            if (pathLang != null && pathLang.length() > 0) {
-                return location;
-            }
-        }
-
-        // build new location
-        String lang = langCode();
-        String queryLangCode = "";
-        String subdomainLangCode = "";
-        String pathLangCode = "";
-        String sitePrefixPath = "";
-        if (settings.urlPattern.equals("query")) {
-            if (location.contains("?")) {
-                queryLangCode = "&wovn=" + lang;
-            } else {
-                queryLangCode = "?wovn=" + lang;
-            }
-        } else if (settings.urlPattern.equals("subdomain")) {
-            subdomainLangCode = lang + ".";
-        } else {
-            pathLangCode = "/" + lang;
-            sitePrefixPath = this.settings.sitePrefixPath;
-            path = path.replaceFirst(sitePrefixPath, "");
-        }
-        return locationProtocol + "://" + subdomainLangCode + host + sitePrefixPath + pathLangCode + path + queryLangCode;
-    }
-    /**
-     * @return String Returns request URL without any language code
+    /*
+     * Take as input a location string of any form (relative path, absolute path, absolute URL).
+     * If the location needs a Wovn language code, return an absolute URL string of that location
+     * with language code of the current request language. Else return the location as-is.
      */
-    String getUrlWithoutLanguageCode() {
-        return this.protocol + "://" + this.url;
+    public String locationWithLangCode(String location) {
+        if (location == null || !this.isValidRequest) return location;
+
+        if (this.requestLang == this.settings.defaultLang) return location;
+
+        URL url = this.urlContext.resolve(location);
+
+        boolean shouldAddLanguageCode = url != null
+                                        && this.urlContext.isSameHost(url)
+                                        && this.urlLanguagePatternHandler.getLang(url.toString()) == null
+                                        && this.urlLanguagePatternHandler.canInterceptUrl(url.toString());
+
+        if (!shouldAddLanguageCode) return location;
+
+        return this.urlLanguagePatternHandler.convertToTargetLanguage(url.toString(), this.requestLang);
     }
 
-    String removeLang(String uri, String lang) {
-        if (lang == null || lang.length() == 0) {
-            lang = this.requestLang;
+    URL convertToDefaultLanguage(URL url) {
+        String urlInDefaultLang = this.urlLanguagePatternHandler.convertToDefaultLanguage(url.toString());
+        try {
+            return new URL(urlInDefaultLang);
+        } catch (MalformedURLException e) {
+            return url;
         }
-        return this.urlLanguagePatternHandler.removeLang(uri, lang);
     }
 
-    public String getRequestLang() {
+    public Lang getRequestLang() {
         return this.requestLang;
     }
 
-    public String getClientRequestUrlWithoutLangCode() {
-        return this.clientRequestUrlWithoutLangCode;
+    public String getClientRequestUrlInDefaultLanguage() {
+        return this.clientRequestUrlInDefaultLanguage;
     }
 
-    public String getClientRequestPathWithoutLangCode() {
-        return UrlPath.getPath(this.clientRequestUrlWithoutLangCode);
+    public String getClientRequestPathInDefaultLanguage() {
+        return UrlPath.getPath(this.clientRequestUrlInDefaultLanguage);
     }
 
-    public boolean getShouldRedirectToDefaultLang() {
-        return this.shouldRedirectToDefaultLang;
+    public URL getCurrentContextUrlInDefaultLanguage() {
+        return this.urlContext.getURL();
     }
 
-    public boolean getIsValidPath() {
-        return this.isValidPath;
+    public boolean getShouldRedirectExplicitDefaultLangUrl() {
+        return this.shouldRedirectExplicitDefaultLangUrl;
+    }
+
+    public boolean getIsPathInDefaultLanguage() {
+        return this.isPathInDefaultLanguage;
+    }
+
+    public boolean getIsValidRequest() {
+        return this.isValidRequest;
     }
 
     public HashMap<String, String> getHreflangUrlMap() {
         HashMap<String, String> hreflangs = new HashMap<String, String>();
-        for (String supportedLang : this.settings.supportedLangs) {
-            String hreflangCode = Lang.get(supportedLang).codeISO639_1;
-            String url = this.urlLanguagePatternHandler.insertLang(this.clientRequestUrlWithoutLangCode, supportedLang);
+        for (Lang supportedLang : this.settings.supportedLangs) {
+            String hreflangCode = supportedLang.codeISO639_1;
+            String url = this.urlLanguagePatternHandler.convertToTargetLanguage(this.clientRequestUrlInDefaultLanguage, supportedLang);
             hreflangs.put(hreflangCode, url);
         }
-        String hreflangCodeDefaultLang = Lang.get(this.settings.defaultLang).codeISO639_1;
-        String urlDefaultLang = this.clientRequestUrlWithoutLangCode;
+        String hreflangCodeDefaultLang = this.settings.defaultLang.codeISO639_1;
+        String urlDefaultLang = this.clientRequestUrlInDefaultLanguage;
         hreflangs.put(hreflangCodeDefaultLang, urlDefaultLang);
         return hreflangs;
     }

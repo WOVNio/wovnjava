@@ -6,22 +6,22 @@ final class UrlLanguagePatternHandlerFactory {
     private UrlLanguagePatternHandlerFactory() {}
 
     public static UrlLanguagePatternHandler create(Settings settings) throws ConfigurationError {
-        return create(settings.urlPattern, settings.sitePrefixPath, settings.rawCustomDomainLangs, settings.supportedLangs);
+        return create(settings.defaultLang, settings.supportedLangs, settings.urlPattern, settings.sitePrefixPath, settings.rawCustomDomainLangs);
     }
 
-    public static UrlLanguagePatternHandler create(String urlPattern, String sitePrefixPath, String rawCustomDomainLangs, ArrayList<String> supportedLangs) throws ConfigurationError {
+    public static UrlLanguagePatternHandler create(Lang defaultLang, ArrayList<Lang> supportedLangs, String urlPattern, String sitePrefixPath, String rawCustomDomainLangs) throws ConfigurationError {
         if ("path".equalsIgnoreCase(urlPattern)) {
-            return new PathUrlLanguagePatternHandler(sitePrefixPath);
+            return new PathUrlLanguagePatternHandler(defaultLang, supportedLangs, sitePrefixPath);
         } else if ("query".equalsIgnoreCase(urlPattern)) {
-            return new QueryUrlLanguagePatternHandler();
+            return new QueryUrlLanguagePatternHandler(defaultLang, supportedLangs);
         } else if ("subdomain".equalsIgnoreCase(urlPattern)) {
-            return new SubdomainUrlLanguagePatternHandler();
+            return new SubdomainUrlLanguagePatternHandler(defaultLang, supportedLangs);
         } else if ("customDomain".equalsIgnoreCase(urlPattern)) {
             CustomDomainLanguages customDomainLanguages = CustomDomainLanguageSerializer.deserialize(rawCustomDomainLangs);
             if (!isCustomDomainLanguagesCompatible(customDomainLanguages, supportedLangs)) {
                 throw new ConfigurationError("\"customDomainLanguages\" does not match \"supportedLangs\". A custom domain must be declared for each supported language.");
             }
-            return new CustomDomainUrlLanguagePatternHandler(customDomainLanguages);
+            return new CustomDomainUrlLanguagePatternHandler(defaultLang, customDomainLanguages);
         } else {
             throw new ConfigurationError("Invalid url pattern: " + urlPattern);
         }
@@ -39,4 +39,3 @@ final class UrlLanguagePatternHandlerFactory {
         return true;
     }
 }
-

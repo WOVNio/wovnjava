@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 public class WovnServletFilter implements Filter {
     private Settings settings;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
+    private FileExtensionMatcher fileExtensionMatcher;
     private final HtmlChecker htmlChecker = new HtmlChecker();
 
     public static final String VERSION = Settings.VERSION;  // for backward compatibility
@@ -28,6 +29,7 @@ public class WovnServletFilter implements Filter {
         try {
             this.settings = new Settings(config);
             this.urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+            this.fileExtensionMatcher = new FileExtensionMatcher();
         } catch (ConfigurationError e) {
             throw new ServletException("WovnServletFilter ConfigurationError: " + e.getMessage());
         }
@@ -45,21 +47,26 @@ public class WovnServletFilter implements Filter {
         RequestOptions requestOptions = new RequestOptions(this.settings, request);
         Headers headers = new Headers((HttpServletRequest)request, this.settings, this.urlLanguagePatternHandler);
 
-        boolean canProcessRequest = !isRequestAlreadyProcessed &&
-                                    !requestOptions.getDisableMode() &&
-                                    headers.getIsValidPath() &&
-                                    htmlChecker.canTranslatePath(headers.pathName);
+        boolean canTranslateRequest = !requestOptions.getDisableMode() &&
+                                      !this.fileExtensionMatcher.isFile(headers.getCurrentContextUrlInDefaultLanguage().getPath());
 
-        if (headers.getShouldRedirectToDefaultLang()) {
-            /* Send 302 redirect to equivalent URL without default language code */
-            ((HttpServletResponse) response).sendRedirect(headers.getClientRequestUrlWithoutLangCode());
-        } else if (canProcessRequest) {
-            /* Process the request */
+        if (isRequestAlreadyProcessed || !headers.getIsValidRequest()) {
+            /* Do nothing */
+            chain.doFilter(request, response);
+        } else if (headers.getShouldRedirectExplicitDefaultLangUrl()) {
+            /* Send HTTP 302 redirect to equivalent URL without default language code */
+            ((HttpServletResponse) response).sendRedirect(headers.getClientRequestUrlInDefaultLanguage());
+        } else if (canTranslateRequest) {
+            /* Strip language code, pass on request, and attempt to translate the resulting response */
             tryTranslate(headers, requestOptions, (HttpServletRequest)request, (HttpServletResponse)response, chain);
         } else {
             /* Strip language code and pass through the request and response untouched */
             WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest((HttpServletRequest)request, headers);
-            chain.doFilter(wovnRequest, response);
+            if (headers.getIsPathInDefaultLanguage()) {
+                chain.doFilter(wovnRequest, response);
+            } else {
+                wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, response);
+            }
         }
     }
 
@@ -74,17 +81,17 @@ public class WovnServletFilter implements Filter {
         ResponseHeaders responseHeaders = new ResponseHeaders(response);
         responseHeaders.setApiStatus("Unused");
 
-        if (settings.urlPattern.equals("path") && headers.getRequestLang().length() > 0) {
-            wovnRequest.getRequestDispatcher(headers.pathNameKeepTrailingSlash).forward(wovnRequest, wovnResponse);
-        } else {
+        if (headers.getIsPathInDefaultLanguage()) {
             chain.doFilter(wovnRequest, wovnResponse);
+        } else {
+            wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, wovnResponse);
         }
 
         String originalBody = wovnResponse.toString();
         if (originalBody != null) {
             // text
             String body = null;
-            if (htmlChecker.canTranslate(response.getContentType(), headers.pathName, originalBody)) {
+            if (htmlChecker.canTranslate(response.getContentType(), originalBody)) {
                 // html
                 Api api = new Api(settings, headers, requestOptions, responseHeaders);
                 Interceptor interceptor = new Interceptor(headers, settings, api, responseHeaders);

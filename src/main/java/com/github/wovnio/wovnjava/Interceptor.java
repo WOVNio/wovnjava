@@ -16,18 +16,17 @@ class Interceptor {
     }
 
     String translate(String body) {
-        String lang = headers.getRequestLang();
-        boolean canTranslate = lang.length() > 0 && !lang.equals(settings.defaultLang);
-        if (canTranslate) {
-            return apiTranslate(lang, body);
+        Lang lang = headers.getRequestLang();
+        if (lang != settings.defaultLang) {
+            return apiTranslate(lang.code, body);
         } else {
-            return localTranslate(settings.defaultLang, body);
+            return localTranslate(settings.defaultLang.code, body);
         }
     }
 
     private String apiTranslate(String lang, String body) {
         try {
-            HtmlConverter converter = new HtmlConverter(settings, body);
+            HtmlConverter converter = new HtmlConverter(this.settings, this.headers, body);
             String convertedBody = converter.strip();
             String translatedBody = api.translate(lang, convertedBody);
             responseHeaders.setApiStatus("Success");
@@ -40,10 +39,10 @@ class Interceptor {
     }
 
     private String apiTranslateFail(String body, String lang) {
-        return new HtmlConverter(settings, body).convert(headers, lang);
+        return new HtmlConverter(this.settings, this.headers, body).convert(lang);
     }
 
     private String localTranslate(String lang, String body) {
-        return new HtmlConverter(settings, body).convert(headers, lang);
+        return new HtmlConverter(this.settings, this.headers, body).convert(lang);
     }
 }

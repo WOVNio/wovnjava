@@ -1,20 +1,25 @@
 package com.github.wovnio.wovnjava;
 
 import java.util.HashMap;
-
-import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.TestCase;
-
 import org.easymock.EasyMock;
 
 public class HtmlConverterTest extends TestCase {
+    private String location = "https://site.com/global/tokyo/";
+
+    private HtmlConverter createHtmlConverter(Settings settings, String location, String original) throws ConfigurationError {
+        HttpServletRequest mockRequest = MockHttpServletRequest.create(location);
+        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
+        return new HtmlConverter(settings, headers, original);
+    }
 
     public void testDisablePrettyPrint() throws ConfigurationError {
         String original = "<html><head></head><body>\n " + "hello" + "\t\n</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
-        HtmlConverter converter = new HtmlConverter(settings, original);
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
         assertEquals(original, html);
     }
@@ -23,7 +28,7 @@ public class HtmlConverterTest extends TestCase {
         String original = "<html><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script></head><body></body></html>";
         String removedHtml = "<html><head></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
-        HtmlConverter converter = new HtmlConverter(settings, original);
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
         assertEquals(removedHtml, stripExtraSpaces(html));
         assertEquals(removedHtml, stripExtraSpaces(converter.restore(html)));
@@ -33,7 +38,7 @@ public class HtmlConverterTest extends TestCase {
         String original = "<html><head><script>alert(1)</script></head><body>a <script>console.log(1)</script>b</body></html>";
         String removedHtml = "<html><head><!--wovn-marker-0--></head><body>a <!--wovn-marker-1-->b</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
-        HtmlConverter converter = new HtmlConverter(settings, original);
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
         assertEquals(removedHtml, stripExtraSpaces(html));
         assertEquals(stripExtraSpaces(original), stripExtraSpaces(converter.restore(html)));
@@ -43,7 +48,7 @@ public class HtmlConverterTest extends TestCase {
         String original = "<html><head><link ref=\"altername\" hreflang=\"en\" href=\"http://localhost:8080/\"><link ref=\"altername\" hreflang=\"ja\" href=\"http://localhost:8080/ja/\"><link ref=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"></head><body></body></html>";
         String removedHtml = "<html><head><link ref=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
-        HtmlConverter converter = new HtmlConverter(settings, original);
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
         assertEquals(removedHtml, stripExtraSpaces(html));
         assertEquals(removedHtml, stripExtraSpaces(converter.restore(html)));
@@ -53,7 +58,7 @@ public class HtmlConverterTest extends TestCase {
         String original = "<html><head></head><body><div>Hello <span wovn-ignore>Duke</span>.</div></body></html>";
         String removedHtml = "<html><head></head><body><div>Hello <!--wovn-marker-0-->.</div></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
-        HtmlConverter converter = new HtmlConverter(settings, original);
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
         assertEquals(removedHtml, stripExtraSpaces(html));
         assertEquals(original, stripExtraSpaces(converter.restore(html)));
@@ -72,8 +77,9 @@ public class HtmlConverterTest extends TestCase {
             put("supportedLangs", "en,fr,ja");
             put("ignoreClasses", "ignore-me,name,ingredient");
         }});
-        HtmlConverter converter = new HtmlConverter(settings, original);
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
+
         assertEquals("ignore-me & name & ingredient", String.join(" & ", settings.ignoreClasses));
         assertEquals(removedHtml, stripExtraSpaces(html));
         assertEquals(original, stripExtraSpaces(converter.restore(html)));
@@ -83,8 +89,9 @@ public class HtmlConverterTest extends TestCase {
         String original = "<html><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
         String removedHtml = "<html><head></head><body><form><!--wovn-marker-0--><!--wovn-marker-1--></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
-        HtmlConverter converter = new HtmlConverter(settings, original);
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
+
         assertEquals(removedHtml, stripExtraSpaces(html));
         // jsoup make lower case tag name
         assertEquals(original.replace("INPUT", "input"), stripExtraSpaces(converter.restore(html)));
@@ -94,8 +101,9 @@ public class HtmlConverterTest extends TestCase {
         String original = "<html><head></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
         String removedHtml = "<html><head></head><body><!--wovn-marker-1--></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
-        HtmlConverter converter = new HtmlConverter(settings, original);
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
+
         assertEquals(removedHtml, stripExtraSpaces(html));
         // jsoup make lower case tag name
         assertEquals(original.replace("INPUT", "input"), stripExtraSpaces(converter.restore(html)));
@@ -116,12 +124,9 @@ public class HtmlConverterTest extends TestCase {
             put("sitePrefixPath", "global");
         }};
         Settings settings = TestUtil.makeSettings(option);
-        HttpServletRequest mockRequest = mockRequestPath("/global/tokyo/", "site.com");
-        UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
-        Headers headers = new Headers(mockRequest, settings, urlLanguagePatternHandler);
-        HtmlConverter converter = new HtmlConverter(settings, original);
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
 
-        assertEquals(expectedHtml, converter.convert(headers, "ja"));
+        assertEquals(expectedHtml, converter.convert("ja"));
     }
 
     public void testMixAllCase() throws ConfigurationError {
@@ -168,27 +173,13 @@ public class HtmlConverterTest extends TestCase {
             put("supportedLangs", "en,fr,ja");
             put("ignoreClasses", "ignore-me,name,ingredient");
         }});
-        HtmlConverter converter = new HtmlConverter(settings, original);
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
+
         assertEquals(removedHtml, stripExtraSpaces(html));
     }
 
     private String stripExtraSpaces(String html) {
         return html.replaceAll("\\s +", "").replaceAll(">\\s+<", "><");
-    }
-
-    private static HttpServletRequest mockRequestPath(String path, String host) {
-        HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
-        EasyMock.expect(mock.getScheme()).andReturn("https").atLeastOnce();
-        EasyMock.expect(mock.getRemoteHost()).andReturn(host);
-        EasyMock.expect(mock.getRequestURI()).andReturn(path).atLeastOnce();
-        EasyMock.expect(mock.getServerName()).andReturn(host).atLeastOnce();
-        EasyMock.expect(mock.getQueryString()).andReturn(null).atLeastOnce();
-        EasyMock.expect(mock.getServerPort()).andReturn(443).atLeastOnce();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).times(0,1);
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).times(0,1);
-        EasyMock.replay(mock);
-
-        return mock;
     }
 }

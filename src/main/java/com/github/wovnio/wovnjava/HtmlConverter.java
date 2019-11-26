@@ -2,6 +2,7 @@ package com.github.wovnio.wovnjava;
 
 import java.lang.StringBuilder;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.ArrayList;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,9 +16,11 @@ class HtmlConverter {
     private final String WOVN_MARKER_PREFIX = "wovn-marker-";
     private final Document doc;
     private final Settings settings;
+    private final HashMap<String, String> hreflangMap;
 
-    HtmlConverter(Settings settings, String original) {
+    HtmlConverter(Settings settings, Headers headers, String original) {
         this.settings = settings;
+        this.hreflangMap = headers.getHreflangUrlMap();
         doc = Jsoup.parse(original);
         doc.outputSettings().prettyPrint(false);
     }
@@ -31,11 +34,11 @@ class HtmlConverter {
         return doc.html();
     }
 
-    String convert(Headers headers, String lang) {
+    String convert(String lang) {
         removeSnippet();
         removeHrefLangIfConflicts();
         appendSnippet(lang);
-        appendHrefLang(headers);
+        appendHrefLang();
         replaceContentType();
         return doc.html();
     }
@@ -61,7 +64,7 @@ class HtmlConverter {
         Elements elements = doc.head().getElementsByTag("link");
         for (Element element : elements) {
             String hreflang = element.attr("hreflang");
-            if (hreflang != null && settings.supportedLangs.contains(hreflang.toLowerCase())) {
+            if (hreflang != null && this.hreflangMap.containsKey(hreflang.toLowerCase())) {
                 element.remove();
             }
         }
@@ -127,7 +130,7 @@ class HtmlConverter {
         sb.append("&backend=true&currentLang=");
         sb.append(lang);
         sb.append("&defaultLang=");
-        sb.append(settings.defaultLang);
+        sb.append(settings.defaultLang.code);
         sb.append("&urlPattern=");
         sb.append(settings.urlPattern);
         sb.append("&langCodeAliases={}&version=");
@@ -144,8 +147,8 @@ class HtmlConverter {
         doc.head().appendChild(js);
     }
 
-    private void appendHrefLang(Headers headers) {
-        for (Map.Entry<String, String> hreflang : headers.getHreflangUrlMap().entrySet()) {
+    private void appendHrefLang() {
+        for (Map.Entry<String, String> hreflang : this.hreflangMap.entrySet()) {
             Element link = new Element(Tag.valueOf("link"), "");
             link.attr("ref", "alternate");
             link.attr("hreflang", hreflang.getKey());
