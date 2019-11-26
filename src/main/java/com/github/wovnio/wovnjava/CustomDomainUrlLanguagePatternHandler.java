@@ -37,8 +37,8 @@ class CustomDomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         CustomDomainLanguage targetCDL = this.customDomainLanguages.getCustomDomainLanguageByLang(lang);
         if (targetCDL == null || currentCDL == targetCDL) return urlString;
 
-        Pattern p = Pattern.compile("^(" + currentCDL.path + ")(/|$)");
-        String newFile = p.matcher(url.getFile()).replaceFirst(targetCDL.path + "$2");
+        Pattern p = Pattern.compile("^(" + currentCDL.path + ")");
+        String newFile = p.matcher(url.getFile()).replaceFirst(targetCDL.path);
 
         try {
             URL result = new URL(url.getProtocol(), targetCDL.host, url.getPort(), newFile);
