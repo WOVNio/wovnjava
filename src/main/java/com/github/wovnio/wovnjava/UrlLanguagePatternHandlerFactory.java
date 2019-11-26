@@ -27,12 +27,12 @@ final class UrlLanguagePatternHandlerFactory {
         }
     }
 
-    private static boolean isCustomDomainLanguagesCompatible(CustomDomainLanguages customDomainLanguages, ArrayList<String> supportedLangs) {
+    private static boolean isCustomDomainLanguagesCompatible(CustomDomainLanguages customDomainLanguages, ArrayList<Lang> supportedLangs) {
         if (customDomainLanguages.customDomainLanguageList.size() != supportedLangs.size()) {
             return false;
         }
         for (CustomDomainLanguage customDomainLanguage : customDomainLanguages.customDomainLanguageList) {
-            if (!supportedLangs.contains(customDomainLanguage.lang.code)) {
+            if (!supportedLangs.contains(customDomainLanguage.lang)) {
                 return false;
             }
         }

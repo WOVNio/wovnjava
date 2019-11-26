@@ -1,5 +1,6 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.regex.Pattern;
 import java.net.URL;
 import java.net.MalformedURLException;
 
