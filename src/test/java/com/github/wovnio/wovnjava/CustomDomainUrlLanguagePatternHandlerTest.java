@@ -152,4 +152,11 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("/fr/global/cat.png", sut.convertToTargetLanguage("/fr/global/cat.png", this.korean));
         assertEquals("?user=tom", sut.convertToTargetLanguage("?user=tom", this.korean));
     }
+
+    public void testConvertToTargetLanguage__SourceUrlHasExplicitPortNumber__ReturnUrlInTargetLanguageWithPortNumber() {
+        assertEquals("http://japan.site.com:6000", sut.convertToTargetLanguage("http://site.co.uk:6000/fr", this.japanese));
+        assertEquals("http://japan.site.com:6000/", sut.convertToTargetLanguage("http://site.co.uk:6000/fr/", this.japanese));
+        assertEquals("http://japan.site.com:6000/cat.png", sut.convertToTargetLanguage("http://site.co.uk:6000/fr/cat.png", this.japanese));
+        assertEquals("http://japan.site.com:6000?user=tom", sut.convertToTargetLanguage("http://site.co.uk:6000/fr?user=tom", this.japanese));
+    }
 }
