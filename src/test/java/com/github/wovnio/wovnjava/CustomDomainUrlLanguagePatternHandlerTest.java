@@ -159,4 +159,46 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("http://japan.site.com:6000/cat.png", sut.convertToTargetLanguage("http://site.co.uk:6000/fr/cat.png", this.japanese));
         assertEquals("http://japan.site.com:6000?user=tom", sut.convertToTargetLanguage("http://site.co.uk:6000/fr?user=tom", this.japanese));
     }
+
+    public void testCanInterceptUrl__UrlMatchesCustomDomainLanguage__ReturnTrue() {
+        assertEquals(true, sut.canInterceptUrl("http://site.co.uk"));
+        assertEquals(true, sut.canInterceptUrl("http://site.co.uk?user=tom"));
+        assertEquals(true, sut.canInterceptUrl("http://site.co.uk/friday/"));
+        assertEquals(true, sut.canInterceptUrl("http://site.co.uk/cat.png"));
+
+        assertEquals(true, sut.canInterceptUrl("http://site.co.uk/fr"));
+        assertEquals(true, sut.canInterceptUrl("http://site.co.uk/fr/"));
+        assertEquals(true, sut.canInterceptUrl("http://site.co.uk/fr/cat.png"));
+        assertEquals(true, sut.canInterceptUrl("http://site.co.uk/fr?user=tom"));
+
+        assertEquals(true, sut.canInterceptUrl("http://japan.site.com"));
+        assertEquals(true, sut.canInterceptUrl("http://japan.site.com/"));
+        assertEquals(true, sut.canInterceptUrl("http://japan.site.com/cat.png"));
+        assertEquals(true, sut.canInterceptUrl("http://japan.site.com?user=tom"));
+
+        assertEquals(true, sut.canInterceptUrl("https://korean.com/ko"));
+        assertEquals(true, sut.canInterceptUrl("https://korean.com/ko/"));
+        assertEquals(true, sut.canInterceptUrl("https://korean.com/ko/cat.png"));
+        assertEquals(true, sut.canInterceptUrl("https://korean.com/ko?user=tom"));
+    }
+
+    public void testCanInterceptUrl__UrlDoesNotMatchCustomDomainLanguage__ReturnFalse() {
+        assertEquals(false, sut.canInterceptUrl("http://korean.com"));
+        assertEquals(false, sut.canInterceptUrl("http://korean.com/"));
+        assertEquals(false, sut.canInterceptUrl("http://korean.com/cat.png"));
+        assertEquals(false, sut.canInterceptUrl("http://korean.com?user=tom"));
+
+        assertEquals(false, sut.canInterceptUrl("http://example.com"));
+        assertEquals(false, sut.canInterceptUrl("http://example.com/fr"));
+        assertEquals(false, sut.canInterceptUrl("http://example.com/fr/"));
+        assertEquals(false, sut.canInterceptUrl("http://example.com/fr/cat.png"));
+        assertEquals(false, sut.canInterceptUrl("http://example.com/fr?user=tom"));
+    }
+
+    public void testCanInterceptUrl__IncompleteUrl__ReturnFalse() {
+        assertEquals(false, sut.canInterceptUrl("site.co.uk/fr"));
+        assertEquals(false, sut.canInterceptUrl("site.co.uk/fr/cat.png"));
+        assertEquals(false, sut.canInterceptUrl("/fr/global/cat.png"));
+        assertEquals(false, sut.canInterceptUrl("?user=tom"));
+    }
 }
