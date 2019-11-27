@@ -1,7 +1,6 @@
 package com.github.wovnio.wovnjava;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import junit.framework.TestCase;
 import org.easymock.EasyMock;
@@ -19,7 +18,6 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         this.japanese = Lang.get("ja");
         this.korean = Lang.get("ko");
 
-        /*
         CustomDomainLanguage englishCDL = new CustomDomainLanguage("site.co.uk", "/", this.english);
         CustomDomainLanguage frenchCDL= new CustomDomainLanguage("site.co.uk", "/fr/", this.french);
         CustomDomainLanguage japaneseCDL = new CustomDomainLanguage("japan.site.com", "/", this.japanese);
@@ -33,14 +31,6 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
 
         CustomDomainLanguages customDomainLanguages = new CustomDomainLanguages(langs);
         this.sut = new CustomDomainUrlLanguagePatternHandler(this.english, customDomainLanguages);
-        */
-        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
-            put("urlPattern", "customDomain");
-            put("defaultLang", "en");
-            put("supportedLangs", "en,fr,ja,ko");
-            put("customDomainLangs", "site.co.uk:en,site.co.uk/fr:fr,japan.site.com:ja,korean.com/ko:ko");
-        }});
-        this.sut = UrlLanguagePatternHandlerFactory.create(settings);
     }
 
     public void testGetLang__HasMatch__ReturnConvertedUrl() {
