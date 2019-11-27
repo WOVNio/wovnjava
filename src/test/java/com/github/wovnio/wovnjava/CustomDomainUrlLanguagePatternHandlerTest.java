@@ -1,6 +1,7 @@
 package com.github.wovnio.wovnjava;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import junit.framework.TestCase;
 import org.easymock.EasyMock;
@@ -18,6 +19,7 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         this.japanese = Lang.get("ja");
         this.korean = Lang.get("ko");
 
+        /*
         CustomDomainLanguage englishCDL = new CustomDomainLanguage("site.co.uk", "/", this.english);
         CustomDomainLanguage frenchCDL= new CustomDomainLanguage("site.co.uk", "/fr/", this.french);
         CustomDomainLanguage japaneseCDL = new CustomDomainLanguage("japan.site.com", "/", this.japanese);
@@ -31,15 +33,14 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
 
         CustomDomainLanguages customDomainLanguages = new CustomDomainLanguages(langs);
         this.sut = new CustomDomainUrlLanguagePatternHandler(this.english, customDomainLanguages);
-        /*
+        */
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("urlPattern", "customDomain");
             put("defaultLang", "en");
-            put("supportedLangs", "en,ja,fr");
-            put("customDomainLangs", "site.co.uk:en,japan.site.com:ja,site.co.uk/fr:fr");
+            put("supportedLangs", "en,fr,ja,ko");
+            put("customDomainLangs", "site.co.uk:en,site.co.uk/fr:fr,japan.site.com:ja,korean.com/ko:ko");
         }});
         this.sut = UrlLanguagePatternHandlerFactory.create(settings);
-        */
     }
 
     public void testGetLang__HasMatch__ReturnConvertedUrl() {
@@ -86,7 +87,7 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(null, sut.getLang("http://korean.com?user=tom"));
     }
 
-    public void testConvertToDefaultLanguage__ValidRequest__ReturnUrlInDefaultLanguage() {
+    public void testConvertToDefaultLanguage__ValidParameters__ReturnUrlInDefaultLanguage() {
         assertEquals("http://site.co.uk", sut.convertToDefaultLanguage("http://site.co.uk"));
         assertEquals("http://site.co.uk/friday/", sut.convertToDefaultLanguage("http://site.co.uk/friday/"));
 
@@ -106,7 +107,7 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("https://site.co.uk?user=tom", sut.convertToDefaultLanguage("https://korean.com/ko?user=tom"));
     }
 
-    public void testConvertToDefaultLanguage__NonMatchingUrl__DoNotModify() {
+    public void testConvertToDefaultLanguage__CannotConvertUrl__ReturnInputUrl() {
         assertEquals("http://korean.com", sut.convertToDefaultLanguage("http://korean.com"));
         assertEquals("http://korean.com/", sut.convertToDefaultLanguage("http://korean.com/"));
         assertEquals("http://korean.com/cat.png", sut.convertToDefaultLanguage("http://korean.com/cat.png"));
@@ -117,5 +118,48 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("http://example.com/fr/", sut.convertToDefaultLanguage("http://example.com/fr/"));
         assertEquals("http://example.com/fr/cat.png", sut.convertToDefaultLanguage("http://example.com/fr/cat.png"));
         assertEquals("http://example.com/fr?user=tom", sut.convertToDefaultLanguage("http://example.com/fr?user=tom"));
+
+        assertEquals("site.co.uk/fr", sut.convertToDefaultLanguage("site.co.uk/fr"));
+        assertEquals("site.co.uk/fr/cat.png", sut.convertToDefaultLanguage("site.co.uk/fr/cat.png"));
+        assertEquals("/fr/global/cat.png", sut.convertToDefaultLanguage("/fr/global/cat.png"));
+        assertEquals("?user=tom", sut.convertToDefaultLanguage("?user=tom"));
+    }
+
+    public void testConvertToTargetLanguage__ValidParameters__ReturnUrlInTargetLanguage() {
+        assertEquals("http://site.co.uk", sut.convertToTargetLanguage("http://site.co.uk", this.english));
+        assertEquals("http://site.co.uk/friday/", sut.convertToTargetLanguage("http://site.co.uk/friday/", this.english));
+
+        assertEquals("http://japan.site.com", sut.convertToTargetLanguage("http://site.co.uk/fr", this.japanese));
+        assertEquals("http://japan.site.com/", sut.convertToTargetLanguage("http://site.co.uk/fr/", this.japanese));
+        assertEquals("http://japan.site.com/cat.png", sut.convertToTargetLanguage("http://site.co.uk/fr/cat.png", this.japanese));
+        assertEquals("http://japan.site.com?user=tom", sut.convertToTargetLanguage("http://site.co.uk/fr?user=tom", this.japanese));
+
+        assertEquals("http://site.co.uk/fr", sut.convertToTargetLanguage("http://japan.site.com", this.french));
+        assertEquals("http://site.co.uk/fr/", sut.convertToTargetLanguage("http://japan.site.com/", this.french));
+        assertEquals("http://site.co.uk/fr/cat.png", sut.convertToTargetLanguage("http://japan.site.com/cat.png", this.french));
+        assertEquals("http://site.co.uk/fr?user=tom", sut.convertToTargetLanguage("http://japan.site.com?user=tom", this.french));
+
+        assertEquals("https://korean.com/ko", sut.convertToTargetLanguage("https://korean.com/ko", this.korean));
+        assertEquals("https://korean.com/ko/", sut.convertToTargetLanguage("https://korean.com/ko/", this.korean));
+        assertEquals("https://korean.com/ko/cat.png", sut.convertToTargetLanguage("https://korean.com/ko/cat.png", this.korean));
+        assertEquals("https://korean.com/ko?user=tom", sut.convertToTargetLanguage("https://korean.com/ko?user=tom", this.korean));
+    }
+
+    public void testConvertToTargetLanguage__CannotConvertUrl__ReturnInputUrl() {
+        assertEquals("http://korean.com", sut.convertToTargetLanguage("http://korean.com", this.english));
+        assertEquals("http://korean.com/", sut.convertToTargetLanguage("http://korean.com/", this.english));
+        assertEquals("http://korean.com/cat.png", sut.convertToTargetLanguage("http://korean.com/cat.png", this.english));
+        assertEquals("http://korean.com?user=tom", sut.convertToTargetLanguage("http://korean.com?user=tom", this.english));
+
+        assertEquals("http://example.com", sut.convertToTargetLanguage("http://example.com", this.japanese));
+        assertEquals("http://example.com/fr", sut.convertToTargetLanguage("http://example.com/fr", this.japanese));
+        assertEquals("http://example.com/fr/", sut.convertToTargetLanguage("http://example.com/fr/", this.japanese));
+        assertEquals("http://example.com/fr/cat.png", sut.convertToTargetLanguage("http://example.com/fr/cat.png", this.japanese));
+        assertEquals("http://example.com/fr?user=tom", sut.convertToTargetLanguage("http://example.com/fr?user=tom", this.japanese));
+
+        assertEquals("site.co.uk/fr", sut.convertToTargetLanguage("site.co.uk/fr", this.korean));
+        assertEquals("site.co.uk/fr/cat.png", sut.convertToTargetLanguage("site.co.uk/fr/cat.png", this.korean));
+        assertEquals("/fr/global/cat.png", sut.convertToTargetLanguage("/fr/global/cat.png", this.korean));
+        assertEquals("?user=tom", sut.convertToTargetLanguage("?user=tom", this.korean));
     }
 }
