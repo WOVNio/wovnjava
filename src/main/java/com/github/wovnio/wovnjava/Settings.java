@@ -88,6 +88,9 @@ class Settings {
         // so here we only assert that some string is declared for this setting.
         if (value == null || value.isEmpty()) {
             throw new ConfigurationError("Missing required configuration for \"urlPattern\".");
+        } else if (value.equals("customDomain")) {
+            // Other systems expect snake_case, but we want to also accept camelCase for java
+            value = "custom_domain";
         }
         return value;
     }

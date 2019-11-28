@@ -16,7 +16,7 @@ final class UrlLanguagePatternHandlerFactory {
             return new QueryUrlLanguagePatternHandler(defaultLang, supportedLangs);
         } else if ("subdomain".equalsIgnoreCase(urlPattern)) {
             return new SubdomainUrlLanguagePatternHandler(defaultLang, supportedLangs);
-        } else if ("customDomain".equalsIgnoreCase(urlPattern)) {
+        } else if ("custom_domain".equalsIgnoreCase(urlPattern)) {
             CustomDomainLanguages customDomainLanguages = CustomDomainLanguageSerializer.deserialize(rawCustomDomainLangs);
             if (!isCustomDomainLanguagesCompatible(customDomainLanguages, supportedLangs)) {
                 throw new ConfigurationError("\"customDomainLangs\" does not match \"supportedLangs\". A custom domain must be declared for each supported language.");

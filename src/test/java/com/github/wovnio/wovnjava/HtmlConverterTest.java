@@ -121,10 +121,31 @@ public class HtmlConverterTest extends TestCase {
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
             put("supportedLangs", "ja,en,th");
+            put("urlPattern", "path");
             put("sitePrefixPath", "global");
         }};
         Settings settings = TestUtil.makeSettings(option);
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
+
+        assertEquals(expectedHtml, converter.convert("ja"));
+    }
+
+    public void testConvertWithCustomDomain() throws ConfigurationError {
+        String original = "<html><head></head><body></body></html>";
+        String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=custom_domain&amp;langCodeAliases={}&amp;version=" + Settings.VERSION + "\" data-wovnio-type=\"fallback\" async></script>";
+        String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.co.jp/tokyo\">" +
+                                   "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/english/tokyo\">";
+        String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
+        String expectedHtml = "<html><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
+
+        HashMap<String, String> option = new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ja,en");
+            put("urlPattern", "customDomain");
+            put("customDomainLangs", "site.co.jp:ja,site.com/english:en");
+        }};
+        Settings settings = TestUtil.makeSettings(option);
+        HtmlConverter converter = this.createHtmlConverter(settings, "https://site.co.jp/tokyo", original);
 
         assertEquals(expectedHtml, converter.convert("ja"));
     }
