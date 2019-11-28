@@ -31,7 +31,7 @@ public class WovnServletFilter implements Filter {
             this.urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
             this.fileExtensionMatcher = new FileExtensionMatcher();
         } catch (ConfigurationError e) {
-            throw new ServletException("WovnServletFilter ConfigurationError: " + e.getMessage());
+            throw new ServletException("WovnServletFilter ConfigurationError: " + e.getMessage() + " (See WovnServletFilter instructions at https://github.com/WOVNio/wovnjava)");
         }
     }
 

@@ -19,7 +19,7 @@ final class UrlLanguagePatternHandlerFactory {
         } else if ("customDomain".equalsIgnoreCase(urlPattern)) {
             CustomDomainLanguages customDomainLanguages = CustomDomainLanguageSerializer.deserialize(rawCustomDomainLangs);
             if (!isCustomDomainLanguagesCompatible(customDomainLanguages, supportedLangs)) {
-                throw new ConfigurationError("\"customDomainLanguages\" does not match \"supportedLangs\". A custom domain must be declared for each supported language.");
+                throw new ConfigurationError("\"customDomainLangs\" does not match \"supportedLangs\". A custom domain must be declared for each supported language.");
             }
             return new CustomDomainUrlLanguagePatternHandler(defaultLang, customDomainLanguages);
         } else {
