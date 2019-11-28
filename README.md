@@ -94,17 +94,17 @@ Set your WOVN.io Account's project token. This parameter is required.
 
 ### 2.3. urlPattern
 
-Within the Java Application, the library works by adding new URL's for translation. You can set the URL type by using the Url Pattern Parameter. There are 3 URL types that can be set.
+Within the Java Application, the library works by adding new URL's for translation. You can set the URL type by using the Url Pattern Parameter.
+Three default URL pattern types are available, plus a highly customizable Custom Domain option.
 
-parameters  | Translated page's URL           | Notes
------------ | ------------------------------- | ------
-'path'      | https://wovn.io/ja/contact      | Default Value. If no settings have been set, url_pattern defaults to this value.
-'subdomain' | https://ja.wovn.io/contact      | The server's DNS settings must be configured.
-'query'     | https://wovn.io/contact?wovn=ja | The least amount of changes to the application required to complete setup.
+The examples below are for the original URL `https://wovn.io/contact`, when visiting the page in korean (as a translated language).
 
-※ The previously mentioned URL's are examples of the following URL translated via the WOVN.io library. As can be seen, depending on the URL Parameter the url will change.
-
-    https://wovn.io/contact
+url pattern type | Translated page's URL           | Description
+---------------- | ------------------------------- | ------
+"path"           | https://wovn.io/ko/contact      | Language code is inserted as the first section of the path
+"subdomain"      | https://ko.wovn.io/contact      | Language code is inserted as the first subdomain. (The server's DNS settings must be configured for this option.)
+"query"          | https://wovn.io/contact?wovn=ko | Language code is inserted as a query parameter. (This option requires the least amount of changes to the application.)
+"customDomain"   | (see section 2.12 below)        | The custom domain option lets you define domain and path for each language independently.
 
 ### 2.5. defaultLang
 
@@ -245,7 +245,7 @@ By default, WOVN will translate all pages for your domain and process path langu
 
 #### Requirements
 
-This setting _must_ be used together with the `urlPattern = path` setting.
+This setting may only be used together with the `urlPattern = path` setting.
 
 Furthermore, it is highly recommended to also configure your `web.xml` with a corresponding filter-mapping for the wovnjava servlet filter. If prefix path is set to `city` as in the example above, the corresponding filter-mapping would look as follows.
 ```
@@ -256,7 +256,46 @@ Furthermore, it is highly recommended to also configure your `web.xml` with a co
 </filter-mapping>
 ```
 
-### 2.12. supportedLangs
+### 2.12. customDomainLangs
+
+This setting lets you define the domain and path that corresponds to each of your supported languages.
+
+The format of the setting is as follows
+```
+FORMAT: <baseURL>:<langCode>,<baseURL>:<langCode>,...
+
+EXAMPLE: www.site.co.jp:ja,www.site.com/english:en
+```
+Note that the `<baseURL>` has only host and a path prefix.
+Anything before the host, like `http://` should not be included, but subdomains must be included.
+
+For the example above, all request URLs that match `www.site.co.jp` will be considered as requests in Japanese langauge.
+All request URLs that match `www.site.com/english/*` will be considered as requests in English language.
+Requests that do not match a domain language, like for example `www.site.com/admin`, will not be processed by the wovnjava library.
+
+The `web.xml` configuration for the above example will look as follows
+```xml
+<filter>
+  ...
+  <init-param>
+    <param-name>urlPattern</param-name>
+    <param-value>customDomain</param-value>
+  </init-param>
+  <init-param>
+    <param-name>customDomainLangs</param-name>
+    <param-value>www.site.co.jp:ja,www.site.com/english:en</param-value>
+  </init-param>
+  ...
+</filter>
+```
+
+#### Requirements
+
+This setting may only be used together with the `urlPattern = customDomain` setting.
+
+Each custom domain language must also be represented in `supportedLangs`. And vice versa, if this setting is used, each language declared in `supportedLangs` must be given a custom domain.
+
+### 2.13. supportedLangs
 
 This parameter lists the set of languages for which the library performs translations.
 
