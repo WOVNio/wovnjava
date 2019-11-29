@@ -16,10 +16,10 @@ public class CustomDomainLanguagesTest extends TestCase {
     private CustomDomainLanguages sut;
 
     protected void setUp() throws Exception {
-        this.french = new CustomDomainLanguage("foo.com", "/", Lang.get("fr"));
+        this.french = new CustomDomainLanguage("foo.com", "", Lang.get("fr"));
         this.japanese = new CustomDomainLanguage("foo.com", "/path", Lang.get("ja"));
         this.german = new CustomDomainLanguage("foo.com", "/dir/path", Lang.get("de"));
-        this.english = new CustomDomainLanguage("english.foo.com", "/", Lang.get("en"));
+        this.english = new CustomDomainLanguage("english.foo.com", "", Lang.get("en"));
 
         ArrayList<CustomDomainLanguage> languageList = new ArrayList<CustomDomainLanguage>();
         languageList.add(this.french);

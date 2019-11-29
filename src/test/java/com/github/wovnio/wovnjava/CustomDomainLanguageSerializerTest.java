@@ -74,4 +74,16 @@ public class CustomDomainLanguageSerializerTest extends TestCase {
         }
         assertEquals(true, errorThrown);
     }
+
+    public void testSerializeToJson() {
+        ArrayList<CustomDomainLanguage> languageList = new ArrayList<CustomDomainLanguage>();
+        languageList.add(new CustomDomainLanguage("site.com", "", Lang.get("en")));
+        languageList.add(new CustomDomainLanguage("site.com", "/jap", Lang.get("ja")));
+        languageList.add(new CustomDomainLanguage("eu.site.com", "/france", Lang.get("fr")));
+
+        CustomDomainLanguages customDomainLanguages = new CustomDomainLanguages(languageList);
+
+        String result = CustomDomainLanguageSerializer.serializeToJson(customDomainLanguages);
+        assertEquals("{\"eu.site.com/france/\":\"fr\",\"site.com/jap/\":\"ja\",\"site.com/\":\"en\"}", result);
+    }
 }

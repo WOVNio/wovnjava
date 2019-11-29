@@ -37,6 +37,14 @@ class CustomDomainLanguageSerializer {
         return customDomainLanguageList;
     }
 
+    public static String serializeToJson(CustomDomainLanguages customDomainLanguages) {
+        ArrayList<String> items = new ArrayList<String>();
+        for (CustomDomainLanguage cdl : customDomainLanguages.customDomainLanguageList) {
+            items.add(cdl.host + cdl.path + "/\":\"" + cdl.lang.code);
+        }
+        return "{\"" + String.join("\",\"", items) + "\"}";
+    }
+
     private static String removeTrailingSlash(String path) {
         return path.replaceAll("/$", "");
     }
