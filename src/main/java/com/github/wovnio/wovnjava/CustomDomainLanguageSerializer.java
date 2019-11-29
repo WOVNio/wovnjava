@@ -27,7 +27,6 @@ class CustomDomainLanguageSerializer {
             }
 
             String hostAndPath = splitPair[0].trim();
-            // TODO: raise error if `hostAndPath` includes protocol (match against "http" or "://", for example)
             try {
                 URL url = new URL("http://" + hostAndPath);
                 customDomainLanguageList.add(new CustomDomainLanguage(url.getHost(), removeTrailingSlash(url.getPath()), lang));
