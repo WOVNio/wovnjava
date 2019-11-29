@@ -395,12 +395,20 @@ public class SettingsTest extends TestCase {
         assertEquals(Settings.DefaultTimeout, s.readTimeout);
     }
 
-    public void testCustomDomainLangs__AcceptRawCustomDomainLangsString() throws ConfigurationError {
+    public void testCustomDomainLangs__SuccessfullyParseCustomDomainLangs() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
-            put("customDomainLangs", "site.com:en");
+            put("customDomainLangs", "site.com:en,site.com/ja:ja");
         }});
         Settings s = new Settings(config);
-        assertEquals("site.com:en", s.rawCustomDomainLangs);
+        ArrayList<CustomDomainLanguage> customDomainLanguageList = s.customDomainLanguages.customDomainLanguageList;
+
+        assertEquals("ja", customDomainLanguageList.get(0).lang.code);
+        assertEquals("site.com", customDomainLanguageList.get(0).host);
+        assertEquals("/ja", customDomainLanguageList.get(0).path);
+
+        assertEquals("en", customDomainLanguageList.get(1).lang.code);
+        assertEquals("site.com", customDomainLanguageList.get(1).host);
+        assertEquals("", customDomainLanguageList.get(1).path);
     }
 
     public void testConnectTimeout__InvalidInteger__ThrowError() throws ConfigurationError {

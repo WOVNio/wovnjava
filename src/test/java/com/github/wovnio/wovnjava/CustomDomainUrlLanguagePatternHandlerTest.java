@@ -18,10 +18,10 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         this.japanese = Lang.get("ja");
         this.korean = Lang.get("ko");
 
-        CustomDomainLanguage englishCDL = new CustomDomainLanguage("site.co.uk", "/", this.english);
-        CustomDomainLanguage frenchCDL= new CustomDomainLanguage("site.co.uk", "/fr/", this.french);
-        CustomDomainLanguage japaneseCDL = new CustomDomainLanguage("japan.site.com", "/", this.japanese);
-        CustomDomainLanguage koreanCDL = new CustomDomainLanguage("korean.com", "/ko/", this.korean);
+        CustomDomainLanguage englishCDL = new CustomDomainLanguage("site.co.uk", "", this.english);
+        CustomDomainLanguage frenchCDL= new CustomDomainLanguage("site.co.uk", "/fr", this.french);
+        CustomDomainLanguage japaneseCDL = new CustomDomainLanguage("japan.site.com", "", this.japanese);
+        CustomDomainLanguage koreanCDL = new CustomDomainLanguage("korean.com", "/ko", this.korean);
 
         ArrayList<CustomDomainLanguage> langs = new ArrayList<CustomDomainLanguage>();
         langs.add(englishCDL);

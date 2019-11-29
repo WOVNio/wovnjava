@@ -1,6 +1,5 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import junit.framework.TestCase;
@@ -42,28 +41,10 @@ public class UrlLanguagePatternHandlerFactoryTest extends TestCase {
         assertEquals(true, result instanceof CustomDomainUrlLanguagePatternHandler);
     }
 
-    public void testCreate__UrlPatternCustomDomain__CustomDomainLangNotDeclaredForAllSupportedLangs__ThrowError() throws ConfigurationError {
+    public void testCreate__UrlPatternCustomDomain__CustomDomainLangsNotConfigured__ThrowError() throws ConfigurationError {
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("urlPattern", "customDomain");
-            put("sitePrefixPath", "");
-            put("customDomainLangs", "site.com:en,site.co.jp:ja");
             put("supportedLangs", "en,ja,ko");
-        }});
-        boolean errorThrown = false;
-        try {
-            UrlLanguagePatternHandlerFactory.create(settings);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
-    }
-
-    public void testCreate__UrlPatternCustomDomain__CustomDomainLangDeclaredForLanguageNotInSupportedLangs__ThrowError() throws ConfigurationError {
-        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
-            put("urlPattern", "customDomain");
-            put("sitePrefixPath", "");
-            put("customDomainLangs", "site.com:en,site.co.jp:ja,site.kr:ko");
-            put("supportedLangs", "en,ja");
         }});
         boolean errorThrown = false;
         try {

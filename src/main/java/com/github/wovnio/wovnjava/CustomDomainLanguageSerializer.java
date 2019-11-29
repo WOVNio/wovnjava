@@ -9,11 +9,7 @@ import java.net.URL;
 class CustomDomainLanguageSerializer {
     private CustomDomainLanguageSerializer() {}
 
-    public static CustomDomainLanguages deserialize(String rawCustomDomainLanguages) throws ConfigurationError {
-        if (rawCustomDomainLanguages == null || rawCustomDomainLanguages.isEmpty()) {
-            throw new ConfigurationError("Using \"urlPattern=customDomain\", missing required configuration for \"customDomainLangs\".");
-        }
-
+    public static ArrayList<CustomDomainLanguage> deserialize(String rawCustomDomainLanguages) throws ConfigurationError {
         ArrayList<CustomDomainLanguage> customDomainLanguageList = new ArrayList<CustomDomainLanguage>();
 
         for (String rawPair : rawCustomDomainLanguages.split(",")) {
@@ -31,39 +27,17 @@ class CustomDomainLanguageSerializer {
             }
 
             String hostAndPath = splitPair[0].trim();
+            // TODO: raise error if `hostAndPath` includes protocol (match against "http" or "://", for example)
             try {
                 URL url = new URL("http://" + hostAndPath);
-                customDomainLanguageList.add(new CustomDomainLanguage(url.getHost(), url.getPath(), lang));
+                customDomainLanguageList.add(new CustomDomainLanguage(url.getHost(), removeTrailingSlash(url.getPath()), lang));
             }
             catch (MalformedURLException e) {
                 throw new ConfigurationError("MalformedURLException when parsing \"customDomainLangs\": " + e.getMessage());
             }
         }
 
-        validateUniqueness(customDomainLanguageList);
-
-        return new CustomDomainLanguages(customDomainLanguageList);
-    }
-
-    private static void validateUniqueness(ArrayList<CustomDomainLanguage> customDomainLanguageList) throws ConfigurationError {
-        ArrayList<Lang> includedLangs = new ArrayList<Lang>();
-        ArrayList<String> includedUrls = new ArrayList<String>();
-
-        for (CustomDomainLanguage customDomainLanguage : customDomainLanguageList) {
-            Lang lang = customDomainLanguage.lang;
-            if (includedLangs.contains(lang)) {
-                throw new ConfigurationError("Each language can only be specified once for \"customDomainLangs\". \"" + lang.code + "\" is specified more than once.");
-            } else {
-                includedLangs.add(lang);
-            }
-
-            String url = customDomainLanguage.host + removeTrailingSlash(customDomainLanguage.path);
-            if (includedUrls.contains(url)) {
-                throw new ConfigurationError("Each language must be mapped to a unique domain and path combination for \"customDomainLangs\". \"" + url + "\" is used twice.");
-            } else {
-                includedUrls.add(url);
-            }
-        }
+        return customDomainLanguageList;
     }
 
     private static String removeTrailingSlash(String path) {

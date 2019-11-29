@@ -6,10 +6,10 @@ final class UrlLanguagePatternHandlerFactory {
     private UrlLanguagePatternHandlerFactory() {}
 
     public static UrlLanguagePatternHandler create(Settings settings) throws ConfigurationError {
-        return create(settings.defaultLang, settings.supportedLangs, settings.urlPattern, settings.sitePrefixPath, settings.rawCustomDomainLangs);
+        return create(settings.defaultLang, settings.supportedLangs, settings.urlPattern, settings.sitePrefixPath, settings.customDomainLanguages);
     }
 
-    public static UrlLanguagePatternHandler create(Lang defaultLang, ArrayList<Lang> supportedLangs, String urlPattern, String sitePrefixPath, String rawCustomDomainLangs) throws ConfigurationError {
+    public static UrlLanguagePatternHandler create(Lang defaultLang, ArrayList<Lang> supportedLangs, String urlPattern, String sitePrefixPath, CustomDomainLanguages customDomainLanguages) throws ConfigurationError {
         if ("path".equalsIgnoreCase(urlPattern)) {
             return new PathUrlLanguagePatternHandler(defaultLang, supportedLangs, sitePrefixPath);
         } else if ("query".equalsIgnoreCase(urlPattern)) {
@@ -17,25 +17,12 @@ final class UrlLanguagePatternHandlerFactory {
         } else if ("subdomain".equalsIgnoreCase(urlPattern)) {
             return new SubdomainUrlLanguagePatternHandler(defaultLang, supportedLangs);
         } else if ("custom_domain".equalsIgnoreCase(urlPattern)) {
-            CustomDomainLanguages customDomainLanguages = CustomDomainLanguageSerializer.deserialize(rawCustomDomainLangs);
-            if (!isCustomDomainLanguagesCompatible(customDomainLanguages, supportedLangs)) {
-                throw new ConfigurationError("\"customDomainLangs\" does not match \"supportedLangs\". A custom domain must be declared for each supported language.");
+            if (customDomainLanguages == null) {
+                throw new ConfigurationError("\"customDomainLangs\" setting must be configured when \"urlPattern=customDomain\".");
             }
             return new CustomDomainUrlLanguagePatternHandler(defaultLang, customDomainLanguages);
         } else {
             throw new ConfigurationError("Invalid url pattern: " + urlPattern);
         }
-    }
-
-    private static boolean isCustomDomainLanguagesCompatible(CustomDomainLanguages customDomainLanguages, ArrayList<Lang> supportedLangs) {
-        if (customDomainLanguages.customDomainLanguageList.size() != supportedLangs.size()) {
-            return false;
-        }
-        for (CustomDomainLanguage customDomainLanguage : customDomainLanguages.customDomainLanguageList) {
-            if (!supportedLangs.contains(customDomainLanguage.lang)) {
-                return false;
-            }
-        }
-        return true;
     }
 }

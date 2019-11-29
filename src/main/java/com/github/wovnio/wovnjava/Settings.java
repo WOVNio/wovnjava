@@ -30,7 +30,7 @@ class Settings {
     public final boolean enableFlushBuffer;
 
     public final String sitePrefixPath;
-    public final String rawCustomDomainLangs;
+    public final CustomDomainLanguages customDomainLanguages;
 
     public final String snippetUrl;
     public final String apiUrl;
@@ -58,7 +58,7 @@ class Settings {
         this.enableFlushBuffer = reader.getBoolParameterDefaultFalse("enableFlushBuffer");
 
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
-        this.rawCustomDomainLangs = reader.getStringParameter("customDomainLangs");
+        this.customDomainLanguages = parseCustomDomainLangs(reader.getStringParameter("customDomainLangs"), this.supportedLangs);
 
         String defaultApiUrl = this.devMode ? DefaultApiUrlDevelopment : DefaultApiUrlProduction;
         this.apiUrl = stringOrDefault(reader.getStringParameter("apiUrl"), defaultApiUrl);
@@ -141,6 +141,18 @@ class Settings {
         } else {
             return value;
         }
+    }
+
+    private CustomDomainLanguages parseCustomDomainLangs(String rawCustomDomainLangs, ArrayList<Lang> supportedLangs) throws ConfigurationError {
+        if (rawCustomDomainLangs == null || rawCustomDomainLangs.isEmpty()) {
+            return null;
+        }
+        ArrayList<CustomDomainLanguage> customDomainLanguageList = CustomDomainLanguageSerializer.deserialize(rawCustomDomainLangs);
+        ValidationResult validationResult = CustomDomainLanguageValidator.validate(customDomainLanguageList, supportedLangs);
+        if (!validationResult.success) {
+            throw new ConfigurationError(validationResult.errorMessage);
+        }
+        return new CustomDomainLanguages(customDomainLanguageList);
     }
 
     private String stringOrDefault(String declaredValue, String defaultValue) {
