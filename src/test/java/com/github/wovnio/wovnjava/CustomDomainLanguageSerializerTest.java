@@ -6,9 +6,9 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 
 public class CustomDomainLanguageSerializerTest extends TestCase {
-    public void testDeserialize__SingleLanguage() throws ConfigurationError {
+    public void testDeserializeFilterConfig__SingleLanguage() throws ConfigurationError {
         String input = "site.com:en";
-        ArrayList<CustomDomainLanguage> results = CustomDomainLanguageSerializer.deserialize(input);
+        ArrayList<CustomDomainLanguage> results = CustomDomainLanguageSerializer.deserializeFilterConfig(input);
 
         assertEquals(1, results.size());
 
@@ -17,9 +17,9 @@ public class CustomDomainLanguageSerializerTest extends TestCase {
         assertEquals("", results.get(0).path);
     }
 
-    public void testDeserialize__MultipleLanguages() throws ConfigurationError {
+    public void testDeserializeFilterConfig__MultipleLanguages() throws ConfigurationError {
         String input = "site.com:en,site.com/ja:ja";
-        ArrayList<CustomDomainLanguage> results = CustomDomainLanguageSerializer.deserialize(input);
+        ArrayList<CustomDomainLanguage> results = CustomDomainLanguageSerializer.deserializeFilterConfig(input);
 
         assertEquals(2, results.size());
 
@@ -32,9 +32,9 @@ public class CustomDomainLanguageSerializerTest extends TestCase {
         assertEquals("/ja", results.get(1).path);
     }
 
-    public void testDeserialize__MultipleLanguages__DomainAndPathVarieties__StripTrailingSlashFromPath() throws ConfigurationError {
+    public void testDeserializeFilterConfig__MultipleLanguages__DomainAndPathVarieties__StripTrailingSlashFromPath() throws ConfigurationError {
         String input = "site.co.uk/english/:en,japan.site.com/:ja,japan.site.com/ko:ko";
-        ArrayList<CustomDomainLanguage> results = CustomDomainLanguageSerializer.deserialize(input);
+        ArrayList<CustomDomainLanguage> results = CustomDomainLanguageSerializer.deserializeFilterConfig(input);
 
         assertEquals(3, results.size());
 
@@ -51,24 +51,24 @@ public class CustomDomainLanguageSerializerTest extends TestCase {
         assertEquals("/ko", results.get(2).path);
     }
 
-    public void testDeserialize__InvalidFormat__ThrowError() throws ConfigurationError {
+    public void testDeserializeFilterConfig__InvalidFormat__ThrowError() throws ConfigurationError {
         String input = "site.com:en,site.com:8000:ja";
 
         boolean errorThrown = false;
         try {
-            CustomDomainLanguageSerializer.deserialize(input);
+            CustomDomainLanguageSerializer.deserializeFilterConfig(input);
         } catch (ConfigurationError e) {
             errorThrown = true;
         }
         assertEquals(true, errorThrown);
     }
 
-    public void testDeserialize__InvalidLanguageCode__ThrowError() throws ConfigurationError {
+    public void testDeserializeFilterConfig__InvalidLanguageCode__ThrowError() throws ConfigurationError {
         String input = "site.com:en,site.com:japanese";
 
         boolean errorThrown = false;
         try {
-            CustomDomainLanguageSerializer.deserialize(input);
+            CustomDomainLanguageSerializer.deserializeFilterConfig(input);
         } catch (ConfigurationError e) {
             errorThrown = true;
         }

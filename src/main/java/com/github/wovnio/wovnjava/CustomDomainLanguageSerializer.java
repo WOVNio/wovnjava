@@ -9,7 +9,7 @@ import java.net.URL;
 class CustomDomainLanguageSerializer {
     private CustomDomainLanguageSerializer() {}
 
-    public static ArrayList<CustomDomainLanguage> deserialize(String rawCustomDomainLanguages) throws ConfigurationError {
+    public static ArrayList<CustomDomainLanguage> deserializeFilterConfig(String rawCustomDomainLanguages) throws ConfigurationError {
         ArrayList<CustomDomainLanguage> customDomainLanguageList = new ArrayList<CustomDomainLanguage>();
 
         for (String rawPair : rawCustomDomainLanguages.split(",")) {

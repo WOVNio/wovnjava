@@ -147,7 +147,7 @@ class Settings {
         if (rawCustomDomainLangs == null || rawCustomDomainLangs.isEmpty()) {
             return null;
         }
-        ArrayList<CustomDomainLanguage> customDomainLanguageList = CustomDomainLanguageSerializer.deserialize(rawCustomDomainLangs);
+        ArrayList<CustomDomainLanguage> customDomainLanguageList = CustomDomainLanguageSerializer.deserializeFilterConfig(rawCustomDomainLangs);
         ValidationResult validationResult = CustomDomainLanguageValidator.validate(customDomainLanguageList, supportedLangs);
         if (!validationResult.success) {
             throw new ConfigurationError(validationResult.errorMessage);
