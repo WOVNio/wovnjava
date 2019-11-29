@@ -2,8 +2,6 @@ package com.github.wovnio.wovnjava;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 class CustomDomainLanguage {
     public final String host;
