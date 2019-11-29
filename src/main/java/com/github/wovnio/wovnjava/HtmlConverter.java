@@ -139,6 +139,10 @@ class HtmlConverter {
             sb.append("&sitePrefixPath=");
             sb.append(settings.sitePrefixPath.replaceFirst("/", ""));
         }
+        if (settings.customDomainLanguages != null) {
+            sb.append("&customDomainLangs=");
+            sb.append(CustomDomainLanguageSerializer.serializeToJson(settings.customDomainLanguages));
+        }
         String key = sb.toString();
         js.attr("src", settings.snippetUrl);
         js.attr("data-wovnio", key);
