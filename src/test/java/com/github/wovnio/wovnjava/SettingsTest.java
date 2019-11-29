@@ -397,7 +397,9 @@ public class SettingsTest extends TestCase {
 
     public void testCustomDomainLangs__SuccessfullyParseCustomDomainLangs() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
-            put("customDomainLangs", "site.com:en,site.com/ja:ja");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,fr");
+            put("customDomainLangs", "site.com:en,site.com/ja:ja,france.com/:fr");
         }});
         Settings s = new Settings(config);
         ArrayList<CustomDomainLanguage> customDomainLanguageList = s.customDomainLanguages.customDomainLanguageList;

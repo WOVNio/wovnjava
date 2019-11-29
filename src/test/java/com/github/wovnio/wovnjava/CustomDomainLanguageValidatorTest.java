@@ -6,105 +6,87 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 
 public class CustomDomainLanguageValidatorTest extends TestCase {
+    private Lang english;
+    private Lang japanese;
+    private Lang korean;
+    private Lang french;
+
     private ArrayList<Lang> supportedLangs;
 
     protected void setUp() throws Exception {
+        this.english = Lang.get("en");
+        this.japanese = Lang.get("ja");
+        this.korean = Lang.get("ko");
+        this.french = Lang.get("fr");
+
         this.supportedLangs = new ArrayList<Lang>();
-        this.supportedLangs.add(Lang.get("en"));
-        this.supportedLangs.add(Lang.get("ja"));
-        this.supportedLangs.add(Lang.get("ko"));
+        this.supportedLangs.add(this.english);
+        this.supportedLangs.add(this.japanese);
+        this.supportedLangs.add(this.korean);
     }
 
     public void testValidate__ValidConfiguration__ResultSuccess() throws ConfigurationError {
         ArrayList<CustomDomainLanguage> customDomainLanguageList = new ArrayList<CustomDomainLanguage>();
-        customDomainLanguageList.add(new CustomDomainLanguage("foo.com", "", Lang.get("en")));
-        customDomainLanguageList.add(new CustomDomainLanguage("foo.com", "/ja", Lang.get("ja")));
-        customDomainLanguageList.add(new CustomDomainLanguage("korea.foo.com", "/ko", Lang.get("ko")));
+        customDomainLanguageList.add(new CustomDomainLanguage("site.com", "", this.english));
+        customDomainLanguageList.add(new CustomDomainLanguage("site.com", "/ja", this.japanese));
+        customDomainLanguageList.add(new CustomDomainLanguage("korea.site.com", "/ko", this.korean));
 
         ValidationResult result = CustomDomainLanguageValidator.validate(customDomainLanguageList, this.supportedLangs);
         assertEquals(true, result.success);
     }
 
-    /*
-    public void testDeserialize__SameLanguageSpecifiedMoreThanOnce__ThrowError() throws ConfigurationError {
-        String input = "site.com/english:en,japan.site.com/:ja,site.com/ja:ja";
+    public void testValidate__SameLanguageSpecifiedMoreThanOnce__ThrowError() throws ConfigurationError {
+        ArrayList<CustomDomainLanguage> customDomainLanguageList = new ArrayList<CustomDomainLanguage>();
+        customDomainLanguageList.add(new CustomDomainLanguage("site.com", "/english", this.english));
+        customDomainLanguageList.add(new CustomDomainLanguage("japan.site.com", "", this.japanese));
+        customDomainLanguageList.add(new CustomDomainLanguage("site.com", "/ja", this.japanese));
 
-        boolean errorThrown = false;
-        try {
-            CustomDomainLanguageSerializer.deserialize(input);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+        ValidationResult result = CustomDomainLanguageValidator.validate(customDomainLanguageList, this.supportedLangs);
+
+        assertEquals(false, result.success);
     }
 
-    public void testDeserialize__TwoLanguagesWithSameDomainAndPath__ThrowError() throws ConfigurationError {
-        String input = "site.com/english:en,site.com:ja,site.com:ko";
+    public void testValidate__TwoLanguagesWithSameDomainAndPath__ThrowError() throws ConfigurationError {
+        ArrayList<CustomDomainLanguage> customDomainLanguageList = new ArrayList<CustomDomainLanguage>();
+        customDomainLanguageList.add(new CustomDomainLanguage("site.com", "/english", this.english));
+        customDomainLanguageList.add(new CustomDomainLanguage("japan.site.com", "", this.japanese));
+        customDomainLanguageList.add(new CustomDomainLanguage("japan.site.com", "", this.korean));
 
-        boolean errorThrown = false;
-        try {
-            CustomDomainLanguageSerializer.deserialize(input);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+        ValidationResult result = CustomDomainLanguageValidator.validate(customDomainLanguageList, this.supportedLangs);
+
+        assertEquals(false, result.success);
     }
 
-    public void testDeserialize__DomainAndPathDifferingOnlyByTrailingSlash__ThrowError() throws ConfigurationError {
-        String input = "site.com/global:en,site.com:ja,site.com/global/:ko";
+    public void testValidate__CustomDomainLangsNotDeclaredForAllSupportedLangs__ThrowError() throws ConfigurationError {
+        ArrayList<CustomDomainLanguage> customDomainLanguageList = new ArrayList<CustomDomainLanguage>();
+        customDomainLanguageList.add(new CustomDomainLanguage("site.com", "/english", this.english));
+        customDomainLanguageList.add(new CustomDomainLanguage("japan.site.com", "", this.japanese));
 
-        boolean errorThrown = false;
-        try {
-            CustomDomainLanguageSerializer.deserialize(input);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+        ValidationResult result = CustomDomainLanguageValidator.validate(customDomainLanguageList, this.supportedLangs);
+
+        assertEquals(false, result.success);
     }
 
-    public void testCreate__UrlPatternCustomDomain__CustomDomainLangsNotDeclaredForAllSupportedLangs__ThrowError() throws ConfigurationError {
-        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
-            put("urlPattern", "customDomain");
-            put("sitePrefixPath", "");
-            put("customDomainLangs", "site.com:en,site.co.jp:ja");
-            put("supportedLangs", "en,ja,ko");
-        }});
-        boolean errorThrown = false;
-        try {
-            UrlLanguagePatternHandlerFactory.create(settings);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+    public void testValidate__CustomDomainLangDeclaredForExtraLanguageNotInSupportedLangs__ThrowError() throws ConfigurationError {
+        ArrayList<CustomDomainLanguage> customDomainLanguageList = new ArrayList<CustomDomainLanguage>();
+        customDomainLanguageList.add(new CustomDomainLanguage("site.com", "/english", this.english));
+        customDomainLanguageList.add(new CustomDomainLanguage("japan.site.com", "", this.japanese));
+        customDomainLanguageList.add(new CustomDomainLanguage("korea.site.com", "", this.japanese));
+        customDomainLanguageList.add(new CustomDomainLanguage("france.site.com", "/fr", this.french));
+
+        ValidationResult result = CustomDomainLanguageValidator.validate(customDomainLanguageList, this.supportedLangs);
+
+        assertEquals(false, result.success);
     }
 
-    public void testCreate__UrlPatternCustomDomain__CustomDomainLangDeclaredForLanguageNotInSupportedLangs__ThrowError() throws ConfigurationError {
-        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
-            put("urlPattern", "customDomain");
-            put("sitePrefixPath", "");
-            put("customDomainLangs", "site.com:en,site.co.jp:ja,site.kr:ko");
-            put("supportedLangs", "en,ja");
-        }});
-        boolean errorThrown = false;
-        try {
-            UrlLanguagePatternHandlerFactory.create(settings);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
-    }
+    public void testValidate__CustomDomainLangDeclaredForDifferentLanguagesFromSupportedLangs__ThrowError() throws ConfigurationError {
+        ArrayList<CustomDomainLanguage> customDomainLanguageList = new ArrayList<CustomDomainLanguage>();
+        customDomainLanguageList.add(new CustomDomainLanguage("site.com", "/english", this.english));
+        customDomainLanguageList.add(new CustomDomainLanguage("japan.site.com", "", this.japanese));
+        customDomainLanguageList.add(new CustomDomainLanguage("france.site.com", "/fr", this.french));
 
-    public void testCreate__InvalidUrlPattern__ThrowError() throws ConfigurationError {
-        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
-            put("urlPattern", "invalid");
-        }});
-        boolean errorThrown = false;
-        try {
-            UrlLanguagePatternHandlerFactory.create(settings);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+        ValidationResult result = CustomDomainLanguageValidator.validate(customDomainLanguageList, this.supportedLangs);
+
+        assertEquals(false, result.success);
     }
-    */
 }
