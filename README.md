@@ -94,8 +94,8 @@ Set your WOVN.io Account's project token. This parameter is required.
 
 ### 2.3. urlPattern
 
-Within the Java Application, the library works by adding new URL's for translation. You can set the URL type by using the Url Pattern Parameter.
-Three default URL pattern types are available, plus a highly customizable Custom Domain option.
+Within the Java Application, the library works by adding new URL's for translation. You can set the URL type by using the urlPattern Parameter.
+Three basic URL pattern types are available, plus a highly customizable Custom Domain option.
 
 The examples below are for the original URL `https://wovn.io/contact`, when visiting the page in korean (as a translated language).
 
@@ -247,7 +247,7 @@ By default, WOVN will translate all pages for your domain and process path langu
 
 This setting may only be used together with the `urlPattern = path` setting.
 
-Furthermore, it is highly recommended to also configure your `web.xml` with a corresponding filter-mapping for the wovnjava servlet filter. If prefix path is set to `city` as in the example above, the corresponding filter-mapping would look as follows.
+Furthermore, it is highly recommended to also configure your `web.xml` with a corresponding filter-mapping for the WovnServletFilter. If prefix path is set to `city` as in the example above, the corresponding filter-mapping would look as follows.
 ```
 <filter-mapping>
   <filter-name>wovn</filter-name>
@@ -271,7 +271,7 @@ Anything before the host, like `http://` should not be included, but subdomains 
 
 For the example above, all request URLs that match `www.site.co.jp` will be considered as requests in Japanese langauge.
 All request URLs that match `www.site.com/english/*` will be considered as requests in English language.
-Requests that do not match a domain language, like for example `www.site.com/admin`, will not be processed by the wovnjava library.
+Requests that do not match a domain language, like for example `www.site.com/admin`, will not be processed by WovnServletFilter.
 
 The `web.xml` configuration for the above example will look as follows
 ```xml
@@ -293,7 +293,10 @@ The `web.xml` configuration for the above example will look as follows
 
 This setting may only be used together with the `urlPattern = customDomain` setting.
 
-Each custom domain language must also be represented in `supportedLangs`. And vice versa, if this setting is used, each language declared in `supportedLangs` must be given a custom domain.
+If this setting is used, each language declared in `supportedLangs` must be given a custom domain. Vice versa, each custom domain language must also be represented in `supportedLangs`.
+
+Lastly, the path declared for your original language must match the structure of the underlying web server.
+In other words, you cannot use this setting to change the request path of your content in original language.
 
 ### 2.13. supportedLangs
 
