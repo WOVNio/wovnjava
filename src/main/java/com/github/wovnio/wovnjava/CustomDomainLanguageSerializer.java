@@ -38,6 +38,10 @@ class CustomDomainLanguageSerializer {
     }
 
     public static String serializeToJson(CustomDomainLanguages customDomainLanguages) {
+        if (customDomainLanguages == null) {
+            return "";
+        }
+
         ArrayList<String> items = new ArrayList<String>();
         for (CustomDomainLanguage cdl : customDomainLanguages.customDomainLanguageList) {
             items.add(cdl.host + cdl.path + "/\":\"" + cdl.lang.code);
