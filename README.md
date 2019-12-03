@@ -266,14 +266,17 @@ FORMAT: <baseURL>:<langCode>,<baseURL>:<langCode>,...
 
 EXAMPLE: www.site.co.jp:ja,www.site.com/english:en
 ```
-Note that the `<baseURL>` has only host and a path prefix.
-Anything before the host, like `http://` should not be included, but subdomains must be included.
+Note that `<baseURL>` has only host and path prefix.
+Anything before the host, like `http://` should not be included. Port numbers should also not be included. However, all applicable subdomains must be included.
 
 For the example above, all request URLs that match `www.site.co.jp` will be considered as requests in Japanese langauge.
 All request URLs that match `www.site.com/english/*` will be considered as requests in English language.
 Requests that do not match a domain language, like for example `www.site.com/admin`, will not be processed by WovnServletFilter.
 
-The `web.xml` configuration for the above example will look as follows
+With the above example configuration, the page `http://www.site.co.jp/about.html` in english language will
+have the URL `http://www.site.com/english/about.html`.
+
+The corresponding `web.xml` configuration will look as follows
 ```xml
 <filter>
   ...
