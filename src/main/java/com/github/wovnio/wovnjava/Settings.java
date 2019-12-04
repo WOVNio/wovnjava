@@ -30,6 +30,8 @@ class Settings {
     public final boolean enableFlushBuffer;
 
     public final String sitePrefixPath;
+    public final CustomDomainLanguages customDomainLanguages;
+
     public final String snippetUrl;
     public final String apiUrl;
     public final String originalUrlHeader;
@@ -56,6 +58,7 @@ class Settings {
         this.enableFlushBuffer = reader.getBoolParameterDefaultFalse("enableFlushBuffer");
 
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
+        this.customDomainLanguages = parseCustomDomainLangs(reader.getStringParameter("customDomainLangs"), this.supportedLangs);
 
         String defaultApiUrl = this.devMode ? DefaultApiUrlDevelopment : DefaultApiUrlProduction;
         this.apiUrl = stringOrDefault(reader.getStringParameter("apiUrl"), defaultApiUrl);
@@ -85,6 +88,9 @@ class Settings {
         // so here we only assert that some string is declared for this setting.
         if (value == null || value.isEmpty()) {
             throw new ConfigurationError("Missing required configuration for \"urlPattern\".");
+        } else if ("customdomain".equalsIgnoreCase(value)) {
+            // Other systems expect snake_case, but we want to also accept camelCase for java
+            value = "custom_domain";
         }
         return value;
     }
@@ -111,6 +117,9 @@ class Settings {
             if (lang == null) {
                 throw new ConfigurationError("Invalid configuration for \"supportedLangs\", each value must match a supported language code.");
             }
+            if (verifiedLangs.contains(lang)) {
+                throw new ConfigurationError("Invalid configuration for \"supportedLangs\", each language must only be specified once.");
+            }
             verifiedLangs.add(lang);
         }
         if (!verifiedLangs.contains(defaultLang)) {
@@ -132,6 +141,18 @@ class Settings {
         } else {
             return value;
         }
+    }
+
+    private CustomDomainLanguages parseCustomDomainLangs(String rawCustomDomainLangs, ArrayList<Lang> supportedLangs) throws ConfigurationError {
+        if (rawCustomDomainLangs == null || rawCustomDomainLangs.isEmpty()) {
+            return null;
+        }
+        ArrayList<CustomDomainLanguage> customDomainLanguageList = CustomDomainLanguageSerializer.deserializeFilterConfig(rawCustomDomainLangs);
+        ValidationResult validationResult = CustomDomainLanguageValidator.validate(customDomainLanguageList, supportedLangs);
+        if (!validationResult.success) {
+            throw new ConfigurationError(validationResult.errorMessage);
+        }
+        return new CustomDomainLanguages(customDomainLanguageList);
     }
 
     private String stringOrDefault(String declaredValue, String defaultValue) {
