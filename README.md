@@ -28,14 +28,11 @@ Sign into [WOVN.io](https://wovn.io), and add a page you would like translated.
   <repository>
     <id>jitpack.io</id>
     <url>https://jitpack.io</url>
-    <!-- These lines are not needed if you're using a SNAPSHOT version. -->
     <snapshots>
       <enabled>true</enabled>
       <updatePolicy>always</updatePolicy>
     </snapshots>
-    <!-- end -->
   </repository>
-  
 </repositories>
 ```
 
@@ -45,31 +42,56 @@ Sign into [WOVN.io](https://wovn.io), and add a page you would like translated.
 <dependency>
   <groupId>com.github.wovnio</groupId>
   <artifactId>wovnjava</artifactId>
-  <!-- set the wovnjava version you're using here -->
-  <!-- if you want to use a development version of wovnjava, set the version to "-SNAPSHOT" -->
-  <version>0.1.0</version>
+  <version>x.x.x</version>
 </dependency>
 ```
-
+Contact Wovn's support for more information about the latest version of wovnjava.
 You can see all available versions of wovnjava [here](https://jitpack.io/#wovnio/wovnjava).
 
 ##### 1.3.1.3. Add the wovnjava library's settings to your servlet's web.xml.
 
+In your `web.xml`, configure parameters for the WovnServletFilter.
+
+Four parameters are required:
+1) projectToken
+2) defaultLang
+3) supportedLangs
+4) urlPattern
+
+It is important that these parameters match your Wovn project. Details about the parameters are found in Section 2.
+
+An example minimum WovnServletFilter configuration looks as follows. This is for a project with token "123abc", original language Japanese, and target translated language English.
 ```XML
 <filter>
   <filter-name>wovn</filter-name>
   <filter-class>com.github.wovnio.wovnjava.WovnServletFilter</filter-class>
   <init-param>
     <param-name>projectToken</param-name>
-    <param-value>2Wle3</param-value><!-- set your project token -->
+    <param-value>123abc</param-value>
+  </init-param>
+  <init-param>
+    <param-name>defaultLang</param-name>
+    <param-value>ja</param-value>
+  </init-param>
+  <init-param>
+    <param-name>supportedLangs</param-name>
+    <param-value>ja,en</param-value>
+  </init-param>
+  <init-param>
+    <param-name>urlPattern</param-name>
+    <param-value>path</param-value>
   </init-param>
 </filter>
 
 <filter-mapping>
   <filter-name>wovn</filter-name>
-  <url-pattern>/*</url-pattern><!-- set the URL pattern the wovnjava library (Servlet Filter) will be applicable to -->
+  <url-pattern>/*</url-pattern>
+  <dispatcher>REQUEST</dispatcher>
+  <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 ```
+
+The recommended `filter-mapping` is to allow `REQUEST` and `FORWARD` for dispatchers, and allow all paths in `url-pattern`. If only a specific directory on your web server should be intercepted by WovnServletFilter, configure `url-pattern` accordingly.
 
 ## 2. Parameter Settings
 
@@ -77,24 +99,44 @@ The following parameters can be set within the WOVN.io Java Library.
 
 Parameter Name            | Required | Default Setting
 ------------------------- | -------- | ------------
-projectToken              | yes      | ''
-urlPattern                | yes      | 'path'
-defaultLang               | yes      | 'en'
-useProxy                  |          | 'false'
-debugMode                 |          | 'false'
-originalUrlHeader         |          | ''
-originalQueryStringHeader |          | ''
-ignoreClasses             |          | ''
+projectToken              | yes      | N/A
+defaultLang               | yes      | N/A
+supportedLangs            | yes      | N/A
+urlPattern                | yes      | N/A
+useProxy                  |          | false
+originalUrlHeader         |          |
+originalQueryStringHeader |          |
+ignoreClasses             |          |
+enableFlushBuffer         |          | false
+sitePrefixPath            |          |
+customDomainLangs         |          |
+debugMode                 |          | false
 
-* A required parameter with a default setting does not need to be set within the web.xml. (Only the projectToken parameter must be set in order for the library to work)
+### 2.1. projectToken (required)
 
-### 2.1. projectToken
+Your WOVN.io account's project token.
 
-Set your WOVN.io Account's project token. This parameter is required.
+### 2.2. defaultLang (required)
 
-### 2.3. urlPattern
+The web server content's original language.
 
-Within the Java Application, the library works by adding new URL's for translation. You can set the URL type by using the urlPattern Parameter.
+defaultLang is declared as a two-character language code.
+See a list of language codes at the bottom of this document.
+
+### 2.3. supportedLangs (required)
+
+A list of all languages to use for this project. (defaultLang will automatically be included in this list.)
+
+supportedLangs is declared as a comma-separated list of language codes.
+See a list of language codes at the bottom of this document.
+
+### 2.4. urlPattern (required)
+
+The pattern of URLs that point to pages in translated languages.
+
+WovnServletFilter accepts request URLs with a declared translated language.
+This setting specifies how those URLs should look.
+
 Three basic URL pattern types are available, plus a highly customizable Custom Domain option.
 
 The examples below are for the original URL `https://wovn.io/contact`, when visiting the page in korean (as a translated language).
@@ -104,92 +146,66 @@ url pattern type | Translated page's URL           | Description
 "path"           | https://wovn.io/ko/contact      | Language code is inserted as the first section of the path
 "subdomain"      | https://ko.wovn.io/contact      | Language code is inserted as the first subdomain. (The server's DNS settings must be configured for this option.)
 "query"          | https://wovn.io/contact?wovn=ko | Language code is inserted as a query parameter. (This option requires the least amount of changes to the application.)
-"customDomain"   | (see section 2.12 below)        | The custom domain option lets you define domain and path for each language independently.
+"customDomain"   | (see section 2.10 below)        | The custom domain option lets you define domain and path for each language independently.
 
-### 2.5. defaultLang
+### 2.5. useProxy
 
-This sets the Java application's default language. The default value is english ('en').
+A flag to set if the Java web server is behind a reverse proxy.
 
-If a request is made with the default language inserted as a parameter in the URL, before the library begins translating the URL is redirected. The defaultLang parameter is used for this purpose.
+If the request received by WovnServletFilter does not have a host name that matches the Wovn project, the page's translation data may not be accessible. This may happen if the request is routed through a reverse proxy.
 
-If the default_lang is set to 'en', when receiving a request for the following URL,
+If you set useProxy to true, WovnServletFilter will use HTTP Request Headers `X-Forwarded-Host` and `X-Forwarded-Port` for determining hostname and port of the request.
 
-    https://wovn.io/en/contact
-
-The library will redirect to the following URL.
-
-    https://wovn.io/contact
-
-### 2.6. useProxy
-
-When using a reverse proxy, if the WOVN.io Java Library is not given an appropriate host name, the page's translation data may not be accessible. If you set useProxy to true, during the WOVN.io Java Library's processing, it will use the HTTP Request Header's X-Forwarded-Host in order to receive the translation data.
-
-### 2.7. debugMode
-
-By turning on debugMode, you will enable extra debugging features for wovnjava.
-
-Turn on debugMode like this:
-```XML
-  <init-param>
-    <param-name>debugMode</param-name>
-    <param-value>true</param-value>
-  </init-param>
+Set useProxy to true as follows
+```xml
+<init-param>
+  <param-name>useProxy</param-name>
+  <param-value>true</param-value>
+</init-param>
 ```
 
-Two extra query parameters become available to change wovnjava's behavior:
+Note that if the reverse proxy may also rewrite the request path or query, configuring the originalUrlHeader and/or originalQueryStringHeader may also be necessary.
 
-#### wovnCacheDisable
-Example request: `http://example.com/page/top.html?wovnCacheDisable`
+### 2.6. originalUrlHeader, originalQueryStringHeader
 
-Using `wovnCacheDisable` as a query parameter will make wovnjava bypass the translation API cache, such that translation is always re-processed.
-This will make the request slower, but it is sometimes useful in order to force updated behavior.
+Name of HTTP headers for declaring the original request path and query.
 
-#### wovnDebugMode
-Example request: `http://example.com/page/top.html?wovnDebugMode`
+If the incoming request has been rewritten, for example using the Apache HTTP Server's mod\_rewrite module, WovnServletFilter may not be able to see the orignal request URL. In this case, it may be unable to retreive the correct translation data from the API server.
 
-Using `wovnDebugMode` as a query parameter will activate embedded debug information in the response HTML comming from the server.
-This is intended to better understand what the problem is if something is not working correctly with wovnjava on your server.
+If originalUrlHeader and originalQueryStringHeader are set, WovnServletFilter will inspect these HTTP header names to determine the original path and query. originalUrlHeader should declare the HTTP header name for original path. orignalQueryStringHeader should declare the HTTP header name for original query string.
 
-_Note that `wovnCacheDisable` and `wovnDebugMode` is only available when debugMode is turned on in your wovnjava configuration._
+If these parameters are set, useProxy should probably be set to `true`.
 
-### 2.8. originalUrlHeader, originalQueryStringHeader
+#### Example configuration
+This example uses HTTP header names `X-Request-Uri` and `X-Query-String` to declare path and query.
 
-When you're using the Apache HTTP Server's mod_rewrite module, wovnjava is given the URL after rewriting. In this case, wovnjava is sometimes unable to retreive the correct translation data from the API server.
-
-If you've configured originalUrlHeader and originalQueryStringHeader in your Application's settings file, wovnjava will use these request headers's values to retreive translation data.
-
-Using the following Apache HTTP Server settings, if the URL (prior to rewriting) is set within the request headers,
-
-```
+Configure Apache to store the incoming request path and query in HTTP headers.
+```apache
 SetEnvIf Request_URI "^(.*)$" REQUEST_URI=$1
 RequestHeader set X-Request-Uri "%{REQUEST_URI}e"
 RewriteRule .* - [E=REQUEST_QUERY_STRING:%{QUERY_STRING}]
 RequestHeader set X-Query-String "%{REQUEST_QUERY_STRING}e"
 ```
 
-wovnjava will use the following settings along with the correct URL (prior to rewriting) to retreive the correct translation data from the API server.
-
+Configure WovnServletFilter to determine request path and query from the same HTTP headers.
 ```XML
-<filter>
-  ...
-  <init-param>
-    <param-name>originalUrlHeader</param-name>
-    <param-value>X-Request-Uri</param-value>
-  </init-param>
-  <init-param>
-    <param-name>originalQueryStringHeader</param-name>
-    <param-value>X-Query-String</param-value>
-  </init-param>
-  ...
-</filter>
+<init-param>
+  <param-name>originalUrlHeader</param-name>
+  <param-value>X-Request-Uri</param-value>
+</init-param>
+<init-param>
+  <param-name>originalQueryStringHeader</param-name>
+  <param-value>X-Query-String</param-value>
+</init-param>
 ```
-* The sample request header shown above was referenced from the following site.
-
+_The sample request header shown above was referenced from the following site:_
 https://coderwall.com/p/jhkw7w/passing-request-uri-into-request-header
 
-### 2.9. ignoreClasses
+### 2.7. ignoreClasses
 
-This parameter is a comma-separated list of HTML classes for which you would like WOVN to skip the elements of.
+A comma-separated list of HTML classes for which you would like WOVN to skip the elements of.
+
+Any content inside ignored elements will not be processed by WovnServletFilter, and will not be sent to Wovn.io for translation.
 
 For example, if you include `my-secret-class` in this parameter and you have an element as follows
 ```HTML
@@ -205,37 +221,31 @@ WOVN will treat it as
 Including three classes, `email-address-element`, `my-secret-class`, and `noshow`, in your ignoreClasses parameter would look as follows
 
 ```XML
-<filter>
-  ...
-  <init-param>
-    <param-name>ignoreClasses</param-name>
-    <param-value>email-address-element,my-secret-class,noshow</param-value>
-  </init-param>
-  ...
-</filter>
+<init-param>
+  <param-name>ignoreClasses</param-name>
+  <param-value>email-address-element,my-secret-class,noshow</param-value>
+</init-param>
 ```
 
-### 2.10. enableFlushBuffer
-This parameter is set to `false` by default.
+### 2.8. enableFlushBuffer
+A flag to adjust the behavior of `ServletResponse.flushBuffer()`.
 
-When `enableFlushBuffer` is set to `false`, the wovnjava servlet filter will capture calls to `response.flushBuffer()` without
+This parameter is set to `false` by default (recommended).
+
+When `enableFlushBuffer` is set to `false`, WovnServletFilter will capture calls to `response.flushBuffer()` without
 immediately writing content to the client. Only when the complete HTML response is ready will the filter translate the content
 and send it to the client. This is necessary in order to translate the content properly.
 
-### 2.11. sitePrefixPath
+### 2.9. sitePrefixPath
 
 This parameter lets you set a prefix path to use as an anchor for which WOVN will translate pages. With this setting, WOVN will only translate pages that match the prefix path, and the path language code will be added _after_ the prefix path.
 
 If, for example, you set your sitePrefix path to `city` as follows
 ```
-<filter>
-  ...
-  <init-param>
-    <param-name>sitePrefixPath</param-name>
-    <param-value>city</param-value>
-  </init-param>
-  ...
-</filter>
+<init-param>
+  <param-name>sitePrefixPath</param-name>
+  <param-value>city</param-value>
+</init-param>
 ```
 WOVN will only translate pages that match `http://www.mysite.com/city/*`.
 
@@ -256,7 +266,7 @@ Furthermore, it is highly recommended to also configure your `web.xml` with a co
 </filter-mapping>
 ```
 
-### 2.12. customDomainLangs
+### 2.10. customDomainLangs
 
 This setting lets you define the domain and path that corresponds to each of your supported languages.
 
@@ -276,20 +286,16 @@ Requests that do not match a domain language, like for example `www.site.com/adm
 With the above example configuration, the page `http://www.site.co.jp/about.html` in english language will
 have the URL `http://www.site.com/english/about.html`.
 
-The corresponding `web.xml` configuration will look as follows
+The corresponding `web.xml` parameters will look as follows
 ```xml
-<filter>
-  ...
-  <init-param>
-    <param-name>urlPattern</param-name>
-    <param-value>customDomain</param-value>
-  </init-param>
-  <init-param>
-    <param-name>customDomainLangs</param-name>
-    <param-value>www.site.co.jp:ja,www.site.com/english:en</param-value>
-  </init-param>
-  ...
-</filter>
+<init-param>
+  <param-name>urlPattern</param-name>
+  <param-value>customDomain</param-value>
+</init-param>
+<init-param>
+  <param-name>customDomainLangs</param-name>
+  <param-value>www.site.co.jp:ja,www.site.com/english:en</param-value>
+</init-param>
 ```
 
 #### Requirements
@@ -301,24 +307,33 @@ If this setting is used, each language declared in `supportedLangs` must be give
 Lastly, the path declared for your original language must match the structure of the underlying web server.
 In other words, you cannot use this setting to change the request path of your content in original language.
 
-### 2.13. supportedLangs
+### 2.11. debugMode
 
-This parameter lists the set of languages for which the library performs translations.
+A flag to enable extra debugging features.
 
-Example settings for English, Japanese, and Korean:
-```xml
-<filter>
-    ...
-    <init-param>
-      <param-name>supportedLangs</param-name>
-      <param-value>en,ja,ko</param-value>
-    </init-param>
-    ...
-</filter>
+Turn on debugMode by setting the parameter to true.
+```XML
+<init-param>
+  <param-name>debugMode</param-name>
+  <param-value>true</param-value>
+</init-param>
 ```
-Note: `defaultLang` will automatically be included in the set of supported languages.
 
-Find a list of languages that WOVN supports below.
+With debugMode on, two extra query parameters become available to change wovnjava's behavior.
+
+#### wovnCacheDisable
+Example request: `http://example.com/page/top.html?wovnCacheDisable`
+
+Using `wovnCacheDisable` as a query parameter will make wovnjava bypass the translation API cache, such that translation is always re-processed.
+This will make the request slower, but it is sometimes useful in order to force updated behavior.
+
+#### wovnDebugMode
+Example request: `http://example.com/page/top.html?wovnDebugMode`
+
+Using `wovnDebugMode` as a query parameter will activate embedded debug information in the response HTML comming from the server.
+This is intended to better understand what the problem is if something is not working correctly with wovnjava on your server.
+
+_Note that `wovnCacheDisable` and `wovnDebugMode` is only available when debugMode is turned on in your wovnjava configuration._
 
 ## Supported Langauges
 
