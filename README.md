@@ -170,9 +170,9 @@ Note that if the reverse proxy may also rewrite the request path or query, confi
 
 Name of HTTP headers for declaring the original request path and query.
 
-If the incoming request has been rewritten, for example using the Apache HTTP Server's mod\_rewrite module, WovnServletFilter may not be able to see the orignal request URL. In this case, it may be unable to retreive the correct translation data from the API server.
+If the incoming request has been rewritten, for example using the Apache HTTP Server's mod\_rewrite module, WovnServletFilter may not be able to see the original request URL. In this case, it may be unable to retrieve the correct translation data from the API server.
 
-If originalUrlHeader and originalQueryStringHeader are set, WovnServletFilter will inspect these HTTP header names to determine the original path and query. originalUrlHeader should declare the HTTP header name for original path. orignalQueryStringHeader should declare the HTTP header name for original query string.
+If originalUrlHeader and originalQueryStringHeader are set, WovnServletFilter will inspect these HTTP header names to determine the original path and query. originalUrlHeader should declare the HTTP header name for original path. originalQueryStringHeader should declare the HTTP header name for original query string.
 
 If these parameters are set, useProxy should probably be set to `true`.
 
