@@ -97,12 +97,12 @@ The recommended `filter-mapping` is to allow `REQUEST` and `FORWARD` for dispatc
 
 The following parameters can be set within the WOVN.io Java Library.
 
-Parameter Name            | Required | Default Setting
+Parameter Name            | Required | Default Value
 ------------------------- | -------- | ------------
-projectToken              | yes      | N/A
-defaultLang               | yes      | N/A
-supportedLangs            | yes      | N/A
-urlPattern                | yes      | N/A
+projectToken              | yes      |
+defaultLang               | yes      |
+supportedLangs            | yes      |
+urlPattern                | yes      |
 useProxy                  |          | false
 originalUrlHeader         |          |
 originalQueryStringHeader |          |
@@ -205,7 +205,7 @@ https://coderwall.com/p/jhkw7w/passing-request-uri-into-request-header
 
 A comma-separated list of HTML classes for which you would like WOVN to skip the elements of.
 
-Any content inside ignored elements will not be processed by WovnServletFilter, and will not be sent to Wovn.io for translation.
+Ignored elements and their contents will not be processed by WovnServletFilter, and will not be sent to Wovn.io for translation. (The elements will still be present in the resulting web page, however.)
 
 For example, if you include `my-secret-class` in this parameter and you have an element as follows
 ```HTML
@@ -213,7 +213,7 @@ For example, if you include `my-secret-class` in this parameter and you have an 
     <p class="my-secret-class">Some information WOVN does not touch</p>
   </div>
 ```
-WOVN will treat it as
+For the purpose of translation, WOVN will treat it as
 ```HTML
   <div></div>
 ```
@@ -241,7 +241,7 @@ and send it to the client. This is necessary in order to translate the content p
 This parameter lets you set a prefix path to use as an anchor for which WOVN will translate pages. With this setting, WOVN will only translate pages that match the prefix path, and the path language code will be added _after_ the prefix path.
 
 If, for example, you set your sitePrefix path to `city` as follows
-```
+```xml
 <init-param>
   <param-name>sitePrefixPath</param-name>
   <param-value>city</param-value>
@@ -258,7 +258,7 @@ By default, WOVN will translate all pages for your domain and process path langu
 This setting may only be used together with the `urlPattern = path` setting.
 
 Furthermore, it is highly recommended to also configure your `web.xml` with a corresponding filter-mapping for the WovnServletFilter. If prefix path is set to `city` as in the example above, the corresponding filter-mapping would look as follows.
-```
+```xml
 <filter-mapping>
   <filter-name>wovn</filter-name>
   <url-pattern>/city/*</url-pattern>
@@ -325,7 +325,8 @@ With debugMode on, two extra query parameters become available to change wovnjav
 Example request: `http://example.com/page/top.html?wovnCacheDisable`
 
 Using `wovnCacheDisable` as a query parameter will make wovnjava bypass the translation API cache, such that translation is always re-processed.
-This will make the request slower, but it is sometimes useful in order to force updated behavior.
+This will make the request slower, but it is sometimes useful in order to inspect updated behavior.
+(Note that this does not clear cache or change behavior for the same page request without `wovnCacheDisable` query parameter.)
 
 #### wovnDebugMode
 Example request: `http://example.com/page/top.html?wovnDebugMode`
