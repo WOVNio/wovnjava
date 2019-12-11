@@ -121,11 +121,11 @@ public class WovnServletFilter implements Filter {
         sb.append("\n<!--Debugging information:");
         sb.append("\nVersion=" + VERSION);
         sb.append("\nTimestamp=" + System.currentTimeMillis());
-        sb.append("\n===env===\n");
+        sb.append("\n===env===");
         sb.append("\nrequest.getQueryString=" + request.getQueryString());
         sb.append("\nrequest.getRequestURI=" + request.getRequestURI());
         sb.append("\njavax.servlet.forward.request_uri=" + request.getAttribute("javax.servlet.forward.request_uri"));
-        sb.append("\n===computed===\n");
+        sb.append("\n===computed===");
         sb.append("\nrequestLang=" + headers.getRequestLang().code);
         sb.append("\nclientRequestUrlInDefaultLanguage=" + headers.getClientRequestUrlInDefaultLanguage());
         sb.append("\ncurrentContextUrlInDefaultLanguage=" + headers.getCurrentContextUrlInDefaultLanguage().toString());
