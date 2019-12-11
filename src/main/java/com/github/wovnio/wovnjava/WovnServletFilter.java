@@ -96,6 +96,9 @@ public class WovnServletFilter implements Filter {
                 Api api = new Api(settings, headers, requestOptions, responseHeaders);
                 Interceptor interceptor = new Interceptor(headers, settings, api, responseHeaders);
                 body = interceptor.translate(originalBody);
+                // append debug output
+                String debugOutput = createDebugOutput(request, wovnResponse, headers);
+                body = body + debugOutput;
             } else {
                 // css, javascript or others
                 body = originalBody;
@@ -111,5 +114,22 @@ public class WovnServletFilter implements Filter {
             out.write(wovnResponse.getData());
             out.close();
         }
+    }
+
+    private String createDebugOutput(HttpServletRequest request, WovnHttpServletResponse response, Headers headers) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n<!--Debugging information:");
+        sb.append("\nVersion=" + VERSION);
+        sb.append("\nTimestamp=" + System.currentTimeMillis());
+        sb.append("\n===env===\n");
+        sb.append("\nrequest.getQueryString=" + request.getQueryString());
+        sb.append("\nrequest.getRequestURI=" + request.getRequestURI());
+        sb.append("\njavax.servlet.forward.request_uri=" + request.getAttribute("javax.servlet.forward.request_uri"));
+        sb.append("\n===computed===\n");
+        sb.append("\nrequestLang=" + headers.getRequestLang().code);
+        sb.append("\nclientRequestUrlInDefaultLanguage=" + headers.getClientRequestUrlInDefaultLanguage());
+        sb.append("\ncurrentContextUrlInDefaultLanguage=" + headers.getCurrentContextUrlInDefaultLanguage().toString());
+        sb.append("\n-->\n");
+        return sb.toString();
     }
 }
