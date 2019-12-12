@@ -1,6 +1,6 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.net.URL;
 import java.net.MalformedURLException;
 
@@ -115,8 +115,8 @@ class Headers {
         return this.isValidRequest;
     }
 
-    public HashMap<String, String> getHreflangUrlMap() {
-        HashMap<String, String> hreflangs = new HashMap<String, String>();
+    public LinkedHashMap<String, String> getHreflangUrlMap() {
+        LinkedHashMap<String, String> hreflangs = new LinkedHashMap<String, String>();
         for (Lang supportedLang : this.settings.supportedLangs) {
             String hreflangCode = supportedLang.codeISO639_1;
             String url = this.urlLanguagePatternHandler.convertToTargetLanguage(this.clientRequestUrlInDefaultLanguage, supportedLang);
