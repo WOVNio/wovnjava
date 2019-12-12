@@ -253,7 +253,7 @@ public class HeadersTest extends TestCase {
         assertEquals(false, h.getIsValidRequest());
     }
 
-    private Headers makeHeaderWithSitePrefixPath(String requestPath, String sitePrefixPath) throws ConfigurationError {
+    private Headers makeHeaderWithSitePrefixPath(String requestPath, final String sitePrefixPath) throws ConfigurationError {
         HttpServletRequest mockRequest = MockHttpServletRequest.create("https://example.com" + requestPath);
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("urlPattern", "path");

@@ -19,7 +19,7 @@ public class TestUtil {
         return makeConfig(emptyOption);
     }
 
-    public static FilterConfig makeConfig(HashMap<String, String> options) {
+    public static FilterConfig makeConfig(final HashMap<String, String> options) {
         FilterConfig mock = EasyMock.createMock(FilterConfig.class);
         EasyMock.expect(mock.getInitParameter(EasyMock.anyString())).andAnswer(
             new IAnswer<String>() {

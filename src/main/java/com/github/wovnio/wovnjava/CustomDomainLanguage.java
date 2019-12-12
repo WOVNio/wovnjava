@@ -1,7 +1,7 @@
 package com.github.wovnio.wovnjava;
 
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
 
 class CustomDomainLanguage {
     public final String host;
@@ -21,8 +21,8 @@ class CustomDomainLanguage {
     }
 
     private boolean pathIsEqualOrSubsetOf(String basePath, String testPath) {
-        String[] basePathList = Arrays.stream(basePath.split("/")).filter(s -> !s.isEmpty()).toArray(String[]::new);
-        String[] testPathList = Arrays.stream(testPath.split("/")).filter(s -> !s.isEmpty()).toArray(String[]::new);
+        String[] basePathList = removeEmptyStrings(basePath.split("/"));
+        String[] testPathList = removeEmptyStrings(testPath.split("/"));
 
         if (basePathList.length > testPathList.length) {
             return false;
@@ -35,5 +35,13 @@ class CustomDomainLanguage {
         }
 
         return true;
+    }
+
+    private String[] removeEmptyStrings(String[] arr) {
+        ArrayList<String> nonEmptyElements = new ArrayList<String>();
+        for (String element : arr) {
+            if (!element.isEmpty()) nonEmptyElements.add(element);
+        }
+        return nonEmptyElements.toArray(new String[0]);
     }
 }

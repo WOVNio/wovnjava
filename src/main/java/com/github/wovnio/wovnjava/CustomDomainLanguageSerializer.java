@@ -46,7 +46,7 @@ class CustomDomainLanguageSerializer {
         for (CustomDomainLanguage cdl : customDomainLanguages.customDomainLanguageList) {
             items.add(cdl.host + cdl.path + "/\":\"" + cdl.lang.code);
         }
-        return "{\"" + String.join("\",\"", items) + "\"}";
+        return "{\"" + StringUtil.join("\",\"", items) + "\"}";
     }
 
     private static String removeTrailingSlash(String path) {
