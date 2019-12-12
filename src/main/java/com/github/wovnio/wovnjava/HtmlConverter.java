@@ -105,7 +105,7 @@ class HtmlConverter {
 
     private void removeClassIgnore() {
         if (settings.ignoreClasses.isEmpty()) return;
-        String classNames = "." + String.join(", .", settings.ignoreClasses);
+        String classNames = "." + StringUtil.join(", .", settings.ignoreClasses);
         Elements elements = doc.select(classNames);
         for (Element element : elements) {
             replaceNodeToMarkerComment(element);
@@ -138,6 +138,10 @@ class HtmlConverter {
         if (!settings.sitePrefixPath.isEmpty()) {
             sb.append("&sitePrefixPath=");
             sb.append(settings.sitePrefixPath.replaceFirst("/", ""));
+        }
+        if (settings.customDomainLanguages != null) {
+            sb.append("&customDomainLangs=");
+            sb.append(CustomDomainLanguageSerializer.serializeToJson(settings.customDomainLanguages));
         }
         String key = sb.toString();
         js.attr("src", settings.snippetUrl);

@@ -145,6 +145,22 @@ public class SettingsTest extends TestCase {
         assertEquals(true, errorThrown);
     }
 
+    public void testRequiredSettings__SupportedLangDeclaredMultipleTimes__throwError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
+            put("projectToken", "123456");
+            put("urlPattern", "path");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,ja");
+        }});
+        boolean errorThrown = false;
+        try {
+            Settings s = new Settings(config);
+        } catch (ConfigurationError e) {
+            errorThrown = true;
+        }
+        assertEquals(true, errorThrown);
+    }
+
     public void testRequiredSettings__LegacyUserTokenDeclared__SetProjectTokenAsUserToken() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
             put("userToken", "98765");
@@ -377,6 +393,24 @@ public class SettingsTest extends TestCase {
         Settings s = new Settings(config);
         assertEquals(Settings.DefaultTimeout, s.connectTimeout);
         assertEquals(Settings.DefaultTimeout, s.readTimeout);
+    }
+
+    public void testCustomDomainLangs__SuccessfullyParseCustomDomainLangs() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,fr");
+            put("customDomainLangs", "site.com:en,site.com/ja:ja,france.com/:fr");
+        }});
+        Settings s = new Settings(config);
+        ArrayList<CustomDomainLanguage> customDomainLanguageList = s.customDomainLanguages.customDomainLanguageList;
+
+        assertEquals("ja", customDomainLanguageList.get(0).lang.code);
+        assertEquals("site.com", customDomainLanguageList.get(0).host);
+        assertEquals("/ja", customDomainLanguageList.get(0).path);
+
+        assertEquals("en", customDomainLanguageList.get(1).lang.code);
+        assertEquals("site.com", customDomainLanguageList.get(1).host);
+        assertEquals("", customDomainLanguageList.get(1).path);
     }
 
     public void testConnectTimeout__InvalidInteger__ThrowError() throws ConfigurationError {

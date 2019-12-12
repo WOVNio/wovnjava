@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Collections;
 import java.util.List;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 public class WovnHttpServletRequest extends HttpServletRequestWrapper {
     private Headers headers;
@@ -19,7 +21,7 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
         headers = h;
 
         this.customHeaders = new HashMap<String, String>() {{
-            put("X-Wovn-Lang", headers.langCode());
+            put("X-Wovn-Lang", headers.getRequestLang().code);
         }};
     }
 
@@ -52,10 +54,13 @@ public class WovnHttpServletRequest extends HttpServletRequestWrapper {
     @Override
     public String getRemoteHost() {
         String host = super.getRemoteHost();
-        if (headers.settings.urlPattern.equals("subdomain")) {
-            host = headers.removeLang(host, null);
+        URL url;
+        try {
+            url = headers.convertToDefaultLanguage(new URL("http://" + host));
+            return url.getHost();
+        } catch (MalformedURLException e) {
+            return host;
         }
-        return host;
     }
 
     @Override

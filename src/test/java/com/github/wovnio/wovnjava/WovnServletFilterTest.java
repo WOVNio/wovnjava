@@ -101,7 +101,7 @@ public class WovnServletFilterTest extends TestCase {
         put("urlPattern", "query");
     }};
 
-    private HashMap<String, String> subdomainOption(String host) {
+    private HashMap<String, String> subdomainOption(final String host) {
         return new HashMap<String, String>() {{
             put("urlPattern", "subdomain");
             put("host", host);

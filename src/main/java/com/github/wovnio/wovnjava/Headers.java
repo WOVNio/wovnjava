@@ -1,6 +1,6 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.net.URL;
 import java.net.MalformedURLException;
 
@@ -13,13 +13,13 @@ class Headers {
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
     private UrlContext urlContext;
 
-    /* The language code found in the client request URL */
-    private final String requestLang;
+    /* The language of the client request URL */
+    private final Lang requestLang;
     /* The URL that the client originally requested */
     private final String clientRequestUrlInDefaultLanguage;
 
     /* Should send HTTP 302 redirect to page in default language */
-    private final boolean shouldRedirectToDefaultLang;
+    private final boolean shouldRedirectExplicitDefaultLangUrl;
     /* Is current context URL path the same as the equivalent path in default language */
     private boolean isPathInDefaultLanguage;
 
@@ -31,11 +31,12 @@ class Headers {
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
         String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
-        this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
-        this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.removeLang(clientRequestUrl, this.requestLang);
+        Lang urlLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
+        this.requestLang = urlLang == null ? settings.defaultLang : urlLang;
+        this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(clientRequestUrl);
 
         String currentContextUrl = request.getRequestURL().toString();
-        String currentContextUrlInDefaultLanguage = this.urlLanguagePatternHandler.removeLang(currentContextUrl, this.requestLang);
+        String currentContextUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(currentContextUrl);
 
         try {
             this.urlContext = new UrlContext(new URL(currentContextUrlInDefaultLanguage));
@@ -50,18 +51,9 @@ class Headers {
             this.isPathInDefaultLanguage = false;
         }
 
-        this.shouldRedirectToDefaultLang = settings.urlPattern.equals("path") && this.requestLang.equals(settings.defaultLang.code);
+        this.shouldRedirectExplicitDefaultLangUrl = this.urlLanguagePatternHandler.shouldRedirectExplicitDefaultLangUrl(clientRequestUrl);
 
         this.isValidRequest = this.urlContext != null && this.urlLanguagePatternHandler.canInterceptUrl(clientRequestUrl);
-    }
-
-    String langCode() {
-        String pl = this.requestLang;
-        if (pl != null && pl.length() > 0) {
-            return pl;
-        } else {
-            return settings.defaultLang.code;
-        }
     }
 
     /*
@@ -72,29 +64,30 @@ class Headers {
     public String locationWithLangCode(String location) {
         if (location == null || !this.isValidRequest) return location;
 
-        boolean isRequestDefaultLang = this.requestLang.isEmpty() || this.requestLang == settings.defaultLang.code;
-        if (isRequestDefaultLang) return location;
+        if (this.requestLang == this.settings.defaultLang) return location;
 
         URL url = this.urlContext.resolve(location);
 
         boolean shouldAddLanguageCode = url != null
                                         && this.urlContext.isSameHost(url)
-                                        && this.urlLanguagePatternHandler.getLang(url.toString()).isEmpty()
+                                        && this.urlLanguagePatternHandler.getLang(url.toString()) == null
                                         && this.urlLanguagePatternHandler.canInterceptUrl(url.toString());
 
         if (!shouldAddLanguageCode) return location;
 
-        return this.urlLanguagePatternHandler.insertLang(url.toString(), this.requestLang);
+        return this.urlLanguagePatternHandler.convertToTargetLanguage(url.toString(), this.requestLang);
     }
 
-    String removeLang(String uri, String lang) {
-        if (lang == null || lang.length() == 0) {
-            lang = this.requestLang;
+    URL convertToDefaultLanguage(URL url) {
+        String urlInDefaultLang = this.urlLanguagePatternHandler.convertToDefaultLanguage(url.toString());
+        try {
+            return new URL(urlInDefaultLang);
+        } catch (MalformedURLException e) {
+            return url;
         }
-        return this.urlLanguagePatternHandler.removeLang(uri, lang);
     }
 
-    public String getRequestLang() {
+    public Lang getRequestLang() {
         return this.requestLang;
     }
 
@@ -110,8 +103,8 @@ class Headers {
         return this.urlContext.getURL();
     }
 
-    public boolean getShouldRedirectToDefaultLang() {
-        return this.shouldRedirectToDefaultLang;
+    public boolean getShouldRedirectExplicitDefaultLangUrl() {
+        return this.shouldRedirectExplicitDefaultLangUrl;
     }
 
     public boolean getIsPathInDefaultLanguage() {
@@ -122,11 +115,11 @@ class Headers {
         return this.isValidRequest;
     }
 
-    public HashMap<String, String> getHreflangUrlMap() {
-        HashMap<String, String> hreflangs = new HashMap<String, String>();
+    public LinkedHashMap<String, String> getHreflangUrlMap() {
+        LinkedHashMap<String, String> hreflangs = new LinkedHashMap<String, String>();
         for (Lang supportedLang : this.settings.supportedLangs) {
             String hreflangCode = supportedLang.codeISO639_1;
-            String url = this.urlLanguagePatternHandler.insertLang(this.clientRequestUrlInDefaultLanguage, supportedLang.code);
+            String url = this.urlLanguagePatternHandler.convertToTargetLanguage(this.clientRequestUrlInDefaultLanguage, supportedLang);
             hreflangs.put(hreflangCode, url);
         }
         String hreflangCodeDefaultLang = this.settings.defaultLang.codeISO639_1;

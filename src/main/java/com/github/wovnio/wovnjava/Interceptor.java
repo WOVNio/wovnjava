@@ -16,10 +16,9 @@ class Interceptor {
     }
 
     String translate(String body) {
-        String lang = headers.getRequestLang();
-        boolean canTranslate = lang.length() > 0 && !lang.equals(settings.defaultLang.code);
-        if (canTranslate) {
-            return apiTranslate(lang, body);
+        Lang lang = headers.getRequestLang();
+        if (lang != settings.defaultLang) {
+            return apiTranslate(lang.code, body);
         } else {
             return localTranslate(settings.defaultLang.code, body);
         }

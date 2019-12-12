@@ -1,14 +1,20 @@
 package com.github.wovnio.wovnjava;
 
-import junit.framework.TestCase;
-
-import org.easymock.EasyMock;
-
 import java.util.HashMap;
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
+import java.net.URL;
+import java.net.MalformedURLException;
+
+import junit.framework.TestCase;
+import org.easymock.EasyMock;
 
 public class HeadersTest extends TestCase {
+    private Lang japanese;
+
+    protected void setUp() throws Exception {
+        this.japanese = Lang.get("ja");
+    }
 
     private static FilterConfig mockConfigPath() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
@@ -25,6 +31,8 @@ public class HeadersTest extends TestCase {
     private static FilterConfig mockConfigQuery() {
         HashMap<String, String> parameters = new HashMap<String, String>() {{
             put("urlPattern", "query");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,zh-CHS");
         }};
         return TestUtil.makeConfigWithValidDefaults(parameters);
     }
@@ -56,7 +64,7 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getRequestLang());
+        assertEquals(this.japanese, h.getRequestLang());
     }
 
     public void testGetRequestLangSubdomain() throws ConfigurationError {
@@ -67,7 +75,7 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getRequestLang());
+        assertEquals(this.japanese, h.getRequestLang());
     }
 
     public void testGetRequestLangQuery() throws ConfigurationError {
@@ -78,10 +86,10 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("ja", h.getRequestLang());
+        assertEquals(this.japanese, h.getRequestLang());
     }
 
-    public void testRemoveLangPath() throws ConfigurationError {
+    public void testConvertToDefaultLanguage__PathPattern() throws ConfigurationError, MalformedURLException {
         HttpServletRequest mockRequest = MockHttpServletRequest.create("https://example.com/ja/test");
         FilterConfig mockConfig = mockConfigPath();
 
@@ -89,9 +97,10 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("example.com/test", h.removeLang("example.com/ja/test", null));
+        URL url = new URL("http://example.com/ja/test");
+        assertEquals("http://example.com/test", h.convertToDefaultLanguage(url).toString());
     }
-    public void testRemoveLangSubdomain() throws ConfigurationError {
+    public void testConvertToDefaultLanguage__SubdomainPattern() throws ConfigurationError, MalformedURLException {
         HttpServletRequest mockRequest = MockHttpServletRequest.create("https://ja.example.com/test");
         FilterConfig mockConfig = mockConfigSubdomain();
 
@@ -99,9 +108,10 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("example.com/test", h.removeLang("ja.example.com/test", null));
+        URL url = new URL("http://ja.example.com/test");
+        assertEquals("http://example.com/test", h.convertToDefaultLanguage(url).toString());
     }
-    public void testRemoveLangQuery() throws ConfigurationError {
+    public void testConvertToDefaultLanguage__QueryPattern() throws ConfigurationError, MalformedURLException {
         HttpServletRequest mockRequest = MockHttpServletRequest.create("https://example.com/test?wovn=ja");
         FilterConfig mockConfig = mockConfigQuery();
 
@@ -109,13 +119,19 @@ public class HeadersTest extends TestCase {
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);
         Headers h = new Headers(mockRequest, s, ulph);
 
-        assertEquals("example.com/test", h.removeLang("example.com/test?wovn=ja", null));
+        URL url = new URL("http://example.com/test?wovn=ja");
+        assertEquals("http://example.com/test", h.convertToDefaultLanguage(url).toString());
     }
 
-    public void testSitePrefixPath() throws ConfigurationError {
+    public void testConvertToDefaultLanguage__PathPatternWithSitePrefixPath() throws ConfigurationError, MalformedURLException {
         Headers h = makeHeaderWithSitePrefixPath("/global/en/foo", "/global/");
-        assertEquals("/global/", h.removeLang("/global/en/", null));
-        assertEquals("/en/global/", h.removeLang("/en/global/", null));
+        URL url;
+
+        url = new URL("http://site.com/global/en/");
+        assertEquals("http://site.com/global/", h.convertToDefaultLanguage(url).toString());
+
+        url = new URL("http://site.com/en/global/");
+        assertEquals("http://site.com/en/global/", h.convertToDefaultLanguage(url).toString());
     }
 
     public void testLocationWithDefaultLangCode() throws ConfigurationError {
@@ -210,7 +226,7 @@ public class HeadersTest extends TestCase {
         assertEquals("http://example.com/global/ja/", h.locationWithLangCode("http://example.com/global/"));
         assertEquals("https://example.com/global/ja/", h.locationWithLangCode("https://example.com/global/"));
         assertEquals("https://example.com/global/ja/", h.locationWithLangCode("https://example.com/global/ja/"));
-        assertEquals("https://example.com/global/th/", h.locationWithLangCode("https://example.com/global/th/"));
+        assertEquals("https://example.com/global/ja/th/", h.locationWithLangCode("https://example.com/global/th/")); // `th` not in supportedLangs
         assertEquals("https://example.com/global/ja/tokyo/", h.locationWithLangCode("https://example.com/global/tokyo/"));
         assertEquals("https://example.com/global/ja/file.html", h.locationWithLangCode("https://example.com/global/file.html"));
         assertEquals("https://example.com/global/ja/file.html", h.locationWithLangCode("https://example.com/pics/../global/file.html"));
@@ -237,7 +253,7 @@ public class HeadersTest extends TestCase {
         assertEquals(false, h.getIsValidRequest());
     }
 
-    private Headers makeHeaderWithSitePrefixPath(String requestPath, String sitePrefixPath) throws ConfigurationError {
+    private Headers makeHeaderWithSitePrefixPath(String requestPath, final String sitePrefixPath) throws ConfigurationError {
         HttpServletRequest mockRequest = MockHttpServletRequest.create("https://example.com" + requestPath);
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("urlPattern", "path");

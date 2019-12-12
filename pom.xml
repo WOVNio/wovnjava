@@ -7,7 +7,7 @@
     <groupId>com.github.wovnio</groupId>
     <artifactId>wovnjava</artifactId>
     <name>wovnjava</name>
-    <version>0.6.0</version>
+    <version>1.0.1-java7</version>
     <url>https://github.com/WOVNio/wovnjava</url>
 
     <licenses>
@@ -91,8 +91,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
