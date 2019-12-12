@@ -112,9 +112,9 @@ public class HtmlConverterTest extends TestCase {
     public void testConvertWithSitePrefixPath() throws ConfigurationError {
         String original = "<html><head></head><body></body></html>";
         String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + Settings.VERSION + "&amp;sitePrefixPath=global\" data-wovnio-type=\"fallback\" async></script>";
-        String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"th\" href=\"https://site.com/global/th/tokyo/\">" +
-                                   "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/global/tokyo/\">" +
-                                   "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/en/tokyo/\">";
+        String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/global/tokyo/\">" +
+                                   "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/en/tokyo/\">" +
+                                   "<link ref=\"alternate\" hreflang=\"th\" href=\"https://site.com/global/th/tokyo/\">";
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
         String expectedHtml = "<html><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
 
