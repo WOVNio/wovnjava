@@ -50,7 +50,7 @@ jobs:
             - ~/.m2
           key: circleci-wovnjava-oraclejdk-pom-{{ checksum "pom.xml" }}
 
-      - run: mvn package
+      - run: mvn -Dhttps.protocols=TLSv1.2 package
 
       - store_test_results:
           path: target/surefire-reports
