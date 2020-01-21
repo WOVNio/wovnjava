@@ -1,44 +1,58 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     private Lang defaultLang;
-    private ArrayList<Lang> supportedLangs;
+    private SupportedLanguages supportedLanguages;
     private String sitePrefixPath;
     private Pattern getLangPattern;
     private Pattern matchSitePrefixPathPattern;
 
-    PathUrlLanguagePatternHandler(Lang defaultLang, ArrayList<Lang> supportedLangs, String sitePrefixPath) {
+    PathUrlLanguagePatternHandler(Lang defaultLang, SupportedLanguages supportedLanguages, String sitePrefixPath) {
         this.defaultLang = defaultLang;
-        this.supportedLangs = supportedLangs;
+        this.supportedLanguages = supportedLanguages;
         this.sitePrefixPath = sitePrefixPath;
         this.getLangPattern = this.buildGetLangPattern(sitePrefixPath);
         this.matchSitePrefixPathPattern = this.buildMatchSitePrefixPathPattern(sitePrefixPath);
     }
 
     Lang getLang(String url) {
-        Lang lang = this.getLangMatch(url, this.getLangPattern);
-        return (lang != null && this.supportedLangs.contains(lang)) ? lang : null;
+        String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
+        Lang lang = this.supportedLanguages.get(languageIdentifier);
+        if (lang != null) {
+            return lang;
+        } else if (this.supportedLanguages.hasLangCodeAliasForDefaultLang) {
+            return null;
+        } else {
+            return this.supportedLanguages.getDefault();
+        }
     }
 
     String convertToDefaultLanguage(String url) {
         Lang currentLang = this.getLang(url);
-        if (currentLang == null) {
+        if (currentLang == null || currentLang == this.defaultLang) {
             return url;
+        }
+
+        String newUrl = this.removeLang(url, currentLang.code);
+        if (this.supportedLanguages.hasLangCodeAliasForDefaultLang) {
+            return this.insertLang(newUrl, this.supportedLanguages.getAlias(this.defaultLang));
         } else {
-            return this.removeLang(url, currentLang.code);
+            return newUrl;
         }
     }
 
-    String convertToTargetLanguage(String url, Lang lang) {
-        Lang currentLang = this.getLangMatch(url, this.getLangPattern);
-        if (currentLang != null && this.supportedLangs.contains(currentLang)) {
-            url = this.removeLang(url, currentLang.code);
+    String convertToTargetLanguage(String url, Lang targetLang) {
+        String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
+        Lang currentLang = this.supportedLanguages.get(languageIdentifier);
+        if (currentLang != null) {
+            url = this.removeLang(url, languageIdentifier);
         }
-        return this.insertLang(url, lang.code);
+        return this.insertLang(url, this.supportedLanguages.getAlias(targetLang));
     }
 
     private String removeLang(String url, String lang) {
@@ -54,7 +68,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     public boolean canInterceptUrl(String url) {
-        return this.matchSitePrefixPathPattern.matcher(url).lookingAt();
+        return this.getLang(url) != null;
     }
 
     /*
@@ -62,8 +76,8 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
      * found in the URL path is for default language
      */
     public boolean shouldRedirectExplicitDefaultLangUrl(String url) {
-        Lang pathLang = this.getLangMatch(url, this.getLangPattern);
-        return pathLang == this.defaultLang;
+        String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
+        return !this.supportedLanguages.hasLangCodeAliasForDefaultLang && languageIdentifier == this.defaultLang.code;
     }
 
     private Pattern buildGetLangPattern(String sitePrefixPath) {
