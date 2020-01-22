@@ -5,51 +5,61 @@ import java.util.regex.Pattern;
 
 class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     private Lang defaultLang;
-    private ArrayList<Lang> supportedLangs;
+    private SupportedLanguages supportedLanguages;
     private Pattern getLangPattern;
     private Pattern hasQueryPattern;
 
-    QueryUrlLanguagePatternHandler(Lang defaultLang, ArrayList<Lang> supportedLangs) {
+    QueryUrlLanguagePatternHandler(Lang defaultLang, SupportedLanguages supportedLanguages) {
         this.defaultLang = defaultLang;
-        this.supportedLangs = supportedLangs;
+        this.supportedLanguages = supportedLanguages;
         this.getLangPattern = this.buildGetLangPattern();
         this.hasQueryPattern = Pattern.compile("\\?");
     }
 
     Lang getLang(String url) {
-        Lang lang = this.getLangMatch(url, this.getLangPattern);
-        return (lang != null && this.supportedLangs.contains(lang)) ? lang : null;
+        String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
+        Lang lang = this.supportedLanguages.get(languageIdentifier);
+        if (lang != null) {
+            return lang;
+        } else if (this.supportedLanguages.hasLangCodeAliasForDefaultLang) {
+            return null;
+        } else {
+            return this.defaultLang;
+        }
     }
 
     String convertToDefaultLanguage(String url) {
-        Lang currentLang = this.getLang(url);
-        if (currentLang == null) {
-            return url;
+        String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
+        String plainUrl = (languageIdentifier != null) ? this.removeLang(url, languageIdentifier) : url;
+
+        if (this.supportedLanguages.hasLangCodeAliasForDefaultLang) {
+            return this.insertLang(plainUrl, this.defaultLang);
         } else {
-            return this.removeLang(url, currentLang.code);
+            return plainUrl;
         }
     }
 
-    String convertToTargetLanguage(String url, Lang lang) {
-        Lang currentLang = this.getLangMatch(url, this.getLangPattern);
-        if (currentLang != null) {
-            url = this.removeLang(url, currentLang.code);
+    String convertToTargetLanguage(String url, Lang targetLang) {
+        String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
+        if (languageIdentifier != null) {
+            url = this.removeLang(url, languageIdentifier);
         }
-        return this.insertLang(url, lang.code);
+        return this.insertLang(url, targetLang);
     }
 
-    private String removeLang(String url, String lang) {
-        if (lang.isEmpty()) return url;
+    private String removeLang(String url, String langCode) {
+        if (langCode.isEmpty()) return url;
 
-        return url.replaceFirst("(^|\\?|&)wovn=" + lang + "(&|$)", "$1")
+        return url.replaceFirst("(^|\\?|&)wovn=" + langCode + "(&|$)", "$1")
                   .replaceAll("(\\?|&)$", "");
     }
 
-    private String insertLang(String url, String lang) {
+    private String insertLang(String url, Lang lang) {
+        String langCode = this.supportedLanguages.getAlias(lang);
         if (this.hasQueryPattern.matcher(url).find()) {
-            return url + "&wovn=" + lang;
+            return url + "&wovn=" + langCode;
         } else {
-            return url + "?wovn=" + lang;
+            return url + "?wovn=" + langCode;
         }
     }
 

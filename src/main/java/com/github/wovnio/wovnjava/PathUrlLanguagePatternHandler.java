@@ -1,6 +1,5 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -28,7 +27,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         } else if (this.supportedLanguages.hasLangCodeAliasForDefaultLang) {
             return null;
         } else {
-            return this.supportedLanguages.getDefault();
+            return this.defaultLang;
         }
     }
 
@@ -38,9 +37,9 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
             return url;
         }
 
-        String newUrl = this.removeLang(url, currentLang.code);
+        String newUrl = this.removeLang(url, currentLang);
         if (this.supportedLanguages.hasLangCodeAliasForDefaultLang) {
-            return this.insertLang(newUrl, this.supportedLanguages.getAlias(this.defaultLang));
+            return this.insertLang(newUrl, this.defaultLang);
         } else {
             return newUrl;
         }
@@ -50,21 +49,21 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
         Lang currentLang = this.supportedLanguages.get(languageIdentifier);
         if (currentLang != null) {
-            url = this.removeLang(url, languageIdentifier);
+            url = this.removeLang(url, currentLang);
         }
-        return this.insertLang(url, this.supportedLanguages.getAlias(targetLang));
+        return this.insertLang(url, targetLang);
     }
 
-    private String removeLang(String url, String lang) {
-        if (lang.isEmpty()) return url;
-
-        Pattern removeLangPattern = buildRemoveLangPattern(lang);
+    private String removeLang(String url, Lang lang) {
+        String langCode = this.supportedLanguages.getAlias(lang);
+        Pattern removeLangPattern = buildRemoveLangPattern(langCode);
         Matcher matcher = removeLangPattern.matcher(url);
         return matcher.replaceFirst("$1$2$3$5");
     }
 
-    private String insertLang(String url, String lang) {
-        return this.matchSitePrefixPathPattern.matcher(url).replaceFirst("$1$2$3/" + lang + "$4");
+    private String insertLang(String url, Lang lang) {
+        String langCode = this.supportedLanguages.getAlias(lang);
+        return this.matchSitePrefixPathPattern.matcher(url).replaceFirst("$1$2$3/" + langCode + "$4");
     }
 
     public boolean canInterceptUrl(String url) {
