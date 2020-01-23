@@ -27,7 +27,7 @@ class LanguageAliases {
 
     public Lang getLang(String alias) {
         for (Map.Entry<Lang, String> entry : this.langMap.entrySet()) {
-            if (entry.getValue() == alias) {
+            if (entry.getValue().equals(alias)) {
                 return entry.getKey();
             }
         }
