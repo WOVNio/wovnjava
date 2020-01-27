@@ -1,6 +1,7 @@
 package com.github.wovnio.wovnjava;
 
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 import junit.framework.TestCase;
 import org.easymock.EasyMock;
@@ -32,7 +33,7 @@ public class LanguageAliasSerializerTest extends TestCase {
     public void testDeserializeFilterConfig__InvalidLanguageCode__ThrowError() throws ConfigurationError {
         boolean errorThrown = false;
         try {
-            CustomDomainLanguageSerializer.deserializeFilterConfig("english:us");
+            LanguageAliasSerializer.deserializeFilterConfig("english:us");
         } catch (ConfigurationError e) {
             errorThrown = true;
         }
@@ -42,10 +43,23 @@ public class LanguageAliasSerializerTest extends TestCase {
     public void testDeserializeFilterConfig__MalformedInput__ThrowError() throws ConfigurationError {
         boolean errorThrown = false;
         try {
-            CustomDomainLanguageSerializer.deserializeFilterConfig("en,ja");
+            LanguageAliasSerializer.deserializeFilterConfig("en,ja");
         } catch (ConfigurationError e) {
             errorThrown = true;
         }
         assertEquals(true, errorThrown);
+    }
+
+    public void testSerializeToJson() {
+        assertEquals("{}", LanguageAliasSerializer.serializeToJson(null));
+
+        Map<Lang, String> langCodeAliases = new LinkedHashMap<Lang, String>();
+        assertEquals("{}", LanguageAliasSerializer.serializeToJson(langCodeAliases));
+
+        langCodeAliases.put(Lang.get("en"), "en");
+        assertEquals("{\"en\":\"en\"}", LanguageAliasSerializer.serializeToJson(langCodeAliases));
+
+        langCodeAliases.put(Lang.get("ja"), "japan");
+        assertEquals("{\"en\":\"en\",\"ja\":\"japan\"}", LanguageAliasSerializer.serializeToJson(langCodeAliases));
     }
 }

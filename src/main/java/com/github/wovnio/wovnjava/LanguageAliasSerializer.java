@@ -36,7 +36,7 @@ class LanguageAliasSerializer {
     }
 
     public static String serializeToJson(Map<Lang, String> langCodeAliases) {
-        if (langCodeAliases == null) return "{\"null\"=\"null\"}";
+        if (langCodeAliases == null || langCodeAliases.size() < 1) return "{}";
 
         ArrayList<String> items = new ArrayList<String>();
         for (Map.Entry<Lang, String> langCodeAlias : langCodeAliases.entrySet()) {
