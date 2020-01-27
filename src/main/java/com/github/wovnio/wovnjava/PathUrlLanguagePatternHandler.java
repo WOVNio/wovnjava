@@ -50,6 +50,10 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     String convertToTargetLanguage(String url, Lang targetLang) {
+        if (targetLang == this.defaultLang) {
+            return this.convertToDefaultLanguage(url);
+        }
+
         String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
         Lang currentLang = this.languageAliases.getLang(languageIdentifier);
         if (currentLang != null) {

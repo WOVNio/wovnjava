@@ -40,6 +40,10 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     String convertToTargetLanguage(String url, Lang targetLang) {
+        if (targetLang == this.defaultLang) {
+            return this.convertToDefaultLanguage(url);
+        }
+
         String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
         Lang currentLang = this.languageAliases.getLang(languageIdentifier);
         if (currentLang != null) {
@@ -50,6 +54,10 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         } else {
             return this.insertLang(url, targetLang);
         }
+    }
+
+    public boolean canInterceptUrl(String url) {
+        return this.getLang(url) != null;
     }
 
     private String removeLang(String url, Lang lang) {
