@@ -36,7 +36,7 @@ public class InterceptorTest extends TestCase {
         }});
         String html = translate("https://example.com/ja/", originalHtml, settings, mockApiTimeout(), mockResponseHeadersTimeout());
         String expect = "<!doctype html><html><head><title>test</title>" +
-                        "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
+                        "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=path&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
                         "<link ref=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
                         "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
                         "<link ref=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
@@ -54,7 +54,7 @@ public class InterceptorTest extends TestCase {
         }});
         String html = translate("https://example.com/", originalHtml, settings, null, null);
         String expect = "<!doctype html><html><head><title>test</title>" +
-                        "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
+                        "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
                         "<link ref=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
                         "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
                         "<link ref=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
