@@ -31,8 +31,7 @@ class Headers {
         this.urlLanguagePatternHandler = urlLanguagePatternHandler;
 
         String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
-        Lang urlLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
-        this.requestLang = urlLang == null ? settings.defaultLang : urlLang;
+        this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
         this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(clientRequestUrl);
 
         String currentContextUrl = request.getRequestURL().toString();
@@ -53,10 +52,12 @@ class Headers {
 
         this.shouldRedirectExplicitDefaultLangUrl = this.urlLanguagePatternHandler.shouldRedirectExplicitDefaultLangUrl(clientRequestUrl);
 
-        this.isValidRequest = this.urlContext != null && this.urlLanguagePatternHandler.canInterceptUrl(clientRequestUrl);
+        this.isValidRequest = this.requestLang != null && this.urlContext != null;
     }
 
     /*
+     * Convert a redirect URL into the language of the current request
+     *
      * Take as input a location string of any form (relative path, absolute path, absolute URL).
      * If the location needs a Wovn language code, return an absolute URL string of that location
      * with language code of the current request language. Else return the location as-is.
@@ -70,8 +71,7 @@ class Headers {
 
         boolean shouldAddLanguageCode = url != null
                                         && this.urlContext.isSameHost(url)
-                                        && this.urlLanguagePatternHandler.getLang(url.toString()) == null
-                                        && this.urlLanguagePatternHandler.canInterceptUrl(url.toString());
+                                        && this.urlLanguagePatternHandler.getLang(url.toString()) == this.defaultLang;
 
         if (!shouldAddLanguageCode) return location;
 
