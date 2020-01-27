@@ -137,6 +137,7 @@ class Api {
         appendKeyValue(sb, "&lang_code=", lang);
         appendKeyValue(sb, "&url_pattern=", settings.urlPattern);
         appendKeyValue(sb, "&site_prefix_path=", settings.sitePrefixPath);
+        appendKeyValue(sb, "&custom_lang_aliases=", LanguageAliasSerializer.serializeToJson(settings.langCodeAliases));
         appendKeyValue(sb, "&custom_domain_langs=", CustomDomainLanguageSerializer.serializeToJson(settings.customDomainLanguages));
         appendKeyValue(sb, "&product=", "wovnjava");
         appendKeyValue(sb, "&version=", Settings.VERSION);
