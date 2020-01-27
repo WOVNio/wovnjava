@@ -27,13 +27,12 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
         supportedLangs.add(this.japanese);
         supportedLangs.add(this.french);
 
-        Map<Lang, String> emptyLangCodeAliasSetting = new LinkedHashMap<Lang, String>();
-        this.languageAliasesEmpty = new LanguageAliases(supportedLangs, emptyLangCodeAliasSetting, this.defaultLang);
+        Map<Lang, String> langCodeAliasSetting = new LinkedHashMap<Lang, String>();
+        this.languageAliasesEmpty = new LanguageAliases(supportedLangs, langCodeAliasSetting, this.defaultLang);
 
-        Map<Lang, String> configuredLangCodeAliasSetting = new LinkedHashMap<Lang, String>();
-        configuredLangCodeAliasSetting.put(this.english, "us");
-        configuredLangCodeAliasSetting.put(this.japanese, "japan");
-        this.languageAliasesConfigured = new LanguageAliases(supportedLangs, configuredLangCodeAliasSetting, this.defaultLang);
+        langCodeAliasSetting.put(this.english, "us");
+        langCodeAliasSetting.put(this.japanese, "japan");
+        this.languageAliasesConfigured = new LanguageAliases(supportedLangs, langCodeAliasSetting, this.defaultLang);
     }
 
     public void testGetLang__NonMatchingSubdomain__ReturnDefaultLang() {

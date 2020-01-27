@@ -6,25 +6,29 @@ import java.util.regex.Matcher;
 
 class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     private Lang defaultLang;
-    private SupportedLanguages supportedLanguages;
+    private LanguageAliases languageAliases;
     private String sitePrefixPath;
     private Pattern getLangPattern;
     private Pattern matchSitePrefixPathPattern;
 
-    PathUrlLanguagePatternHandler(Lang defaultLang, SupportedLanguages supportedLanguages, String sitePrefixPath) {
+    PathUrlLanguagePatternHandler(Lang defaultLang, LanguageAliases languageAliases, String sitePrefixPath) {
         this.defaultLang = defaultLang;
-        this.supportedLanguages = supportedLanguages;
+        this.languageAliases = languageAliases;
         this.sitePrefixPath = sitePrefixPath;
         this.getLangPattern = this.buildGetLangPattern(sitePrefixPath);
         this.matchSitePrefixPathPattern = this.buildMatchSitePrefixPathPattern(sitePrefixPath);
     }
 
     Lang getLang(String url) {
+        if (!this.matchSitePrefixPathPattern.matcher(url).lookingAt()) {
+            return null;
+        }
+
         String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
-        Lang lang = this.supportedLanguages.get(languageIdentifier);
+        Lang lang = this.languageAliases.getLang(languageIdentifier);
         if (lang != null) {
             return lang;
-        } else if (this.supportedLanguages.hasLangCodeAliasForDefaultLang) {
+        } else if (this.languageAliases.hasAliasForDefaultLang) {
             return null;
         } else {
             return this.defaultLang;
@@ -33,12 +37,12 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     String convertToDefaultLanguage(String url) {
         Lang currentLang = this.getLang(url);
-        if (currentLang == null || currentLang == this.defaultLang) {
+        if (currentLang == null) {
             return url;
         }
 
         String newUrl = this.removeLang(url, currentLang);
-        if (this.supportedLanguages.hasLangCodeAliasForDefaultLang) {
+        if (this.languageAliases.hasAliasForDefaultLang) {
             return this.insertLang(newUrl, this.defaultLang);
         } else {
             return newUrl;
@@ -47,22 +51,26 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     String convertToTargetLanguage(String url, Lang targetLang) {
         String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
-        Lang currentLang = this.supportedLanguages.get(languageIdentifier);
+        Lang currentLang = this.languageAliases.getLang(languageIdentifier);
         if (currentLang != null) {
-            url = this.removeLang(url, currentLang);
+            String newUrl = this.removeLang(url, currentLang);
+            return this.insertLang(newUrl, targetLang);
+        } else if (this.languageAliases.hasAliasForDefaultLang) {
+            return url;
+        } else {
+            return this.insertLang(url, targetLang);
         }
-        return this.insertLang(url, targetLang);
     }
 
     private String removeLang(String url, Lang lang) {
-        String langCode = this.supportedLanguages.getAlias(lang);
+        String langCode = this.languageAliases.getAlias(lang);
         Pattern removeLangPattern = buildRemoveLangPattern(langCode);
         Matcher matcher = removeLangPattern.matcher(url);
         return matcher.replaceFirst("$1$2$3$5");
     }
 
     private String insertLang(String url, Lang lang) {
-        String langCode = this.supportedLanguages.getAlias(lang);
+        String langCode = this.languageAliases.getAlias(lang);
         return this.matchSitePrefixPathPattern.matcher(url).replaceFirst("$1$2$3/" + langCode + "$4");
     }
 
@@ -76,7 +84,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
      */
     public boolean shouldRedirectExplicitDefaultLangUrl(String url) {
         String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
-        return !this.supportedLanguages.hasLangCodeAliasForDefaultLang && languageIdentifier == this.defaultLang.code;
+        return !this.languageAliases.hasAliasForDefaultLang && this.defaultLang.code.equals(languageIdentifier);
     }
 
     private Pattern buildGetLangPattern(String sitePrefixPath) {
