@@ -198,8 +198,8 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/dir/file?wovn=ja", h.locationWithLangCode("./file"));
         assertEquals("https://example.com/file?wovn=ja", h.locationWithLangCode("../file"));
         assertEquals("https://example.com/file?wovn=ja", h.locationWithLangCode("../../file"));
-        assertEquals("../../file?q=hello&wovn=zh-CHS", h.locationWithLangCode("../../file?q=hello&wovn=zh-CHS"));
-        assertEquals("../../file?wovn=zh-CHS", h.locationWithLangCode("../../file?wovn=zh-CHS"));
+        assertEquals("https://example.com/file?q=hello&wovn=ja", h.locationWithLangCode("../../file?q=hello&wovn=zh-CHS"));
+        assertEquals("https://example.com/file?wovn=ja", h.locationWithLangCode("../../file?wovn=zh-CHS"));
     }
 
     public void testLocationWithSubdomain() throws ConfigurationError {
@@ -230,7 +230,7 @@ public class HeadersTest extends TestCase {
         assertEquals("https://example.com/global/ja/tokyo/", h.locationWithLangCode("https://example.com/global/tokyo/"));
         assertEquals("https://example.com/global/ja/file.html", h.locationWithLangCode("https://example.com/global/file.html"));
         assertEquals("https://example.com/global/ja/file.html", h.locationWithLangCode("https://example.com/pics/../global/file.html"));
-        assertEquals("https://example.com/global/../../file.html", h.locationWithLangCode("https://example.com/global/../../file.html"));
+        assertEquals("https://example.com/file.html", h.locationWithLangCode("https://example.com/global/../../file.html"));
         assertEquals("https://example.com/tokyo/", h.locationWithLangCode("https://example.com/tokyo/"));
         assertEquals("https://example.com/tokyo/global/", h.locationWithLangCode("https://example.com/tokyo/global/"));
         assertEquals("https://example.com/ja/global/", h.locationWithLangCode("https://example.com/ja/global/"));
