@@ -133,13 +133,15 @@ class HtmlConverter {
         sb.append(settings.defaultLang.code);
         sb.append("&urlPattern=");
         sb.append(settings.urlPattern);
-        sb.append("&langCodeAliases=");
-        sb.append(LanguageAliasSerializer.serializeToJson(settings.langCodeAliases));
         sb.append("&version=");
         sb.append(Settings.VERSION);
         if (!settings.sitePrefixPath.isEmpty()) {
             sb.append("&sitePrefixPath=");
             sb.append(settings.sitePrefixPath.replaceFirst("/", ""));
+        }
+        if (settings.langCodeAliases.size() > 1) {
+            sb.append("&langCodeAliases=");
+            sb.append(LanguageAliasSerializer.serializeToJson(settings.langCodeAliases));
         }
         if (settings.customDomainLanguages != null) {
             sb.append("&customDomainLangs=");
