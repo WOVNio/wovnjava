@@ -56,10 +56,6 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         }
     }
 
-    public boolean canInterceptUrl(String url) {
-        return this.getLang(url) != null;
-    }
-
     private String removeLang(String url, Lang lang) {
         String langCode = this.languageAliases.getAlias(lang);
 

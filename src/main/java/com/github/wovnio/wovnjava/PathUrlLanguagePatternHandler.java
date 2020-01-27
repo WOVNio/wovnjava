@@ -78,10 +78,6 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         return this.matchSitePrefixPathPattern.matcher(url).replaceFirst("$1$2$3/" + langCode + "$4");
     }
 
-    public boolean canInterceptUrl(String url) {
-        return this.getLang(url) != null;
-    }
-
     /*
      * Redirect to same URL without language code if the language code
      * found in the URL path is for default language

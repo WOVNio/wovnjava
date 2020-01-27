@@ -233,35 +233,6 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("http://site.com/japan/pre/fix/page/", sut.convertToDefaultLanguage("http://site.com/japan/pre/fix/page/"));
     }
 
-    public void testCanInterceptUrl__DefaultSettings() {
-        PathUrlLanguagePatternHandler sut = create("");
-        assertEquals(true, sut.canInterceptUrl(""));
-        assertEquals(true, sut.canInterceptUrl("?query"));
-        assertEquals(true, sut.canInterceptUrl("/pre/fix/ja"));
-        assertEquals(true, sut.canInterceptUrl("/pre/fix/ja?query"));
-        assertEquals(true, sut.canInterceptUrl("http://www.site.com"));
-        assertEquals(true, sut.canInterceptUrl("https://site.com/pre/fix/en/"));
-        assertEquals(true, sut.canInterceptUrl("site.com/no/page/index.html"));
-        assertEquals(true, sut.canInterceptUrl("site.com/no/page/index.html?query"));
-    }
-
-    public void testCanInterceptUrl__UsingSitePrefixPath() {
-        PathUrlLanguagePatternHandler sut = create("/pre/fix");
-        assertEquals(false, sut.canInterceptUrl(""));
-        assertEquals(false, sut.canInterceptUrl("site.com"));
-        assertEquals(false, sut.canInterceptUrl("site.com?query"));
-        assertEquals(false, sut.canInterceptUrl("www.site.com/pre"));
-        assertEquals(false, sut.canInterceptUrl("http://www.site.com/en/pre/fix"));
-        assertEquals(true, sut.canInterceptUrl("/pre/fix"));
-        assertEquals(true, sut.canInterceptUrl("/pre/fix/"));
-        assertEquals(true, sut.canInterceptUrl("/pre/fix?query"));
-        assertEquals(true, sut.canInterceptUrl("/pre/fix/?query"));
-        assertEquals(true, sut.canInterceptUrl("/pre/fix/ja"));
-        assertEquals(true, sut.canInterceptUrl("https://site.com/pre/fix/en/"));
-        assertEquals(true, sut.canInterceptUrl("site.com/pre/fix/page/index.html"));
-        assertEquals(true, sut.canInterceptUrl("site.com/pre/fix/page/index.html?query"));
-    }
-
     public void testConvertToTargetLanguage__DefaultSettings() {
         PathUrlLanguagePatternHandler sut = create("");
         assertEquals("/ja", sut.convertToTargetLanguage("", this.japanese));

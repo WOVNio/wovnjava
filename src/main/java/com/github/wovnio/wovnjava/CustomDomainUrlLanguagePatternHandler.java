@@ -48,10 +48,6 @@ class CustomDomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         }
     }
 
-    public boolean canInterceptUrl(String urlString) {
-        return this.getLang(urlString) != null;
-    }
-
     private URL getUrlObject(String url) {
         try {
             return new URL(url);

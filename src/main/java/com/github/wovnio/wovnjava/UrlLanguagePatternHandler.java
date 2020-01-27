@@ -16,10 +16,6 @@ abstract class UrlLanguagePatternHandler {
 
     abstract String convertToTargetLanguage(String url, Lang lang);
 
-    public boolean canInterceptUrl(String url) {
-        return true;
-    }
-
     public boolean shouldRedirectExplicitDefaultLangUrl(String url) {
         return false;
     }
