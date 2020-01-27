@@ -1,25 +1,24 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     private Lang defaultLang;
-    private SupportedLanguages supportedLanguages;
+    private LanguageAliases languageAliases;
     private Pattern getLangPattern;
 
-    SubdomainUrlLanguagePatternHandler(Lang defaultLang, SupportedLanguages supportedLanguages) {
+    SubdomainUrlLanguagePatternHandler(Lang defaultLang, LanguageAliases languageAliases) {
         this.defaultLang = defaultLang;
-        this.supportedLanguages = supportedLanguages;
+        this.languageAliases = languageAliases;
         this.getLangPattern = this.buildGetLangPattern();
     }
 
     Lang getLang(String url) {
         String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
-        Lang lang = this.supportedLanguages.get(languageIdentifier);
+        Lang lang = this.languageAliases.getLang(languageIdentifier);
         if (lang != null) {
             return lang;
-        } else if (this.supportedLanguages.hasLangCodeAliasForDefaultLang) {
+        } else if (this.languageAliases.hasAliasForDefaultLang) {
             return null;
         } else {
             return this.defaultLang;
@@ -28,12 +27,12 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     String convertToDefaultLanguage(String url) {
         Lang currentLang = this.getLang(url);
-        if (currentLang == null || currentLang == this.defaultLang) {
+        if (currentLang == null) {
             return url;
         }
 
         String newUrl = this.removeLang(url, currentLang);
-        if (this.supportedLanguages.hasLangCodeAliasForDefaultLang) {
+        if (this.languageAliases.hasAliasForDefaultLang) {
             return this.insertLang(newUrl, this.defaultLang);
         } else {
             return newUrl;
@@ -42,22 +41,26 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     String convertToTargetLanguage(String url, Lang targetLang) {
         String languageIdentifier = this.getLangMatch(url, this.getLangPattern);
-        Lang currentLang = this.supportedLanguages.get(languageIdentifier);
+        Lang currentLang = this.languageAliases.getLang(languageIdentifier);
         if (currentLang != null) {
-            url = this.removeLang(url, currentLang);
+            String newUrl = this.removeLang(url, currentLang);
+            return this.insertLang(newUrl, targetLang);
+        } else if (this.languageAliases.hasAliasForDefaultLang) {
+            return url;
+        } else {
+            return this.insertLang(url, targetLang);
         }
-        return this.insertLang(url, targetLang);
     }
 
     private String removeLang(String url, Lang lang) {
-        String langCode = this.supportedLanguages.getAlias(lang);
+        String langCode = this.languageAliases.getAlias(lang);
 
         return Pattern.compile("(^|(//))" + langCode + "\\.", Pattern.CASE_INSENSITIVE)
                       .matcher(url).replaceFirst("$1");
     }
 
     private String insertLang(String url, Lang lang) {
-        String langCode = this.supportedLanguages.getAlias(lang);
+        String langCode = this.languageAliases.getAlias(lang);
         if (url.contains("://")) {
             return url.replaceFirst("://", "://" + langCode + ".");
         } else if (url.startsWith("/")) {
