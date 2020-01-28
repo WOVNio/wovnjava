@@ -139,7 +139,7 @@ class HtmlConverter {
             sb.append("&sitePrefixPath=");
             sb.append(settings.sitePrefixPath.replaceFirst("/", ""));
         }
-        if (settings.langCodeAliases.size() > 1) {
+        if (settings.langCodeAliases.size() > 0) {
             sb.append("&langCodeAliases=");
             sb.append(LanguageAliasSerializer.serializeToJson(settings.langCodeAliases));
         }
