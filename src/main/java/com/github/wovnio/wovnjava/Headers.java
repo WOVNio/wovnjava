@@ -69,7 +69,9 @@ class Headers {
 
         URL url = this.urlContext.resolve(location);
 
-        boolean shouldAddLanguageCode = url != null && this.urlContext.isSameHost(url);
+        boolean shouldAddLanguageCode = url != null
+                                        && this.urlContext.isSameHost(url)
+                                        && this.urlLanguagePatternHandler.getLang(url.toString()) != null;
 
         if (!shouldAddLanguageCode) return location;
 
