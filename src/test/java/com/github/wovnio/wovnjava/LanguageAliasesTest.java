@@ -30,13 +30,13 @@ public class LanguageAliasesTest extends TestCase {
         Map<Lang, String> langCodeAliases = new LinkedHashMap<Lang, String>();
         this.sut = new LanguageAliases(this.supportedLangs, langCodeAliases, this.english);
 
-        assertEquals(this.english, sut.getLang("en"));
-        assertEquals(this.italian, sut.getLang("it"));
-        assertEquals(this.russian, sut.getLang("ru"));
+        assertEquals(this.english, sut.getLanguageFromAlias("en"));
+        assertEquals(this.italian, sut.getLanguageFromAlias("it"));
+        assertEquals(this.russian, sut.getLanguageFromAlias("ru"));
 
-        assertEquals("en", sut.getAlias(this.english));
-        assertEquals("it", sut.getAlias(this.italian));
-        assertEquals("ru", sut.getAlias(this.russian));
+        assertEquals("en", sut.getAliasFromLanguage(this.english));
+        assertEquals("it", sut.getAliasFromLanguage(this.italian));
+        assertEquals("ru", sut.getAliasFromLanguage(this.russian));
 
         assertEquals(false, sut.hasAliasForDefaultLang);
     }
@@ -47,16 +47,16 @@ public class LanguageAliasesTest extends TestCase {
         langCodeAliases.put(this.italian, "italy");
         this.sut = new LanguageAliases(this.supportedLangs, langCodeAliases, this.english);
 
-        assertEquals(null, sut.getLang("en"));
-        assertEquals(null, sut.getLang("it"));
+        assertEquals(null, sut.getLanguageFromAlias("en"));
+        assertEquals(null, sut.getLanguageFromAlias("it"));
 
-        assertEquals(this.english, sut.getLang("us"));
-        assertEquals(this.italian, sut.getLang("italy"));
-        assertEquals(this.russian, sut.getLang("ru"));
+        assertEquals(this.english, sut.getLanguageFromAlias("us"));
+        assertEquals(this.italian, sut.getLanguageFromAlias("italy"));
+        assertEquals(this.russian, sut.getLanguageFromAlias("ru"));
 
-        assertEquals("us", sut.getAlias(this.english));
-        assertEquals("italy", sut.getAlias(this.italian));
-        assertEquals("ru", sut.getAlias(this.russian));
+        assertEquals("us", sut.getAliasFromLanguage(this.english));
+        assertEquals("italy", sut.getAliasFromLanguage(this.italian));
+        assertEquals("ru", sut.getAliasFromLanguage(this.russian));
 
         assertEquals(true, sut.hasAliasForDefaultLang);
     }
@@ -65,7 +65,7 @@ public class LanguageAliasesTest extends TestCase {
         Map<Lang, String> langCodeAliases = new LinkedHashMap<Lang, String>();
         this.sut = new LanguageAliases(this.supportedLangs, langCodeAliases, this.english);
 
-        assertEquals(null, sut.getLang(null));
-        assertEquals(null, sut.getAlias(null));
+        assertEquals(null, sut.getLanguageFromAlias(null));
+        assertEquals(null, sut.getAliasFromLanguage(null));
     }
 }

@@ -15,7 +15,7 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     Lang getLang(String url) {
         String languageIdentifier = this.resolvePatternMatch(url, this.getLangPattern);
-        Lang lang = this.languageAliases.getLang(languageIdentifier);
+        Lang lang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
         if (lang != null) {
             return lang;
         } else if (this.languageAliases.hasAliasForDefaultLang) {
@@ -45,7 +45,7 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         }
 
         String languageIdentifier = this.resolvePatternMatch(url, this.getLangPattern);
-        Lang currentLang = this.languageAliases.getLang(languageIdentifier);
+        Lang currentLang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
         if (currentLang != null) {
             String newUrl = this.removeLang(url, currentLang);
             return this.insertLang(newUrl, targetLang);
@@ -57,14 +57,14 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     private String removeLang(String url, Lang lang) {
-        String langCode = this.languageAliases.getAlias(lang);
+        String langCode = this.languageAliases.getAliasFromLanguage(lang);
 
         return Pattern.compile("(^|(//))" + langCode + "\\.", Pattern.CASE_INSENSITIVE)
                       .matcher(url).replaceFirst("$1");
     }
 
     private String insertLang(String url, Lang lang) {
-        String langCode = this.languageAliases.getAlias(lang);
+        String langCode = this.languageAliases.getAliasFromLanguage(lang);
         if (url.contains("://")) {
             return url.replaceFirst("://", "://" + langCode + ".");
         } else if (url.startsWith("/")) {

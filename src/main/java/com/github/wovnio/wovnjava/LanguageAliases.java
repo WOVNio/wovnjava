@@ -21,11 +21,11 @@ class LanguageAliases {
         this.langMap = langMap;
     }
 
-    public String getAlias(Lang lang) {
+    public String getAliasFromLanguage(Lang lang) {
         return this.langMap.get(lang);
     }
 
-    public Lang getLang(String alias) {
+    public Lang getLanguageFromAlias(String alias) {
         for (Map.Entry<Lang, String> entry : this.langMap.entrySet()) {
             if (entry.getValue().equals(alias)) {
                 return entry.getKey();

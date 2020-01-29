@@ -21,7 +21,7 @@ class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     Lang getLang(String url) {
         String languageIdentifier = this.resolvePatternMatch(url, this.getLangPattern);
-        Lang lang = this.languageAliases.getLang(languageIdentifier);
+        Lang lang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
         return (lang != null) ? lang : this.defaultLang;
     }
 
@@ -50,7 +50,7 @@ class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     private String insertLang(String url, Lang lang) {
-        String langCode = this.languageAliases.getAlias(lang);
+        String langCode = this.languageAliases.getAliasFromLanguage(lang);
         if (this.hasQueryPattern.matcher(url).find()) {
             return url + "&wovn=" + langCode;
         } else {

@@ -25,7 +25,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         }
 
         String languageIdentifier = this.resolvePatternMatch(url, this.getLangPattern);
-        Lang lang = this.languageAliases.getLang(languageIdentifier);
+        Lang lang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
         if (lang != null) {
             return lang;
         } else if (this.languageAliases.hasAliasForDefaultLang) {
@@ -55,7 +55,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         }
 
         String languageIdentifier = this.resolvePatternMatch(url, this.getLangPattern);
-        Lang currentLang = this.languageAliases.getLang(languageIdentifier);
+        Lang currentLang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
         if (currentLang != null) {
             String newUrl = this.removeLang(url, currentLang);
             return this.insertLang(newUrl, targetLang);
@@ -67,14 +67,14 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     private String removeLang(String url, Lang lang) {
-        String langCode = this.languageAliases.getAlias(lang);
+        String langCode = this.languageAliases.getAliasFromLanguage(lang);
         Pattern removeLangPattern = buildRemoveLangPattern(langCode);
         Matcher matcher = removeLangPattern.matcher(url);
         return matcher.replaceFirst("$1$2$3$5");
     }
 
     private String insertLang(String url, Lang lang) {
-        String langCode = this.languageAliases.getAlias(lang);
+        String langCode = this.languageAliases.getAliasFromLanguage(lang);
         return this.matchSitePrefixPathPattern.matcher(url).replaceFirst("$1$2$3/" + langCode + "$4");
     }
 
