@@ -19,6 +19,9 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
         if (lang != null) {
             return lang;
         } else if (this.languageAliases.hasAliasForDefaultLang) {
+            // Default language has a language alias but the input URL domain does not
+            // include a language identifier, so we cannot identify the request language.
+            // (That also means that we cannot intercept a request for the resource.)
             return null;
         } else {
             return this.defaultLang;
@@ -50,6 +53,8 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
             String newUrl = this.removeLang(url, currentLang);
             return this.insertLang(newUrl, targetLang);
         } else if (this.languageAliases.hasAliasForDefaultLang) {
+            // Default language has a language alias but the input URL domain does not
+            // include a language identifier, so we cannot convert the URL language.
             return url;
         } else {
             return this.insertLang(url, targetLang);
