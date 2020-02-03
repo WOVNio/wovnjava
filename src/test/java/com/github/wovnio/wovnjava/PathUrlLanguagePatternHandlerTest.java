@@ -100,7 +100,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.english, sut.getLang("http://site.com/us?u=Tom"));
         assertEquals(this.english, sut.getLang("http://site.com/us/page"));
         assertEquals(this.french, sut.getLang("http://site.com/fr/page"));
-        assertEquals(this.japan, sut.getLang("http://site.com/japan/page"));
+        assertEquals(this.japanese, sut.getLang("http://site.com/japan/page"));
     }
 
     public void testGetLang__SitePrefixPath__NonMatchingPath__ReturnNull() {
@@ -146,6 +146,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testGetLang__SitePrefixPath__HasLanguageAliases__MatchingPath__ReturnLanguageObject() {
+        PathUrlLanguagePatternHandler sut = createWithAliases("/pre/fix");
         assertEquals(this.french, sut.getLang("site.com/pre/fix/fr/"));
         assertEquals(this.english, sut.getLang("site.com/pre/fix/us?query"));
         assertEquals(this.japanese, sut.getLang("en.site.com/pre/fix/japan/index.html?wovn=es"));
@@ -308,6 +309,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testConvertToTargetLanguage__SitePrefixPath__HasLanguageAliases__MatchingPath__ConvertUrl() {
+        PathUrlLanguagePatternHandler sut = createWithAliases("/pre/fix");
         assertEquals("http://site.com/pre/fix/japan", sut.convertToTargetLanguage("http://site.com/pre/fix/us", this.japanese));
         assertEquals("http://site.com/pre/fix/japan/", sut.convertToTargetLanguage("http://site.com/pre/fix/fr/", this.japanese));
         assertEquals("http://site.com/pre/fix/japan/page/index.html", sut.convertToTargetLanguage("http://site.com/pre/fix/japan/page/index.html", this.japanese));
