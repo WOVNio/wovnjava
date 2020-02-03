@@ -39,7 +39,7 @@ abstract class UrlLanguagePatternHandler {
         return false;
     }
 
-    protected String resolvePatternMatch(String url, Pattern pattern) {
+    protected String findLanguageIdentifier(String url, Pattern pattern) {
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {
             String langMatch = matcher.group(1);

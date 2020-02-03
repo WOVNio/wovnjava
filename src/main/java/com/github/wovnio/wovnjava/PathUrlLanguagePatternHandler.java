@@ -24,7 +24,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
             return null;
         }
 
-        String languageIdentifier = this.resolvePatternMatch(url, this.getLangPattern);
+        String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
         Lang lang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
         if (lang != null) {
             return lang;
@@ -57,7 +57,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
             return this.convertToDefaultLanguage(url);
         }
 
-        String languageIdentifier = this.resolvePatternMatch(url, this.getLangPattern);
+        String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
         Lang currentLang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
         if (currentLang != null) {
             String newUrl = this.removeLang(url, currentLang);
@@ -88,7 +88,7 @@ class PathUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
      * found in the URL path is for default language
      */
     public boolean shouldRedirectExplicitDefaultLangUrl(String url) {
-        String languageIdentifier = this.resolvePatternMatch(url, this.getLangPattern);
+        String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
         return !this.languageAliases.hasAliasForDefaultLang && this.defaultLang.code.equals(languageIdentifier);
     }
 

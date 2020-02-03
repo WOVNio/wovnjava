@@ -20,13 +20,13 @@ class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     }
 
     Lang getLang(String url) {
-        String languageIdentifier = this.resolvePatternMatch(url, this.getLangPattern);
+        String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
         Lang lang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
         return (lang != null) ? lang : this.defaultLang;
     }
 
     String convertToDefaultLanguage(String url) {
-        String languageIdentifier = this.resolvePatternMatch(url, this.getLangPattern);
+        String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
         return (languageIdentifier != null) ? this.removeLangCode(url, languageIdentifier) : url;
     }
 
@@ -35,7 +35,7 @@ class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
             return this.convertToDefaultLanguage(url);
         }
 
-        String languageIdentifier = this.resolvePatternMatch(url, this.getLangPattern);
+        String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
         if (languageIdentifier != null) {
             url = this.removeLangCode(url, languageIdentifier);
         }
