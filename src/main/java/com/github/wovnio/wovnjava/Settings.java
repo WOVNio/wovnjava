@@ -1,6 +1,7 @@
 package com.github.wovnio.wovnjava;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -30,6 +31,7 @@ class Settings {
     public final boolean enableFlushBuffer;
 
     public final String sitePrefixPath;
+    public final Map<Lang, String> langCodeAliases;
     public final CustomDomainLanguages customDomainLanguages;
 
     public final String snippetUrl;
@@ -58,6 +60,7 @@ class Settings {
         this.enableFlushBuffer = reader.getBoolParameterDefaultFalse("enableFlushBuffer");
 
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
+        this.langCodeAliases = parseLangCodeAliases(reader.getStringParameter("langCodeAliases"));
         this.customDomainLanguages = parseCustomDomainLangs(reader.getStringParameter("customDomainLangs"), this.supportedLangs);
 
         String defaultApiUrl = this.devMode ? DefaultApiUrlDevelopment : DefaultApiUrlProduction;
@@ -141,6 +144,10 @@ class Settings {
         } else {
             return value;
         }
+    }
+
+    private Map<Lang, String> parseLangCodeAliases(String rawLangCodeAliases) throws ConfigurationError {
+        return LanguageAliasSerializer.deserializeFilterConfig(rawLangCodeAliases);
     }
 
     private CustomDomainLanguages parseCustomDomainLangs(String rawCustomDomainLangs, ArrayList<Lang> supportedLangs) throws ConfigurationError {

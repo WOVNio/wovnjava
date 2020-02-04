@@ -75,6 +75,7 @@ public class ApiTest extends TestCase {
                                      "&lang_code=ja" +
                                      "&url_pattern=path" +
                                      "&site_prefix_path=" +
+                                     "&custom_lang_aliases={}" +
                                      "&custom_domain_langs=" +
                                      "&product=wovnjava" +
                                      "&version=" + Settings.VERSION +

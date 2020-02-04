@@ -1,55 +1,81 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     private Lang defaultLang;
-    private ArrayList<Lang> supportedLangs;
+    private LanguageAliases languageAliases;
     private Pattern getLangPattern;
 
-    SubdomainUrlLanguagePatternHandler(Lang defaultLang, ArrayList<Lang> supportedLangs) {
+    SubdomainUrlLanguagePatternHandler(Lang defaultLang, LanguageAliases languageAliases) {
         this.defaultLang = defaultLang;
-        this.supportedLangs = supportedLangs;
+        this.languageAliases = languageAliases;
         this.getLangPattern = this.buildGetLangPattern();
     }
 
     Lang getLang(String url) {
-        Lang lang = this.getLangMatch(url, this.getLangPattern);
-        return (lang != null && this.supportedLangs.contains(lang)) ? lang : null;
+        String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
+        Lang lang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
+        if (lang != null) {
+            return lang;
+        } else if (this.languageAliases.hasAliasForDefaultLang) {
+            // Default language has a language alias but the input URL domain does not
+            // include a language identifier, so we cannot identify the request language.
+            // (That also means that we cannot intercept a request for the resource.)
+            return null;
+        } else {
+            return this.defaultLang;
+        }
     }
 
     String convertToDefaultLanguage(String url) {
         Lang currentLang = this.getLang(url);
         if (currentLang == null) {
             return url;
+        }
+
+        String newUrl = this.removeLang(url, currentLang);
+        if (this.languageAliases.hasAliasForDefaultLang) {
+            return this.insertLang(newUrl, this.defaultLang);
         } else {
-            return this.removeLang(url, currentLang.code);
+            return newUrl;
         }
     }
 
-    String convertToTargetLanguage(String url, Lang lang) {
-        Lang currentLang = this.getLangMatch(url, this.getLangPattern);
-        if (currentLang != null && this.supportedLangs.contains(currentLang)) {
-            url = this.removeLang(url, currentLang.code);
+    String convertToTargetLanguage(String url, Lang targetLang) {
+        if (targetLang == this.defaultLang) {
+            return this.convertToDefaultLanguage(url);
         }
-        return this.insertLang(url, lang.code);
+
+        String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
+        Lang currentLang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
+        if (currentLang != null) {
+            String newUrl = this.removeLang(url, currentLang);
+            return this.insertLang(newUrl, targetLang);
+        } else if (this.languageAliases.hasAliasForDefaultLang) {
+            // Default language has a language alias but the input URL domain does not
+            // include a language identifier, so we cannot convert the URL language.
+            return url;
+        } else {
+            return this.insertLang(url, targetLang);
+        }
     }
 
-    private String removeLang(String url, String lang) {
-        if (lang.isEmpty()) return url;
+    private String removeLang(String url, Lang lang) {
+        String langCode = this.languageAliases.getAliasFromLanguage(lang);
 
-        return Pattern.compile("(^|(//))" + lang + "\\.", Pattern.CASE_INSENSITIVE)
+        return Pattern.compile("(^|(//))" + langCode + "\\.", Pattern.CASE_INSENSITIVE)
                       .matcher(url).replaceFirst("$1");
     }
 
-    private String insertLang(String url, String lang) {
+    private String insertLang(String url, Lang lang) {
+        String langCode = this.languageAliases.getAliasFromLanguage(lang);
         if (url.contains("://")) {
-            return url.replaceFirst("://", "://" + lang + ".");
+            return url.replaceFirst("://", "://" + langCode + ".");
         } else if (url.startsWith("/")) {
             return url;
         } else {
-            return lang + "." + url;
+            return langCode + "." + url;
         }
     }
 

@@ -1,55 +1,60 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+/*
+ * Note: For query pattern, language alias for default language has no meaning.
+ * Setting it will not cause errors, but it will never be used for default language.
+ */
 class QueryUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
     private Lang defaultLang;
-    private ArrayList<Lang> supportedLangs;
+    private LanguageAliases languageAliases;
     private Pattern getLangPattern;
     private Pattern hasQueryPattern;
 
-    QueryUrlLanguagePatternHandler(Lang defaultLang, ArrayList<Lang> supportedLangs) {
+    QueryUrlLanguagePatternHandler(Lang defaultLang, LanguageAliases languageAliases) {
         this.defaultLang = defaultLang;
-        this.supportedLangs = supportedLangs;
+        this.languageAliases = languageAliases;
         this.getLangPattern = this.buildGetLangPattern();
         this.hasQueryPattern = Pattern.compile("\\?");
     }
 
     Lang getLang(String url) {
-        Lang lang = this.getLangMatch(url, this.getLangPattern);
-        return (lang != null && this.supportedLangs.contains(lang)) ? lang : null;
+        String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
+        Lang lang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
+        return (lang != null) ? lang : this.defaultLang;
     }
 
     String convertToDefaultLanguage(String url) {
-        Lang currentLang = this.getLang(url);
-        if (currentLang == null) {
-            return url;
-        } else {
-            return this.removeLang(url, currentLang.code);
-        }
+        String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
+        return (languageIdentifier != null) ? this.removeLangCode(url, languageIdentifier) : url;
     }
 
-    String convertToTargetLanguage(String url, Lang lang) {
-        Lang currentLang = this.getLangMatch(url, this.getLangPattern);
-        if (currentLang != null) {
-            url = this.removeLang(url, currentLang.code);
+    String convertToTargetLanguage(String url, Lang targetLang) {
+        if (targetLang == this.defaultLang) {
+            return this.convertToDefaultLanguage(url);
         }
-        return this.insertLang(url, lang.code);
+
+        String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
+        if (languageIdentifier != null) {
+            url = this.removeLangCode(url, languageIdentifier);
+        }
+        return this.insertLang(url, targetLang);
     }
 
-    private String removeLang(String url, String lang) {
-        if (lang.isEmpty()) return url;
+    private String removeLangCode(String url, String langCode) {
+        if (langCode.isEmpty()) return url;
 
-        return url.replaceFirst("(^|\\?|&)wovn=" + lang + "(&|$)", "$1")
+        return url.replaceFirst("(^|\\?|&)wovn=" + langCode + "(&|$)", "$1")
                   .replaceAll("(\\?|&)$", "");
     }
 
-    private String insertLang(String url, String lang) {
+    private String insertLang(String url, Lang lang) {
+        String langCode = this.languageAliases.getAliasFromLanguage(lang);
         if (this.hasQueryPattern.matcher(url).find()) {
-            return url + "&wovn=" + lang;
+            return url + "&wovn=" + langCode;
         } else {
-            return url + "?wovn=" + lang;
+            return url + "?wovn=" + langCode;
         }
     }
 

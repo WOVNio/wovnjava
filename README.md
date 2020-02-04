@@ -109,6 +109,7 @@ originalQueryStringHeader |          |
 ignoreClasses             |          |
 enableFlushBuffer         |          | false
 sitePrefixPath            |          |
+langCodeAliases           |          |
 customDomainLangs         |          |
 debugMode                 |          | false
 
@@ -266,7 +267,42 @@ Furthermore, it is highly recommended to also configure your `web.xml` with a co
 </filter-mapping>
 ```
 
-### 2.10. customDomainLangs
+### 2.10. langCodeAliases
+
+This setting lets you specify the language identifier for your supported languages.
+
+For example, the default language identifier for English is `en`, such that a URL for your page in English language may look like `http://site.com/en/page`.
+With `langCodeAliases`, you can change the language identifier to `us`, for example. The resulting URL would look like `http://site.com/us/page` instead.
+
+This setting is only valid for url patterns `path`, `query`, and `subdomain`.
+
+The format is as follows
+```
+FORMAT: <langCode>:<alias>,<langCode>:<alias>,...
+
+EXAMPLE: ja:japan,en:us
+```
+In `web.xml`, the configuration will look like this
+```xml
+<init-param>
+  <param-name>langCodeAliases</param-name>
+  <param-value>ja:japan,en:us</param-value>
+</init-param>
+```
+
+#### Alias for default language
+
+If your original content exists at a location that already includes a form of language code, you can make the WovnServletFilter treat this path or subdomain as a language code by configuring a language alias for your default language.
+
+To illustrate, here is an example:
+
+> Your content already exists at `http://site.com/jp/*`, and your default language is Japanese.
+>
+> You want the URLs for translated content in English to change the `/jp/` to `/en/`, such that `http://site.com/jp/home.html` becomes `http://site.com/en/home.html`.
+
+Achieve this result by configuring `jp` as an alias for Japanese.
+
+### 2.11. customDomainLangs
 
 This setting lets you define the domain and path that corresponds to each of your supported languages.
 
@@ -307,7 +343,7 @@ If this setting is used, each language declared in `supportedLangs` must be give
 Lastly, the path declared for your original language must match the structure of the underlying web server.
 In other words, you cannot use this setting to change the request path of your content in original language.
 
-### 2.11. debugMode
+### 2.12. debugMode
 
 A flag to enable extra debugging features.
 

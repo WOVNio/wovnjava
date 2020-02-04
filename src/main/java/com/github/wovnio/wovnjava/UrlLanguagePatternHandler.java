@@ -5,28 +5,45 @@ import java.util.regex.Matcher;
 
 abstract class UrlLanguagePatternHandler {
     /*
-     * Return the language declared by the url,
-     * or null if the url does not specify a valid language
+     * Return the language of the request.
+     *
+     * Return null if the given URL is outside the scope of URLs that wovnjava
+     * is configured to handle. Such a request should not be intercepted.
      */
     abstract Lang getLang(String url);
 
+    /*
+     * Return the input URL converted into its form in default language
+     *
+     * If the input URL cannot be intercepted (does not match "site prefix path"
+     * for example), return the input URL unchanged.
+     */
     abstract String convertToDefaultLanguage(String url);
 
+    /*
+     * Return the input URL converted into the declared target language
+     *
+     * If the input URL cannot be intercepted (does not match "site prefix path"
+     * for example), return the input URL unchanged.
+     */
     abstract String convertToTargetLanguage(String url, Lang lang);
 
-    public boolean canInterceptUrl(String url) {
-        return true;
-    }
-
+    /*
+     * Return true if the input URL is identified as being in original language
+     * but another form of the URL is preferred, such that the server should send
+     * a HTTP 302 redirect to the preferred URL for the resource.
+     *
+     * (Currently only relevant for explicitly declared default language in path pattern.)
+     */
     public boolean shouldRedirectExplicitDefaultLangUrl(String url) {
         return false;
     }
 
-    protected Lang getLangMatch(String url, Pattern pattern) {
+    protected String findLanguageIdentifier(String url, Pattern pattern) {
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {
             String langMatch = matcher.group(1);
-            return Lang.get(langMatch);
+            if (!langMatch.isEmpty()) return langMatch;
         }
         return null;
     }

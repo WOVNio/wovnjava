@@ -25,7 +25,7 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveWovnSnippet() throws ConfigurationError {
-        String original = "<html><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script></head><body></body></html>";
+        String original = "<html><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script></head><body></body></html>";
         String removedHtml = "<html><head></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
@@ -111,7 +111,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testConvertWithSitePrefixPath() throws ConfigurationError {
         String original = "<html><head></head><body></body></html>";
-        String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + Settings.VERSION + "&amp;sitePrefixPath=global\" data-wovnio-type=\"fallback\" async></script>";
+        String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=path&amp;version=" + Settings.VERSION + "&amp;sitePrefixPath=global\" data-wovnio-type=\"fallback\" async></script>";
         String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/global/tokyo/\">" +
                                    "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/en/tokyo/\">" +
                                    "<link ref=\"alternate\" hreflang=\"th\" href=\"https://site.com/global/th/tokyo/\">";
@@ -130,9 +130,29 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(expectedHtml, converter.convert("ja"));
     }
 
+    public void testConvert__HasLangCodeAliasSetting() throws ConfigurationError {
+        String original = "<html><head></head><body></body></html>";
+        String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=path&amp;version=" + Settings.VERSION + "&amp;langCodeAliases={&quot;en&quot;:&quot;en&quot;,&quot;ja&quot;:&quot;japan&quot;}\" data-wovnio-type=\"fallback\" async></script>";
+        String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/japan/tokyo\">" +
+                                   "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/en/tokyo\">";
+        String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
+        String expectedHtml = "<html><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
+
+        HashMap<String, String> option = new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ja,en");
+            put("urlPattern", "path");
+            put("langCodeAliases", "en:en,ja:japan");
+        }};
+        Settings settings = TestUtil.makeSettings(option);
+        HtmlConverter converter = this.createHtmlConverter(settings, "https://site.com/japan/tokyo", original);
+
+        assertEquals(expectedHtml, converter.convert("ja"));
+    }
+
     public void testConvertWithCustomDomain() throws ConfigurationError {
         String original = "<html><head></head><body></body></html>";
-        String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=custom_domain&amp;langCodeAliases={}&amp;version=" + Settings.VERSION + "&amp;customDomainLangs={&quot;site.com/english/&quot;:&quot;en&quot;,&quot;site.co.jp/&quot;:&quot;ja&quot;}\" data-wovnio-type=\"fallback\" async></script>";
+        String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=custom_domain&amp;version=" + Settings.VERSION + "&amp;customDomainLangs={&quot;site.com/english/&quot;:&quot;en&quot;,&quot;site.co.jp/&quot;:&quot;ja&quot;}\" data-wovnio-type=\"fallback\" async></script>";
         String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.co.jp/tokyo\">" +
                                    "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/english/tokyo\">";
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
@@ -152,7 +172,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testMixAllCase() throws ConfigurationError {
         String original = "<html><head>" +
-            "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script>" +
+            "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script>" +
             "<script>alert(1)</script>" +
             "<link ref=\"altername\" hreflang=\"en\" href=\"http://localhost:8080/\"><link ref=\"altername\" hreflang=\"ja\" href=\"http://localhost:8080/ja/\"><link ref=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\">" +
             "</head><body>" +
