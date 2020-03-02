@@ -5,3 +5,6 @@
 /.vagrant/
 .idea/
 *.swp
+
+docker/java7/hello/target
+docker/java8/hello/target
