@@ -1,0 +1,18 @@
+version: '3'
+services:
+  tomcat-jdk6:
+    container_name: wovnjava-tomcat-jdk6
+    image: "wiwai/tomcat:7-jdk6"
+    ports:
+      - 8080:8080
+    volumes:
+      - ./hello/target:/usr/local/tomcat/webapps
+
+  ## ngrok allows you to expose a web server running on your local machine to the internet,
+  ## Access to http://127.0.0.1:4040 , Ngrok Web Interface.
+  ngrok:
+    container_name: wovnjava-ngrok
+    image: lukaszlach/ngrok
+    ports:
+      - 4040:4040
+    command: [ ngrok, http, "tomcat-jdk6:8080", --log, /dev/stdout, --log-format, term ]
