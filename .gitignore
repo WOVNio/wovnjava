@@ -5,3 +5,7 @@
 /.vagrant/
 .idea/
 *.swp
+
+.classpath
+.project
+.settings
