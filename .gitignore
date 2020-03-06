@@ -9,3 +9,5 @@
 .classpath
 .project
 .settings
+docker/java6/hello/target
+docker/java6/hello/lib
