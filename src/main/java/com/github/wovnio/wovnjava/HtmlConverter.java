@@ -162,8 +162,9 @@ class HtmlConverter {
     }
 
     private void replaceNodeToMarkerComment(Element element) {
-        Comment comment = new Comment(WOVN_MARKER_PREFIX + String.valueOf(markers.size()));
-        element.replaceWith(comment);
+        String commentData = WOVN_MARKER_PREFIX + String.valueOf(markers.size());
+        element.before("<!--" + commentData + "-->");
+        element.remove();
         markers.add(restore(element.outerHtml())); // restore original text if element has marker
     }
 
