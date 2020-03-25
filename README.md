@@ -341,7 +341,7 @@ _Note that `wovnCacheDisable` and `wovnDebugMode` is only available when debugMo
 
 A flag to control whether or not to show wovnjava version number in the `X-Wovn-Handler` HTTP response header.
 
-Turn off showVersion by setting the parameter to false.
+Hide wovnjava version number from HTTP header by setting `showVersion` to false.
 ```XML
 <init-param>
   <param-name>showVersion</param-name>
