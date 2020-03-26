@@ -111,6 +111,7 @@ enableFlushBuffer         |          | false
 sitePrefixPath            |          |
 customDomainLangs         |          |
 debugMode                 |          | false
+showVersion               |          | true
 
 ### 2.1. projectToken (required)
 
@@ -335,6 +336,18 @@ Using `wovnDebugMode` as a query parameter will activate embedded debug informat
 This is intended to better understand what the problem is if something is not working correctly with wovnjava on your server.
 
 _Note that `wovnCacheDisable` and `wovnDebugMode` is only available when debugMode is turned on in your wovnjava configuration._
+
+### 2.12. showVersion
+
+A flag to control whether or not to show wovnjava version number in the `X-Wovn-Handler` HTTP response header.
+
+Hide wovnjava version number from HTTP header by setting `showVersion` to false.
+```XML
+<init-param>
+  <param-name>showVersion</param-name>
+  <param-value>false</param-value>
+</init-param>
+```
 
 ## Supported Langauges
 

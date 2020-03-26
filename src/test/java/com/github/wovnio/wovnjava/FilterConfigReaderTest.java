@@ -83,6 +83,28 @@ public class FilterConfigReaderTest extends TestCase {
         assertEquals(false, reader.getBoolParameterDefaultFalse("0"));
     }
 
+    public void testGetBoolParameterDefaultTrue() {
+        FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {
+            {
+                put("off", "off");
+                put("false", "false");
+                put("1", "1");
+                put("0", "0");
+                put("empty-string", "");
+            }
+        });
+        FilterConfigReader reader = new FilterConfigReader(config);
+
+        assertEquals(false, reader.getBoolParameterDefaultTrue("off"));
+        assertEquals(false, reader.getBoolParameterDefaultTrue("false"));
+        assertEquals(false, reader.getBoolParameterDefaultTrue("0"));
+
+        assertEquals(true, reader.getBoolParameterDefaultTrue(null));
+        assertEquals(true, reader.getBoolParameterDefaultTrue("not-set"));
+        assertEquals(true, reader.getBoolParameterDefaultTrue("empty-string"));
+        assertEquals(true, reader.getBoolParameterDefaultTrue("1"));
+    }
+
     public void testGetArrayParameter() {
         FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
             put("empty-string", "");

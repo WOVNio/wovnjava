@@ -21,6 +21,7 @@ public class WovnServletFilter implements Filter {
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
     private FileExtensionMatcher fileExtensionMatcher;
     private final HtmlChecker htmlChecker = new HtmlChecker();
+    private String wovnHandlerHeaderValue;
 
     public static final String VERSION = Settings.VERSION;  // for backward compatibility
 
@@ -30,6 +31,7 @@ public class WovnServletFilter implements Filter {
             this.settings = new Settings(config);
             this.urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
             this.fileExtensionMatcher = new FileExtensionMatcher();
+            this.wovnHandlerHeaderValue = this.getWovnHandlerHeaderValue();
         } catch (ConfigurationError e) {
             throw new ServletException("WovnServletFilter ConfigurationError: " + e.getMessage() + " (See WovnServletFilter instructions at https://github.com/WOVNio/wovnjava)");
         }
@@ -41,7 +43,7 @@ public class WovnServletFilter implements Filter {
         if (((HttpServletResponse)response).containsHeader("X-Wovn-Handler")) {
             isRequestAlreadyProcessed = true;
         } else {
-            ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
+            ((HttpServletResponse) response).setHeader("X-Wovn-Handler", this.wovnHandlerHeaderValue);
         }
 
         RequestOptions requestOptions = new RequestOptions(this.settings, request);
@@ -112,4 +114,13 @@ public class WovnServletFilter implements Filter {
             out.close();
         }
     }
+
+    private String getWovnHandlerHeaderValue() {
+        if (this.settings.showVersion) {
+            return "wovnjava_" + Settings.VERSION;
+        } else {
+            return "wovnjava";
+        }
+    }
+
 }

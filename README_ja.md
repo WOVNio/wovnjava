@@ -162,3 +162,14 @@ wovnjava は下記の設定で書き換え前の URL を使って、正しい翻
 ※ 上記のリクエストヘッダ設定のサンプルは、下記ページから引用しています。
 
 https://coderwall.com/p/jhkw7w/passing-request-uri-into-request-header
+
+### 2.7. showVersion
+
+showVersion を `false` に設定すると、`X-Wovn-Hander`のバージョン番号を隠すことができます。
+```XML
+<init-param>
+  <param-name>showVersion</param-name>
+  <param-value>false</param-value>
+</init-param>
+```
+

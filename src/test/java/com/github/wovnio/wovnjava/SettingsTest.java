@@ -38,6 +38,7 @@ public class SettingsTest extends TestCase {
         assertEquals(false, s.debugMode);
         assertEquals(false, s.useProxy);
         assertEquals(false, s.enableFlushBuffer);
+        assertEquals(true, s.showVersion);
 
         assertEquals("", s.sitePrefixPath);
         assertEquals("", s.originalUrlHeader);
@@ -214,12 +215,14 @@ public class SettingsTest extends TestCase {
             put("debugMode", "on");
             put("useProxy", "1");
             put("enableFlushBuffer", "false");
+            put("showVersion", "false");
         }});
         Settings s = new Settings(config);
         assertEquals(true, s.devMode);
         assertEquals(true, s.debugMode);
         assertEquals(true, s.useProxy);
         assertEquals(false, s.enableFlushBuffer);
+        assertEquals(false, s.showVersion);
     }
 
     public void testSitePrefixPath__DeclareEmptyString__UseEmptyString() throws ConfigurationError {

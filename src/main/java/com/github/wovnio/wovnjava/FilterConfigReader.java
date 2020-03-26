@@ -43,6 +43,15 @@ class FilterConfigReader {
         return param.equals("on") || param.equals("true") || param.equals("1");
     }
 
+    boolean getBoolParameterDefaultTrue(String paramName) {
+        String param = this.config.getInitParameter(paramName);
+        if (param == null) {
+            return true;
+        }
+        param = param.trim().toLowerCase();
+        return !(param.equals("off") || param.equals("false") || param.equals("0"));
+    }
+
     ArrayList<String> getArrayParameter(String paramName) {
         String param = this.getStringParameter(paramName);
         ArrayList<String> al = new ArrayList<String>();

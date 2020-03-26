@@ -28,6 +28,7 @@ class Settings {
     public final boolean debugMode;
     public final boolean useProxy;
     public final boolean enableFlushBuffer;
+    public final boolean showVersion;
 
     public final String sitePrefixPath;
     public final CustomDomainLanguages customDomainLanguages;
@@ -56,6 +57,7 @@ class Settings {
         this.debugMode = reader.getBoolParameterDefaultFalse("debugMode");
         this.useProxy = reader.getBoolParameterDefaultFalse("useProxy");
         this.enableFlushBuffer = reader.getBoolParameterDefaultFalse("enableFlushBuffer");
+        this.showVersion = reader.getBoolParameterDefaultTrue("showVersion");
 
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
         this.customDomainLanguages = parseCustomDomainLangs(reader.getStringParameter("customDomainLangs"), this.supportedLangs);
@@ -175,6 +177,7 @@ class Settings {
         md.update(useProxy ? new byte[]{ 0 } : new byte[] { 1 });
         md.update(originalUrlHeader.getBytes());
         md.update(originalQueryStringHeader.getBytes());
+        md.update(showVersion ? new byte[] { 0 } : new byte[] { 1 });
         byte[] digest = md.digest();
         return DatatypeConverter.printHexBinary(digest).toUpperCase();
     }
