@@ -83,6 +83,7 @@ public class InterceptorTest extends TestCase {
 
     private Api mockApiTimeout() {
         Api mock = EasyMock.createMock(Api.class);
+        EasyMock.expect(mock.getDebugMode()).andReturn(false);
         try {
             EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andThrow(new ApiException("SocketTimeoutException", "")).atLeastOnce();
         } catch (ApiException _) {

@@ -32,7 +32,11 @@ class Interceptor {
             responseHeaders.setApiStatus("Success");
             return converter.restore(translatedBody);
         } catch (ApiException e) {
-            responseHeaders.setApiStatus(e.getType());
+            if (this.api.getDebugMode())  {
+                responseHeaders.setApiStatus(e.getType() + ": " + e.getDetails());
+            } else {
+                responseHeaders.setApiStatus(e.getType());
+            }
             Logger.log.error("ApiException", e);
             return apiTranslateFail(body, lang);
         }

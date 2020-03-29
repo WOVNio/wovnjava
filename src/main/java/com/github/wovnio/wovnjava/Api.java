@@ -101,6 +101,10 @@ class Api {
         }
     }
 
+    Boolean getDebugMode() {
+        return this.requestOptions.getDebugMode();
+    }
+
     private ByteArrayOutputStream gzipStream(byte[] input) throws IOException, UnsupportedEncodingException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         GZIPOutputStream gz = new GZIPOutputStream(buffer);
@@ -142,6 +146,11 @@ class Api {
         appendKeyValue(sb, "&version=", Settings.VERSION);
         appendKeyValue(sb, "&debug_mode=", String.valueOf(this.requestOptions.getDebugMode()));
         appendKeyValue(sb, "&body=", body);
+
+        if (this.requestOptions.getDebugMode()) {
+            Logger.log.info("ApiBody: " + sb.toString());
+        }
+
         return sb.toString();
     }
 
@@ -166,6 +175,11 @@ class Api {
             appendValue(sb, String.valueOf(System.currentTimeMillis()));
         }
         appendValue(sb, ")");
+
+        if (this.requestOptions.getDebugMode()) {
+            Logger.log.info("ApiUrl: " + sb.toString());
+        }
+
         return new URL(sb.toString());
     }
 
