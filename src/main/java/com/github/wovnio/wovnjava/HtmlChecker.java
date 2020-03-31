@@ -24,6 +24,14 @@ class HtmlChecker {
         return isHtml(head) && !isAmp(head);
     }
 
+    public boolean isTextContentType(String type) {
+        return type == null
+            || type.toLowerCase().contains("text")
+            || type.toLowerCase().contains("html")
+            || type.toLowerCase().contains("application/json")
+            || type.toLowerCase().contains("application/javascript");
+    }
+
     private boolean isAmp(String head) {
         Element element = Jsoup.parse(head).getElementsByTag("html").first();
         return element != null && (element.hasAttr("amp") || element.hasAttr("⚡"));
