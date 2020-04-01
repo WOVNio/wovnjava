@@ -25,10 +25,12 @@ class HtmlChecker {
     }
 
     public boolean isTextContentType(String type) {
+        if (type == null)
+            return true;
+
         String contentType = type.toLowerCase();
 
-        return type == null
-            || contentType.contains("text")
+        return contentType.contains("text")
             || contentType.contains("html")
             || contentType.contains("application/json")
             || contentType.contains("application/javascript");
