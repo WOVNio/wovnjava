@@ -25,11 +25,13 @@ class HtmlChecker {
     }
 
     public boolean isTextContentType(String type) {
+        String contentType = type.toLowerCase();
+
         return type == null
-            || type.toLowerCase().contains("text")
-            || type.toLowerCase().contains("html")
-            || type.toLowerCase().contains("application/json")
-            || type.toLowerCase().contains("application/javascript");
+            || contentType.contains("text")
+            || contentType.contains("html")
+            || contentType.contains("application/json")
+            || contentType.contains("application/javascript");
     }
 
     private boolean isAmp(String head) {
