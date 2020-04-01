@@ -89,8 +89,9 @@ public class WovnServletFilter implements Filter {
             wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, wovnResponse);
         }
 
-        String originalBody = wovnResponse.toString();
-        if (originalBody != null) {
+        if (htmlChecker.isTextContentType(response.getContentType())) {
+            String originalBody = wovnResponse.toString();
+
             // text
             String body = null;
             if (htmlChecker.canTranslate(response.getContentType(), originalBody)) {
@@ -98,13 +99,12 @@ public class WovnServletFilter implements Filter {
                 Api api = new Api(settings, headers, requestOptions, responseHeaders);
                 Interceptor interceptor = new Interceptor(headers, settings, api, responseHeaders);
                 body = interceptor.translate(originalBody);
-
-                wovnResponse.setCharacterEncoding("utf-8");
             } else {
                 // css, javascript or others
                 body = originalBody;
             }
             wovnResponse.setContentLength(body.getBytes().length);
+            wovnResponse.setCharacterEncoding("utf-8");
             PrintWriter out = response.getWriter();
             out.write(body);
             out.close();

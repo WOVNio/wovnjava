@@ -59,4 +59,19 @@ public class HtmlCheckerTest extends TestCase {
         assertEquals(expect, htmlChecker.canTranslateContent("<!-- comment -->" + prefix + template));
         assertEquals(expect, htmlChecker.canTranslateContent("<!-- comment -->\n " + prefix + template));
     }
+
+    public void testIsTextContentType() {
+        assertEquals(true, htmlChecker.isTextContentType(null));
+        assertEquals(true, htmlChecker.isTextContentType("html"));
+        assertEquals(true, htmlChecker.isTextContentType("text/html"));
+        assertEquals(true, htmlChecker.isTextContentType("text/xhtml"));
+        assertEquals(true, htmlChecker.isTextContentType("text/plain"));
+        assertEquals(true, htmlChecker.isTextContentType("text/javascript"));
+        assertEquals(true, htmlChecker.isTextContentType("application/json"));
+        assertEquals(true, htmlChecker.isTextContentType("application/javascript"));
+        assertEquals(false, htmlChecker.isTextContentType("image/png"));
+        assertEquals(false, htmlChecker.isTextContentType("image/jpeg"));
+        assertEquals(false, htmlChecker.isTextContentType("image/gif"));
+    }
+
 }
