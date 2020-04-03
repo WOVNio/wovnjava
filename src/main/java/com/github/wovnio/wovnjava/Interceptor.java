@@ -33,17 +33,27 @@ class Interceptor {
             return converter.restore(translatedBody);
         } catch (ApiException e) {
             if (this.api.getDebugMode())  {
-                responseHeaders.setApiStatus(e.getType() + ": " + e.getDetails());
+                responseHeaders.setErrorMessage(e.getType() + ": " + e.getDetails());
+                System.err.println(e);
+                Logger.log.error("ApiException", e);
+                if (e.getErrorBody() != null) {
+                    return e.getErrorBody();
+                }
+                return apiTranslateFail(body, lang, e);
             } else {
                 responseHeaders.setApiStatus(e.getType());
+                Logger.log.error("ApiException", e);
             }
-            Logger.log.error("ApiException", e);
             return apiTranslateFail(body, lang);
         }
     }
 
     private String apiTranslateFail(String body, String lang) {
         return new HtmlConverter(this.settings, this.headers, body).convert(lang);
+    }
+
+    private String apiTranslateFail(String body, String lang, ApiException e) {
+        return new HtmlConverter(this.settings, this.headers, body, e).convert(lang);
     }
 
     private String localTranslate(String lang, String body) {

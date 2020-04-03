@@ -13,6 +13,7 @@ import net.arnx.jsonic.JSON;
 class ResponseHeaders {
     private static final String apiStatusHeaderName = "X-Wovn-Api-Status";
     private static final String apiStatusCodeHeaderName = "X-Wovn-Api-StatusCode";
+    private static final String errorMessageHeaderName = "X-WovnJava-Error";
     private static final Map<String, String> fastlyHeaders;
     static {
         Map<String, String> headers = new HashMap<String, String>();
@@ -34,6 +35,10 @@ class ResponseHeaders {
 
     public void setApiStatusCode(String value) {
         this.response.setHeader(ResponseHeaders.apiStatusCodeHeaderName, value);
+    }
+
+    public void setErrorMessage(String value) {
+        this.response.setHeader(ResponseHeaders.errorMessageHeaderName, value);
     }
 
     public void forwardFastlyHeaders(HttpURLConnection con) {

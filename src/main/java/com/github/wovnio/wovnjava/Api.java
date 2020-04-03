@@ -39,10 +39,12 @@ class Api {
         this.responseHeaders.setApiStatus("Requested");
         HttpURLConnection con = null;
         try {
+            this.responseHeaders.setApiStatus("ConnectStart");
             URL url = getApiUrl(lang, html);
             con = (HttpURLConnection) url.openConnection();
             con.setConnectTimeout(settings.connectTimeout);
             con.setReadTimeout(settings.readTimeout);
+            this.responseHeaders.setApiStatus("Connected");
             return translate(lang, html, con);
         } catch (UnsupportedEncodingException e) {
             throw new ApiException("UnsupportedEncodingException", e.getMessage());
@@ -62,16 +64,19 @@ class Api {
     String translate(String lang, String html, HttpURLConnection con) throws ApiException {
         OutputStream out = null;
         try {
+            this.responseHeaders.setApiStatus("RequestBodyPrepare");
             ByteArrayOutputStream body = gzipStream(getApiBody(lang, html).getBytes());
             con.setDoOutput(true);
             con.setRequestProperty("Accept-Encoding", "gzip");
             con.setRequestProperty("Content-Type", "application/octet-stream");
             con.setRequestProperty("Content-Length", String.valueOf(body.size()));
             con.setRequestMethod("POST");
+            this.responseHeaders.setApiStatus("RequestBodyOutput");
             out = con.getOutputStream();
             body.writeTo(out);
             out.close();
             out = null;
+            this.responseHeaders.setApiStatus("ResponseWaiting");
             this.responseHeaders.forwardFastlyHeaders(con);
             int status = con.getResponseCode();
             this.responseHeaders.setApiStatusCode(String.valueOf(status));
@@ -89,7 +94,24 @@ class Api {
         } catch (SocketTimeoutException e) {
             throw new ApiException("SocketTimeoutException", e.getMessage());
         } catch (IOException e) {
-            throw new ApiException("IOException", e.getMessage());
+
+            String body = null;
+            try {
+                InputStream errorStream = con.getErrorStream();
+                if (errorStream != null) {
+                    if ("gzip".equals(con.getContentEncoding())) {
+                        errorStream = new GZIPInputStream(errorStream);
+                    }
+                    body = readToString(errorStream);
+                }
+            } catch (IOException errException) {
+                System.err.println(errException);
+            }
+            if (body != null) {
+                throw new ApiException("IOException", e.getMessage(), body);
+            } else {
+                throw new ApiException("IOException", e.getMessage());
+            }
         } finally {
             if (out != null) {
                 try {
@@ -114,6 +136,18 @@ class Api {
             gz.close();
         }
         return buffer;
+    }
+
+    private String readToString(InputStream input) throws IOException, UnsupportedEncodingException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buffer = new byte[READ_BUFFER_SIZE];
+        int len = 0;
+        while ((len = input.read(buffer)) > 0) {
+            out.write(buffer, 0, len);
+        }
+        input.close();
+
+        return out.toString(responseEncoding);
     }
 
     private String extractHtml(InputStream input) throws ApiException, IOException, UnsupportedEncodingException {

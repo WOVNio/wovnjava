@@ -137,6 +137,8 @@ public class ApiTest extends TestCase {
         EasyMock.expectLastCall().times(1);
         mock.setApiStatusCode("200");
         EasyMock.expectLastCall().times(1);
+        mock.setApiStatus(EasyMock.anyString());
+        EasyMock.expectLastCall().times(0, 10);
         EasyMock.replay(mock);
         return mock;
     }

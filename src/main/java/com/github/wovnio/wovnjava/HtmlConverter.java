@@ -17,12 +17,18 @@ class HtmlConverter {
     private final Document doc;
     private final Settings settings;
     private final HashMap<String, String> hreflangMap;
+    private Exception exception;
 
     HtmlConverter(Settings settings, Headers headers, String original) {
         this.settings = settings;
         this.hreflangMap = headers.getHreflangUrlMap();
         doc = Jsoup.parse(original);
         doc.outputSettings().prettyPrint(false);
+    }
+
+    HtmlConverter(Settings settings, Headers headers, String original, Exception error) {
+        this(settings, headers, original);
+        this.exception = error;
     }
 
     String strip() {
@@ -35,6 +41,10 @@ class HtmlConverter {
     }
 
     String convert(String lang) {
+        if (this.exception != null) {
+            doc.body().append("<!-- " + this.exception + " -->");
+        }
+
         removeSnippet();
         removeHrefLangIfConflicts();
         appendSnippet(lang);
