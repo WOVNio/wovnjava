@@ -29,6 +29,11 @@ public class FileExtensionMatcherTest extends TestCase {
         assertIsFile(true, "pdf");
         assertIsFile(true, "js");
         assertIsFile(true, "css");
+        assertIsFile(true, "doc");
+        assertIsFile(true, "docx");
+        assertIsFile(true, "xls");
+        assertIsFile(true, "xlsx");
+        assertIsFile(true, "xlsm");
         assertIsFile(false, "unknown");
     }
 
