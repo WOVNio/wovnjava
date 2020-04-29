@@ -377,34 +377,78 @@ _Note that `wovnCacheDisable` and `wovnDebugMode` is only available when debugMo
 
 Language code | Language name | Name in English
 ---|---|---
-ar | ﺎﻠﻋﺮﺒﻳﺓ | Arabic
+ar | العربية | Arabic
+eu | Euskara | Basque
+bn | বাংলা ভাষা | Bengali
 bg | Български | Bulgarian
+ca | Català | Catalan
 zh-CHS | 简体中文 | Simp Chinese
 zh-CHT | 繁體中文 | Trad Chinese
+zh-CN | 简体中文（中国） | Simp Chinese (China)
+zh-Hant-HK | 繁體中文（香港） | Trad Chinese (Hong Kong)
+zh-Hant-TW | 繁體中文（台湾） | Trad Chinese (Taiwan)
 da | Dansk | Danish
 nl | Nederlands | Dutch
 en | English | English
+en-AU | English (Australia) | English (Australia)
+en-CA | English (Canada) | English (Canada)
+en-IN | English (India) | English (India)
+en-NZ | English (New Zealand) | English (New Zealand)
+en-ZA | English (South Africa) | English (South Africa)
+en-GB | English (United Kingdom) | English (United Kingdom)
+en-SG | English (Singapore) | English (Singapore)
+en-US | English (United States) | English (United States)
 fi | Suomi | Finnish
 fr | Français | French
+fr-CA | Français (Canada) | French (Canada)
+fr-FR | Français (France) | French (France)
+fr-CH | Français (Suisse) | French (Switzerland)
+gl | Galego | Galician
 de | Deutsch | German
+de-AT | Deutsch (Österreich) | German (Austria)
+de-DE | Deutsch (Deutschland) | German (Germany)
+de-LI | Deutsch (Liechtenstien) | German (Liechtenstien)
+de-CH | Deutsch (Schweiz) | German (Switzerland)
 el | Ελληνικά | Greek
 he | עברית | Hebrew
-id | Bahasa | Indonesian
+hu | Magyar | Hungarian
+id | Bahasa Indonesia | Indonesian
 it | Italiano | Italian
+it-IT | Italiano (Italia) | Italian (Italy)
+it-CH | Italiano (Svizzera) | Italian (Switzerland)
 ja | 日本語 | Japanese
 ko | 한국어 | Korean
-ms | Bahasa | Malay
+lv | Latviešu | Latvian
+ms | Bahasa Melayu | Malay
 my | ဗမာစာ | Burmese
 ne | नेपाली भाषा | Nepali
 no | Norsk | Norwegian
+fa | زبان_فارسی | Persian
 pl | Polski | Polish
 pt | Português | Portuguese
+pt-BR | Português (Brasil) | Portuguese (Brazil)
+pt-PT | Português (Portugal) | Portuguese (Portugal)
 ru | Русский | Russian
 es | Español | Spanish
+es-RA | Español (Argentina) | Spanish (Argentina)
+es-CL | Español (Chile) | Spanish (Chile)
+es-CO | Español (Colombia) | Spanish (Colombia)
+es-CR | Español (Costa Rica) | Spanish (Costa Rica)
+es-HN | Español (Honduras) | Spanish (Honduras)
+es-419 | Español (Latinoamérica) | Spanish (Latin America)
+es-MX | Español (México) | Spanish (Mexico)
+es-PE | Español (Perú) | Spanish (Peru)
+es-ES | Español (España) | Spanish (Spain)
+es-US | Español (Estados Unidos) | Spanish (United States)
+es-UY | Español (Uruguay) | Spanish (Uruguay)
+es-VE | Español (Venezuela) | Spanish (Venezuela)
+sw | Kiswahili | Swahili
 sv | Svensk | Swedish
+tl | Tagalog | Tagalog
 th | ภาษาไทย | Thai
 hi | हिन्दी | Hindi
 tr | Türkçe | Turkish
 uk | Українська | Ukrainian
-vi | Tiếng | Vietnamese
+ur | اردو | Urdu
+vi | Tiếng Việt | Vietnamese
 tl | Tagalog | Tagalog
