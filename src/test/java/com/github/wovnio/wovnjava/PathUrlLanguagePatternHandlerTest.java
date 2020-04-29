@@ -94,7 +94,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.french, sut.getLang("en.site.com/fr/page/index.html?wovn=es"));
     }
 
-    public void testGetLang__MatchingPath__ValidSupportedLang__ReturnTargetLangObjectOfChinese() {
+    public void testGetLang__MatchingPath__ValidSupportedLangRegionalLang__ReturnTargetLangObject() {
         PathUrlLanguagePatternHandler sut = create("");
         assertEquals(this.chinese, sut.getLang("/zh-CHT"));
         assertEquals(this.chinese, sut.getLang("/zh-CHT/"));
