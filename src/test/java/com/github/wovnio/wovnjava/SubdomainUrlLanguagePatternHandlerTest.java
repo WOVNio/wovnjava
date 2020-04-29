@@ -11,32 +11,48 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     private Lang english;
     private Lang japanese;
     private Lang french;
+    private Lang chinese;
 
     private Lang defaultLang;
-    private LanguageAliases languageAliasesEmpty;
-    private LanguageAliases languageAliasesConfigured;
+    private ArrayList<Lang> supportedLangs;
 
     protected void setUp() throws Exception {
         this.english = Lang.get("en");
         this.japanese = Lang.get("ja");
         this.french = Lang.get("fr");
+        this.chinese = Lang.get("zh-cht");
 
-        this.defaultLang = this.english;
-        ArrayList<Lang> supportedLangs = new ArrayList<Lang>();
-        supportedLangs.add(this.english);
-        supportedLangs.add(this.japanese);
-        supportedLangs.add(this.french);
+        this.supportedLangs = new ArrayList<Lang>();
+        this.supportedLangs.add(this.english);
+        this.supportedLangs.add(this.japanese);
+        this.supportedLangs.add(this.french);
+        this.supportedLangs.add(this.chinese);
+    }
+
+    private SubdomainUrlLanguagePatternHandler create(Lang defaultLanguage) {
+        this.defaultLang = defaultLanguage;
 
         Map<Lang, String> langCodeAliasSetting = new LinkedHashMap<Lang, String>();
-        this.languageAliasesEmpty = new LanguageAliases(supportedLangs, langCodeAliasSetting, this.defaultLang);
+        LanguageAliases languageAliasesEmpty = new LanguageAliases(this.supportedLangs, langCodeAliasSetting,
+                this.defaultLang);
 
+        return new SubdomainUrlLanguagePatternHandler(this.defaultLang, languageAliasesEmpty);
+    }
+
+    private SubdomainUrlLanguagePatternHandler createWithAliases(Lang defaultLanguage) {
+        this.defaultLang = defaultLanguage;
+
+        Map<Lang, String> langCodeAliasSetting = new LinkedHashMap<Lang, String>();
         langCodeAliasSetting.put(this.english, "us");
         langCodeAliasSetting.put(this.japanese, "japan");
-        this.languageAliasesConfigured = new LanguageAliases(supportedLangs, langCodeAliasSetting, this.defaultLang);
+        LanguageAliases languageAliasesConfigured = new LanguageAliases(this.supportedLangs, langCodeAliasSetting,
+                this.defaultLang);
+
+        return new SubdomainUrlLanguagePatternHandler(this.defaultLang, languageAliasesConfigured);
     }
 
     public void testGetLang__NonMatchingSubdomain__ReturnDefaultLang() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty);
+        SubdomainUrlLanguagePatternHandler sut = create(this.english);
         assertEquals(this.defaultLang, sut.getLang("/"));
         assertEquals(this.defaultLang, sut.getLang("/en"));
         assertEquals(this.defaultLang, sut.getLang("/en/page"));
@@ -47,9 +63,23 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.defaultLang, sut.getLang("http://site.com"));
     }
 
+    public void testGetLang__NonMatchingSubdomain__ReturnDefaultLangByChinese() {
+        SubdomainUrlLanguagePatternHandler sut = create(this.chinese);
+        assertEquals(this.defaultLang, sut.getLang("/"));
+        assertEquals(this.defaultLang, sut.getLang("/zh-CHT"));
+        assertEquals(this.defaultLang, sut.getLang("/zh-CHT/page"));
+        assertEquals(this.defaultLang, sut.getLang("site.com/page/index.html"));
+        assertEquals(this.defaultLang, sut.getLang("site.com/zh-CHT/pre/fix/index.html"));
+        assertEquals(this.defaultLang, sut.getLang("/page?language=zh-CHT&wovn=fr"));
+        assertEquals(this.defaultLang, sut.getLang("deutsch.site.com/page"));
+        assertEquals(this.defaultLang, sut.getLang("http://site.com"));
+    }
+
     public void testGetLang__MatchingSubdomain__ValidSupportedLang__ReturnTargetLangObject() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty);
+        SubdomainUrlLanguagePatternHandler sut = create(this.english);
         assertEquals(this.english, sut.getLang("en.site.com"));
+        assertEquals(this.chinese, sut.getLang("zh-CHT.site.com"));
+        assertEquals(this.chinese, sut.getLang("zh-cht.site.com"));
         assertEquals(this.japanese, sut.getLang("ja.site.com/"));
         assertEquals(this.french, sut.getLang("fr.site.com/en/page/index.html?lang=it&wovn=en"));
         assertEquals(this.french, sut.getLang("http://fr.site.com/"));
@@ -57,7 +87,7 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testGetLang__MatchingSubdomain__NotSupportedLang__ReturnDefaultLang() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty);
+        SubdomainUrlLanguagePatternHandler sut = create(this.english);
         assertEquals(this.defaultLang, sut.getLang("th.site.com"));
         assertEquals(this.defaultLang, sut.getLang("es.site.com/"));
         assertEquals(this.defaultLang, sut.getLang("sv.site.com/en/page/index.html?lang=it&wovn=en"));
@@ -66,7 +96,7 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testGetLang__HasAliasForDefaultLang__NonMatchingSubdomain__ReturnNull() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesConfigured);
+        SubdomainUrlLanguagePatternHandler sut = createWithAliases(this.english);
         assertEquals(null, sut.getLang("/"));
         assertEquals(null, sut.getLang("/en"));
         assertEquals(null, sut.getLang("/en/page"));
@@ -80,16 +110,17 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testGetLang__HasLanguageAliases__MatchingSubdomain__ReturnTargetLangObject() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesConfigured);
+        SubdomainUrlLanguagePatternHandler sut = createWithAliases(this.english);
         assertEquals(this.english, sut.getLang("us.site.com"));
         assertEquals(this.japanese, sut.getLang("japan.site.com/"));
         assertEquals(this.french, sut.getLang("fr.site.com/en/page/index.html?lang=it&wovn=en"));
         assertEquals(this.french, sut.getLang("http://fr.site.com/"));
         assertEquals(this.japanese, sut.getLang("https://japan.site.com?wovn=fr"));
+        assertEquals(this.chinese, sut.getLang("https://zh-CHT.site.com?wovn=fr"));
     }
 
     public void testConvertToDefaultLanguage__NonMatchingSubdomain__DoNotModify() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty);
+        SubdomainUrlLanguagePatternHandler sut = create(this.english);
         assertEquals("/", sut.convertToDefaultLanguage("/"));
         assertEquals("/en/path/index.php", sut.convertToDefaultLanguage("/en/path/index.php"));
         assertEquals("?lang=english", sut.convertToDefaultLanguage("?lang=english"));
@@ -100,22 +131,23 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testConvertToDefaultLanguage__MatchingSubdomain__RemoveLangCode() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty);
+        SubdomainUrlLanguagePatternHandler sut = create(this.english);
         assertEquals("site.com", sut.convertToDefaultLanguage("en.site.com"));
+        assertEquals("site.com", sut.convertToDefaultLanguage("zh-CHT.site.com"));
         assertEquals("site.com/", sut.convertToDefaultLanguage("fr.site.com/"));
         assertEquals("http://site.com/", sut.convertToDefaultLanguage("http://fr.site.com/"));
         assertEquals("site.com/fr/index.html?lang=fr&wovn=fr", sut.convertToDefaultLanguage("fr.site.com/fr/index.html?lang=fr&wovn=fr"));
     }
 
     public void testConvertToDefaultLanguage__HasAliasForDefaultLang__NonMatchingSubdomain__DoNotModify() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesConfigured);
+        SubdomainUrlLanguagePatternHandler sut = createWithAliases(this.english);
         assertEquals("en.site.com", sut.convertToDefaultLanguage("en.site.com"));
         assertEquals("http://ja.site.com/", sut.convertToDefaultLanguage("http://ja.site.com/"));
         assertEquals("http://site.com/", sut.convertToDefaultLanguage("http://site.com/"));
     }
 
     public void testConvertToDefaultLanguage__HasAliasForDefaultLang__MatchingSubdomain__InsertDefaultLanguageAlias() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesConfigured);
+        SubdomainUrlLanguagePatternHandler sut = createWithAliases(this.english);
         assertEquals("us.site.com/", sut.convertToDefaultLanguage("fr.site.com/"));
         assertEquals("http://us.site.com/", sut.convertToDefaultLanguage("http://fr.site.com/"));
         assertEquals("http://us.site.com/", sut.convertToDefaultLanguage("http://japan.site.com/"));
@@ -123,10 +155,11 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testConvertToTargetLanguage() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty);
+        SubdomainUrlLanguagePatternHandler sut = create(this.english);
         assertEquals("/", sut.convertToTargetLanguage("/", this.japanese));
         assertEquals("/path/index.html", sut.convertToTargetLanguage("/path/index.html", this.japanese));
         assertEquals("ja.site.com?q=none", sut.convertToTargetLanguage("site.com?q=none", this.japanese));
+        assertEquals("zh-CHT.site.com?q=none", sut.convertToTargetLanguage("site.com?q=none", this.chinese));
         assertEquals("http://ja.site.com?q=none", sut.convertToTargetLanguage("http://site.com?q=none", this.japanese));
         assertEquals("https://ja.user13.sub.site.co.jp/home", sut.convertToTargetLanguage("https://user13.sub.site.co.jp/home", this.japanese));
         assertEquals("ja.site.com", sut.convertToTargetLanguage("ja.site.com", this.japanese));
@@ -135,7 +168,7 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testConvertToTargetLanguage__HasLanguageAliases() {
-        SubdomainUrlLanguagePatternHandler sut = new SubdomainUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesConfigured);
+        SubdomainUrlLanguagePatternHandler sut = createWithAliases(this.english);
         assertEquals("/", sut.convertToTargetLanguage("/", this.japanese));
         assertEquals("/path/index.html", sut.convertToTargetLanguage("/path/index.html", this.japanese));
         assertEquals("site.com?q=none", sut.convertToTargetLanguage("site.com?q=none", this.japanese));

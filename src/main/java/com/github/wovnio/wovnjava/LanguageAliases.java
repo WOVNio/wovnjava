@@ -26,8 +26,15 @@ class LanguageAliases {
     }
 
     public Lang getLanguageFromAlias(String alias) {
+        return getLanguageFromAlias(alias, false);
+    }
+
+    public Lang getLanguageFromAlias(String alias, Boolean IgnoreCaseSensitive) {
         for (Map.Entry<Lang, String> entry : this.langMap.entrySet()) {
             if (entry.getValue().equals(alias)) {
+                return entry.getKey();
+            }
+            if (IgnoreCaseSensitive && entry.getValue().equalsIgnoreCase(alias)) {
                 return entry.getKey();
             }
         }

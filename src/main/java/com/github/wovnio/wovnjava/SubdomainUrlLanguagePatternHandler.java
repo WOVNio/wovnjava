@@ -15,7 +15,7 @@ class SubdomainUrlLanguagePatternHandler extends UrlLanguagePatternHandler {
 
     Lang getLang(String url) {
         String languageIdentifier = this.findLanguageIdentifier(url, this.getLangPattern);
-        Lang lang = this.languageAliases.getLanguageFromAlias(languageIdentifier);
+        Lang lang = this.languageAliases.getLanguageFromAlias(languageIdentifier, true);
         if (lang != null) {
             return lang;
         } else if (this.languageAliases.hasAliasForDefaultLang) {
