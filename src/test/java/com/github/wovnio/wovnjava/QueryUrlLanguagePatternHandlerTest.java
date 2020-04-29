@@ -61,18 +61,6 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.defaultLang, sut.getLang("http://site.com?wovn="));
     }
 
-    public void testGetLang__NonMatchingQuery__ReturnDefaultLangByChinese() {
-        QueryUrlLanguagePatternHandler sut = create(this.chinese);
-        assertEquals(this.defaultLang, sut.getLang("/"));
-        assertEquals(this.defaultLang, sut.getLang("/zh-CHT"));
-        assertEquals(this.defaultLang, sut.getLang("/zh-CHT/page?wovn&zh-CHT"));
-        assertEquals(this.defaultLang, sut.getLang("site.com/page/index.html"));
-        assertEquals(this.defaultLang, sut.getLang("zh-cht.site.com/pre/fix/index.html"));
-        assertEquals(this.defaultLang, sut.getLang("/page?language=zh-CHT"));
-        assertEquals(this.defaultLang, sut.getLang("/en/?wovn=Nederlands"));
-        assertEquals(this.defaultLang, sut.getLang("http://site.com?wovn="));
-    }
-
     public void testGetLang__MatchingQuery__ValidSupportedLang__ReturnTargetLangObject() {
         QueryUrlLanguagePatternHandler sut = create(this.english);
         assertEquals(this.french, sut.getLang("?wovn=fr"));

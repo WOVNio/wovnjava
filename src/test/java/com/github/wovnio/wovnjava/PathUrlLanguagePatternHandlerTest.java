@@ -70,19 +70,6 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.defaultLang, sut.getLang("http://site.com/Suomi/page/index.html"));
     }
 
-    public void testGetLang__NonMatchingPath__ReturnDefaultLangByChinse() {
-        PathUrlLanguagePatternHandler sut = create(this.chinese, "");
-        assertEquals(this.defaultLang, sut.getLang(""));
-        assertEquals(this.defaultLang, sut.getLang("/"));
-        assertEquals(this.defaultLang, sut.getLang("?query"));
-        assertEquals(this.defaultLang, sut.getLang("/page"));
-        assertEquals(this.defaultLang, sut.getLang("site.com/page/index.html"));
-        assertEquals(this.defaultLang, sut.getLang("en.site.com/pre/fix/index.html"));
-        assertEquals(this.defaultLang, sut.getLang("/page?wovn=en"));
-        assertEquals(this.defaultLang, sut.getLang("site.com/French/"));
-        assertEquals(this.defaultLang, sut.getLang("http://site.com/Suomi/page/index.html"));
-    }
-
     public void testGetLang__MatchingPath__ValidSupportedLang__ReturnTargetLangObject() {
         PathUrlLanguagePatternHandler sut = create("");
         assertEquals(this.french, sut.getLang("/fr"));

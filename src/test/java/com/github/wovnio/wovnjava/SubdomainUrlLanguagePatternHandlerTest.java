@@ -63,18 +63,6 @@ public class SubdomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.defaultLang, sut.getLang("http://site.com"));
     }
 
-    public void testGetLang__NonMatchingSubdomain__ReturnDefaultLangByChinese() {
-        SubdomainUrlLanguagePatternHandler sut = create(this.chinese);
-        assertEquals(this.defaultLang, sut.getLang("/"));
-        assertEquals(this.defaultLang, sut.getLang("/zh-CHT"));
-        assertEquals(this.defaultLang, sut.getLang("/zh-CHT/page"));
-        assertEquals(this.defaultLang, sut.getLang("site.com/page/index.html"));
-        assertEquals(this.defaultLang, sut.getLang("site.com/zh-CHT/pre/fix/index.html"));
-        assertEquals(this.defaultLang, sut.getLang("/page?language=zh-CHT&wovn=fr"));
-        assertEquals(this.defaultLang, sut.getLang("deutsch.site.com/page"));
-        assertEquals(this.defaultLang, sut.getLang("http://site.com"));
-    }
-
     public void testGetLang__MatchingSubdomain__ValidSupportedLang__ReturnTargetLangObject() {
         SubdomainUrlLanguagePatternHandler sut = create(this.english);
         assertEquals(this.english, sut.getLang("en.site.com"));
