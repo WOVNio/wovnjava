@@ -205,6 +205,7 @@ https://coderwall.com/p/jhkw7w/passing-request-uri-into-request-header
 ### 2.7. ignoreClasses
 
 A comma-separated list of HTML classes for which you would like WOVN to skip the elements of.
+(This setting is used to prevent confidential data contained in the page to be translated from being sent to WOVN)
 
 Ignored elements and their contents will not be processed by WovnServletFilter, and will not be sent to Wovn.io for translation. (The elements will still be present in the resulting web page, however.)
 
