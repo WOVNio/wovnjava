@@ -74,12 +74,11 @@ public class LanguageAliasesTest extends TestCase {
         Map<Lang, String> langCodeAliases = new LinkedHashMap<Lang, String>();
         this.sut = new LanguageAliases(this.supportedLangs, langCodeAliases, this.english);
 
-        assertEquals(this.english, sut.getLanguageFromAlias("En", true));
-        assertEquals(this.italian, sut.getLanguageFromAlias("iT", true));
-        assertEquals(this.russian, sut.getLanguageFromAlias("RU", true));
-        assertEquals(this.chinese, sut.getLanguageFromAlias("zh-cht", true));
-        assertEquals(this.chinese, sut.getLanguageFromAlias("zh-CHT", true));
-        assertNotEquals(this.chinese, sut.getLanguageFromAlias("zh-cht", false));
+        assertEquals(this.english, sut.getLanguageFromAlias("En"));
+        assertEquals(this.italian, sut.getLanguageFromAlias("iT"));
+        assertEquals(this.russian, sut.getLanguageFromAlias("RU"));
+        assertEquals(this.chinese, sut.getLanguageFromAlias("zh-cht"));
+        assertEquals(this.chinese, sut.getLanguageFromAlias("zh-CHT"));
 
         assertEquals("en", sut.getAliasFromLanguage(this.english));
         assertEquals("it", sut.getAliasFromLanguage(this.italian));
