@@ -1,5 +1,7 @@
 package com.github.wovnio.wovnjava;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -11,6 +13,7 @@ public class LanguageAliasesTest extends TestCase {
     private Lang english;
     private Lang italian;
     private Lang russian;
+    private Lang chinese;
 
     private ArrayList<Lang> supportedLangs;
     private LanguageAliases sut;
@@ -19,11 +22,13 @@ public class LanguageAliasesTest extends TestCase {
         this.english = Lang.get("en");
         this.italian = Lang.get("it");
         this.russian = Lang.get("ru");
+        this.chinese = Lang.get("zh-cht");
 
         this.supportedLangs = new ArrayList<Lang>();
         this.supportedLangs.add(this.english);
         this.supportedLangs.add(this.italian);
         this.supportedLangs.add(this.russian);
+        this.supportedLangs.add(this.chinese);
     }
 
     public void testNoLangCodeAliases__IdentifyLanguageByLangCode() {
@@ -33,10 +38,12 @@ public class LanguageAliasesTest extends TestCase {
         assertEquals(this.english, sut.getLanguageFromAlias("en"));
         assertEquals(this.italian, sut.getLanguageFromAlias("it"));
         assertEquals(this.russian, sut.getLanguageFromAlias("ru"));
+        assertEquals(this.chinese, sut.getLanguageFromAlias("zh-CHT"));
 
         assertEquals("en", sut.getAliasFromLanguage(this.english));
         assertEquals("it", sut.getAliasFromLanguage(this.italian));
         assertEquals("ru", sut.getAliasFromLanguage(this.russian));
+        assertEquals("zh-CHT", sut.getAliasFromLanguage(this.chinese));
 
         assertEquals(false, sut.hasAliasForDefaultLang);
     }
@@ -53,12 +60,32 @@ public class LanguageAliasesTest extends TestCase {
         assertEquals(this.english, sut.getLanguageFromAlias("us"));
         assertEquals(this.italian, sut.getLanguageFromAlias("italy"));
         assertEquals(this.russian, sut.getLanguageFromAlias("ru"));
+        assertEquals(this.chinese, sut.getLanguageFromAlias("zh-CHT"));
 
         assertEquals("us", sut.getAliasFromLanguage(this.english));
         assertEquals("italy", sut.getAliasFromLanguage(this.italian));
         assertEquals("ru", sut.getAliasFromLanguage(this.russian));
+        assertEquals("zh-CHT", sut.getAliasFromLanguage(this.chinese));
 
         assertEquals(true, sut.hasAliasForDefaultLang);
+    }
+
+    public void testNoLangCodeAliases__IdentifyLanguageByLangCode__IgnoreCasesensitive() {
+        Map<Lang, String> langCodeAliases = new LinkedHashMap<Lang, String>();
+        this.sut = new LanguageAliases(this.supportedLangs, langCodeAliases, this.english);
+
+        assertEquals(this.english, sut.getLanguageFromAlias("En"));
+        assertEquals(this.italian, sut.getLanguageFromAlias("iT"));
+        assertEquals(this.russian, sut.getLanguageFromAlias("RU"));
+        assertEquals(this.chinese, sut.getLanguageFromAlias("zh-cht"));
+        assertEquals(this.chinese, sut.getLanguageFromAlias("zh-CHT"));
+
+        assertEquals("en", sut.getAliasFromLanguage(this.english));
+        assertEquals("it", sut.getAliasFromLanguage(this.italian));
+        assertEquals("ru", sut.getAliasFromLanguage(this.russian));
+        assertEquals("zh-CHT", sut.getAliasFromLanguage(this.chinese));
+
+        assertEquals(false, sut.hasAliasForDefaultLang);
     }
 
     public void testNullInput__ReturnNull() {

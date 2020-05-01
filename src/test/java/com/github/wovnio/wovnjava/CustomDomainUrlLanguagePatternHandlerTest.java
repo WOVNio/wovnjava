@@ -10,6 +10,8 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
     private Lang french;
     private Lang japanese;
     private Lang korean;
+    private Lang chinese;
+
     private UrlLanguagePatternHandler sut;
 
     protected void setUp() throws Exception {
@@ -17,17 +19,20 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         this.french = Lang.get("fr");
         this.japanese = Lang.get("ja");
         this.korean = Lang.get("ko");
+        this.chinese = Lang.get("zh-cht");
 
         CustomDomainLanguage englishCDL = new CustomDomainLanguage("site.co.uk", "", this.english);
         CustomDomainLanguage frenchCDL= new CustomDomainLanguage("site.co.uk", "/fr", this.french);
         CustomDomainLanguage japaneseCDL = new CustomDomainLanguage("japan.site.com", "", this.japanese);
         CustomDomainLanguage koreanCDL = new CustomDomainLanguage("korean.com", "/ko", this.korean);
+        CustomDomainLanguage chineseCDL = new CustomDomainLanguage("zh-cht.site.com", "", this.chinese);
 
         ArrayList<CustomDomainLanguage> langs = new ArrayList<CustomDomainLanguage>();
         langs.add(englishCDL);
         langs.add(frenchCDL);
         langs.add(japaneseCDL);
         langs.add(koreanCDL);
+        langs.add(chineseCDL);
 
         CustomDomainLanguages customDomainLanguages = new CustomDomainLanguages(langs);
         this.sut = new CustomDomainUrlLanguagePatternHandler(this.english, customDomainLanguages);
@@ -56,6 +61,13 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.korean, sut.getLang("http://korean.com/ko/"));
         assertEquals(this.korean, sut.getLang("http://korean.com/ko/global"));
         assertEquals(this.korean, sut.getLang("https://korean.com/ko?user=tom"));
+
+        assertEquals(this.chinese, sut.getLang("http://zh-cht.site.com"));
+        assertEquals(this.chinese, sut.getLang("http://zh-cht.site.com/"));
+        assertEquals(this.chinese, sut.getLang("http://zh-cht.site.com/global"));
+        assertEquals(this.chinese, sut.getLang("https://zh-cht.site.com/global/graph.png?user=tom"));
+
+        assertEquals(this.chinese, sut.getLang("http://zh-cht.site.com?user=tom"));
     }
 
     public void testGetLang__InvalidUrl__ReturnNull() {
@@ -95,6 +107,11 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("https://site.co.uk/", sut.convertToDefaultLanguage("https://korean.com/ko/"));
         assertEquals("https://site.co.uk/cat.png", sut.convertToDefaultLanguage("https://korean.com/ko/cat.png"));
         assertEquals("https://site.co.uk?user=tom", sut.convertToDefaultLanguage("https://korean.com/ko?user=tom"));
+
+        assertEquals("http://site.co.uk", sut.convertToDefaultLanguage("http://zh-cht.site.com"));
+        assertEquals("http://site.co.uk/", sut.convertToDefaultLanguage("http://zh-cht.site.com/"));
+        assertEquals("http://site.co.uk/cat.png", sut.convertToDefaultLanguage("http://zh-cht.site.com/cat.png"));
+        assertEquals("http://site.co.uk?user=tom", sut.convertToDefaultLanguage("http://zh-cht.site.com?user=tom"));
     }
 
     public void testConvertToDefaultLanguage__CannotConvertUrl__ReturnInputUrl() {
@@ -133,6 +150,11 @@ public class CustomDomainUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("https://korean.com/ko/", sut.convertToTargetLanguage("https://korean.com/ko/", this.korean));
         assertEquals("https://korean.com/ko/cat.png", sut.convertToTargetLanguage("https://korean.com/ko/cat.png", this.korean));
         assertEquals("https://korean.com/ko?user=tom", sut.convertToTargetLanguage("https://korean.com/ko?user=tom", this.korean));
+
+        assertEquals("http://zh-cht.site.com", sut.convertToTargetLanguage("http://site.co.uk/fr", this.chinese));
+        assertEquals("http://zh-cht.site.com/", sut.convertToTargetLanguage("http://site.co.uk/fr/", this.chinese));
+        assertEquals("http://zh-cht.site.com/cat.png", sut.convertToTargetLanguage("http://site.co.uk/fr/cat.png", this.chinese));
+        assertEquals("http://zh-cht.site.com?user=tom", sut.convertToTargetLanguage("http://site.co.uk/fr?user=tom", this.chinese));
     }
 
     public void testConvertToTargetLanguage__CannotConvertUrl__ReturnInputUrl() {

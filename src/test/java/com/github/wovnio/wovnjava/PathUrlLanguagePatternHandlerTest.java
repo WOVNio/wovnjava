@@ -11,36 +11,50 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     private Lang english;
     private Lang japanese;
     private Lang french;
+    private Lang chinese;
 
     private Lang defaultLang;
-    private LanguageAliases languageAliasesEmpty;
-    private LanguageAliases languageAliasesConfigured;
+    private ArrayList<Lang> supportedLangs;
 
     protected void setUp() throws Exception {
         this.english = Lang.get("en");
         this.japanese = Lang.get("ja");
         this.french = Lang.get("fr");
+        this.chinese = Lang.get("zh-cht");
 
-        this.defaultLang = this.english;
-        ArrayList<Lang> supportedLangs = new ArrayList<Lang>();
-        supportedLangs.add(this.english);
-        supportedLangs.add(this.japanese);
-        supportedLangs.add(this.french);
+        this.supportedLangs = new ArrayList<Lang>();
+        this.supportedLangs.add(this.english);
+        this.supportedLangs.add(this.japanese);
+        this.supportedLangs.add(this.french);
+        this.supportedLangs.add(this.chinese);
+    }
+
+    private PathUrlLanguagePatternHandler create(Lang defaultLanguage, String sitePrefixPath) {
+        this.defaultLang = defaultLanguage;
 
         Map<Lang, String> langCodeAliasSetting = new LinkedHashMap<Lang, String>();
-        this.languageAliasesEmpty = new LanguageAliases(supportedLangs, langCodeAliasSetting, this.defaultLang);
+        LanguageAliases languageAliasesEmpty = new LanguageAliases(this.supportedLangs, langCodeAliasSetting, this.defaultLang);
 
-        langCodeAliasSetting.put(this.english, "us");
-        langCodeAliasSetting.put(this.japanese, "japan");
-        this.languageAliasesConfigured = new LanguageAliases(supportedLangs, langCodeAliasSetting, this.defaultLang);
+        return new PathUrlLanguagePatternHandler(this.defaultLang, languageAliasesEmpty, sitePrefixPath);
     }
 
     private PathUrlLanguagePatternHandler create(String sitePrefixPath) {
-        return new PathUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty, sitePrefixPath);
+        return create(this.english, sitePrefixPath);
+    }
+
+    private PathUrlLanguagePatternHandler createWithAliases(Lang defaultLanguage, String sitePrefixPath) {
+        this.defaultLang = defaultLanguage;
+
+        Map<Lang, String> langCodeAliasSetting = new LinkedHashMap<Lang, String>();
+        langCodeAliasSetting.put(this.english, "us");
+        langCodeAliasSetting.put(this.japanese, "japan");
+        LanguageAliases languageAliasesConfigured = new LanguageAliases(this.supportedLangs, langCodeAliasSetting, this.defaultLang);
+
+        return new PathUrlLanguagePatternHandler(this.defaultLang, languageAliasesConfigured, sitePrefixPath);
     }
 
     private PathUrlLanguagePatternHandler createWithAliases(String sitePrefixPath) {
-        return new PathUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesConfigured, sitePrefixPath);
+        return createWithAliases(this.english, sitePrefixPath);
     }
 
     public void testGetLang__NonMatchingPath__ReturnDefaultLang() {
@@ -65,6 +79,17 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.french, sut.getLang("http://site.com/fr/page"));
         assertEquals(this.french, sut.getLang("https://site.com/fr/page/index.html"));
         assertEquals(this.french, sut.getLang("en.site.com/fr/page/index.html?wovn=es"));
+    }
+
+    public void testGetLang__MatchingPath__ValidSupportedLangRegionalLang__ReturnTargetLangObject() {
+        PathUrlLanguagePatternHandler sut = create("");
+        assertEquals(this.chinese, sut.getLang("/zh-CHT"));
+        assertEquals(this.chinese, sut.getLang("/zh-CHT/"));
+        assertEquals(this.chinese, sut.getLang("/zh-CHT?wovn=en"));
+        assertEquals(this.chinese, sut.getLang("/zh-CHT/?wovn=en"));
+        assertEquals(this.chinese, sut.getLang("http://site.com/zh-CHT/page"));
+        assertEquals(this.chinese, sut.getLang("https://site.com/zh-CHT/page/index.html"));
+        assertEquals(this.chinese, sut.getLang("en.site.com/zh-CHT/page/index.html?wovn=es"));
     }
 
     public void testGetLang__MatchingPath__NotSupportedLang__ReturnDefaultLang() {
@@ -101,6 +126,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.english, sut.getLang("http://site.com/us/page"));
         assertEquals(this.french, sut.getLang("http://site.com/fr/page"));
         assertEquals(this.japanese, sut.getLang("http://site.com/japan/page"));
+        assertEquals(this.chinese, sut.getLang("http://site.com/zh-CHT/page"));
     }
 
     public void testGetLang__SitePrefixPath__NonMatchingPath__ReturnNull() {
@@ -124,6 +150,18 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.french, sut.getLang("/pre/fix/fr/index.html"));
         assertEquals(this.french, sut.getLang("/pre/fix/fr/page/index.html"));
         assertEquals(this.french, sut.getLang("https://en.site.com/pre/fix/fr/page/"));
+    }
+
+    public void testGetLang__SitePrefixPath__MatchingPath__ValidSupportedLang__ReturnTargetLangObjectOfChinese() {
+        PathUrlLanguagePatternHandler sut = create("/pre/fix");
+        assertEquals(this.chinese, sut.getLang("site.com/pre/fix/zh-CHT"));
+        assertEquals(this.chinese, sut.getLang("site.com/pre/fix/zh-CHT/"));
+        assertEquals(this.chinese, sut.getLang("site.com/pre/fix/zh-CHT?query"));
+        assertEquals(this.chinese, sut.getLang("site.com/pre/fix/zh-CHT/?query"));
+        assertEquals(this.chinese, sut.getLang("en.site.com/pre/fix/zh-CHT/index.html?wovn=es"));
+        assertEquals(this.chinese, sut.getLang("/pre/fix/zh-CHT/index.html"));
+        assertEquals(this.chinese, sut.getLang("/pre/fix/zh-CHT/page/index.html"));
+        assertEquals(this.chinese, sut.getLang("https://en.site.com/pre/fix/zh-CHT/page/"));
     }
 
     public void testGetLang__SitePrefixPath__MatchingPath__NotSupportedLang__ReturnDefaultLang() {
@@ -150,6 +188,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.french, sut.getLang("site.com/pre/fix/fr/"));
         assertEquals(this.english, sut.getLang("site.com/pre/fix/us?query"));
         assertEquals(this.japanese, sut.getLang("en.site.com/pre/fix/japan/index.html?wovn=es"));
+        assertEquals(this.chinese, sut.getLang("en.site.com/pre/fix/zh-CHT/index.html?wovn=es"));
     }
 
     public void testConvertToDefaultLanguage__NonMatchingPath__DoNotModify() {
@@ -174,20 +213,34 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     public void testConvertToDefaultLanguage__MatchingSupportedLang__RemoveLangCode() {
         PathUrlLanguagePatternHandler sut = create("");
         assertEquals("", sut.convertToDefaultLanguage("/ja"));
+        assertEquals("", sut.convertToDefaultLanguage("/zh-CHT"));
         assertEquals("/", sut.convertToDefaultLanguage("/ja/"));
+        assertEquals("/", sut.convertToDefaultLanguage("/zh-CHT/"));
         assertEquals("?query", sut.convertToDefaultLanguage("/ja?query"));
+        assertEquals("?query", sut.convertToDefaultLanguage("/zh-CHT?query"));
         assertEquals("/?query", sut.convertToDefaultLanguage("/ja/?query"));
+        assertEquals("/?query", sut.convertToDefaultLanguage("/zh-CHT/?query"));
         assertEquals("site.com", sut.convertToDefaultLanguage("site.com/en"));
+        assertEquals("site.com", sut.convertToDefaultLanguage("site.com/zh-CHT"));
         assertEquals("site.com/", sut.convertToDefaultLanguage("site.com/ja/"));
+        assertEquals("site.com/", sut.convertToDefaultLanguage("site.com/zh-CHT/"));
         assertEquals("site.com/?query", sut.convertToDefaultLanguage("site.com/ja/?query"));
+        assertEquals("site.com/?query", sut.convertToDefaultLanguage("site.com/zh-CHT/?query"));
         assertEquals("site.com/index.html", sut.convertToDefaultLanguage("site.com/fr/index.html"));
+        assertEquals("site.com/index.html", sut.convertToDefaultLanguage("site.com/zh-CHT/index.html"));
         assertEquals("site.com/page/index.html", sut.convertToDefaultLanguage("site.com/en/page/index.html"));
+        assertEquals("site.com/page/index.html", sut.convertToDefaultLanguage("site.com/zh-CHT/page/index.html"));
         assertEquals("/page/index.html", sut.convertToDefaultLanguage("/en/page/index.html"));
+        assertEquals("/page/index.html", sut.convertToDefaultLanguage("/zh-CHT/page/index.html"));
         assertEquals("/page/index.html?query", sut.convertToDefaultLanguage("/en/page/index.html?query"));
+        assertEquals("/page/index.html?query", sut.convertToDefaultLanguage("/zh-CHT/page/index.html?query"));
         assertEquals("site.com/en/page/", sut.convertToDefaultLanguage("site.com/ja/en/page/"));
         assertEquals("site.com/ja/page/", sut.convertToDefaultLanguage("site.com/ja/ja/page/"));
+        assertEquals("site.com/zh-CHT/page/", sut.convertToDefaultLanguage("site.com/zh-CHT/zh-CHT/page/"));
         assertEquals("http://www.site.com", sut.convertToDefaultLanguage("http://www.site.com/ja"));
+        assertEquals("http://www.site.com", sut.convertToDefaultLanguage("http://www.site.com/zh-CHT"));
         assertEquals("https://test.com/path/index.html", sut.convertToDefaultLanguage("https://test.com/en/path/index.html"));
+        assertEquals("https://test.com/path/index.html", sut.convertToDefaultLanguage("https://test.com/zh-CHT/path/index.html"));
     }
 
     public void testConvertToDefaultLanguage__SitePrefixPath__NonMatchingPath__DoNotModify() {
@@ -196,7 +249,9 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("site.com", sut.convertToDefaultLanguage("site.com"));
         assertEquals("site.com?query", sut.convertToDefaultLanguage("site.com?query"));
         assertEquals("site.com/pre/fix/", sut.convertToDefaultLanguage("site.com/pre/fix/"));
+        assertEquals("site.com/pre/fix/#section", sut.convertToDefaultLanguage("site.com/pre/fix/#section"));
         assertEquals("site.com/no/index.html", sut.convertToDefaultLanguage("site.com/no/index.html"));
+        assertEquals("site.com/no/index.html#section", sut.convertToDefaultLanguage("site.com/no/index.html#section"));
         assertEquals("site.com/no/index.html?query", sut.convertToDefaultLanguage("site.com/no/index.html?query"));
         assertEquals("site.com/fr/pre/fix/", sut.convertToDefaultLanguage("site.com/fr/pre/fix/"));
         assertEquals("site.com/pre/ja/fix/", sut.convertToDefaultLanguage("site.com/pre/ja/fix/"));
@@ -209,13 +264,21 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     public void testConvertToDefaultLanguage__SitePrefixPath__MatchingSupportedLang__RemoveLangCode() {
         PathUrlLanguagePatternHandler sut = create("/pre/fix");
         assertEquals("/pre/fix", sut.convertToDefaultLanguage("/pre/fix/ja"));
+        assertEquals("/pre/fix", sut.convertToDefaultLanguage("/pre/fix/zh-CHT"));
         assertEquals("/pre/fix?query", sut.convertToDefaultLanguage("/pre/fix/ja?query"));
+        assertEquals("/pre/fix?query", sut.convertToDefaultLanguage("/pre/fix/zh-CHT?query"));
         assertEquals("/pre/fix/", sut.convertToDefaultLanguage("/pre/fix/ja/"));
+        assertEquals("/pre/fix/", sut.convertToDefaultLanguage("/pre/fix/zh-CHT/"));
         assertEquals("/pre/fix/?query", sut.convertToDefaultLanguage("/pre/fix/ja/?query"));
+        assertEquals("/pre/fix/?query", sut.convertToDefaultLanguage("/pre/fix/zh-CHT/?query"));
         assertEquals("http://site.com/pre/fix/", sut.convertToDefaultLanguage("http://site.com/pre/fix/en/"));
+        assertEquals("http://site.com/pre/fix/", sut.convertToDefaultLanguage("http://site.com/pre/fix/zh-CHT/"));
         assertEquals("site.com/pre/fix/page/index.html", sut.convertToDefaultLanguage("site.com/pre/fix/fr/page/index.html"));
+        assertEquals("site.com/pre/fix/page/index.html", sut.convertToDefaultLanguage("site.com/pre/fix/zh-CHT/page/index.html"));
         assertEquals("site.com/pre/fix/page/index.html?query", sut.convertToDefaultLanguage("site.com/pre/fix/fr/page/index.html?query"));
+        assertEquals("site.com/pre/fix/page/index.html?query", sut.convertToDefaultLanguage("site.com/pre/fix/zh-CHT/page/index.html?query"));
         assertEquals("http://www.site.com/pre/fix", sut.convertToDefaultLanguage("http://www.site.com/pre/fix/ja"));
+        assertEquals("http://www.site.com/pre/fix", sut.convertToDefaultLanguage("http://www.site.com/pre/fix/zh-CHT"));
     }
 
     public void testConvertToDefaultLanguage__HasLanguageAliases__NonMatchingPath__DoNotModify() {
@@ -256,6 +319,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     public void testConvertToTargetLanguage__DefaultSettings() {
         PathUrlLanguagePatternHandler sut = create("");
         assertEquals("/ja", sut.convertToTargetLanguage("", this.japanese));
+        assertEquals("/zh-CHT", sut.convertToTargetLanguage("", this.chinese));
         assertEquals("/ja/", sut.convertToTargetLanguage("/", this.japanese));
         assertEquals("/ja/path/index.html", sut.convertToTargetLanguage("/path/index.html", this.japanese));
         assertEquals("site.com/ja/", sut.convertToTargetLanguage("site.com/", this.japanese));
@@ -269,6 +333,7 @@ public class PathUrlLanguagePatternHandlerTest extends TestCase {
     public void testConvertToTargetLanguage__SitePrefixPath__MatchingPath__ConvertUrl() {
         PathUrlLanguagePatternHandler sut = create("/pre/fix");
         assertEquals("/pre/fix/ja", sut.convertToTargetLanguage("/pre/fix", this.japanese));
+        assertEquals("/pre/fix/zh-CHT", sut.convertToTargetLanguage("/pre/fix", this.chinese));
         assertEquals("/pre/fix/ja/", sut.convertToTargetLanguage("/pre/fix/", this.japanese));
         assertEquals("/pre/fix/ja/path/index.html", sut.convertToTargetLanguage("/pre/fix/path/index.html", this.japanese));
         assertEquals("site.com/pre/fix/ja/", sut.convertToTargetLanguage("site.com/pre/fix/", this.japanese));

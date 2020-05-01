@@ -11,32 +11,46 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
     private Lang english;
     private Lang japanese;
     private Lang french;
+    private Lang chinese;
 
     private Lang defaultLang;
-    private LanguageAliases languageAliasesEmpty;
-    private LanguageAliases languageAliasesConfigured;
+    private ArrayList<Lang> supportedLangs;
 
     protected void setUp() throws Exception {
         this.english = Lang.get("en");
         this.japanese = Lang.get("ja");
         this.french = Lang.get("fr");
+        this.chinese = Lang.get("zh-cht");
 
-        this.defaultLang = this.english;
-        ArrayList<Lang> supportedLangs = new ArrayList<Lang>();
-        supportedLangs.add(this.english);
-        supportedLangs.add(this.japanese);
-        supportedLangs.add(this.french);
+        this.supportedLangs = new ArrayList<Lang>();
+        this.supportedLangs.add(this.english);
+        this.supportedLangs.add(this.japanese);
+        this.supportedLangs.add(this.french);
+        this.supportedLangs.add(this.chinese);
+    }
+
+    private QueryUrlLanguagePatternHandler create(Lang defaultLanguage) {
+        this.defaultLang = defaultLanguage;
 
         Map<Lang, String> langCodeAliasSetting = new LinkedHashMap<Lang, String>();
-        this.languageAliasesEmpty = new LanguageAliases(supportedLangs, langCodeAliasSetting, this.defaultLang);
+        LanguageAliases languageAliasesEmpty = new LanguageAliases(this.supportedLangs, langCodeAliasSetting, this.defaultLang);
 
+        return new QueryUrlLanguagePatternHandler(this.defaultLang, languageAliasesEmpty);
+    }
+
+    private QueryUrlLanguagePatternHandler createWithAliases(Lang defaultLanguage) {
+        this.defaultLang = defaultLanguage;
+
+        Map<Lang, String> langCodeAliasSetting = new LinkedHashMap<Lang, String>();
         langCodeAliasSetting.put(this.english, "us");
         langCodeAliasSetting.put(this.japanese, "japan");
-        this.languageAliasesConfigured = new LanguageAliases(supportedLangs, langCodeAliasSetting, this.defaultLang);
+        LanguageAliases languageAliasesConfigured = new LanguageAliases(this.supportedLangs, langCodeAliasSetting, this.defaultLang);
+
+        return new QueryUrlLanguagePatternHandler(this.defaultLang, languageAliasesConfigured);
     }
 
     public void testGetLang__NonMatchingQuery__ReturnDefaultLang() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty);
+        QueryUrlLanguagePatternHandler sut = create(this.english);
         assertEquals(this.defaultLang, sut.getLang("/"));
         assertEquals(this.defaultLang, sut.getLang("/en"));
         assertEquals(this.defaultLang, sut.getLang("/en/page?wovn&en"));
@@ -48,7 +62,7 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testGetLang__MatchingQuery__ValidSupportedLang__ReturnTargetLangObject() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty);
+        QueryUrlLanguagePatternHandler sut = create(this.english);
         assertEquals(this.french, sut.getLang("?wovn=fr"));
         assertEquals(this.french, sut.getLang("/?wovn=fr"));
         assertEquals(this.french, sut.getLang("/en/?wovn=fr"));
@@ -59,8 +73,20 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals(this.french, sut.getLang("en.site.com/es/page/index.html?wovn=fr"));
     }
 
+    public void testGetLang__MatchingQuery__ValidSupportedRegionalLang__ReturnTargetLangObject() {
+        QueryUrlLanguagePatternHandler sut = create(this.english);
+        assertEquals(this.chinese, sut.getLang("?wovn=zh-CHT"));
+        assertEquals(this.chinese, sut.getLang("/?wovn=zh-CHT"));
+        assertEquals(this.chinese, sut.getLang("/en/?wovn=zh-CHT"));
+        assertEquals(this.chinese, sut.getLang("/en/?lang=es&wovn=zh-CHT&country=vi"));
+        assertEquals(this.chinese, sut.getLang("site.com?wovn=zh-CHT"));
+        assertEquals(this.chinese, sut.getLang("site.com/?lang=en&wovn=zh-CHT"));
+        assertEquals(this.chinese, sut.getLang("http://site.com/?wovn=zh-CHT"));
+        assertEquals(this.chinese, sut.getLang("en.site.com/es/page/index.html?wovn=zh-CHT"));
+    }
+
     public void testGetLang__MatchingQuery__NotSupportedLang__ReturnDefaultLang() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty);
+        QueryUrlLanguagePatternHandler sut = create(this.english);
         assertEquals(this.defaultLang, sut.getLang("?wovn=th"));
         assertEquals(this.defaultLang, sut.getLang("/?wovn=vi"));
         assertEquals(this.defaultLang, sut.getLang("/en/?wovn=sv"));
@@ -72,7 +98,7 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testGetLang__HasLanguageAliases__NonMatchingQuery__ReturnDefaultLang() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesConfigured);
+        QueryUrlLanguagePatternHandler sut = createWithAliases(this.english);
         assertEquals(this.defaultLang, sut.getLang("?wovn=th"));
         assertEquals(this.defaultLang, sut.getLang("/?wovn=football"));
         assertEquals(this.defaultLang, sut.getLang("http://site.com/?wovn=en"));
@@ -80,14 +106,15 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testGetLang__HasLanguageAliases__MatchingQuery__ReturnTargetLang() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesConfigured);
+        QueryUrlLanguagePatternHandler sut = createWithAliases(this.english);
         assertEquals(this.english, sut.getLang("http://site.com/?wovn=us"));
         assertEquals(this.japanese, sut.getLang("http://site.com/?wovn=japan"));
         assertEquals(this.french, sut.getLang("http://site.com/?wovn=fr"));
+        assertEquals(this.chinese, sut.getLang("http://site.com/?wovn=zh-CHT"));
     }
 
     public void testConvertToDefaultLanguage__NonMatchingQuery__DoNotModify() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty);
+        QueryUrlLanguagePatternHandler sut = create(this.english);
         assertEquals("/", sut.convertToDefaultLanguage("/"));
         assertEquals("", sut.convertToDefaultLanguage("?wovn=ja"));
         assertEquals("/page/", sut.convertToDefaultLanguage("/page/?wovn=ru"));
@@ -100,8 +127,9 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testConvertToDefaultLanguage__HasLanguageAliases__RemoveLangCode() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesConfigured);
+        QueryUrlLanguagePatternHandler sut = createWithAliases(this.english);
         assertEquals("", sut.convertToDefaultLanguage("?wovn=ja"));
+        assertEquals("", sut.convertToDefaultLanguage("?wovn=zh-CHT"));
         assertEquals("/?search=pizza&lang=ja", sut.convertToDefaultLanguage("/?search=pizza&wovn=japan&lang=ja"));
         assertEquals("site.com/page/index.html?wovn", sut.convertToDefaultLanguage("site.com/page/index.html?wovn&wovn=us"));
         assertEquals("https://ja.site.com/ja/", sut.convertToDefaultLanguage("https://ja.site.com/ja/?wovn=en"));
@@ -109,8 +137,9 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
     }
 
     public void testConvertToTargetLanguage() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesEmpty);
+        QueryUrlLanguagePatternHandler sut = create(this.english);
         assertEquals("/?wovn=ja", sut.convertToTargetLanguage("/", this.japanese));
+        assertEquals("/?wovn=zh-CHT", sut.convertToTargetLanguage("/", this.chinese));
         assertEquals("/path/index.html?wovn=ja", sut.convertToTargetLanguage("/path/index.html", this.japanese));
         assertEquals("site.com/home?q=123&wovn=ja", sut.convertToTargetLanguage("site.com/home?q=123", this.japanese));
         assertEquals("http://site.com?wovn=ja", sut.convertToTargetLanguage("http://site.com", this.japanese));
@@ -120,10 +149,11 @@ public class QueryUrlLanguagePatternHandlerTest extends TestCase {
         assertEquals("http://site.com", sut.convertToTargetLanguage("http://site.com", this.english));
         assertEquals("http://site.com", sut.convertToTargetLanguage("http://site.com?wovn=ru", this.english));
         assertEquals("http://site.com", sut.convertToTargetLanguage("http://site.com?wovn=japan", this.english));
+        assertEquals("http://site.com", sut.convertToTargetLanguage("http://site.com?wovn=zh-CHT", this.english));
     }
 
     public void testConvertToTargetLanguage__HasLanguageAliases() {
-        QueryUrlLanguagePatternHandler sut = new QueryUrlLanguagePatternHandler(this.defaultLang, this.languageAliasesConfigured);
+        QueryUrlLanguagePatternHandler sut = createWithAliases(this.english);
         assertEquals("/?wovn=japan", sut.convertToTargetLanguage("/", this.japanese));
         assertEquals("/path/index.html?wovn=japan", sut.convertToTargetLanguage("/path/index.html", this.japanese));
         assertEquals("site.com/home?q=123&wovn=japan", sut.convertToTargetLanguage("site.com/home?q=123", this.japanese));
