@@ -76,7 +76,6 @@ class Lang {
         langs.add(new Lang("es-VE", "es-VE", "Spanish (Venezuela)", "Español (Venezuela)"));
         langs.add(new Lang("sw", "sw", "Swahili", "Kiswahili"));
         langs.add(new Lang("sv", "sv", "Swedish", "Svensk"));
-        langs.add(new Lang("tl", "tl", "Tagalog", "Tagalog"));
         langs.add(new Lang("th", "th", "Thai", "ภาษาไทย"));
         langs.add(new Lang("hi", "hi", "Hindi", "हिन्दी"));
         langs.add(new Lang("tr", "tr", "Turkish", "Türkçe"));
