@@ -1,3 +1,7 @@
+.classpath
+.project
+.settings/
+
 /out/
 /target/
 /.idea/workspace.xml
