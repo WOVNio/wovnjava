@@ -1,6 +1,8 @@
 package com.github.wovnio.wovnjava;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.net.MalformedURLException;
 
 import junit.framework.TestCase;
@@ -105,5 +107,23 @@ public class UrlContextTest extends TestCase {
         assertEquals(true, this.contextRootPath.isSameHost(new URL("http://site.com/?country=japan")));
         assertEquals(false, this.contextRootPath.isSameHost(new URL("http://en.site.com/?country=japan")));
         assertEquals(false, this.contextRootPath.isSameHost(new URL("http://other.com/?country=japan")));
+    }
+
+    public void testIsPrefixMatchPath() throws MalformedURLException {
+        ArrayList<String> emptyPaths = new ArrayList<String>(Arrays.asList(""));
+
+        assertEquals(false, (new UrlContext(new URL("http://site.com"))).isPrefixMatchPath(emptyPaths));
+        assertEquals(false, (new UrlContext(new URL("http://site.com/admin"))).isPrefixMatchPath(emptyPaths));
+
+        ArrayList<String> adminPaths = new ArrayList<String>(Arrays.asList("/admin"));
+
+        assertEquals(false, (new UrlContext(new URL("http://site.com"))).isPrefixMatchPath(adminPaths));
+        assertEquals(false, (new UrlContext(new URL("http://site.com/index.html"))).isPrefixMatchPath(adminPaths));
+        assertEquals(false, (new UrlContext(new URL("http://site.com/user/admin"))).isPrefixMatchPath(adminPaths));
+        assertEquals(false, (new UrlContext(new URL("http://site.com/adminpage"))).isPrefixMatchPath(adminPaths));
+
+        assertEquals(true, (new UrlContext(new URL("http://site.com/admin"))).isPrefixMatchPath(adminPaths));
+        assertEquals(true, (new UrlContext(new URL("http://site.com/admin/"))).isPrefixMatchPath(adminPaths));
+        assertEquals(true, (new UrlContext(new URL("http://site.com/admin/plugin.html"))).isPrefixMatchPath(adminPaths));
     }
 }

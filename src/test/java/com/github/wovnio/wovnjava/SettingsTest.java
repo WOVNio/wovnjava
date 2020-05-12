@@ -45,6 +45,7 @@ public class SettingsTest extends TestCase {
 
         ArrayList<String> emptyArrayList = new ArrayList<String>();
         assertEquals(emptyArrayList, s.ignoreClasses);
+        assertEquals(emptyArrayList, s.ignorePaths);
 
         assertEquals(Settings.DefaultSnippetUrlProduction, s.snippetUrl);
         assertEquals(Settings.DefaultApiUrlProduction, s.apiUrl);
@@ -326,6 +327,15 @@ public class SettingsTest extends TestCase {
         }});
         Settings s = new Settings(config);
         assertEquals(Settings.DefaultSnippetUrlDevelopment, s.snippetUrl);
+    }
+
+    public void testIgnorePaths__DeclareEmptyString__UseDefaultEmptyArray() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("ignorePaths", "");
+        }});
+        Settings s = new Settings(config);
+        ArrayList<String> emptyArrayList = new ArrayList<String>();
+        assertEquals(emptyArrayList, s.ignorePaths);
     }
 
     public void testIgnoreClasses__DeclareEmptyString__UseDefaultEmptyArray() throws ConfigurationError {

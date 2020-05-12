@@ -37,8 +37,10 @@ class Headers {
         String currentContextUrl = request.getRequestURL().toString();
         String currentContextUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(currentContextUrl);
 
+        Boolean currentContextUrlIgnoredPath = false;
         try {
             this.urlContext = new UrlContext(new URL(currentContextUrlInDefaultLanguage));
+            currentContextUrlIgnoredPath = this.urlContext.isPrefixMatchPath(settings.ignorePaths);
         } catch (MalformedURLException e) {
             this.urlContext = null;
         }
@@ -52,7 +54,7 @@ class Headers {
 
         this.shouldRedirectExplicitDefaultLangUrl = this.urlLanguagePatternHandler.shouldRedirectExplicitDefaultLangUrl(clientRequestUrl);
 
-        this.isValidRequest = this.requestLang != null && this.urlContext != null;
+        this.isValidRequest = this.requestLang != null && this.urlContext != null && currentContextUrlIgnoredPath == false;
     }
 
     /*
