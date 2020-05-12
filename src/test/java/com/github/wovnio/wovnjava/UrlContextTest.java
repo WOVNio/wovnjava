@@ -1,8 +1,6 @@
 package com.github.wovnio.wovnjava;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.net.MalformedURLException;
 
 import junit.framework.TestCase;
@@ -108,5 +106,4 @@ public class UrlContextTest extends TestCase {
         assertEquals(false, this.contextRootPath.isSameHost(new URL("http://en.site.com/?country=japan")));
         assertEquals(false, this.contextRootPath.isSameHost(new URL("http://other.com/?country=japan")));
     }
-
 }
