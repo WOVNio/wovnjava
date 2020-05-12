@@ -1,5 +1,6 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -37,10 +38,8 @@ class Headers {
         String currentContextUrl = request.getRequestURL().toString();
         String currentContextUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(currentContextUrl);
 
-        Boolean currentContextUrlIgnoredPath = false;
         try {
             this.urlContext = new UrlContext(new URL(currentContextUrlInDefaultLanguage));
-            currentContextUrlIgnoredPath = this.urlContext.isPrefixMatchPath(settings.ignorePaths);
         } catch (MalformedURLException e) {
             this.urlContext = null;
         }
@@ -54,7 +53,7 @@ class Headers {
 
         this.shouldRedirectExplicitDefaultLangUrl = this.urlLanguagePatternHandler.shouldRedirectExplicitDefaultLangUrl(clientRequestUrl);
 
-        this.isValidRequest = this.requestLang != null && this.urlContext != null && currentContextUrlIgnoredPath == false;
+        this.isValidRequest = this.requestLang != null && this.urlContext != null && !this.isIgnoredPath(this.urlContext.getURL().getPath());
     }
 
     /*
@@ -128,5 +127,30 @@ class Headers {
         String urlDefaultLang = this.clientRequestUrlInDefaultLanguage;
         hreflangs.put(hreflangCodeDefaultLang, urlDefaultLang);
         return hreflangs;
+    }
+
+    private boolean isIgnoredPath(String contextPath) {
+        ArrayList<String> ignorePaths = this.settings.ignorePaths;
+
+        if (ignorePaths.isEmpty()) {
+            return false;
+        }
+
+        for (String ignorePath : ignorePaths) {
+            if (ignorePath.isEmpty()) {
+                continue;
+            }
+
+            String prefixPath = ignorePath.endsWith("/") ? ignorePath.substring(0, ignorePath.length() - 1) : ignorePath;
+            String prefixPathTrailingSlash = ignorePath.endsWith("/") ? ignorePath : (ignorePath + "/");
+
+            if (contextPath.equalsIgnoreCase(prefixPath)) {
+                return true;
+            }
+            if (contextPath.startsWith(prefixPathTrailingSlash.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

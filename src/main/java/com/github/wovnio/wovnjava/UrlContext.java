@@ -1,7 +1,6 @@
 package com.github.wovnio.wovnjava;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,30 +30,6 @@ class UrlContext {
 
     public boolean isSameHost(URL url) {
         return this.context.getHost().equalsIgnoreCase(url.getHost());
-    }
-
-    public boolean isPrefixMatchPath(ArrayList<String> paths) {
-        if (paths.isEmpty()) {
-            return false;
-        }
-        String contextPath = this.context.getPath().toLowerCase();
-
-        for (String path : paths) {
-            if (path.isEmpty()) {
-                continue;
-            }
-
-            String prefixPath = path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
-            String prefixPathTrailingSlash = path.endsWith("/") ? path : (path + "/");
-
-            if (contextPath.equalsIgnoreCase(prefixPath)) {
-                return true;
-            }
-            if (contextPath.startsWith(prefixPathTrailingSlash.toLowerCase())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /*
