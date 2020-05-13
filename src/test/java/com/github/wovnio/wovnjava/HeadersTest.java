@@ -251,7 +251,10 @@ public class HeadersTest extends TestCase {
 
         h = createHeaders("/ja/global/foo", "global", "");
         assertEquals(false, h.getIsValidRequest());
+    }
 
+    public void testGetIsValidRequest__withIgnoredPaths() throws ConfigurationError {
+        Headers h;
 
         h = createHeaders("/", "", "/admin,/wp-admin");
         assertEquals(true, h.getIsValidRequest());
