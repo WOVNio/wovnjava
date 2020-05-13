@@ -139,8 +139,8 @@ class Headers {
             String prefixPath = ignorePath;
             String prefixPathTrailingSlash = ignorePath + "/";
 
-            return contextPath.equals(prefixPath)
-                || contextPath.startsWith(prefixPathTrailingSlash);
+            if (contextPath.equals(prefixPath) || contextPath.startsWith(prefixPathTrailingSlash))
+                return true;
         }
         return false;
     }
