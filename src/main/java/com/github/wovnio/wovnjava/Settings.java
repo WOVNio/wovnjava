@@ -69,7 +69,7 @@ class Settings {
         this.snippetUrl = this.devMode ? DefaultSnippetUrlDevelopment : DefaultSnippetUrlProduction;
 
         this.ignoreClasses = reader.getArrayParameter("ignoreClasses");
-        this.ignorePaths = reader.getArrayParameter("ignorePaths");
+        this.ignorePaths = normalizeIgnorePaths(reader.getArrayParameter("ignorePaths"));
 
         this.originalUrlHeader = stringOrDefault(reader.getStringParameter("originalUrlHeader"), "");
         this.originalQueryStringHeader = stringOrDefault(reader.getStringParameter("originalQueryStringHeader"), "");
@@ -146,6 +146,28 @@ class Settings {
         } else {
             return value;
         }
+    }
+
+    private ArrayList<String> normalizeIgnorePaths(ArrayList<String> values) {
+
+        ArrayList<String> ignorePaths = new ArrayList<String>();
+
+        for (String path : values) {
+            if (path.isEmpty()) {
+                continue;
+            }
+
+            path = path.toLowerCase();
+
+            if (!path.startsWith("/")) path = "/" + path;
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
+            }
+
+            ignorePaths.add(path);
+        }
+
+        return ignorePaths;
     }
 
     private Map<Lang, String> parseLangCodeAliases(String rawLangCodeAliases) throws ConfigurationError {

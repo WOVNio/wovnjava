@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.servlet.FilterConfig;
 
@@ -338,6 +339,22 @@ public class SettingsTest extends TestCase {
         assertEquals(emptyArrayList, s.ignorePaths);
     }
 
+    public void testIgnorePaths__NormalizedValues() throws ConfigurationError {
+        Settings s;
+
+        s = createSettings(new HashMap<String, String>() {{
+            put("ignorePaths", ",,,");
+        }});
+        ArrayList<String> emptyArrayList = new ArrayList<String>();
+        assertEquals(emptyArrayList, s.ignorePaths);
+
+        s = createSettings(new HashMap<String, String>() {{
+            put("ignorePaths", ",path1,path2/,pa/th3");
+        }});
+        ArrayList<String> expectedArrayList = new ArrayList<String>(Arrays.asList("/path1", "/path2", "/pa/th3"));
+        assertEquals(expectedArrayList, s.ignorePaths);
+    }
+
     public void testIgnoreClasses__DeclareEmptyString__UseDefaultEmptyArray() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("ignoreClasses", "");
@@ -447,5 +464,9 @@ public class SettingsTest extends TestCase {
             errorThrown = true;
         }
         assertEquals(true, errorThrown);
+    }
+
+    private Settings createSettings(HashMap<String, String> values) throws ConfigurationError {
+        return new Settings(TestUtil.makeConfigWithValidDefaults(values));
     }
 }
