@@ -202,7 +202,34 @@ Configure WovnServletFilter to determine request path and query from the same HT
 _The sample request header shown above was referenced from the following site:_
 https://coderwall.com/p/jhkw7w/passing-request-uri-into-request-header
 
-### 2.7. ignoreClasses
+### 2.7. ignorePaths
+
+A comma-separated list of URL path for which you would like WOVN to not translation content withing given directories.
+
+Ignored paths and their contents will not be processed by WovnServletFilter, and will not be sent to Wovn.io for translation. 
+
+For instance, if you want to not translation the admin directory of your website, you should configure as below.
+
+```XML
+<init-param>
+  <param-name>ignorePaths</param-name>
+  <param-value>/admin,/wp-admin</param-value>
+</init-param>
+```
+With this configuration, WOVN.java will ignore the following URLs
+```Text
+https://my-wesite.com/admin
+https://my-wesite.com/admin/
+https://my-website.com/admin/plugin.html
+```
+but allow the following
+```Text
+https://my-website.com/index.html
+https://my-website.com/user/admin
+https://my-website.com/adminpage
+```
+
+### 2.8. ignoreClasses
 
 A comma-separated list of HTML classes for which you would like WOVN to skip the elements of.
 (This setting is used to prevent confidential data contained in the page to be translated from being sent to WOVN)
@@ -229,7 +256,7 @@ Including three classes, `email-address-element`, `my-secret-class`, and `noshow
 </init-param>
 ```
 
-### 2.8. enableFlushBuffer
+### 2.9. enableFlushBuffer
 A flag to adjust the behavior of `ServletResponse.flushBuffer()`.
 
 This parameter is set to `false` by default (recommended).
@@ -238,7 +265,7 @@ When `enableFlushBuffer` is set to `false`, WovnServletFilter will capture calls
 immediately writing content to the client. Only when the complete HTML response is ready will the filter translate the content
 and send it to the client. This is necessary in order to translate the content properly.
 
-### 2.9. sitePrefixPath
+### 2.10. sitePrefixPath
 
 This parameter lets you set a prefix path to use as an anchor for which WOVN will translate pages. With this setting, WOVN will only translate pages that match the prefix path, and the path language code will be added _after_ the prefix path.
 
@@ -268,7 +295,7 @@ Furthermore, it is highly recommended to also configure your `web.xml` with a co
 </filter-mapping>
 ```
 
-### 2.10. langCodeAliases
+### 2.11. langCodeAliases
 
 This setting lets you specify the language identifier for your supported languages.
 
@@ -303,7 +330,7 @@ To illustrate, here is an example:
 
 Achieve this result by configuring `jp` as an alias for Japanese.
 
-### 2.11. customDomainLangs
+### 2.12. customDomainLangs
 
 This setting lets you define the domain and path that corresponds to each of your supported languages.
 
@@ -344,7 +371,7 @@ If this setting is used, each language declared in `supportedLangs` must be give
 Lastly, the path declared for your original language must match the structure of the underlying web server.
 In other words, you cannot use this setting to change the request path of your content in original language.
 
-### 2.12. debugMode
+### 2.13. debugMode
 
 A flag to enable extra debugging features.
 
