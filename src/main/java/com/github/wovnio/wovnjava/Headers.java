@@ -132,17 +132,15 @@ class Headers {
     private boolean isIgnoredPath(String contextPath) {
         ArrayList<String> ignorePaths = this.settings.ignorePaths;
 
+        contextPath = contextPath.toLowerCase();
+
         for (String ignorePath : ignorePaths) {
 
             String prefixPath = ignorePath;
             String prefixPathTrailingSlash = ignorePath + "/";
 
-            if (contextPath.toLowerCase().equals(prefixPath)) {
-                return true;
-            }
-            if (contextPath.toLowerCase().startsWith(prefixPathTrailingSlash)) {
-                return true;
-            }
+            return contextPath.equals(prefixPath)
+                || contextPath.startsWith(prefixPathTrailingSlash);
         }
         return false;
     }
