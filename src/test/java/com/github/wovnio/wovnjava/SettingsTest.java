@@ -339,17 +339,25 @@ public class SettingsTest extends TestCase {
         assertEquals(emptyArrayList, s.ignorePaths);
     }
 
-    public void testIgnorePaths__NormalizedValues() throws ConfigurationError {
-        Settings s;
-
-        s = createSettings(new HashMap<String, String>() {{
+    public void testIgnorePaths__emptyValues__areExcluded() throws ConfigurationError {
+        Settings s = createSettings(new HashMap<String, String>() {{
             put("ignorePaths", ",,,");
         }});
         ArrayList<String> emptyArrayList = new ArrayList<String>();
         assertEquals(emptyArrayList, s.ignorePaths);
+    }
 
-        s = createSettings(new HashMap<String, String>() {{
-            put("ignorePaths", ",path1,path2/,pa/th3");
+    public void testIgnorePaths__pathsWithoutLeadingSlash__slashAdded() throws ConfigurationError {
+        Settings s = createSettings(new HashMap<String, String>() {{
+            put("ignorePaths", ",path1/,path2/,pa/th3/");
+        }});
+        ArrayList<String> expectedArrayList = new ArrayList<String>(Arrays.asList("/path1", "/path2", "/pa/th3"));
+        assertEquals(expectedArrayList, s.ignorePaths);
+    }
+
+    public void testIgnorePaths__pathsWithTrailingSlash__slashRemoved() throws ConfigurationError {
+        Settings s = createSettings(new HashMap<String, String>() {{
+            put("ignorePaths", ",/path1/,/path2/,/pa/th3/");
         }});
         ArrayList<String> expectedArrayList = new ArrayList<String>(Arrays.asList("/path1", "/path2", "/pa/th3"));
         assertEquals(expectedArrayList, s.ignorePaths);
