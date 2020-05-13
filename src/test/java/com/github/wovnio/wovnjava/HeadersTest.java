@@ -271,6 +271,9 @@ public class HeadersTest extends TestCase {
         h = createHeaders("/wp-admin/", "", "/admin,/wp-admin");
         assertEquals(false, h.getIsValidRequest());
 
+        h = createHeaders("/wp-admin/page", "", "/admin,/wp-admin");
+        assertEquals(false, h.getIsValidRequest());
+
         h = createHeaders("/ja/admin", "", "/admin,/wp-admin");
         assertEquals(false, h.getIsValidRequest());
 
