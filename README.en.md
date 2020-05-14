@@ -93,6 +93,8 @@ An example minimum WovnServletFilter configuration looks as follows. This is for
 
 The recommended `filter-mapping` is to allow `REQUEST` and `FORWARD` for dispatchers, and allow all paths in `url-pattern`. If only a specific directory on your web server should be intercepted by WovnServletFilter, configure `url-pattern` accordingly.
 
+_Note If you have set up your own filters in your web.xml to handle URL rewriting and internal redirects, add the WovnJava settings under your own settings._
+
 ## 2. Parameter Settings
 
 The following parameters can be set within the WOVN.io Java Library.
