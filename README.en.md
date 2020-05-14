@@ -221,6 +221,9 @@ With this configuration, WOVN.java will ignore the following URLs
 https://my-wesite.com/admin
 https://my-wesite.com/admin/
 https://my-website.com/admin/plugin.html
+https://my-wesite.com/wp-admin
+https://my-wesite.com/wp-admin/
+https://my-website.com/wp-admin/anypages
 ```
 but allow the following
 ```Text
