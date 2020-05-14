@@ -39,6 +39,7 @@ class Settings {
     public final String originalUrlHeader;
     public final String originalQueryStringHeader;
 
+    public final ArrayList<String> ignorePaths;
     public final ArrayList<String> ignoreClasses;
 
     public final int connectTimeout;
@@ -68,6 +69,7 @@ class Settings {
         this.snippetUrl = this.devMode ? DefaultSnippetUrlDevelopment : DefaultSnippetUrlProduction;
 
         this.ignoreClasses = reader.getArrayParameter("ignoreClasses");
+        this.ignorePaths = normalizeIgnorePaths(reader.getArrayParameter("ignorePaths"));
 
         this.originalUrlHeader = stringOrDefault(reader.getStringParameter("originalUrlHeader"), "");
         this.originalQueryStringHeader = stringOrDefault(reader.getStringParameter("originalQueryStringHeader"), "");
@@ -146,6 +148,28 @@ class Settings {
         }
     }
 
+    private ArrayList<String> normalizeIgnorePaths(ArrayList<String> values) {
+
+        ArrayList<String> ignorePaths = new ArrayList<String>();
+
+        for (String path : values) {
+            if (path.isEmpty()) {
+                continue;
+            }
+
+            path = path.toLowerCase();
+
+            if (!path.startsWith("/")) path = "/" + path;
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
+            }
+
+            ignorePaths.add(path);
+        }
+
+        return ignorePaths;
+    }
+
     private Map<Lang, String> parseLangCodeAliases(String rawLangCodeAliases) throws ConfigurationError {
         return LanguageAliasSerializer.deserializeFilterConfig(rawLangCodeAliases);
     }
@@ -178,6 +202,9 @@ class Settings {
         md.update(defaultLang.code.getBytes());
         for (Lang lang : supportedLangs) {
             md.update(lang.code.getBytes());
+        }
+        for (String path : ignorePaths) {
+            md.update(path.getBytes());
         }
         md.update(useProxy ? new byte[]{ 0 } : new byte[] { 1 });
         md.update(originalUrlHeader.getBytes());

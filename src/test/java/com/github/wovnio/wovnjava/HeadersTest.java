@@ -124,7 +124,7 @@ public class HeadersTest extends TestCase {
     }
 
     public void testConvertToDefaultLanguage__PathPatternWithSitePrefixPath() throws ConfigurationError, MalformedURLException {
-        Headers h = makeHeaderWithSitePrefixPath("/global/en/foo", "/global/");
+        Headers h = createHeaders("/global/en/foo", "/global/", "");
         URL url;
 
         url = new URL("http://site.com/global/en/");
@@ -221,7 +221,7 @@ public class HeadersTest extends TestCase {
     }
 
     public void testLocationWithSitePrefixPath() throws ConfigurationError {
-        Headers h = makeHeaderWithSitePrefixPath("/global/ja/foo", "/global/");
+        Headers h = createHeaders("/global/ja/foo", "/global/", "");
         assertEquals("http://example.com/", h.locationWithLangCode("http://example.com/"));
         assertEquals("http://example.com/global/ja/", h.locationWithLangCode("http://example.com/global/"));
         assertEquals("https://example.com/global/ja/", h.locationWithLangCode("https://example.com/global/"));
@@ -240,24 +240,66 @@ public class HeadersTest extends TestCase {
 
     public void testGetIsValidRequest() throws ConfigurationError {
         Headers h;
-        h = makeHeaderWithSitePrefixPath("/", "global");
+        h = createHeaders("/", "global", "");
         assertEquals(false, h.getIsValidRequest());
 
-        h = makeHeaderWithSitePrefixPath("/global", "global");
+        h = createHeaders("/global", "global", "");
         assertEquals(true, h.getIsValidRequest());
 
-        h = makeHeaderWithSitePrefixPath("/global/ja/foo", "global");
+        h = createHeaders("/global/ja/foo", "global", "");
         assertEquals(true, h.getIsValidRequest());
 
-        h = makeHeaderWithSitePrefixPath("/ja/global/foo", "global");
+        h = createHeaders("/ja/global/foo", "global", "");
         assertEquals(false, h.getIsValidRequest());
     }
 
-    private Headers makeHeaderWithSitePrefixPath(String requestPath, String sitePrefixPath) throws ConfigurationError {
+    public void testGetIsValidRequest__withIgnoredPaths() throws ConfigurationError {
+        Headers h;
+
+        h = createHeaders("/", "", "/admin,/wp-admin");
+        assertEquals(true, h.getIsValidRequest());
+
+        h = createHeaders("/user/admin", "", "/admin,/wp-admin");
+        assertEquals(true, h.getIsValidRequest());
+
+        h = createHeaders("/adminpage", "", "/admin,/wp-admin");
+        assertEquals(true, h.getIsValidRequest());
+
+        h = createHeaders("/admin", "", "/admin,/wp-admin");
+        assertEquals(false, h.getIsValidRequest());
+
+        h = createHeaders("/wp-admin/", "", "/admin,/wp-admin");
+        assertEquals(false, h.getIsValidRequest());
+
+        h = createHeaders("/wp-admin/page", "", "/admin,/wp-admin");
+        assertEquals(false, h.getIsValidRequest());
+
+        h = createHeaders("/ja/admin", "", "/admin,/wp-admin");
+        assertEquals(false, h.getIsValidRequest());
+
+        h = createHeaders("/ja/wp-admin/", "", "/admin,/wp-admin");
+        assertEquals(false, h.getIsValidRequest());
+
+        h = createHeaders("/en/admin", "", "/admin,/wp-admin");
+        assertEquals(false, h.getIsValidRequest());
+
+        h = createHeaders("/en/wp-admin/", "", "/admin,/wp-admin");
+        assertEquals(false, h.getIsValidRequest());
+
+
+        h = createHeaders("/city/wp-admin", "city", "/admin,/wp-admin");
+        assertEquals(true, h.getIsValidRequest());
+
+        h = createHeaders("/city/wp-admin", "city", "/city/admin,/city/wp-admin");
+        assertEquals(false, h.getIsValidRequest());
+    }
+
+    private Headers createHeaders(String requestPath, String sitePrefixPath, String ignorePaths) throws ConfigurationError {
         HttpServletRequest mockRequest = MockHttpServletRequest.create("https://example.com" + requestPath);
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("urlPattern", "path");
             put("sitePrefixPath", sitePrefixPath);
+            put("ignorePaths", ignorePaths);
         }};
         Settings s = TestUtil.makeSettings(option);
         UrlLanguagePatternHandler ulph = UrlLanguagePatternHandlerFactory.create(s);

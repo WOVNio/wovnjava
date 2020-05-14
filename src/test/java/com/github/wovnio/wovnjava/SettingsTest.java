@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.servlet.FilterConfig;
 
@@ -45,6 +46,7 @@ public class SettingsTest extends TestCase {
 
         ArrayList<String> emptyArrayList = new ArrayList<String>();
         assertEquals(emptyArrayList, s.ignoreClasses);
+        assertEquals(emptyArrayList, s.ignorePaths);
 
         assertEquals(Settings.DefaultSnippetUrlProduction, s.snippetUrl);
         assertEquals(Settings.DefaultApiUrlProduction, s.apiUrl);
@@ -328,6 +330,39 @@ public class SettingsTest extends TestCase {
         assertEquals(Settings.DefaultSnippetUrlDevelopment, s.snippetUrl);
     }
 
+    public void testIgnorePaths__DeclareEmptyString__UseDefaultEmptyArray() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("ignorePaths", "");
+        }});
+        Settings s = new Settings(config);
+        ArrayList<String> emptyArrayList = new ArrayList<String>();
+        assertEquals(emptyArrayList, s.ignorePaths);
+    }
+
+    public void testIgnorePaths__emptyValues__areExcluded() throws ConfigurationError {
+        Settings s = createSettings(new HashMap<String, String>() {{
+            put("ignorePaths", ",,,");
+        }});
+        ArrayList<String> emptyArrayList = new ArrayList<String>();
+        assertEquals(emptyArrayList, s.ignorePaths);
+    }
+
+    public void testIgnorePaths__pathsWithoutLeadingSlash__slashAdded() throws ConfigurationError {
+        Settings s = createSettings(new HashMap<String, String>() {{
+            put("ignorePaths", ",path1/,path2/,pa/th3/");
+        }});
+        ArrayList<String> expectedArrayList = new ArrayList<String>(Arrays.asList("/path1", "/path2", "/pa/th3"));
+        assertEquals(expectedArrayList, s.ignorePaths);
+    }
+
+    public void testIgnorePaths__pathsWithTrailingSlash__slashRemoved() throws ConfigurationError {
+        Settings s = createSettings(new HashMap<String, String>() {{
+            put("ignorePaths", ",/path1/,/path2/,/pa/th3/");
+        }});
+        ArrayList<String> expectedArrayList = new ArrayList<String>(Arrays.asList("/path1", "/path2", "/pa/th3"));
+        assertEquals(expectedArrayList, s.ignorePaths);
+    }
+
     public void testIgnoreClasses__DeclareEmptyString__UseDefaultEmptyArray() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("ignoreClasses", "");
@@ -437,5 +472,9 @@ public class SettingsTest extends TestCase {
             errorThrown = true;
         }
         assertEquals(true, errorThrown);
+    }
+
+    private Settings createSettings(HashMap<String, String> values) throws ConfigurationError {
+        return new Settings(TestUtil.makeConfigWithValidDefaults(values));
     }
 }

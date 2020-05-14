@@ -1,5 +1,6 @@
 package com.github.wovnio.wovnjava;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -52,7 +53,7 @@ class Headers {
 
         this.shouldRedirectExplicitDefaultLangUrl = this.urlLanguagePatternHandler.shouldRedirectExplicitDefaultLangUrl(clientRequestUrl);
 
-        this.isValidRequest = this.requestLang != null && this.urlContext != null;
+        this.isValidRequest = this.requestLang != null && this.urlContext != null && !this.isIgnoredPath(this.urlContext.getURL().getPath());
     }
 
     /*
@@ -126,5 +127,21 @@ class Headers {
         String urlDefaultLang = this.clientRequestUrlInDefaultLanguage;
         hreflangs.put(hreflangCodeDefaultLang, urlDefaultLang);
         return hreflangs;
+    }
+
+    private boolean isIgnoredPath(String contextPath) {
+        ArrayList<String> ignorePaths = this.settings.ignorePaths;
+
+        contextPath = contextPath.toLowerCase();
+
+        for (String ignorePath : ignorePaths) {
+
+            String prefixPath = ignorePath;
+            String prefixPathTrailingSlash = ignorePath + "/";
+
+            if (contextPath.equals(prefixPath) || contextPath.startsWith(prefixPathTrailingSlash))
+                return true;
+        }
+        return false;
     }
 }
