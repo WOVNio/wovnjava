@@ -482,4 +482,4 @@ uk | Українська | Ukrainian
 ur | اردو | Urdu
 vi | Tiếng Việt | Vietnamese
 tl | Tagalog | Tagalog
-
+km | ភាសាខ្មែរ | Khmer

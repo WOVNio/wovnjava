@@ -83,6 +83,7 @@ class Lang {
         langs.add(new Lang("ur", "ur", "Urdu", "اردو"));
         langs.add(new Lang("vi", "vi", "Vietnamese", "Tiếng Việt"));
         langs.add(new Lang("tl", "tl", "Tagalog", "Tagalog"));
+        langs.add(new Lang("km", "km", "Khmer", "ភាសាខ្មែរ"));
 
         HashMap<String, Lang> map = new HashMap<String, Lang>();
         for (Lang lang : langs) {
