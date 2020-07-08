@@ -97,8 +97,10 @@ class HtmlConverter {
     }
 
     private void removeWovnIgnore() {
-        Elements elements = doc.getElementsByAttribute("wovn-ignore");
-        for (Element element : elements) {
+        for (Element element : doc.getElementsByAttribute("wovn-ignore")) {
+            replaceNodeToMarkerComment(element);
+        }
+        for (Element element : doc.getElementsByAttribute("data-wovn-ignore")) {
             replaceNodeToMarkerComment(element);
         }
     }

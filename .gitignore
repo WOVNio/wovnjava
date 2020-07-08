@@ -9,6 +9,10 @@
 /.vagrant/
 .idea/
 *.swp
+.classpath
+.project
+.settings/
+.vscode/
 
 docker/java7/hello/target
 docker/java8/hello/target
