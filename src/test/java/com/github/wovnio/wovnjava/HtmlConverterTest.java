@@ -55,8 +55,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveWovnIgnore() throws ConfigurationError {
-        String original = "<html><head></head><body><div>Hello <span wovn-ignore>Duke</span>.</div></body></html>";
-        String removedHtml = "<html><head></head><body><div>Hello <!--wovn-marker-0-->.</div></body></html>";
+        String original = "<html><head></head><body><div>Hello <span wovn-ignore>Duke</span><span data-wovn-ignore>Silver</span>.</div></body></html>";
+        String removedHtml = "<html><head></head><body><div>Hello <!--wovn-marker-0--><!--wovn-marker-1-->.</div></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
