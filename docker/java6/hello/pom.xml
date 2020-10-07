@@ -43,8 +43,8 @@
       <artifactId>wovnjava</artifactId>
       <version>1.0.1-jdk6</version>
       <!-- If you use local compiled version. -->
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/wovnjava-1.0.1-jdk6-jar-with-dependencies.jar</systemPath>
+      <!-- <scope>system</scope>
+      <systemPath>${basedir}/lib/wovnjava-1.0.1-jdk6-jar-with-dependencies.jar</systemPath> -->
     </dependency>
 
   </dependencies>

@@ -4,6 +4,7 @@
 /META-INF/
 /.vagrant/
 .idea/
+.vscode/
 *.swp
 
 .classpath
@@ -11,3 +12,4 @@
 .settings
 docker/java6/hello/target
 docker/java6/hello/lib
+bin/
