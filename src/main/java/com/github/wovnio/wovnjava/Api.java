@@ -26,11 +26,11 @@ import org.bouncycastle.jsse.provider.SSLSocketFactoryImpl;
 import net.arnx.jsonic.JSON;
 
 class Api {
-	static {
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
-		}
-	}
+    static {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
 
     private final int READ_BUFFER_SIZE = 8196;
     private final Settings settings;
