@@ -41,7 +41,7 @@ public class WovnServletFilter implements Filter {
         if (((HttpServletResponse)response).containsHeader("X-Wovn-Handler")) {
             isRequestAlreadyProcessed = true;
         } else {
-            ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "TEST_" + Settings.VERSION);
+            ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
         }
 
         RequestOptions requestOptions = new RequestOptions(this.settings, request);

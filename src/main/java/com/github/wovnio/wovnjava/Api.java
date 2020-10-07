@@ -1,30 +1,29 @@
 package com.github.wovnio.wovnjava;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-import java.util.LinkedHashMap;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
+import java.util.LinkedHashMap;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.DatatypeConverter;
-import javax.net.ssl.*;
 
-import net.arnx.jsonic.JSON;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jsse.provider.SSLSocketFactoryImpl;
+
+import net.arnx.jsonic.JSON;
 
 class Api {
 	static {
@@ -48,8 +47,6 @@ class Api {
     }
 
     String translate(String lang, String html) throws ApiException {
-        this.TestTLS();
-
         this.responseHeaders.setApiStatus("Requested");
 
         HttpsURLConnection con = null;
@@ -57,7 +54,6 @@ class Api {
             URL url = getApiUrl(lang, html);
             con = (HttpsURLConnection) url.openConnection();
             con.setConnectTimeout(settings.connectTimeout);
-            System.out.println("Set socket factory");
             con.setSSLSocketFactory(new SSLSocketFactoryImpl());
             con.setReadTimeout(settings.readTimeout);
             return translate(lang, html, con);
@@ -76,26 +72,6 @@ class Api {
             if (con != null) {
                 con.disconnect();
             }
-        }
-    }
-
-    private void TestTLS() {
-        System.out.println("TestTLS");
-        try {
-            URL badUrl = new URL("https://tls-v1-2.badssl.com:1012/");
-            HttpsURLConnection con2 = (HttpsURLConnection) badUrl.openConnection();
-            con2.setSSLSocketFactory(new SSLSocketFactoryImpl());
-            BufferedReader in = new BufferedReader(new InputStreamReader(con2.getInputStream()));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null)
-                System.out.println(inputLine);
-            in.close();
-        }
-        catch(IOException e) {
-            System.out.println("TestTLS IOException" + e.toString());
-        }
-        catch(Exception e) {
-            System.out.println("TestTLS Exception" + e.toString());
         }
     }
 
