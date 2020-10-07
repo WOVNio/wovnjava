@@ -11,7 +11,7 @@
         <init-param>
             <param-name>projectToken</param-name>
             <!-- Change your project token -->
-            <param-value>Token</param-value>
+            <param-value>70U4Er</param-value>
         </init-param>
         <init-param>
             <param-name>defaultLang</param-name>

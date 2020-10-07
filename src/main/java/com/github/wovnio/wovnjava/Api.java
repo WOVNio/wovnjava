@@ -1,7 +1,9 @@
 package com.github.wovnio.wovnjava;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
@@ -36,7 +38,10 @@ class Api {
     }
 
     String translate(String lang, String html) throws ApiException {
+        this.TestTLS();
+
         this.responseHeaders.setApiStatus("Requested");
+
         HttpURLConnection con = null;
         try {
             URL url = getApiUrl(lang, html);
@@ -56,6 +61,23 @@ class Api {
             if (con != null) {
                 con.disconnect();
             }
+        }
+    }
+
+    private void TestTLS() {
+        System.out.println("TestTLS");
+        try {
+            URL badUrl = new URL("https://tls-v1-2.badssl.com:1012/");
+            HttpURLConnection con2 = (HttpURLConnection) badUrl.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(con2.getInputStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null)
+                System.out.println(inputLine);
+            in.close();
+        }
+        catch(IOException e) {
+
+        System.out.println("TestTLS IOException" + e.toString());
         }
     }
 
