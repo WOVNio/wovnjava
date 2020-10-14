@@ -1,26 +1,37 @@
 package com.github.wovnio.wovnjava;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-import java.util.LinkedHashMap;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
+import java.util.LinkedHashMap;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.DatatypeConverter;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jsse.provider.SSLSocketFactoryImpl;
 
 import net.arnx.jsonic.JSON;
 
 class Api {
+    static {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
+
     private final int READ_BUFFER_SIZE = 8196;
     private final Settings settings;
     private final Headers headers;
@@ -37,11 +48,13 @@ class Api {
 
     String translate(String lang, String html) throws ApiException {
         this.responseHeaders.setApiStatus("Requested");
-        HttpURLConnection con = null;
+
+        HttpsURLConnection con = null;
         try {
             URL url = getApiUrl(lang, html);
-            con = (HttpURLConnection) url.openConnection();
+            con = (HttpsURLConnection) url.openConnection();
             con.setConnectTimeout(settings.connectTimeout);
+            con.setSSLSocketFactory(new SSLSocketFactoryImpl());
             con.setReadTimeout(settings.readTimeout);
             return translate(lang, html, con);
         } catch (UnsupportedEncodingException e) {
@@ -52,7 +65,10 @@ class Api {
             throw new ApiException("IOException", e.getMessage());
         } catch (NoSuchAlgorithmException e) {
             throw new ApiException("NoSuchAlgorithmException", e.getMessage());
-        } finally {
+        } catch(Exception e) {
+            throw new ApiException("Exception", e.getMessage());
+        }
+        finally {
             if (con != null) {
                 con.disconnect();
             }
