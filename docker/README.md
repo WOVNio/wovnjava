@@ -16,6 +16,12 @@ Steps of run to Hello WOVN.java.
 mave-clean-package.sh
 ```
 
+Or
+
+```
+make
+```
+
 ## 2. Start docker-compose
 
 This is using ngrok, ngrok allows you to expose a web server running on your local machine to the internet.
