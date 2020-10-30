@@ -474,7 +474,6 @@ es-UY | Español (Uruguay) | Spanish (Uruguay)
 es-VE | Español (Venezuela) | Spanish (Venezuela)
 sw | Kiswahili | Swahili
 sv | Svensk | Swedish
-tl | Tagalog | Tagalog
 th | ภาษาไทย | Thai
 hi | हिन्दी | Hindi
 tr | Türkçe | Turkish
@@ -483,3 +482,5 @@ ur | اردو | Urdu
 vi | Tiếng Việt | Vietnamese
 tl | Tagalog | Tagalog
 km | ភាសាខ្មែរ | Khmer
+ta | தமிழ் | Tamil
+si | සිංහල | Sinhala
