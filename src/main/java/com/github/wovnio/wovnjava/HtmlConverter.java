@@ -107,13 +107,12 @@ class HtmlConverter {
         for (Element element : elements) {
             String type = element.attr("type");
             if (type != null && type.toLowerCase().equals("hidden")) {
-                String original = element.outerHtml();
-                for (Attribute attr: element.attributes()) {
-                    element.removeAttr(attr.getKey());
+                if (element.hasAttr("value")) {
+                    String original = element.attr("value");
+                    String key = htmlReplaceMarker.generateKey();
+                    element.attr("value", key);
+                    htmlReplaceMarker.addValue(key, original);
                 }
-                element.removeAttr("name");  // "name" doesn't show up in Element.attributes()
-                element.attr(htmlReplaceMarker.generateKey(), "");
-                htmlReplaceMarker.addValue(element.outerHtml(), original);
             }
         }
     }

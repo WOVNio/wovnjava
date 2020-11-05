@@ -87,18 +87,18 @@ public class HtmlConverterTest extends TestCase {
 
     public void testRemoveForm() throws ConfigurationError {
         String original = "<html><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
-        String removedHtml = "<html><head></head><body><form><input wovn-marker-0=\"\"><input wovn-marker-1=\"\"></form></body></html>";
+        String removedHtml = "<html><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"wovn-marker-0\"><input TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" value=\"wovn-marker-1\"></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
 
         assertEquals(removedHtml, stripExtraSpaces(html));
         // jsoup make lower case tag name
-        assertEquals(original.replace("INPUT", "input"), stripExtraSpaces(converter.restore(html)));
+        assertEquals(original.replace("INPUT", "input").replace("VALUE", "value"), stripExtraSpaces(converter.restore(html)));
     }
 
     public void testNested() throws ConfigurationError {
-        String original = "<html><head></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
+        String original = "<html><head></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" value=\"RANDOM\"></form></body></html>";
         String removedHtml = "<html><head></head><body><form wovn-ignore><!--wovn-marker-1--></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
@@ -197,7 +197,7 @@ public class HtmlConverterTest extends TestCase {
             "</head><body>" +
             "a <script><!--wovn-marker-1--></script>b" +
             "<div>Hello <span wovn-ignore><!--wovn-marker-9--></span>.</div>" +
-            "<form><input wovn-marker-16=\"\"></form>" +
+            "<form><input type=\"hidden\" name=\"csrf\" value=\"wovn-marker-16\"></form>" +
             "<script><!--wovn-marker-2--></script>" +
             "<script><!--wovn-marker-3--></script>" +
             "<script><!--wovn-marker-4--></script>" +
