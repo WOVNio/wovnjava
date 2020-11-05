@@ -3,22 +3,24 @@ package com.github.wovnio.wovnjava;
 import java.lang.StringBuilder;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.ArrayList;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attribute;
+import org.jsoup.nodes.Attributes;
+import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
 class HtmlConverter {
-    private final ArrayList<String> markers = new ArrayList<String>();
-    private final String WOVN_MARKER_PREFIX = "wovn-marker-";
     private final Document doc;
     private final Settings settings;
     private final HashMap<String, String> hreflangMap;
+    private final HtmlReplaceMarker htmlReplaceMarker;
 
     HtmlConverter(Settings settings, Headers headers, String original) {
         this.settings = settings;
+        this.htmlReplaceMarker = new HtmlReplaceMarker();
         this.hreflangMap = headers.getHreflangUrlMap();
         doc = Jsoup.parse(original);
         doc.outputSettings().prettyPrint(false);
@@ -43,20 +45,7 @@ class HtmlConverter {
     }
 
     String restore(String html) {
-        StringBuilder sb = new StringBuilder();
-        String[] list = html.split("<!--" + WOVN_MARKER_PREFIX);
-
-        sb.append(list[0]);
-        for (int i=1; i<list.length; i++) {
-            String fragment = list[i];
-            String commentSuffix = "-->";
-            int suffixOffset = fragment.indexOf(commentSuffix);
-            String indexString = fragment.substring(0, suffixOffset);
-            int index = Integer.parseInt(indexString);
-            sb.append(markers.get(index));
-            sb.append(fragment.substring(suffixOffset + commentSuffix.length()));
-        }
-        return sb.toString();
+        return htmlReplaceMarker.revert(html);
     }
 
     private void removeHrefLangIfConflicts() {
@@ -116,7 +105,14 @@ class HtmlConverter {
         for (Element element : elements) {
             String type = element.attr("type");
             if (type != null && type.toLowerCase().equals("hidden")) {
-                replaceNodeToMarkerComment(element);
+                String original = element.outerHtml();
+                Attributes attributes = element.attributes().clone();
+                for (Attribute attr: attributes) {
+                    element.removeAttr(attr.getKey());
+                }
+                element.removeAttr("name");  // "name" doesn't show up in Element.attributes()
+                element.attr(htmlReplaceMarker.generateKey(), "");
+                htmlReplaceMarker.addValue(element.outerHtml(), original);
             }
         }
     }
@@ -161,10 +157,9 @@ class HtmlConverter {
     }
 
     private void replaceNodeToMarkerComment(Element element) {
-        String commentData = WOVN_MARKER_PREFIX + String.valueOf(markers.size());
-        element.before("<!--" + commentData + "-->");
-        element.remove();
-        markers.add(restore(element.outerHtml())); // restore original text if element has marker
+        String commentKey = htmlReplaceMarker.addCommentValue(htmlReplaceMarker.revert(element.html()));
+        element.html("");
+        element.appendChild(new Comment(commentKey, element.baseUri()));
     }
 
     private void replaceContentType() {
