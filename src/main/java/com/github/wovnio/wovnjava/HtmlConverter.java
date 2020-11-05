@@ -2,24 +2,27 @@ package com.github.wovnio.wovnjava;
 
 import java.lang.StringBuilder;
 import java.util.Map;
+import java.util.HashSet;
 import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
+import org.jsoup.parser.Tag;
 
 class HtmlConverter {
-    private final ArrayList<String> markers = new ArrayList<String>();
-    private final String WOVN_MARKER_PREFIX = "wovn-marker-";
+    private final String WOVN_MARKER_PREFIX = "wovn-marker-id";
+    private final String WOVN_MARKER_CLASS = "wovn-marked";
     private final Document doc;
     private final Settings settings;
     private final HashMap<String, String> hreflangMap;
+    private final HtmlMarkerManager markerManager;
 
     HtmlConverter(Settings settings, Headers headers, String original) {
         this.settings = settings;
+        this.markerManager = new HtmlMarkerManager();
         this.hreflangMap = headers.getHreflangUrlMap();
         doc = Jsoup.parse(original);
         doc.outputSettings().prettyPrint(false);
@@ -44,20 +47,29 @@ class HtmlConverter {
     }
 
     String restore(String html) {
-        StringBuilder sb = new StringBuilder();
-        String[] list = html.split("<!--" + WOVN_MARKER_PREFIX);
-
-        sb.append(list[0]);
-        for (int i=1; i<list.length; i++) {
-            String fragment = list[i];
-            String commentSuffix = "-->";
-            int suffixOffset = fragment.indexOf(commentSuffix);
-            String indexString = fragment.substring(0, suffixOffset);
-            int index = Integer.parseInt(indexString);
-            sb.append(markers.get(index));
-            sb.append(fragment.substring(suffixOffset + commentSuffix.length()));
+        Document document = Jsoup.parse(html);
+        Elements markedElements = document.select(String.format(".%s", this.WOVN_MARKER_CLASS));
+        for(Element markedElement : markedElements) {
+            String commentId = markedElement.attr(WOVN_MARKER_PREFIX);
+            Element original = this.markerManager.getOriginal(commentId);
+            if (original != null) {
+                markedElement.replaceWith(original);
+            }
         }
-        return sb.toString();
+        return document.outerHtml();
+    }
+
+    Element restore(Element element) {
+        Element clonedElement = element.clone();
+        Elements markedElements = clonedElement.select(String.format(".%s", this.WOVN_MARKER_CLASS));
+        for(Element markedElement : markedElements) {
+            String commentId = markedElement.attr(WOVN_MARKER_PREFIX);
+            Element original = this.markerManager.getOriginal(commentId);
+            if (original != null) {
+                markedElement.replaceWith(original);
+            }
+        }
+        return clonedElement;
     }
 
     private void removeHrefLangIfConflicts() {
@@ -168,9 +180,17 @@ class HtmlConverter {
     }
 
     private void replaceNodeToMarkerComment(Element element) {
-        Comment comment = new Comment(WOVN_MARKER_PREFIX + String.valueOf(markers.size()));
-        element.replaceWith(comment);
-        markers.add(restore(element.outerHtml())); // restore original text if element has marker
+        int commentId = this.markerManager.getCommentId();
+        Element newElement = restore(element);
+        if (this.markerManager.addComment(newElement, String.valueOf(commentId)) != commentId) {
+            throw new ConcurrentModificationException("Invlid Comment ID. CommentManger is not thread-safe.");
+        }
+        Element marker = new Element(element.tag().toString());
+        HashSet<String> markerClasses = new HashSet<String>();
+        markerClasses.add(WOVN_MARKER_CLASS);
+        marker.classNames(markerClasses);
+        marker.attr(WOVN_MARKER_PREFIX, String.valueOf(commentId));
+        element.replaceWith(marker);
     }
 
     private void replaceContentType() {

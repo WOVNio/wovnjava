@@ -36,7 +36,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testRemoveScripts() throws ConfigurationError {
         String original = "<html><head><script>alert(1)</script></head><body>a <script>console.log(1)</script>b</body></html>";
-        String removedHtml = "<html><head><!--wovn-marker-0--></head><body>a <!--wovn-marker-1-->b</body></html>";
+        String removedHtml = "<html><head><script class=\"wovn-marked\" wovn-marker-id=\"0\"></script></head><body>a <script class=\"wovn-marked\" wovn-marker-id=\"1\"></script>b</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -56,7 +56,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testRemoveWovnIgnore() throws ConfigurationError {
         String original = "<html><head></head><body><div>Hello <span wovn-ignore>Duke</span><span data-wovn-ignore>Silver</span>.</div></body></html>";
-        String removedHtml = "<html><head></head><body><div>Hello <!--wovn-marker-0--><!--wovn-marker-1-->.</div></body></html>";
+        String removedHtml = "<html><head></head><body><div>Hello <span class=\"wovn-marked\" wovn-marker-id=\"0\"></span><span class=\"wovn-marked\" wovn-marker-id=\"1\"></span>.</div></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -70,8 +70,8 @@ public class HtmlConverterTest extends TestCase {
           "<p class=\"ignore-me\">It's a fruit, <span class=\"name\">Louie</span>!</p>" +
           "</body></html>";
         String removedHtml = "<html><head></head><body>" +
-          "<p class=\"no-ignore\">The pizza needs <!--wovn-marker-0-->, <!--wovn-marker-1-->!</p>" +
-          "<!--wovn-marker-2-->" +
+          "<p class=\"no-ignore\">The pizza needs <b class=\"wovn-marked\" wovn-marker-id=\"0\"></b>, <span class=\"wovn-marked\" wovn-marker-id=\"1\"></span>!</p>" +
+          "<p class=\"wovn-marked\" wovn-marker-id=\"2\"></p>" +
           "</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("supportedLangs", "en,fr,ja");
@@ -87,7 +87,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testRemoveForm() throws ConfigurationError {
         String original = "<html><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
-        String removedHtml = "<html><head></head><body><form><!--wovn-marker-0--><!--wovn-marker-1--></form></body></html>";
+        String removedHtml = "<html><head></head><body><form><input class=\"wovn-marked\" wovn-marker-id=\"0\"><input class=\"wovn-marked\" wovn-marker-id=\"1\"></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -99,7 +99,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testNested() throws ConfigurationError {
         String original = "<html><head></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
-        String removedHtml = "<html><head></head><body><!--wovn-marker-1--></body></html>";
+        String removedHtml = "<html><head></head><body><form class=\"wovn-marked\" wovn-marker-id=\"1\"></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -192,23 +192,23 @@ public class HtmlConverterTest extends TestCase {
             "<script>10</script>" +
             "</body></html>";
         String removedHtml = "<html><head>" +
-            "<!--wovn-marker-0-->" +
+            "<script class=\"wovn-marked\" wovn-marker-id=\"0\"></script>" +
             "<link ref=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\">" +
             "</head><body>" +
-            "a <!--wovn-marker-1-->b" +
-            "<div>Hello <!--wovn-marker-9-->.</div>" +
-            "<form><!--wovn-marker-14--></form>" +
-            "<!--wovn-marker-2-->" +
-            "<!--wovn-marker-3-->" +
-            "<!--wovn-marker-4-->" +
-            "<!--wovn-marker-5-->" +
-            "<!--wovn-marker-6-->" +
+            "a <script class=\"wovn-marked\" wovn-marker-id=\"1\"></script>b" +
+            "<div>Hello <span class=\"wovn-marked\" wovn-marker-id=\"9\"></span>.</div>" +
+            "<form><input class=\"wovn-marked\" wovn-marker-id=\"14\"></form>" +
+            "<script class=\"wovn-marked\" wovn-marker-id=\"2\"></script>" +
+            "<script class=\"wovn-marked\" wovn-marker-id=\"3\"></script>" +
+            "<script class=\"wovn-marked\" wovn-marker-id=\"4\"></script>" +
+            "<script class=\"wovn-marked\" wovn-marker-id=\"5\"></script>" +
+            "<script class=\"wovn-marked\" wovn-marker-id=\"6\"></script>" +
             "<div class=\"class-ignore-test\">" +
-            "<p class=\"no-ignore\">The pizza needs <!--wovn-marker-12-->, <!--wovn-marker-10-->!</p>" +
-            "<!--wovn-marker-13-->" +
+            "<p class=\"no-ignore\">The pizza needs <b class=\"wovn-marked\" wovn-marker-id=\"12\"></b>, <span class=\"wovn-marked\" wovn-marker-id=\"10\"></span>!</p>" +
+            "<p class=\"wovn-marked\" wovn-marker-id=\"13\"></p>" +
             "</div>" +
-            "<!--wovn-marker-7-->" +
-            "<!--wovn-marker-8-->" +
+            "<script class=\"wovn-marked\" wovn-marker-id=\"7\"></script>" +
+            "<script class=\"wovn-marked\" wovn-marker-id=\"8\"></script>" +
             "</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("supportedLangs", "en,fr,ja");
