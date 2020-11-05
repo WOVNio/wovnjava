@@ -23,7 +23,7 @@ public class InterceptorTest extends TestCase {
             put("supportedLangs", "en,ja,fr");
         }});
         String html = translate("https://example.com/ja/", originalHtml, settings, mockApiSuccess(), mockResponseHeadersSuccess());
-        String expect = "<html><head></head><body>replaced html</body></html>";
+        String expect = "replaced html";
         assertEquals(expect, stripExtraSpaces(html));
     }
 

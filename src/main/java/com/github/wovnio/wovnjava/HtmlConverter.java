@@ -2,27 +2,25 @@ package com.github.wovnio.wovnjava;
 
 import java.lang.StringBuilder;
 import java.util.Map;
-import java.util.HashSet;
 import java.util.HashMap;
-import java.util.ConcurrentModificationException;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attribute;
+import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.parser.Tag;
 
 class HtmlConverter {
-    private final String WOVN_MARKER_PREFIX = "wovn-marker-id";
-    private final String WOVN_MARKER_CLASS = "wovn-marked";
     private final Document doc;
     private final Settings settings;
     private final HashMap<String, String> hreflangMap;
-    private final HtmlMarkerManager markerManager;
+    private final HtmlReplaceMarker htmlReplaceMarker;
 
     HtmlConverter(Settings settings, Headers headers, String original) {
         this.settings = settings;
-        this.markerManager = new HtmlMarkerManager();
+        this.htmlReplaceMarker = new HtmlReplaceMarker();
         this.hreflangMap = headers.getHreflangUrlMap();
         doc = Jsoup.parse(original);
         doc.outputSettings().prettyPrint(false);
@@ -47,29 +45,7 @@ class HtmlConverter {
     }
 
     String restore(String html) {
-        Document document = Jsoup.parse(html);
-        Elements markedElements = document.select(String.format(".%s", this.WOVN_MARKER_CLASS));
-        for(Element markedElement : markedElements) {
-            String commentId = markedElement.attr(WOVN_MARKER_PREFIX);
-            Element original = this.markerManager.getOriginal(commentId);
-            if (original != null) {
-                markedElement.replaceWith(original);
-            }
-        }
-        return document.outerHtml();
-    }
-
-    Element restore(Element element) {
-        Element clonedElement = element.clone();
-        Elements markedElements = clonedElement.select(String.format(".%s", this.WOVN_MARKER_CLASS));
-        for(Element markedElement : markedElements) {
-            String commentId = markedElement.attr(WOVN_MARKER_PREFIX);
-            Element original = this.markerManager.getOriginal(commentId);
-            if (original != null) {
-                markedElement.replaceWith(original);
-            }
-        }
-        return clonedElement;
+        return htmlReplaceMarker.revert(html);
     }
 
     private void removeHrefLangIfConflicts() {
@@ -131,7 +107,13 @@ class HtmlConverter {
         for (Element element : elements) {
             String type = element.attr("type");
             if (type != null && type.toLowerCase().equals("hidden")) {
-                replaceNodeToMarkerComment(element);
+                String original = element.outerHtml();
+                for (Attribute attr: element.attributes()) {
+                    element.removeAttr(attr.getKey());
+                }
+                element.removeAttr("name");  // "name" doesn't show up in Element.attributes()
+                element.attr(htmlReplaceMarker.generateKey(), "");
+                htmlReplaceMarker.addValue(element.outerHtml(), original);
             }
         }
     }
@@ -180,17 +162,9 @@ class HtmlConverter {
     }
 
     private void replaceNodeToMarkerComment(Element element) {
-        int commentId = this.markerManager.getCommentId();
-        Element newElement = restore(element);
-        if (this.markerManager.addComment(newElement, String.valueOf(commentId)) != commentId) {
-            throw new ConcurrentModificationException("Invlid Comment ID. CommentManger is not thread-safe.");
-        }
-        Element marker = new Element(element.tag().toString());
-        HashSet<String> markerClasses = new HashSet<String>();
-        markerClasses.add(WOVN_MARKER_CLASS);
-        marker.classNames(markerClasses);
-        marker.attr(WOVN_MARKER_PREFIX, String.valueOf(commentId));
-        element.replaceWith(marker);
+        String commentKey = htmlReplaceMarker.addCommentValue(htmlReplaceMarker.revert(element.html()));
+        element.html("");
+        element.appendChild(new Comment(commentKey));
     }
 
     private void replaceContentType() {
