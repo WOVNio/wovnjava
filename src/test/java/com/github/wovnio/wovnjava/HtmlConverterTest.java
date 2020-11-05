@@ -80,7 +80,7 @@ public class HtmlConverterTest extends TestCase {
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
 
-        assertEquals("ignore-me & name & ingredient", String.join(" & ", settings.ignoreClasses));
+        assertEquals("ignore-me & name & ingredient", StringUtil.join(" & ", settings.ignoreClasses));
         assertEquals(removedHtml, stripExtraSpaces(html));
         assertEquals(original, stripExtraSpaces(converter.restore(html)));
     }
