@@ -21,6 +21,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.DatatypeConverter;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import org.bouncycastle.jsse.provider.SSLSocketFactoryImpl;
 
 import net.arnx.jsonic.JSON;
@@ -29,6 +30,9 @@ class Api {
     static {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
+        }
+        if (Security.getProvider(BouncyCastleJsseProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleJsseProvider());
         }
     }
 
