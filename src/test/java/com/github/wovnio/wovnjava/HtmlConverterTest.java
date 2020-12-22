@@ -234,30 +234,10 @@ public class HtmlConverterTest extends TestCase {
         String html = this.createHtmlConverter(settings, location, original).convert("en");
         assertTrue("general case - insert lang attribute", stripExtraSpaces(html).indexOf(expected) != -1);
 
-        original = "<html test=\"lang\"><head></head><body><a>hello</a></body></html>";
-        expected = "<html test=\"lang\" lang=\"en\"";
-        html = this.createHtmlConverter(settings, location, original).convert("en");
-        assertTrue("html with other attribute - insert lang attribute", stripExtraSpaces(html).indexOf(expected) != -1);
-
         original = "<html lang=\"ja\"><head></head><body><a>hello</a></body></html>";
         expected = "<html lang=\"ja\"";
         html = this.createHtmlConverter(settings, location, original).convert("en");
         assertTrue("lang attribute exists - keep existing lang", stripExtraSpaces(html).indexOf(expected) != -1);
-
-        original = "<html lang='ja'><head></head><body><a>hello</a></body></html>";
-        expected = "lang=\"ja\"";
-        html = this.createHtmlConverter(settings, location, original).convert("en");
-        assertTrue("lang attribute exists with single quotes - keep existing lang", stripExtraSpaces(html).indexOf(expected) != -1);
-
-        original = "<html lang=ja><head></head><body><a>hello</a></body></html>";
-        expected = "lang=\"ja\"";
-        html = this.createHtmlConverter(settings, location, original).convert("en");
-        assertTrue("lang attribute exists without quotes - keep existing lang", stripExtraSpaces(html).indexOf(expected) != -1);
-
-        original = "<html lang=\"zh-CHS\"><head></head><body><a>hello</a></body></html>";
-        expected = "lang=\"zh-CHS\"";
-        html = this.createHtmlConverter(settings, location, original).convert("en");
-        assertTrue("lang code has dash - keep existing lang", stripExtraSpaces(html).indexOf(expected) != -1);
     }
 
     private String stripExtraSpaces(String html) {
