@@ -116,7 +116,7 @@ public class HtmlConverterTest extends TestCase {
                                    "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/en/tokyo/\">" +
                                    "<link ref=\"alternate\" hreflang=\"th\" href=\"https://site.com/global/th/tokyo/\">";
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = "<html><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
+        String expectedHtml = "<html lang=\"ja\"><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -136,7 +136,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/japan/tokyo\">" +
                                    "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/en/tokyo\">";
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = "<html><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
+        String expectedHtml = "<html lang=\"ja\"><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -156,7 +156,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.co.jp/tokyo\">" +
                                    "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/english/tokyo\">";
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = "<html><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
+        String expectedHtml = "<html lang=\"ja\"><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -218,6 +218,46 @@ public class HtmlConverterTest extends TestCase {
         String html = converter.strip();
 
         assertEquals(removedHtml, stripExtraSpaces(html));
+    }
+
+    public void testInsertDocLangIfEmpty()  throws ConfigurationError {
+        HashMap<String, String> option = new HashMap<String, String>() {{
+            put("defaultLang", "en");
+            put("supportedLangs", "en,vi");
+            put("urlPattern", "path");
+            put("sitePrefixPath", "global");
+        }};
+        Settings settings = TestUtil.makeSettings(option);
+
+        String original = "<html><head></head><body><a>hello</a></body></html>";
+        String expected = "<html lang=\"en\"";
+        String html = this.createHtmlConverter(settings, location, original).convert("en");
+        assertTrue("general case - insert lang attribute", stripExtraSpaces(html).indexOf(expected) != -1);
+
+        original = "<html test=\"lang\"><head></head><body><a>hello</a></body></html>";
+        expected = "<html test=\"lang\" lang=\"en\"";
+        html = this.createHtmlConverter(settings, location, original).convert("en");
+        assertTrue("html with other attribute - insert lang attribute", stripExtraSpaces(html).indexOf(expected) != -1);
+
+        original = "<html lang=\"ja\"><head></head><body><a>hello</a></body></html>";
+        expected = "<html lang=\"ja\"";
+        html = this.createHtmlConverter(settings, location, original).convert("en");
+        assertTrue("lang attribute exists - keep existing lang", stripExtraSpaces(html).indexOf(expected) != -1);
+
+        original = "<html lang='ja'><head></head><body><a>hello</a></body></html>";
+        expected = "lang=\"ja\"";
+        html = this.createHtmlConverter(settings, location, original).convert("en");
+        assertTrue("lang attribute exists with single quotes - keep existing lang", stripExtraSpaces(html).indexOf(expected) != -1);
+
+        original = "<html lang=ja><head></head><body><a>hello</a></body></html>";
+        expected = "lang=\"ja\"";
+        html = this.createHtmlConverter(settings, location, original).convert("en");
+        assertTrue("lang attribute exists without quotes - keep existing lang", stripExtraSpaces(html).indexOf(expected) != -1);
+
+        original = "<html lang=\"zh-CHS\"><head></head><body><a>hello</a></body></html>";
+        expected = "lang=\"zh-CHS\"";
+        html = this.createHtmlConverter(settings, location, original).convert("en");
+        assertTrue("lang code has dash - keep existing lang", stripExtraSpaces(html).indexOf(expected) != -1);
     }
 
     private String stripExtraSpaces(String html) {
