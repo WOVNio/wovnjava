@@ -32,6 +32,7 @@ class HtmlConverter {
         removeWovnIgnore();
         removeClassIgnore();
         removeForm();
+        insertDocLangIfEmpty();
         return doc.html();
     }
 
