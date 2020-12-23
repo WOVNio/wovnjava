@@ -32,7 +32,7 @@ class HtmlConverter {
         removeWovnIgnore();
         removeClassIgnore();
         removeForm();
-        insertDocLangIfEmpty();
+        insertHtmlLangAttribute();
         return doc.html();
     }
 
@@ -42,7 +42,7 @@ class HtmlConverter {
         appendSnippet(lang);
         appendHrefLang();
         replaceContentType();
-        insertDocLangIfEmpty();
+        insertHtmlLangAttribute();
         return doc.html();
     }
 
@@ -162,7 +162,7 @@ class HtmlConverter {
         }
     }
 
-    private void insertDocLangIfEmpty() {
+    private void insertHtmlLangAttribute() {
         Element element = doc.getElementsByTag("html").first();
 
         if (element.attributes().hasKey("lang")) {
