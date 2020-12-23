@@ -32,6 +32,7 @@ class HtmlConverter {
         removeWovnIgnore();
         removeClassIgnore();
         removeForm();
+        insertHtmlLangAttribute();
         return doc.html();
     }
 
@@ -41,6 +42,7 @@ class HtmlConverter {
         appendSnippet(lang);
         appendHrefLang();
         replaceContentType();
+        insertHtmlLangAttribute();
         return doc.html();
     }
 
@@ -158,6 +160,16 @@ class HtmlConverter {
             link.attr("href", hreflang.getValue());
             doc.head().appendChild(link);
         }
+    }
+
+    private void insertHtmlLangAttribute() {
+        Element element = doc.getElementsByTag("html").first();
+
+        if (element.attributes().hasKey("lang")) {
+            return;
+        }
+        
+        element.attr("lang", this.settings.defaultLang.codeISO639_1);
     }
 
     private void replaceNodeToMarkerComment(Element element) {
