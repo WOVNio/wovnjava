@@ -13,6 +13,7 @@
 .project
 .settings/
 .vscode/
+bin/
 
 docker/java7/hello/target
 docker/java8/hello/target

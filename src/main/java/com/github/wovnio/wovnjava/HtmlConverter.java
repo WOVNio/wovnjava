@@ -18,6 +18,12 @@ class HtmlConverter {
     private final HashMap<String, String> hreflangMap;
     private final HtmlReplaceMarker htmlReplaceMarker;
 
+    private static final String[] WOVN_WIDGET_URLS = new String[] {
+        "j.wovn.io",
+        "j.dev-wovn.io:3000",
+        Settings.DefaultApiUrlBase
+    };
+
     HtmlConverter(Settings settings, Headers headers, String original) {
         this.settings = settings;
         this.htmlReplaceMarker = new HtmlReplaceMarker();
@@ -60,15 +66,25 @@ class HtmlConverter {
         }
     }
 
-    private boolean isSnippet(String src) {
-        return src != null && (src.startsWith("//j.wovn.io/") || src.startsWith("//j.dev-wovn.io:3000/"));
+    private boolean isSnippet(Element element) {
+        String src = element.attr("src");
+        String dataAttr = element.attr("data-wovnio");
+
+        if (src != null) {
+            for (String wovnUrl : WOVN_WIDGET_URLS) {
+                if (src.contains(wovnUrl)) {
+                    return true;
+                }
+            }
+        }
+
+        return dataAttr != null && dataAttr.length() > 0;
     }
 
     private void removeSnippet() {
         Elements elements = doc.getElementsByTag("script");
         for (Element element : elements) {
-            String src = element.attr("src");
-            if (isSnippet(src)) {
+            if (isSnippet(element)) {
                 element.remove();
             }
         }
@@ -77,8 +93,7 @@ class HtmlConverter {
     private void removeSnippetAndScripts() {
         Elements elements = doc.getElementsByTag("script");
         for (Element element : elements) {
-            String src = element.attr("src");
-            if (isSnippet(src)) {
+            if (isSnippet(element)) {
                 element.remove();
             } else {
                 replaceNodeToMarkerComment(element);

@@ -13,7 +13,8 @@ class Settings {
 
     // Default configuration values
     public static final int DefaultTimeout = 1000;
-    public static final String DefaultApiUrlProduction  = "https://wovn.global.ssl.fastly.net/v0/";
+    public static final String DefaultApiUrlBase  = "https://wovn.global.ssl.fastly.net";
+    public static final String DefaultApiUrlProduction  = DefaultApiUrlBase + "/v0/";
     public static final String DefaultApiUrlDevelopment = "http://localhost:3001/v0/";
     public static final String DefaultSnippetUrlProduction  = "//j.wovn.io/1";
     public static final String DefaultSnippetUrlDevelopment = "//j.dev-wovn.io:3000/1";
