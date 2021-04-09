@@ -21,7 +21,7 @@ class HtmlConverter {
     private static final String[] WOVN_WIDGET_URLS = new String[] {
         "j.wovn.io",
         "j.dev-wovn.io:3000",
-        Settings.DefaultLockedWidgetUrlProduction
+        Settings.DefaultVersionedWidgetUrlProduction
     };
 
     HtmlConverter(Settings settings, Headers headers, String original) {
