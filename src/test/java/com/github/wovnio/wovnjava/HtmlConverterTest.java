@@ -26,7 +26,7 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveWovnSnippet() throws ConfigurationError {
-        String original = "<html><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script></head><body></body></html>";
+        String original = "<html><head><script src=\"https://wovn.global.ssl.fastly.net/widget/abcdef\"></script><script src=\"https://j.dev-wovn.io:3000\"></script><script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script></head><body></body></html>";
         String removedHtml = "<html lang=\"en\"><head></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
