@@ -418,6 +418,7 @@ public class SettingsTest extends TestCase {
         Settings settings = new Settings(config);
 
         assertEquals("proxy.com", settings.outboundProxyHost);
+    }
 
     public void testOutboundProxyPort__Empty_ThrowsError() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
