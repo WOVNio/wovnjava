@@ -43,6 +43,9 @@ class Settings {
     public final int connectTimeout;
     public final int readTimeout;
 
+    public final String outboundProxyHost;
+    public final int outboundProxyPort;
+
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
 
@@ -73,6 +76,9 @@ class Settings {
 
         this.connectTimeout = positiveIntOrDefault(reader.getIntParameter("connectTimeout"), DefaultTimeout);
         this.readTimeout = positiveIntOrDefault(reader.getIntParameter("readTimeout"), DefaultTimeout);
+
+        this.outboundProxyHost = nonEmptyString(reader, "outboundProxyHost");
+        this.outboundProxyPort = reader.getIntParameter("outboundProxyPort");
     }
 
     private String verifyToken(String declaredUserToken, String declaredProjectToken) throws ConfigurationError {
@@ -163,6 +169,14 @@ class Settings {
 
     private int positiveIntOrDefault(int declaredValue, int defaultValue) {
         return declaredValue > 0 ? declaredValue : defaultValue;
+    }
+
+    private String nonEmptyString(FilterConfigReader reader, String key) throws ConfigurationError {
+        String value = reader.getStringParameter(key);
+        if (value != null && value.isEmpty()) {
+            throw new ConfigurationError(String.format("Invalid configuration for \"%s\", value cannot be empty.", value));
+        }
+        return value;
     }
 
     String hash() throws NoSuchAlgorithmException {

@@ -104,8 +104,6 @@ defaultLang               | yes      |
 supportedLangs            | yes      |
 urlPattern                | yes      |
 useProxy                  |          | false
-outboundProxyPort         |          |
-outboundProxyHost         |          |
 originalUrlHeader         |          |
 originalQueryStringHeader |          |
 ignoreClasses             |          |
@@ -113,7 +111,6 @@ enableFlushBuffer         |          | false
 sitePrefixPath            |          |
 customDomainLangs         |          |
 debugMode                 |          | false
-showVersion               |          | true
 
 ### 2.1. projectToken (required)
 
@@ -169,23 +166,7 @@ Set useProxy to true as follows
 
 Note that if the reverse proxy may also rewrite the request path or query, configuring the originalUrlHeader and/or originalQueryStringHeader may also be necessary.
 
-### 2.6. outboundProxyHost, outboundProxyPort
-
-WovnServletFilter needs to send requests to Wovn's translation API server. This setting should be used if your server requires all outbound requests to be routed through a proxy. Both ``outboundProxyHost`` (host or IP address of the proxy) and ``outboundProxyPort`` (port number of the proxy) are required to be set. 
-
-```xml
-<init-param>
-  <param-name>outboundProxyHost</param-name>
-  <param-value>proxy.company.com</param-value>
-</init-param>
-<init-param>
-  <param-name>outboundProxyPort</param-name>
-  <param-value>8080</param-value>
-</init-param>
-```
-
-
-### 2.7. originalUrlHeader, originalQueryStringHeader
+### 2.6. originalUrlHeader, originalQueryStringHeader
 
 Name of HTTP headers for declaring the original request path and query.
 
@@ -220,7 +201,7 @@ Configure WovnServletFilter to determine request path and query from the same HT
 _The sample request header shown above was referenced from the following site:_
 https://coderwall.com/p/jhkw7w/passing-request-uri-into-request-header
 
-### 2.8. ignoreClasses
+### 2.7. ignoreClasses
 
 A comma-separated list of HTML classes for which you would like WOVN to skip the elements of.
 
@@ -246,7 +227,7 @@ Including three classes, `email-address-element`, `my-secret-class`, and `noshow
 </init-param>
 ```
 
-### 2.9. enableFlushBuffer
+### 2.8. enableFlushBuffer
 A flag to adjust the behavior of `ServletResponse.flushBuffer()`.
 
 This parameter is set to `false` by default (recommended).
@@ -255,7 +236,7 @@ When `enableFlushBuffer` is set to `false`, WovnServletFilter will capture calls
 immediately writing content to the client. Only when the complete HTML response is ready will the filter translate the content
 and send it to the client. This is necessary in order to translate the content properly.
 
-### 2.10. sitePrefixPath
+### 2.9. sitePrefixPath
 
 This parameter lets you set a prefix path to use as an anchor for which WOVN will translate pages. With this setting, WOVN will only translate pages that match the prefix path, and the path language code will be added _after_ the prefix path.
 
@@ -285,7 +266,7 @@ Furthermore, it is highly recommended to also configure your `web.xml` with a co
 </filter-mapping>
 ```
 
-### 2.11. customDomainLangs
+### 2.10. customDomainLangs
 
 This setting lets you define the domain and path that corresponds to each of your supported languages.
 
@@ -326,7 +307,7 @@ If this setting is used, each language declared in `supportedLangs` must be give
 Lastly, the path declared for your original language must match the structure of the underlying web server.
 In other words, you cannot use this setting to change the request path of your content in original language.
 
-### 2.12. debugMode
+### 2.11. debugMode
 
 A flag to enable extra debugging features.
 
@@ -354,18 +335,6 @@ Using `wovnDebugMode` as a query parameter will activate embedded debug informat
 This is intended to better understand what the problem is if something is not working correctly with wovnjava on your server.
 
 _Note that `wovnCacheDisable` and `wovnDebugMode` is only available when debugMode is turned on in your wovnjava configuration._
-
-### 2.13. showVersion
-
-A flag to control whether or not to show wovnjava version number in the `X-Wovn-Handler` HTTP response header.
-
-Hide wovnjava version number from HTTP header by setting `showVersion` to false.
-```XML
-<init-param>
-  <param-name>showVersion</param-name>
-  <param-value>false</param-value>
-</init-param>
-```
 
 ## Supported Langauges
 
