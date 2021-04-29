@@ -6,9 +6,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.SocketTimeoutException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -40,7 +42,10 @@ class Api {
         HttpURLConnection con = null;
         try {
             URL url = getApiUrl(lang, html);
-            con = (HttpURLConnection) url.openConnection();
+            Proxy proxy = this.settings.outboundProxyHost== null
+                ? Proxy.NO_PROXY
+                : new Proxy(Proxy.Type.HTTP, new InetSocketAddress(this.settings.outboundProxyHost, this.settings.outboundProxyPort));
+            con = (HttpURLConnection) url.openConnection(proxy);
             con.setConnectTimeout(settings.connectTimeout);
             con.setReadTimeout(settings.readTimeout);
             return translate(lang, html, con);

@@ -25,7 +25,7 @@ jobs:
            sudo apt-get update
            sudo apt install -y maven
            cd ~/
-           curl -O https://bootstrap.pypa.io/get-pip.py
+           curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
            python get-pip.py --user
            export PATH=~/.local/bin/:$PATH
            pip install awscli --upgrade --user
@@ -82,7 +82,7 @@ jobs:
            sudo apt-get update
            sudo apt install -y maven
            cd ~/
-           curl -O https://bootstrap.pypa.io/get-pip.py
+           curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
            python get-pip.py --user
            export PATH=~/.local/bin/:$PATH
            pip install awscli --upgrade --user
@@ -96,6 +96,7 @@ jobs:
            export PATH=${JAVA_HOME}/bin:$PATH
            export M2_HOME=~/.m2
            export MAVEN_HOME=~/.m2
+           export MAVEN_OPTS=-Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2
 
       - restore_cache:
           key: circleci-wovnjava-oraclejdk-pom-{{ checksum "pom.xml" }}
@@ -144,6 +145,7 @@ jobs:
            sudo apt update; sudo apt install -y zulu-7
            export M2_HOME=~/.m2
            export MAVEN_HOME=~/.m2
+           export MAVEN_OPTS=-Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2
 
       - restore_cache:
           key: circleci-wovnjava-openjdk-pom-{{ checksum "pom.xml" }}

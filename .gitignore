@@ -5,3 +5,8 @@
 /.vagrant/
 .idea/
 *.swp
+bin/
+.settings
+.classpath
+.project
+.vscode
