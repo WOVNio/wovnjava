@@ -11,7 +11,7 @@ services:
   ## ngrok allows you to expose a web server running on your local machine to the internet,
   ## Access to http://127.0.0.1:4040 , Ngrok Web Interface.
   ngrok:
-    container_name: wovnjava-ngrok
+    container_name: wovnjava-ngrok-jdk8
     image: lukaszlach/ngrok
     ports:
       - 4040:4040
