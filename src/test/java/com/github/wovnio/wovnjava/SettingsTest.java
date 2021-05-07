@@ -61,13 +61,8 @@ public class SettingsTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja");
         }});
-        boolean errorThrown = false;
-        try {
-            Settings s = new Settings(config);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+
+        assertErrorThrown(config);
     }
 
     public void testRequiredSettings__MissingUrlPattern__ThrowError() throws ConfigurationError {
@@ -76,13 +71,8 @@ public class SettingsTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,ja");
         }});
-        boolean errorThrown = false;
-        try {
-            Settings s = new Settings(config);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+
+        assertErrorThrown(config);
     }
 
     public void testRequiredSettings__MissingDefaultLang__ThrowError() throws ConfigurationError {
@@ -91,13 +81,8 @@ public class SettingsTest extends TestCase {
             put("urlPattern", "path");
             put("supportedLangs", "en,ja");
         }});
-        boolean errorThrown = false;
-        try {
-            Settings s = new Settings(config);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+
+        assertErrorThrown(config);
     }
 
     public void testRequiredSettings__InvalidDefaultLangCode__ThrowError() throws ConfigurationError {
@@ -107,13 +92,8 @@ public class SettingsTest extends TestCase {
             put("defaultLang", "English");
             put("supportedLangs", "en,ja");
         }});
-        boolean errorThrown = false;
-        try {
-            Settings s = new Settings(config);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+
+        assertErrorThrown(config);
     }
 
     public void testRequiredSettings__MissingSupportedLangs__ThrowError() throws ConfigurationError {
@@ -122,13 +102,8 @@ public class SettingsTest extends TestCase {
             put("urlPattern", "path");
             put("defaultLang", "en");
         }});
-        boolean errorThrown = false;
-        try {
-            Settings s = new Settings(config);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+
+        assertErrorThrown(config);
     }
 
     public void testRequiredSettings__InvalidSupportedLangCode__ThrowError() throws ConfigurationError {
@@ -138,13 +113,8 @@ public class SettingsTest extends TestCase {
             put("defaultLang", "en");
             put("supportedLangs", "en,Japanese");
         }});
-        boolean errorThrown = false;
-        try {
-            Settings s = new Settings(config);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+
+        assertErrorThrown(config);
     }
 
     public void testRequiredSettings__SupportedLangDeclaredMultipleTimes__throwError() throws ConfigurationError {
@@ -452,19 +422,62 @@ public class SettingsTest extends TestCase {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("connectTimeout", "hoge");
         }});
-        boolean errorThrown = false;
-        try {
-            Settings s = new Settings(config);
-        } catch (ConfigurationError e) {
-            errorThrown = true;
-        }
-        assertEquals(true, errorThrown);
+
+        assertErrorThrown(config);
     }
 
     public void testReadTimeout__InvalidInteger__ThrowError() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("readTimeout", "");
         }});
+
+        assertErrorThrown(config);
+    }
+
+    public void testOutboundProxyHost__Empty_ThrowsError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("outboundProxyHost", "");
+        }});
+
+        assertErrorThrown(config);
+    }
+
+    public void testOutboundProxyHost__NonEmpty_AcceptSetting() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("outboundProxyHost", "proxy.com");
+        }});
+
+        Settings settings = new Settings(config);
+
+        assertEquals("proxy.com", settings.outboundProxyHost);
+    }
+
+    public void testOutboundProxyPort__Empty_ThrowsError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("outboundProxyPort", "");
+        }});
+
+        assertErrorThrown(config);
+    }
+
+    public void testOutboundProxyPort__NonInteger_ThrowsError() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("outboundProxyPort", "abc");
+        }});
+        assertErrorThrown(config);
+    }
+
+    public void testOutboundProxyPort__Integer_AcceptSetting() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("outboundProxyPort", "4000");
+        }});
+
+        Settings settings = new Settings(config);
+
+        assertEquals(4000, settings.outboundProxyPort);
+    }
+
+    private void assertErrorThrown(FilterConfig config) {
         boolean errorThrown = false;
         try {
             Settings s = new Settings(config);
