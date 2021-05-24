@@ -38,6 +38,7 @@ class HtmlConverter {
         removeWovnIgnore();
         removeClassIgnore();
         removeForm();
+        appendHrefLang();
         insertHtmlLangAttribute();
         return doc.html();
     }
