@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.HashMap;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
