@@ -7,6 +7,8 @@ services:
       - 8080:8080
     volumes:
       - ./hello/target:/usr/local/tomcat/webapps
+    networks:
+      - backend-network
 
   ## ngrok allows you to expose a web server running on your local machine to the internet,
   ## Access to http://127.0.0.1:4040 , Ngrok Web Interface.
@@ -16,3 +18,6 @@ services:
     ports:
       - 4040:4040
     command: [ ngrok, http, "tomcat-jdk7:8080", --log, /dev/stdout, --log-format, term ]
+networks:
+  backend-network:
+    name: 'backend-network'
