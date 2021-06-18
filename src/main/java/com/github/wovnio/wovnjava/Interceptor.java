@@ -1,7 +1,5 @@
 package com.github.wovnio.wovnjava;
 
-import javax.servlet.http.HttpServletResponse;
-
 class Interceptor {
     private final Settings settings;
     private final Headers headers;

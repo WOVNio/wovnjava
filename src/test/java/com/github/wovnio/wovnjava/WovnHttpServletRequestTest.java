@@ -5,8 +5,6 @@ import junit.framework.TestCase;
 import java.util.HashMap;
 import java.util.Enumeration;
 
-import org.easymock.EasyMock;
-
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
 

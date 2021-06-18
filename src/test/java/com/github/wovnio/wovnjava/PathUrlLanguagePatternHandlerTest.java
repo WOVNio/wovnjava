@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 
 public class PathUrlLanguagePatternHandlerTest extends TestCase {
     private Lang english;

@@ -1,7 +1,5 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.ArrayList;
-
 final class UrlLanguagePatternHandlerFactory {
     private UrlLanguagePatternHandlerFactory() {}
 
