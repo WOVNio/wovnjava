@@ -2,8 +2,6 @@ package com.github.wovnio.wovnjava;
 
 import junit.framework.TestCase;
 
-import org.easymock.EasyMock;
-
 public class UrlPathTest extends TestCase {
     public void testGetPathAndQuery() {
         assertEquals("", UrlPath.getPath(""));

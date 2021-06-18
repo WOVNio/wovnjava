@@ -1,13 +1,10 @@
 package com.github.wovnio.wovnjava;
 
-import static org.junit.Assert.assertNotEquals;
-
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.LinkedHashMap;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 
 public class LanguageAliasesTest extends TestCase {
     private Lang english;

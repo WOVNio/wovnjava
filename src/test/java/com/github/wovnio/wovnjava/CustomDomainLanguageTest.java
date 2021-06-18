@@ -1,11 +1,9 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.ArrayList;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 
 public class CustomDomainLanguageTest extends TestCase {
     CustomDomainLanguage customDomainRootPath;

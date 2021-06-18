@@ -3,7 +3,6 @@ package com.github.wovnio.wovnjava;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 
 public class CustomDomainLanguageSerializerTest extends TestCase {
     public void testDeserializeFilterConfig__SingleLanguage() throws ConfigurationError {

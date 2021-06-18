@@ -2,8 +2,6 @@ package com.github.wovnio.wovnjava;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 class HtmlChecker {
     public boolean canTranslate(String contentType, String html) {

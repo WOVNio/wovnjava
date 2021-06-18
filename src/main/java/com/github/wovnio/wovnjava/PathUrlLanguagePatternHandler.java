@@ -1,6 +1,5 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 

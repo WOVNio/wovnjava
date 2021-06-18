@@ -1,7 +1,6 @@
 package com.github.wovnio.wovnjava;
 
 import java.util.ArrayList;
-import java.net.URL;
 
 class CustomDomainLanguageValidator {
     private CustomDomainLanguageValidator() {}

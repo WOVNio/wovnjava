@@ -2,8 +2,6 @@ package com.github.wovnio.wovnjava;
 
 import junit.framework.TestCase;
 
-import java.util.Map;
-
 public class LangTest extends TestCase {
     public void testGetLang__validCode() {
         Lang english = Lang.get("en");
