@@ -50,6 +50,8 @@ class Settings {
     public final String outboundProxyHost;
     public final int outboundProxyPort;
 
+    public final String encoding;
+
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
 
@@ -84,6 +86,8 @@ class Settings {
 
         this.outboundProxyHost = nonEmptyString(reader, "outboundProxyHost");
         this.outboundProxyPort = reader.getIntParameter("outboundProxyPort");
+
+        this.encoding = stringOrDefault(reader.getStringParameter("encoding"), "");
     }
 
     private String verifyToken(String declaredUserToken, String declaredProjectToken) throws ConfigurationError {
