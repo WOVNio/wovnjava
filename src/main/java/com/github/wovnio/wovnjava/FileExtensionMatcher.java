@@ -1,6 +1,5 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class FileExtensionMatcher {

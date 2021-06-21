@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 
 public class LanguageAliasSerializerTest extends TestCase {
     public void testDeserializeFilterConfig__EmptyInput() throws ConfigurationError {

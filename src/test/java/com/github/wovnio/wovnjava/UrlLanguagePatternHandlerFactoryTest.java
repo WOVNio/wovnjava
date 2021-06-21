@@ -3,7 +3,6 @@ package com.github.wovnio.wovnjava;
 import java.util.HashMap;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 
 public class UrlLanguagePatternHandlerFactoryTest extends TestCase {
     public void testCreate__UrlPatternPath() throws ConfigurationError {

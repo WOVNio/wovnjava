@@ -7,7 +7,6 @@ import java.net.URL;
 import java.net.MalformedURLException;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 
 public class HeadersTest extends TestCase {
     private Lang japanese;

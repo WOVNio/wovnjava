@@ -7,7 +7,6 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.FilterConfig;
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;

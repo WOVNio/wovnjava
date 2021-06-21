@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 
 public class CustomDomainLanguagesTest extends TestCase {
     private CustomDomainLanguage french;

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 
 public class HtmlConverterTest extends TestCase {
     private String location = "https://site.com/global/tokyo/";

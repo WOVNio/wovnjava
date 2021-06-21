@@ -6,9 +6,6 @@ import java.util.Map;
 import java.util.Collections;
 import javax.servlet.http.HttpServletResponse;
 
-import javax.xml.bind.DatatypeConverter;
-
-import net.arnx.jsonic.JSON;
 
 class ResponseHeaders {
     private static final String apiStatusHeaderName = "X-Wovn-Api-Status";

@@ -3,7 +3,6 @@ package com.github.wovnio.wovnjava;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 
 public class CustomDomainLanguageValidatorTest extends TestCase {
     private Lang english;
