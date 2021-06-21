@@ -4,20 +4,13 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.io.UnsupportedEncodingException;
 
-import org.junit.Ignore;
-
 import junit.framework.TestCase;
 
 public class Utf8Test extends TestCase {
-    public void testDefaultEncodingUTF8() {
+    public void testDefaultEncodingUTF8() throws UnsupportedEncodingException {
         Utf8 unicodeConverter = new Utf8("");
         String data = new String("Unicøde Sentence　東京 الخط العربي في يونيكود");
-        byte[] rawData = null;
-        try {
-            rawData = data.getBytes("utf-8");
-        } catch (UnsupportedEncodingException e) {
-            System.exit(1);
-        } 
+        byte[] rawData = data.getBytes("utf-8");
         assertEquals(data, unicodeConverter.toStringUtf8(rawData));
     }
 
