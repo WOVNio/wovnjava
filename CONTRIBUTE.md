@@ -40,6 +40,20 @@ wovnjava-mvn test -f pom.xml
 
 ## How to use it in docker
 
+### Using a development branch
+
+This is the recommended way of evaluating a development copy of wovnjava. You need to have your development branch pushed to Github. Then, specify the branch you want to use in the `pom.xml` file by using the following format:
+
+```
+<version>branchname-SNAPSHOT</version>
+```
+
+Replace `branchname` with the actual branch name (`/` in branch names should be replaced with `~`.)
+
+Then build the docker envrionment as usual.
+
+### Using a locally compiled version
+
 If you want to use a locally compiled version of wovnjava, please use the following method.
 
 Remove or comment out the repository configuration in jitpack.io and enable the dependency systemPath instead.
