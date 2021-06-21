@@ -18,11 +18,11 @@ class WovnHttpServletResponse extends HttpServletResponseWrapper {
     private Headers headers;
     private Utf8 unicodeConverter;
 
-    WovnHttpServletResponse(HttpServletResponse response, Headers headers, String encoding) {
+    WovnHttpServletResponse(HttpServletResponse response, Headers headers, Utf8 unicodeConverter) {
         super(response);
         this.buff = new ByteArrayOutputStream();
         this.headers = headers;
-        this.unicodeConverter = new Utf8(encoding);
+        this.unicodeConverter = unicodeConverter;
     }
 
     byte[] getData() {
