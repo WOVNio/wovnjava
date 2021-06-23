@@ -76,7 +76,7 @@ public class WovnServletFilter implements Filter {
 
     private void tryTranslate(Headers headers, RequestOptions requestOptions, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(request, headers);
-        WovnHttpServletResponse wovnResponse = new WovnHttpServletResponse(response, headers);
+        WovnHttpServletResponse wovnResponse = new WovnHttpServletResponse(response, headers, new Utf8(this.settings.encoding));
 
         ResponseHeaders responseHeaders = new ResponseHeaders(response);
         responseHeaders.setApiStatus("Unused");

@@ -116,6 +116,7 @@ sitePrefixPath            |          |
 langCodeAliases           |          |
 customDomainLangs         |          |
 debugMode                 |          | false
+encoding | | 
 
 ### 2.1. projectToken (required)
 
@@ -422,6 +423,12 @@ Using `wovnDebugMode` as a query parameter will activate embedded debug informat
 This is intended to better understand what the problem is if something is not working correctly with wovnjava on your server.
 
 _Note that `wovnCacheDisable` and `wovnDebugMode` is only available when debugMode is turned on in your wovnjava configuration._
+
+### 2.15. encoding
+
+You can choose to optionally explicitly specify the encoding used by your HTML. If `encoding` is not set, wovnjava will attempt to automatically detect the encoding.
+
+Commonly used encodings are `utf-8`, `Shift_JIS` and `EUC-JP`. For a complete list of supported encodings, please refer to Java's official documentation [here](https://docs.oracle.com/javase/8/docs/technotes/guides/intl/encoding.doc.html).
 
 ## Supported Langauges
 

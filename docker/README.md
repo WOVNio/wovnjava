@@ -37,7 +37,7 @@ Change your project token in `hello/src/main/webapp/WEB-INF/web.xml`.
 ## 5. Re-Compile
 
 ```
-mave-clean-package.sh
+maven-clean-package.sh
 ```
 
 ## 6. Restart Tomcat
