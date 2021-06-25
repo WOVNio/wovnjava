@@ -2,9 +2,12 @@ package com.github.wovnio.wovnjava;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Utf8 {
     private String encoding;
+    private static Logger logger = Logger.getLogger("utf-8-logger");
 
     Utf8(String encoding) {
         this.encoding = encoding;
@@ -26,7 +29,7 @@ public class Utf8 {
             try {
                 converted = (new String(data, encoding)).getBytes(encoding);
             } catch (UnsupportedEncodingException e) {
-                Logger.log.error("UnsupportedEncodingException while detecting encoding: ", e);
+                Utf8.logger.log(Level.INFO, "UnsupportedEncodingException while detecting encoding: ", e);
                 continue;
             }
             if (Arrays.equals(converted, data)) {
@@ -45,12 +48,12 @@ public class Utf8 {
             encoding = this.encoding;
         }
 
-        Logger.log.error("encoding: " + encoding);
+        Utf8.logger.log(Level.INFO, "encoding: " + encoding);
         
         try {
             return new String(data, encoding);
         } catch (UnsupportedEncodingException e) {
-            Logger.log.error("UnsupportedEncodingException while encoding to UTF-8: ", e);
+            Utf8.logger.log(Level.INFO, "UnsupportedEncodingException while encoding to UTF-8: ", e);
             return new String(data);
         }
     }
