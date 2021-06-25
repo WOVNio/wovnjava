@@ -45,7 +45,7 @@ public class Utf8 {
             encoding = this.encoding;
         }
 
-        Logger.log.debug("encoding: " + encoding);
+        Logger.log.error("encoding: " + encoding);
         
         try {
             return new String(data, encoding);
