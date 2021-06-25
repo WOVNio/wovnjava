@@ -44,11 +44,9 @@ public class Utf8 {
         } else {
             encoding = this.encoding;
         }
-        
-        if (Logger.isDebug()) {
-            Logger.log.info("encoding: " + encoding);
-        }
 
+        Logger.log.debug("encoding: " + encoding);
+        
         try {
             return new String(data, encoding);
         } catch (UnsupportedEncodingException e) {
