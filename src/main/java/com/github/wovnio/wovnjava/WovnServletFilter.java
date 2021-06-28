@@ -13,9 +13,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class WovnServletFilter implements Filter {
     private Settings settings;
     private UrlLanguagePatternHandler urlLanguagePatternHandler;
@@ -40,6 +37,7 @@ public class WovnServletFilter implements Filter {
         boolean isRequestAlreadyProcessed = false;
         if (((HttpServletResponse)response).containsHeader("X-Wovn-Handler")) {
             isRequestAlreadyProcessed = true;
+            WovnLogger.log("Request is already processed by WOVN.");
         } else {
             ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
         }
@@ -58,9 +56,11 @@ public class WovnServletFilter implements Filter {
             ((HttpServletResponse) response).sendRedirect(headers.getClientRequestUrlInDefaultLanguage());
         } else if (canTranslateRequest) {
             /* Strip language code, pass on request, and attempt to translate the resulting response */
+            WovnLogger.log("Content can be translated.");
             tryTranslate(headers, requestOptions, (HttpServletRequest)request, (HttpServletResponse)response, chain);
         } else {
             /* Strip language code and pass through the request and response untouched */
+            WovnLogger.log("Content cannot be translated.");
             WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest((HttpServletRequest)request, headers);
             if (headers.getIsPathInDefaultLanguage()) {
                 chain.doFilter(wovnRequest, response);

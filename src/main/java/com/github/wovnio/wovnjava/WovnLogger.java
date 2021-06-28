@@ -7,9 +7,11 @@ import java.util.logging.Logger;
 class WovnLogger {
     private static Logger logger = Logger.getLogger("wovnLogger");
     private static boolean enabled = false;
-    private final static String prefix = "WOVN"; 
+    private static String uuid = "NO_UUID";
+    private final static String prefix = "WOVN";
 
-    public static void enbale() {
+    public static void enbale(String uuid) {
+        WovnLogger.uuid = uuid;
         WovnLogger.enabled = true;
     }
 
@@ -21,13 +23,13 @@ class WovnLogger {
         if (!WovnLogger.enabled) {
             return;
         }
-        WovnLogger.logger.log(Level.INFO, String.format("[%s] %s", WovnLogger.prefix, message), e);
+        WovnLogger.logger.log(Level.INFO, String.format("[%s][%s] %s", WovnLogger.prefix, WovnLogger.uuid, message), e);
     }
 
     public static void log(String message) {
         if (!WovnLogger.enabled) {
             return;
         }
-        WovnLogger.logger.log(Level.INFO, String.format("[%s] %s", WovnLogger.prefix, message));
+        WovnLogger.logger.log(Level.INFO, String.format("[%s][%s] %s", WovnLogger.prefix, WovnLogger.uuid, message));
     }
 }
