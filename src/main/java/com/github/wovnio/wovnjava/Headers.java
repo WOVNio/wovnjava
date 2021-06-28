@@ -81,6 +81,7 @@ class Headers {
 
     URL convertToDefaultLanguage(URL url) {
         String urlInDefaultLang = this.urlLanguagePatternHandler.convertToDefaultLanguage(url.toString());
+        WovnLogger.log(String.format("Requested URL is: %s\nCalculated source URL is:%s.", url.toString(), urlInDefaultLang));
         try {
             return new URL(urlInDefaultLang);
         } catch (MalformedURLException e) {
