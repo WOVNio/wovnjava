@@ -22,6 +22,10 @@ class WovnLogger {
         WovnLogger.uuid = uuid;
     }
 
+    public static String getUUID() {
+        return WovnLogger.uuid;
+    }
+
     public static void log(String message, Exception e) {
         if (!WovnLogger.enabled) {
             return;

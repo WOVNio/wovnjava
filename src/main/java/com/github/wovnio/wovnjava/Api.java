@@ -42,6 +42,7 @@ class Api {
         HttpURLConnection con = null;
         try {
             URL url = getApiUrl(lang, html);
+            WovnLogger.log(String.format("API url: %s", url.toString()));
             Proxy proxy = this.settings.outboundProxyHost== null
                 ? Proxy.NO_PROXY
                 : new Proxy(Proxy.Type.HTTP, new InetSocketAddress(this.settings.outboundProxyHost, this.settings.outboundProxyPort));
@@ -50,12 +51,16 @@ class Api {
             con.setReadTimeout(settings.readTimeout);
             return translate(lang, html, con);
         } catch (UnsupportedEncodingException e) {
+            WovnLogger.log("API error: unsupported encoding.");
             throw new ApiException("UnsupportedEncodingException", e.getMessage());
         } catch (MalformedURLException e) {
+            WovnLogger.log("API error: malformed URL.");
             throw new ApiException("MalformedURLException", e.getMessage());
         } catch (IOException e) {
+            WovnLogger.log("API error: IO exception.");
             throw new ApiException("IOException", e.getMessage());
         } catch (NoSuchAlgorithmException e) {
+            WovnLogger.log("API error: no such algorithm exception.");
             throw new ApiException("NoSuchAlgorithmException", e.getMessage());
         } finally {
             if (con != null) {
@@ -69,6 +74,7 @@ class Api {
         try {
             ByteArrayOutputStream body = gzipStream(getApiBody(lang, html).getBytes());
             con.setDoOutput(true);
+            con.setRequestProperty("X-Request-Id", WovnLogger.getUUID());
             con.setRequestProperty("Accept-Encoding", "gzip");
             con.setRequestProperty("Content-Type", "application/octet-stream");
             con.setRequestProperty("Content-Length", String.valueOf(body.size()));

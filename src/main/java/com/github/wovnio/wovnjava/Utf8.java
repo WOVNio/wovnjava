@@ -42,8 +42,10 @@ public class Utf8 {
 
         if (this.encoding == "") {
             encoding = detectEncoding(data);
+            WovnLogger.log("Using automatic encoding detection.");
         } else {
             encoding = this.encoding;
+            WovnLogger.log("Encoding is set by config.");
         }
 
         WovnLogger.log("encoding: " + encoding);
