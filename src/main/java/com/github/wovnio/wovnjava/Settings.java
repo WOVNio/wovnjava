@@ -69,6 +69,10 @@ class Settings {
         this.enableFlushBuffer = reader.getBoolParameterDefaultFalse("enableFlushBuffer");
         this.enableLogging = reader.getBoolParameterDefaultFalse("enableLogging");
 
+        if (this.enableLogging) {
+            WovnLogger.enbale();
+        }
+
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
         this.langCodeAliases = parseLangCodeAliases(reader.getStringParameter("langCodeAliases"));
         this.customDomainLanguages = parseCustomDomainLangs(reader.getStringParameter("customDomainLangs"), this.supportedLangs);
