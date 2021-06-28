@@ -31,6 +31,7 @@ class Settings {
     public final boolean debugMode;
     public final boolean useProxy;
     public final boolean enableFlushBuffer;
+    public final boolean enableLogging;
 
     public final String sitePrefixPath;
     public final Map<Lang, String> langCodeAliases;
@@ -66,6 +67,7 @@ class Settings {
         this.debugMode = reader.getBoolParameterDefaultFalse("debugMode");
         this.useProxy = reader.getBoolParameterDefaultFalse("useProxy");
         this.enableFlushBuffer = reader.getBoolParameterDefaultFalse("enableFlushBuffer");
+        this.enableLogging = reader.getBoolParameterDefaultFalse("enableLogging");
 
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
         this.langCodeAliases = parseLangCodeAliases(reader.getStringParameter("langCodeAliases"));

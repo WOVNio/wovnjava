@@ -100,7 +100,7 @@ class Api {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    Logger.log.error("Api close buffer error", e);
+                    WovnLogger.log("Api close buffer error", e);
                 }
             }
         }
