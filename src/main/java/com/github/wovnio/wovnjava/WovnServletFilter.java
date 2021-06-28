@@ -2,6 +2,7 @@ package com.github.wovnio.wovnjava;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.UUID;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -34,6 +35,7 @@ public class WovnServletFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+        WovnLogger.setUUID(UUID.randomUUID().toString());
         boolean isRequestAlreadyProcessed = false;
         if (((HttpServletResponse)response).containsHeader("X-Wovn-Handler")) {
             isRequestAlreadyProcessed = true;

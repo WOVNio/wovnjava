@@ -10,13 +10,16 @@ class WovnLogger {
     private static String uuid = "NO_UUID";
     private final static String prefix = "WOVN";
 
-    public static void enbale(String uuid) {
-        WovnLogger.uuid = uuid;
+    public static void enbale() {
         WovnLogger.enabled = true;
     }
 
     public static void disable() {
         WovnLogger.enabled = false;
+    }
+
+    public static void setUUID(String uuid) {
+        WovnLogger.uuid = uuid;
     }
 
     public static void log(String message, Exception e) {

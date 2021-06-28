@@ -29,12 +29,11 @@ class Headers {
     Headers(HttpServletRequest request, Settings settings, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = settings;
         this.request = request;
-        this.urlLanguagePatternHandler = urlLanguagePatternHandler;
-
+        this.urlLanguagePatternHandler = urlLanguagePatternHandler;            
         String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
         this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
         this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(clientRequestUrl);
-        WovnLogger.log(String.format("Request language is: %s", this.requestLang));
+        WovnLogger.log(String.format("Request language is: %s", this.requestLang.code));
 
         String currentContextUrl = request.getRequestURL().toString();
         String currentContextUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(currentContextUrl);

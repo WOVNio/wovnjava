@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.UUID;
 
 import javax.servlet.FilterConfig;
 import javax.xml.bind.DatatypeConverter;
@@ -71,7 +70,7 @@ class Settings {
         this.enableLogging = reader.getBoolParameterDefaultFalse("enableLogging");
 
         if (this.enableLogging) {
-            WovnLogger.enbale(UUID.randomUUID().toString());
+            WovnLogger.enbale();
         }
 
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
