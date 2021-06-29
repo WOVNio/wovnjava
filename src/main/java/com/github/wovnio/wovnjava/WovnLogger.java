@@ -10,7 +10,7 @@ class WovnLogger {
     private static String uuid = "NO_UUID";
     private final static String prefix = "WOVN";
 
-    public static void enbale() {
+    public static void enable() {
         WovnLogger.enabled = true;
     }
 

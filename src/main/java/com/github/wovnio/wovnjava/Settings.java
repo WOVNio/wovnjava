@@ -70,7 +70,7 @@ class Settings {
         this.enableLogging = reader.getBoolParameterDefaultFalse("enableLogging");
 
         if (this.enableLogging) {
-            WovnLogger.enbale();
+            WovnLogger.enable();
         }
 
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
