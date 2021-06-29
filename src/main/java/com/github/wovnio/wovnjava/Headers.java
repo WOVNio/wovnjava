@@ -33,11 +33,7 @@ class Headers {
         String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
         this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
         this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(clientRequestUrl);
-        if (this.requestLang == null) {
-            WovnLogger.log("Request cannot be determined");
-        } else {
-            WovnLogger.log(String.format("Request language is: %s", this.requestLang.code));
-        }
+        WovnLogger.log(String.format("Request language is: %s", this.requestLang != null ? this.requestLang.code : "null"));
 
         String currentContextUrl = request.getRequestURL().toString();
         WovnLogger.log(String.format("Request URL is: %s", currentContextUrl));
