@@ -55,7 +55,7 @@ Add the following configuration, If you want to use local translation API and lo
 
 ## 2. Compile your local wovnjava
 ```
-make build_webisite_with_loacal_wovn_java
+make build_wovn_java_and_website
 ```
 This command run the followings.
 - Build your local wovnjava will be created
@@ -81,7 +81,7 @@ make build_webisite && make restart
 ## Change local wovnjava
 After you change local wovnjava, the following command rebuilds wovnjava, and restart tomcat.
 ```
-make build_webisite_with_loacal_wovn_java && make restart
+make build_wovn_java_and_website && make restart
 ```
 
 ## Stop your local environment

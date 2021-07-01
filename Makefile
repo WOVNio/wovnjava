@@ -36,10 +36,9 @@ build_wovn_java:
 	mkdir -p ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib
 	cp ./target/wovnjava-1.$(VERSION).0*.jar ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib
 
-build_webisite_with_loacal_wovn_java:
+build_wovn_java_and_website:
 	make build_wovn_java
-	$(eval TARGET_DIR := ${PWD}/docker/java$(VERSION)/hello)
-	$(MAVEN) clean package -f pom.xml
+	make build_webisite
 
 restart:
 	docker-compose -f docker/java$(VERSION)/docker-compose.yml restart tomcat-jdk8

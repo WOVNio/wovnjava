@@ -55,7 +55,7 @@ Makefile内に存在するmakeコマンドを使用することで、ローカ�
 
 ## 2. ローカルwovnjavaのコンパイル
 ```
-make build_webisite_with_loacal_wovn_java
+make build_wovn_java_and_website
 ```
 このコマンドは次の事を実行します。  
 - ローカルwovnjavaをビルドする
@@ -81,7 +81,7 @@ make build_webisite && make restart
 ## ローカルwovnjavaの変更
 ローカルのwovnjavaを変更した後、次のコマンドでwovnjavaをビルドしTomcatを再起動します。  
 ```
-make build_webisite_with_loacal_wovn_java && make restart
+make build_wovn_java_and_website && make restart
 ```
 
 ## ローカル環境を停止する
