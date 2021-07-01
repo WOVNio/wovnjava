@@ -25,6 +25,14 @@
           <param-name>urlPattern</param-name>
           <param-value>query</param-value>
       </init-param>
+      <!-- <init-param>
+          <param-name>devMode</param-name>
+          <param-value>true</param-value>
+      </init-param> -->
+      <!-- <init-param>
+          <param-name>enableLogging</param-name>
+          <param-value>true</param-value>
+      </init-param> -->
   </filter>
 
   <filter-mapping>

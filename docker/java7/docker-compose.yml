@@ -7,6 +7,7 @@ services:
       - 8080:8080
     volumes:
       - ./hello/target:/usr/local/tomcat/webapps
+      - ./logs:/usr/local/tomcat/logs
     networks:
       - backend-network
 
