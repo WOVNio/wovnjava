@@ -31,7 +31,7 @@ class Interceptor {
             return converter.restore(translatedBody);
         } catch (ApiException e) {
             responseHeaders.setApiStatus(e.getType());
-            Logger.log.error("ApiException", e);
+            WovnLogger.log("ApiException", e);
             return apiTranslateFail(body, lang);
         }
     }

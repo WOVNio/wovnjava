@@ -29,14 +29,16 @@ class Headers {
     Headers(HttpServletRequest request, Settings settings, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = settings;
         this.request = request;
-        this.urlLanguagePatternHandler = urlLanguagePatternHandler;
-
+        this.urlLanguagePatternHandler = urlLanguagePatternHandler;            
         String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
         this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
         this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(clientRequestUrl);
+        WovnLogger.log(String.format("Request language is: %s", this.requestLang != null ? this.requestLang.code : "null"));
 
         String currentContextUrl = request.getRequestURL().toString();
+        WovnLogger.log(String.format("Request URL is: %s", currentContextUrl));
         String currentContextUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(currentContextUrl);
+        WovnLogger.log(String.format("Source URL is calculated as: %s", currentContextUrlInDefaultLanguage));
 
         try {
             this.urlContext = new UrlContext(new URL(currentContextUrlInDefaultLanguage));
@@ -81,6 +83,7 @@ class Headers {
 
     URL convertToDefaultLanguage(URL url) {
         String urlInDefaultLang = this.urlLanguagePatternHandler.convertToDefaultLanguage(url.toString());
+        WovnLogger.log(String.format("Requested URL is: %s\nCalculated source URL is:%s.", url.toString(), urlInDefaultLang));
         try {
             return new URL(urlInDefaultLang);
         } catch (MalformedURLException e) {
