@@ -116,7 +116,7 @@ sitePrefixPath            |          |
 langCodeAliases           |          |
 customDomainLangs         |          |
 debugMode                 |          | false
-encoding | | 
+encoding                  |          | 
 
 ### 2.1. projectToken (required)
 

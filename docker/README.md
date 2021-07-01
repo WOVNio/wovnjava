@@ -48,7 +48,7 @@ Change configuration like project token.
 Add the following configuration, If you want to use local translation API and local widget.
 ```
 <init-param>
-    <param-name>debugMode</param-name>
+    <param-name>devMode</param-name>
     <param-value>true</param-value>
 </init-param>
 ```

@@ -48,7 +48,7 @@ Makefile内に存在するmakeコマンドを使用することで、ローカ�
 もしローカルの次の用に設定を追加すると、ローカルのtranslationAPIとWidgetを使用します。  
 ```
 <init-param>
-    <param-name>debugMode</param-name>
+    <param-name>devMode</param-name>
     <param-value>true</param-value>
 </init-param>
 ```

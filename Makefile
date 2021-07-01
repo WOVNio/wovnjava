@@ -21,7 +21,7 @@ test:
 	$(MAVEN) test -f pom.jdk$(VERSION).xml
 
 start:
-	docker-compose -f docker/java$(VERSION)/docker-compose.yml up -d
+	docker-compose -f docker/java$(VERSION)/docker-compose.yml up
 
 stop:
 	docker-compose -f docker/java$(VERSION)/docker-compose.yml rm -sf
