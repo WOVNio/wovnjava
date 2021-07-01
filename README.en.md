@@ -430,6 +430,11 @@ You can choose to optionally explicitly specify the encoding used by your HTML. 
 
 Commonly used encodings are `utf-8`, `Shift_JIS` and `EUC-JP`. For a complete list of supported encodings, please refer to Java's official documentation [here](https://docs.oracle.com/javase/8/docs/technotes/guides/intl/encoding.doc.html).
 
+### 2.16. enableLogging
+
+You can choose to enable WOVN's logging feature that will log some useful debug information by setting `enableLogging` to "true".
+The logs make use of `java.util.logging` and it is most likely to appear in the catalina logs.
+
 ## Supported Langauges
 
 Language code | Language name | Name in English
