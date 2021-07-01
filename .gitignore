@@ -14,6 +14,8 @@
 .settings/
 .vscode/
 bin/
+*.jar
+.DS_Store
 
-docker/java7/hello/target
-docker/java8/hello/target
+docker/**/hello/target
+docker/**/logs

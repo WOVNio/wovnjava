@@ -14,14 +14,25 @@
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+      <!-- SNAPSHOT バージョンを使用しない場合は、以下の行は必要ありません。 -->
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+      <!-- end -->
+    </repository>
+  </repositories>
+
   <dependencies>
-    <dependency>
-      <groupId>com.github.wovnio</groupId>
-      <artifactId>wovnjava</artifactId>
-      <version>1.8.0</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/wovnjava-1.8.0-jar-with-dependencies.jar</systemPath>
-    </dependency>
+      <dependency>
+          <groupId>com.github.wovnio</groupId>
+          <artifactId>wovnjava</artifactId>
+          <version>1.1.0</version>
+      </dependency>
   </dependencies>
 
   <build>
