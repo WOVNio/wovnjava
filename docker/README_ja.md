@@ -75,7 +75,7 @@ http://localhost:8080 にアクセスすると、あなたのウェブサイト�
 もしあなたのウェブサイトを変更したい場合、`docker/java8/hello/src/main/webapp`を変更してください。    
 次のコマンドは、あなたの変更を再ビルドし、Tomcatに適用します。
 ```
-make build_webisite && make restart
+make build_website && make restart
 ```
 
 ## ローカルwovnjavaの変更
@@ -105,5 +105,5 @@ docker exec -it wovnjava-tomcat-jdk8 sh
 ## Use published wovnjava in your local
 `docker/java8/hello/pom_jitpack.xml`は公開されたwovnjavaをウェブサイトで使用するための設定ファイルです。  
 - Makefileの設定を`WEBSITE_CONFIG_FILE = pom_jitpack.xml`に変更する
-- `make build_webisite`コマンドでサイトをビルドする
+- `make build_website`コマンドでサイトをビルドする
 - `make restart`コマンドでTomcatを起動する

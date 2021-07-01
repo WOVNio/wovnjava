@@ -8,14 +8,14 @@ MAVEN    = docker run -it --rm -v ${TARGET_DIR}:/project -v wovnjava-maven_repo:
 WEBSITE_CONFIG_FILE = pom.xml
 # WEBSITE_CONFIG_FILE = pom_jitpack.xml
 
-.PHONY: all clean build test start stop build_webisite build_wovn_java build_webisite_with_loacal_wovn_java restart
+.PHONY: all clean build test start stop build_website build_wovn_java build_wovn_java_and_website restart
 all: clean build
 
 clean:
 	$(MAVEN) clean -f pom.jdk$(VERSION).xml
 
 build:
-	$(MAVEN) package -f pom.jdk$(VERSION).xml
+	$(MAVEN) package -f pom.jdk$(VERSION).xml -Dmaven.test.skip
 
 test:
 	$(MAVEN) test -f pom.jdk$(VERSION).xml
@@ -26,7 +26,7 @@ start:
 stop:
 	docker-compose -f docker/java$(VERSION)/docker-compose.yml rm -sf
 
-build_webisite:
+build_website:
 	$(eval TARGET_DIR := ${PWD}/docker/java$(VERSION)/hello)
 	$(MAVEN) clean package -f $(WEBSITE_CONFIG_FILE)
 
@@ -38,7 +38,7 @@ build_wovn_java:
 
 build_wovn_java_and_website:
 	make build_wovn_java
-	make build_webisite
+	make build_website
 
 restart:
 	docker-compose -f docker/java$(VERSION)/docker-compose.yml restart tomcat-jdk8

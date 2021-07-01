@@ -5,7 +5,7 @@
 3. JitPack builds wovnjava library. (https://jitpack.io/#wovnio/wovnjava)  
 
 ## JitPack
-Our wovnjava repogitory is registered in JitPack, and JitPack is monitoring our repogitory.  
+Our wovnjava repository is registered in JitPack, and JitPack is monitoring our repository.  
 When new release is created, JitPack will automatically build wovnjava like the followings.  
 https://jitpack.io/com/github/wovnio/wovnjava/1.8.0/wovnjava-1.8.0.jar
 https://jitpack.io/com/github/wovnio/wovnjava/1.8.0/wovnjava-1.8.0-jar-with-dependencies.jar
@@ -33,7 +33,7 @@ The big difference is version for `source` and `target`.
 ```
 
 # Start using your local environment
-To build local docker environemnt, this repogitory is using the following three docker images.
+To build local docker environemnt, this repository is using the following three docker images.
 1. andreptb/tomcat: Tomcat is software to run Java Servlet
 2. maven: Maven is software to manage and build Java Servlet
 3. ngrok: This is utility tool to make your local website accessible from the outside
@@ -75,7 +75,7 @@ Go to http://localhost:8080 , then you can see your website.
 When you want to change your website, change `docker/java8/hello/src/main/webapp`.  
 The following command rebuilds your website, and restart tomcat to apply them.
 ```
-make build_webisite && make restart
+make build_website && make restart
 ```
 
 ## Change local wovnjava
@@ -105,5 +105,5 @@ docker exec -it wovnjava-tomcat-jdk8 sh
 ## Use published wovnjava in your local
 `docker/java8/hello/pom_jitpack.xml` is the configuration file to use published wovnjava with your local website.
 - Change makefile to `WEBSITE_CONFIG_FILE = pom_jitpack.xml`
-- Build website with command `make build_webisite`
+- Build website with command `make build_website`
 - Start tomcat with command `make restart`
