@@ -83,7 +83,7 @@ class WovnHttpServletResponse extends HttpServletResponseWrapper {
 
     @Override
     public void setHeader(String name, String value) {
-        if (name.toLowerCase() == "location") {
+        if (name.toLowerCase().equals("location")) {
             value = headers.locationWithLangCode(value);
         }
         super.setHeader(name, value);
