@@ -3,6 +3,7 @@ SHELL        := /bin/bash
 .SHELLFLAGS  := -eu -o pipefail -c
 
 VERSION := 8
+WOVN_VERSION := 1.9.1
 TARGET_DIR = ${PWD}
 MAVEN    = docker run -it --rm -v ${TARGET_DIR}:/project -v wovnjava-maven_repo:/root/.m2 -w /project maven:3-jdk-$(VERSION) mvn
 WEBSITE_CONFIG_FILE = pom.xml
@@ -34,7 +35,7 @@ build_wovn_java:
 	make clean
 	make build
 	mkdir -p ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib
-	cp ./target/wovnjava-1.$(VERSION).0*.jar ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib
+	cp ./target/wovnjava-$(WOVN_VERSION)*.jar ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib
 
 build_wovn_java_and_website:
 	make build_wovn_java
