@@ -18,9 +18,9 @@
     <dependency>
       <groupId>com.github.wovnio</groupId>
       <artifactId>wovnjava</artifactId>
-      <version>1.8.0</version>
+      <version>1.9.1</version>
       <scope>system</scope>
-      <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/wovnjava-1.8.0-jar-with-dependencies.jar</systemPath>
+      <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/wovnjava-1.9.1-jar-with-dependencies.jar</systemPath>
     </dependency>
   </dependencies>
 
