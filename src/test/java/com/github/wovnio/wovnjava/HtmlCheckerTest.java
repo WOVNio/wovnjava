@@ -13,6 +13,16 @@ public class HtmlCheckerTest extends TestCase {
         assertEquals(false, htmlChecker.canTranslateContentType("text/plain"));
     }
 
+    public void testIsTextFileContentType() {
+        assertEquals(true, htmlChecker.isTextFileContentType(null));
+        assertEquals(true, htmlChecker.isTextFileContentType("html"));
+        assertEquals(true, htmlChecker.isTextFileContentType("text/html"));
+        assertEquals(true, htmlChecker.isTextFileContentType("text/xhtml"));
+        assertEquals(true, htmlChecker.isTextFileContentType("text/plain"));
+        assertEquals(true, htmlChecker.isTextFileContentType("text/css"));
+        assertEquals(true, htmlChecker.isTextFileContentType("text/javascript"));
+    }
+
     public void testCanTranslate() {
         assertEquals(false, htmlChecker.canTranslateContent(null));
         assertEquals(false, htmlChecker.canTranslateContent(""));
