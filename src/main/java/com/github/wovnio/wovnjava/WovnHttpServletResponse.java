@@ -48,6 +48,7 @@ class WovnHttpServletResponse extends HttpServletResponseWrapper {
 
     @Override
     public String toString() {
+        // TODO: thrown an exception when this is called twice
         return this.unicodeConverter.toStringUtf8(this.getData());
     }
 
