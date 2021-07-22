@@ -97,7 +97,7 @@ public class WovnServletFilter implements Filter {
                 // html
                 Api api = new Api(settings, headers, requestOptions, responseHeaders);
                 Interceptor interceptor = new Interceptor(headers, settings, api, responseHeaders);
-                body = interceptor.translate(wovnResponse.toString());
+                body = interceptor.translate(originalBody);
             } else {
                 // css, javascript or others
                 body = originalBody;
