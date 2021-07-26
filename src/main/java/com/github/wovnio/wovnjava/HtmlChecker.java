@@ -6,6 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class HtmlChecker {
+    public boolean isTextFileContentType(String contentType) {
+        return contentType == null || contentType.toLowerCase().contains("text/") || contentType.toLowerCase().contains("html");
+    }
+
     public boolean canTranslate(String contentType, String html) {
         return canTranslateContentType(contentType) &&
             canTranslateContent(html);
