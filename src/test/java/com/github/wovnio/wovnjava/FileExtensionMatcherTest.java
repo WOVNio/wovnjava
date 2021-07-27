@@ -34,6 +34,8 @@ public class FileExtensionMatcherTest extends TestCase {
         assertIsFile(true, "xls");
         assertIsFile(true, "xlsx");
         assertIsFile(true, "xlsm");
+        assertIsFile(true, "woff");
+        assertIsFile(true, "eot");
         assertIsFile(false, "unknown");
     }
 

@@ -8,8 +8,10 @@ class FileExtensionMatcher {
     private final Pattern AUDIO_FILE_PATTERN;
     private final Pattern VIDEO_FILE_PATTERN;
     private final Pattern DOC_FILE_PATTERN;
+    private final Pattern WEB_FILE_PATTERN;
 
     FileExtensionMatcher() {
+        this.WEB_FILE_PATTERN = Pattern.compile("\\.(eot|woff)$");
         this.TEXT_FILE_PATTERN = Pattern.compile("\\.(?:(?:css)|(?:js)|(?:txt))$");
         this.IMAGE_FILE_PATTERN = Pattern.compile("(\\.(jpe|jpe?g|bmp|gif|png|btif|tiff?|psd|djvu?|xif|wbmp|webp|p(n|b|g|p)m|rgb|tga|x(b|p)m|xwd|pic|ico|fh(c|4|5|7)?|xif|f(bs|px|st)))$");
         this.AUDIO_FILE_PATTERN = Pattern.compile("(\\.(mp(3|2)|m(p?2|3|p?4|pg)a|midi?|kar|rmi|web(m|a)|aif(f?|c)|w(ma|av|ax)|m(ka|3u)|sil|s3m|og(a|g)|uvv?a))$");
@@ -27,6 +29,7 @@ class FileExtensionMatcher {
             || IMAGE_FILE_PATTERN.matcher(path).find()
             || AUDIO_FILE_PATTERN.matcher(path).find()
             || VIDEO_FILE_PATTERN.matcher(path).find()
-            || DOC_FILE_PATTERN.matcher(path).find();
+            || DOC_FILE_PATTERN.matcher(path).find()
+            || WEB_FILE_PATTERN.matcher(path).find();
     }
 }
