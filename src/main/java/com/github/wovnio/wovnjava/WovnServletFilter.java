@@ -89,10 +89,9 @@ public class WovnServletFilter implements Filter {
             wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, wovnResponse);
         }
 
-        if (htmlChecker.isTextContentType(response.getContentType())) {
-            String originalBody = wovnResponse.toString();
-
+        if (htmlChecker.isTextFileContentType(response.getContentType())) {
             // text
+            String originalBody = wovnResponse.toString();
             String body = null;
             if (htmlChecker.canTranslate(response.getContentType(), originalBody)) {
                 // html
