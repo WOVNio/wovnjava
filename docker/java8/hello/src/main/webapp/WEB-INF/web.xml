@@ -35,9 +35,19 @@
       </init-param> -->
   </filter>
 
+  <filter>
+      <filter-name>universalfilter</filter-name>
+      <filter-class>com.example.wovnjava.hello.UniversalFilter</filter-class>
+  </filter>
+
   <filter-mapping>
       <filter-name>wovn</filter-name>
       <url-pattern>/*</url-pattern>
   </filter-mapping>
+
+  <filter-mapping>
+   <filter-name>universalfilter</filter-name>
+   <url-pattern>/custom_response/*</url-pattern>
+</filter-mapping>
 
 </web-app>
