@@ -29,7 +29,7 @@ stop:
 
 build_website:
 	$(eval TARGET_DIR := ${PWD}/docker/java$(VERSION)/hello)
-	rm -r ${TARGET_DIR}/target
+	rm -rf ${TARGET_DIR}/target
 	$(MAVEN) clean package -f $(WEBSITE_CONFIG_FILE)
 
 build_wovn_java:
