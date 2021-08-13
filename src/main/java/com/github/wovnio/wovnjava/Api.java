@@ -37,7 +37,7 @@ class Api {
         this.responseHeaders = responseHeaders;
     }
 
-    String translate(String lang, String html) throws ApiException {
+    String translate(String lang, String html) throws ApiException, ApiNoPageDataException {
         this.responseHeaders.setApiStatus("Requested");
         HttpURLConnection con = null;
         try {
@@ -69,7 +69,7 @@ class Api {
         }
     }
 
-    String translate(String lang, String html, HttpURLConnection con) throws ApiException {
+    String translate(String lang, String html, HttpURLConnection con) throws ApiException, ApiNoPageDataException {
         OutputStream out = null;
         try {
             ByteArrayOutputStream body = gzipStream(getApiBody(lang, html).getBytes());
@@ -92,7 +92,10 @@ class Api {
                     input = new GZIPInputStream(input);
                 }
                 return extractHtml(input);
-            } else {
+            } else if (status == 422) {
+                throw new ApiNoPageDataException();
+            }
+            else {
                 throw new ApiException("Failure", "Status code " + String.valueOf(status));
             }
         } catch (UnsupportedEncodingException e) {

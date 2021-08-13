@@ -20,23 +20,23 @@ import org.easymock.EasyMock;
 
 public class ApiTest extends TestCase {
 
-    public void testTranslateWithGzipResponse() throws ApiException, IOException, ProtocolException, ConfigurationError {
+    public void testTranslateWithGzipResponse() throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException {
         byte[] apiServerResponse = gzip("{\"body\": \"<html><body>response html</body></html>\"}".getBytes());
         String encoding = "gzip";
-        String resultingHtml = testTranslate(apiServerResponse, encoding);
+        String resultingHtml = testTranslate(apiServerResponse, encoding, 200);
         String expectedHtml = "<html><body>response html</body></html>";
         assertEquals(expectedHtml, resultingHtml);
     }
 
-    public void testTranslateWithPlainTextResponse() throws ApiException, IOException, ProtocolException, ConfigurationError {
+    public void testTranslateWithPlainTextResponse() throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException {
         byte[] apiServerResponse = "{\"body\": \"<html><body>response html</body></html>\"}".getBytes();
         String encoding = "";
-        String resultingHtml = testTranslate(apiServerResponse, encoding);
+        String resultingHtml = testTranslate(apiServerResponse, encoding, 200);
         String expectedHtml = "<html><body>response html</body></html>";
         assertEquals(expectedHtml, resultingHtml);
     }
 
-    private String testTranslate(byte[] apiServerResponse, String encoding) throws ApiException, IOException, ProtocolException, ConfigurationError {
+    private static String testTranslate(byte[] apiServerResponse, String encoding, int statusCode) throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException {
         String html = "<html>much content</html>";
 
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
@@ -57,8 +57,8 @@ public class ApiTest extends TestCase {
 
         ByteArrayOutputStream requestStream = new ByteArrayOutputStream();
         ByteArrayInputStream responseStream = new ByteArrayInputStream(apiServerResponse);
-        int returnCode = 200;
-        HttpURLConnection con = mockHttpURLConnection(requestStream, responseStream, returnCode, encoding);
+
+        HttpURLConnection con = mockHttpURLConnection(requestStream, responseStream, statusCode, encoding);
 
         String result = api.translate("ja", html, con);
 
@@ -91,13 +91,13 @@ public class ApiTest extends TestCase {
         return buffer.toByteArray();
     }
 
-    private HttpURLConnection mockHttpURLConnection(ByteArrayOutputStream requestStream, ByteArrayInputStream responseStream, int code, String encoding) throws IOException, ProtocolException {
+    private static HttpURLConnection mockHttpURLConnection(ByteArrayOutputStream requestStream, ByteArrayInputStream responseStream, int statusCode, String encoding) throws IOException, ProtocolException {
         HttpURLConnection mock = EasyMock.createMock(HttpURLConnection.class);
         mock.setDoOutput(true);
         mock.setRequestProperty(EasyMock.anyString(), EasyMock.anyString());
         EasyMock.expectLastCall().atLeastOnce();
         mock.setRequestMethod("POST");
-        EasyMock.expect(mock.getResponseCode()).andReturn(code);
+        EasyMock.expect(mock.getResponseCode()).andReturn(statusCode);
         EasyMock.expect(mock.getContentEncoding()).andReturn(encoding);
         EasyMock.expect(mock.getOutputStream()).andReturn(requestStream);
         EasyMock.expect(mock.getInputStream()).andReturn(responseStream);
@@ -126,7 +126,7 @@ public class ApiTest extends TestCase {
         return sb.toString();
     }
 
-    private ResponseHeaders mockResponseHeaders() {
+    private static ResponseHeaders mockResponseHeaders() {
         ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
         mock.forwardFastlyHeaders(EasyMock.anyObject(HttpURLConnection.class));
         EasyMock.expectLastCall().times(1);
