@@ -69,7 +69,7 @@ public class MockHttpServletRequest {
 
         /* Stub `X-Header-Test` for testing behavior of an existing Header value */
         EasyMock.expect(mock.getHeader("X-Header-Test")).andReturn("x-header-test-value").anyTimes();
-        Vector headersVector = new Vector<String>();
+        Vector<String> headersVector = new Vector<String>();
         headersVector.add("X-Header-Test");
         EasyMock.expect(mock.getHeaderNames()).andReturn(headersVector.elements()).anyTimes();
     }
