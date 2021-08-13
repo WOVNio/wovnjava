@@ -7,7 +7,7 @@ class Interceptor {
     private final Headers headers;
     private final Api api;
     private final ResponseHeaders responseHeaders;
-     
+
     Interceptor(Headers headers, Settings settings, Api api, ResponseHeaders responseHeaders) {
         this.headers = headers;
         this.settings = settings;
