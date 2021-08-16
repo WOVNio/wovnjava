@@ -115,7 +115,7 @@ public class InterceptorTest extends TestCase {
     private Api mockApi422Error() {
         Api mock = EasyMock.createMock(Api.class);
         try {
-            EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andThrow(new ApiNoPageDataException()).atLeastOnce();
+            EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andThrow(new ApiNoPageDataException("ApiDataNotAvailable")).atLeastOnce();
         } catch (ApiException _) {
             throw new RuntimeException("Fail create mock");
         } catch (ApiNoPageDataException _) {
@@ -147,7 +147,7 @@ public class InterceptorTest extends TestCase {
 
     private ResponseHeaders mockResponseHeaders422Error() {
         ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
-        mock.setApiStatus(Interceptor.NO_API_DATA_STATUS);
+        mock.setApiStatus("ApiDataNotAvailable");
         EasyMock.expectLastCall().times(1);
         EasyMock.replay(mock);
         return mock;

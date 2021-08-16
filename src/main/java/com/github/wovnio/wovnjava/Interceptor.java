@@ -1,8 +1,6 @@
 package com.github.wovnio.wovnjava;
 
 class Interceptor {
-    public static final String NO_API_DATA_STATUS = "ApiDataNotAvailable";
-
     private final Settings settings;
     private final Headers headers;
     private final Api api;
@@ -32,7 +30,7 @@ class Interceptor {
             responseHeaders.setApiStatus("Success");
             return converter.restore(translatedBody);
         } catch (ApiNoPageDataException e) {
-            responseHeaders.setApiStatus(Interceptor.NO_API_DATA_STATUS);
+            responseHeaders.setApiStatus(e.getDetails());
             return apiTranslateFail(body, lang);
         } catch (ApiException e) {
             responseHeaders.setApiStatus(e.getType());

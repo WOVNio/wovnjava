@@ -93,7 +93,7 @@ class Api {
                 }
                 return extractHtml(input);
             } else if (status == 422) {
-                throw new ApiNoPageDataException();
+                throw new ApiNoPageDataException("ApiDataNotAvailable");
             }
             else {
                 throw new ApiException("Failure", "Status code " + String.valueOf(status));
