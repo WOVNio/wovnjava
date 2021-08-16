@@ -126,7 +126,7 @@ public class SettingsTest extends TestCase {
         }});
         boolean errorThrown = false;
         try {
-            Settings s = new Settings(config);
+            new Settings(config);
         } catch (ConfigurationError e) {
             errorThrown = true;
         }
@@ -176,7 +176,7 @@ public class SettingsTest extends TestCase {
     public void testSettings__ConfigWithValidBase__DoesNotRaiseError() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
         }});
-        Settings s = new Settings(config);
+        new Settings(config);
         assertEquals(true, true); // no error
     }
 
@@ -480,7 +480,7 @@ public class SettingsTest extends TestCase {
     private void assertErrorThrown(FilterConfig config) {
         boolean errorThrown = false;
         try {
-            Settings s = new Settings(config);
+            new Settings(config);
         } catch (ConfigurationError e) {
             errorThrown = true;
         }

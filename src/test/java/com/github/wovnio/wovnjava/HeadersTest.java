@@ -36,14 +36,6 @@ public class HeadersTest extends TestCase {
         return TestUtil.makeConfigWithValidDefaults(parameters);
     }
 
-    private static FilterConfig mockConfigOriginalHeaders() {
-        HashMap<String, String> parameters = new HashMap<String, String>() {{
-            put("originalUrlHeader", "REDIRECT_URL");
-            put("originalQueryStringHeader", "REDIRECT_QUERY_STRING");
-        }};
-        return TestUtil.makeConfigWithValidDefaults(parameters);
-    }
-
     public void testHeaders() throws ConfigurationError {
         HttpServletRequest mockRequest = MockHttpServletRequest.create("https://example.com/ja/test");
         FilterConfig mockConfig = mockConfigPath();

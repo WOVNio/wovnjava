@@ -90,9 +90,9 @@ public class InterceptorTest extends TestCase {
         Api mock = EasyMock.createMock(Api.class);
         try {
             EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andReturn("replaced html").atLeastOnce();
-        } catch (ApiException _) {
+        } catch (ApiException e) {
             throw new RuntimeException("Fail create mock");
-        } catch (ApiNoPageDataException _) {
+        } catch (ApiNoPageDataException e) {
             throw new RuntimeException("Fail create mock");
         } 
         EasyMock.replay(mock);
@@ -103,9 +103,9 @@ public class InterceptorTest extends TestCase {
         Api mock = EasyMock.createMock(Api.class);
         try {
             EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andThrow(new ApiException("SocketTimeoutException", "")).atLeastOnce();
-        } catch (ApiException _) {
+        } catch (ApiException e) {
             throw new RuntimeException("Fail create mock");
-        } catch (ApiNoPageDataException _) {
+        } catch (ApiNoPageDataException e) {
             throw new RuntimeException("Fail create mock");
         } 
         EasyMock.replay(mock);
@@ -116,9 +116,9 @@ public class InterceptorTest extends TestCase {
         Api mock = EasyMock.createMock(Api.class);
         try {
             EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andThrow(new ApiNoPageDataException("ApiDataNotAvailable")).atLeastOnce();
-        } catch (ApiException _) {
+        } catch (ApiException eApiException) {
             throw new RuntimeException("Fail create mock");
-        } catch (ApiNoPageDataException _) {
+        } catch (ApiNoPageDataException e) {
             throw new RuntimeException("Fail create mock");
         } 
         EasyMock.replay(mock);
