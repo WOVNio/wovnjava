@@ -43,6 +43,24 @@ public class InterceptorTest extends TestCase {
         assertEquals(expect, stripExtraSpaces(html));
     }
 
+    public void testApi422() throws NoSuchMethodException, IllegalAccessException, IOException, ServletException, ConfigurationError {
+        String originalHtml = "<!doctype html><html><head><meta http-equiv=\"CONTENT-TYPE\"><title>test</title></head><body>test</body></html>";
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("projectToken", "token0");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,fr");
+        }});
+        String html = translate("https://example.com/ja/", originalHtml, settings, mockApi422Error(), mockResponseHeaders422Error());
+        String expect = "<!doctype html><html lang=\"en\"><head><title>test</title>" +
+                        "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=path&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
+                        "<link ref=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
+                        "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
+                        "<link ref=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
+                        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" +
+                        "</head><body>test</body></html>";
+        assertEquals(expect, stripExtraSpaces(html));
+    }
+
     public void testNoApi() throws NoSuchMethodException, IllegalAccessException, IOException, ServletException, ConfigurationError {
         String originalHtml = "<!doctype html><html><head><meta http-equiv=\"CONTENT-TYPE\"><title>test</title></head><body>test</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
@@ -72,9 +90,11 @@ public class InterceptorTest extends TestCase {
         Api mock = EasyMock.createMock(Api.class);
         try {
             EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andReturn("replaced html").atLeastOnce();
-        } catch (ApiException _) {
+        } catch (ApiException e) {
             throw new RuntimeException("Fail create mock");
-        }
+        } catch (ApiNoPageDataException e) {
+            throw new RuntimeException("Fail create mock");
+        } 
         EasyMock.replay(mock);
         return mock;
     }
@@ -83,9 +103,24 @@ public class InterceptorTest extends TestCase {
         Api mock = EasyMock.createMock(Api.class);
         try {
             EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andThrow(new ApiException("SocketTimeoutException", "")).atLeastOnce();
-        } catch (ApiException _) {
+        } catch (ApiException e) {
             throw new RuntimeException("Fail create mock");
-        }
+        } catch (ApiNoPageDataException e) {
+            throw new RuntimeException("Fail create mock");
+        } 
+        EasyMock.replay(mock);
+        return mock;
+    }
+
+    private Api mockApi422Error() {
+        Api mock = EasyMock.createMock(Api.class);
+        try {
+            EasyMock.expect(mock.translate(EasyMock.anyString(), EasyMock.anyString())).andThrow(new ApiNoPageDataException("ApiDataNotAvailable")).atLeastOnce();
+        } catch (ApiException eApiException) {
+            throw new RuntimeException("Fail create mock");
+        } catch (ApiNoPageDataException e) {
+            throw new RuntimeException("Fail create mock");
+        } 
         EasyMock.replay(mock);
         return mock;
     }
@@ -105,6 +140,14 @@ public class InterceptorTest extends TestCase {
     private ResponseHeaders mockResponseHeadersTimeout() {
         ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
         mock.setApiStatus("SocketTimeoutException");
+        EasyMock.expectLastCall().times(1);
+        EasyMock.replay(mock);
+        return mock;
+    }
+
+    private ResponseHeaders mockResponseHeaders422Error() {
+        ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
+        mock.setApiStatus("ApiDataNotAvailable");
         EasyMock.expectLastCall().times(1);
         EasyMock.replay(mock);
         return mock;

@@ -58,11 +58,6 @@ public class WovnServletFilterTest extends TestCase {
     }
 
     public void testProcessRequestOnce__RequestNotProcessed__ProcessRequest() throws ServletException, IOException {
-        HashMap<String, String> config = new HashMap<String, String>() {{
-            put("urlPattern", "path");
-            put("defaultLang", "ja");
-            put("location", "https://example.com/ja/search/");
-        }};
         boolean requestIsAlreadyProcessed = false;
         FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", TestUtil.emptyOption, requestIsAlreadyProcessed);
 
@@ -73,11 +68,6 @@ public class WovnServletFilterTest extends TestCase {
     }
 
     public void testProcessRequestOnce__RequestAlreadyProcessed__DoNotProcessRequestAgain() throws ServletException, IOException {
-        HashMap<String, String> config = new HashMap<String, String>() {{
-            put("urlPattern", "path");
-            put("defaultLang", "ja");
-            put("location", "https://example.com/ja/search/");
-        }};
         boolean requestIsAlreadyProcessed = true;
         FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", TestUtil.emptyOption, requestIsAlreadyProcessed);
 

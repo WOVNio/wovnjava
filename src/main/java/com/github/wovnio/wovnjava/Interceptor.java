@@ -29,6 +29,9 @@ class Interceptor {
             String translatedBody = api.translate(lang, convertedBody);
             responseHeaders.setApiStatus("Success");
             return converter.restore(translatedBody);
+        } catch (ApiNoPageDataException e) {
+            responseHeaders.setApiStatus(e.getDetails());
+            return apiTranslateFail(body, lang);
         } catch (ApiException e) {
             responseHeaders.setApiStatus(e.getType());
             WovnLogger.log("ApiException", e);
