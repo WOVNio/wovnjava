@@ -86,8 +86,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveForm() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"wovn-marker-0\"><input TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" value=\"wovn-marker-1\"></form></body></html>";
+        String original = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT type=\"HIDDEN\" name=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"wovn-marker-0\"><input type=\"HIDDEN\" name=\"CSRF_TOKEN\" value=\"wovn-marker-1\"></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -98,7 +98,7 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testNested() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" value=\"RANDOM\"></form></body></html>";
+        String original = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT type=\"HIDDEN\" name=\"CSRF_TOKEN\" value=\"RANDOM\"></form></body></html>";
         String removedHtml = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form wovn-ignore><!--wovn-marker-1--></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
