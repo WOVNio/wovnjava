@@ -59,7 +59,7 @@ class Settings {
         this.urlPattern = verifyUrlPattern(reader.getStringParameter("urlPattern"));
         this.defaultLang = verifyDefaultLang(reader.getStringParameter("defaultLang"));
         this.supportedLangs = verifySupportedLangs(reader.getArrayParameter("supportedLangs"), this.defaultLang);
-        this.snippetUrl = verifySnippetUrl(reader.getStringParameter("snippetUrl"));
+        this.snippetUrl = stringOrDefault(reader.getStringParameter("snippetUrl"), DefaultSnippetUrlProduction);
 
         // Optional settings
         this.devMode = reader.getBoolParameterDefaultFalse("devMode");
@@ -125,13 +125,6 @@ class Settings {
             throw new ConfigurationError("Invalid configuration for \"defaultLang\", must match a supported language code.");
         }
         return lang;
-    }
-
-    private String verifySnippetUrl(String value) throws ConfigurationError {
-        if (value == null || value.isEmpty()) {
-            return DefaultSnippetUrlProduction;
-        }
-        return value;
     }
 
     private ArrayList<Lang> verifySupportedLangs(ArrayList<String> values, Lang defaultLang) throws ConfigurationError {
