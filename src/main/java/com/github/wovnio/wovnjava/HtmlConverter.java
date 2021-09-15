@@ -29,7 +29,7 @@ class HtmlConverter {
         this.WOVN_WIDGET_URLS = new String[] {
             "j.wovn.io",
             "j.dev-wovn.io:3000",
-            this.settings.defaultVersionedWidgetUrlProduction
+            this.settings.snippetUrl
         };
     }
 

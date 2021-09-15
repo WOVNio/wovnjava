@@ -3,6 +3,9 @@ package com.github.wovnio.wovnjava;
 import junit.framework.TestCase;
 
 import java.util.HashMap;
+
+import static org.junit.Assert.assertThrows;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -23,6 +26,7 @@ public class SettingsTest extends TestCase {
             put("urlPattern", "path");
             put("defaultLang", "en");
             put("supportedLangs", "en,ja");
+            put("snippetUrl", "//j.wovn.io/1");
         }});
         Settings s = new Settings(config);
 
@@ -60,6 +64,7 @@ public class SettingsTest extends TestCase {
             put("urlPattern", "path");
             put("defaultLang", "en");
             put("supportedLangs", "en,ja");
+            put("snippetUrl", "//j.wovn.io/1");
         }});
 
         assertErrorThrown(config);
@@ -70,6 +75,7 @@ public class SettingsTest extends TestCase {
             put("projectToken", "123456");
             put("defaultLang", "en");
             put("supportedLangs", "en,ja");
+            put("snippetUrl", "//j.wovn.io/1");
         }});
 
         assertErrorThrown(config);
@@ -91,6 +97,7 @@ public class SettingsTest extends TestCase {
             put("urlPattern", "path");
             put("defaultLang", "English");
             put("supportedLangs", "en,ja");
+            put("snippetUrl", "//j.wovn.io/1");
         }});
 
         assertErrorThrown(config);
@@ -101,6 +108,7 @@ public class SettingsTest extends TestCase {
             put("projectToken", "123456");
             put("urlPattern", "path");
             put("defaultLang", "en");
+            put("snippetUrl", "//j.wovn.io/1");
         }});
 
         assertErrorThrown(config);
@@ -112,6 +120,7 @@ public class SettingsTest extends TestCase {
             put("urlPattern", "path");
             put("defaultLang", "en");
             put("supportedLangs", "en,Japanese");
+            put("snippetUrl", "//j.wovn.io/1");
         }});
 
         assertErrorThrown(config);
@@ -123,6 +132,7 @@ public class SettingsTest extends TestCase {
             put("urlPattern", "path");
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,ja");
+            put("snippetUrl", "//j.wovn.io/1");
         }});
         boolean errorThrown = false;
         try {
@@ -139,6 +149,7 @@ public class SettingsTest extends TestCase {
             put("urlPattern", "path");
             put("defaultLang", "en");
             put("supportedLangs", "en,ja");
+            put("snippetUrl", "//j.wovn.io/1");
         }});
         Settings s = new Settings(config);
 
@@ -152,6 +163,7 @@ public class SettingsTest extends TestCase {
             put("urlPattern", "path");
             put("defaultLang", "en");
             put("supportedLangs", "en,ja");
+            put("snippetUrl", "//j.wovn.io/1");
         }});
         Settings s = new Settings(config);
 
@@ -164,6 +176,7 @@ public class SettingsTest extends TestCase {
             put("urlPattern", "path");
             put("defaultLang", "en");
             put("supportedLangs", "ja");
+            put("snippetUrl", "//j.wovn.io/1");
         }});
         Settings s = new Settings(config);
 
@@ -284,20 +297,13 @@ public class SettingsTest extends TestCase {
         assertEquals("http://test.test", s.apiUrl);
     }
 
-    public void testSnippetUrl__ProductionMode__DefaultValue() throws ConfigurationError {
+    public void testSnippetUrl__EmptyUrl__ThrowsException() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
-            put("devMode", "false");
+            put("snippetUrl", "");
         }});
-        Settings s = new Settings(config);
-        assertEquals(Settings.DefaultSnippetUrlProduction, s.snippetUrl);
-    }
-
-    public void testSnippetUrl__DevelopmentMode__DefaultValue() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
-            put("devMode", "true");
-        }});
-        Settings s = new Settings(config);
-        assertEquals(Settings.DefaultSnippetUrlDevelopment, s.snippetUrl);
+        assertThrows("Missing required configuration for \"snippetUrl\".", ConfigurationError.class, () -> {
+            new Settings(config);
+        });
     }
 
     public void testIgnorePaths__DeclareEmptyString__UseDefaultEmptyArray() throws ConfigurationError {
@@ -475,16 +481,6 @@ public class SettingsTest extends TestCase {
         Settings settings = new Settings(config);
 
         assertEquals(4000, settings.outboundProxyPort);
-    }
-
-    public void testEnableWidgetVersioning__SnippetURLShouldBeVersionedWhenEnabled() throws ConfigurationError {
-        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
-            put("enableWidgetVersioning", "true");
-        }});
-
-        Settings settings = new Settings(config);
-
-        assertEquals("https://cdn.wovn.io/widget/123456", settings.snippetUrl);
     }
 
     private void assertErrorThrown(FilterConfig config) {

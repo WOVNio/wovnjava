@@ -2,6 +2,7 @@ package com.github.wovnio.wovnjava;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -20,14 +21,12 @@ class Settings {
     public static final String DefaultSnippetUrlProduction  = "//j.wovn.io/1";
     public static final String DefaultSnippetUrlDevelopment = "//j.dev-wovn.io:3000/1";
 
-    // Derived default configuration values
-    public final String defaultVersionedWidgetUrlProduction;
-
     // Required settings
     public final String projectToken;
     public final String urlPattern;
     public final Lang defaultLang;
     public final ArrayList<Lang> supportedLangs;
+    public final String snippetUrl;
 
     // Optional settings
     public final boolean devMode;
@@ -40,7 +39,6 @@ class Settings {
     public final Map<Lang, String> langCodeAliases;
     public final CustomDomainLanguages customDomainLanguages;
 
-    public final String snippetUrl;
     public final String apiUrl;
     public final String originalUrlHeader;
     public final String originalQueryStringHeader;
@@ -56,8 +54,6 @@ class Settings {
 
     public final String encoding;
 
-    public final boolean enableWidgetVersioning;
-
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
 
@@ -66,9 +62,7 @@ class Settings {
         this.urlPattern = verifyUrlPattern(reader.getStringParameter("urlPattern"));
         this.defaultLang = verifyDefaultLang(reader.getStringParameter("defaultLang"));
         this.supportedLangs = verifySupportedLangs(reader.getArrayParameter("supportedLangs"), this.defaultLang);
-
-        // Derived default configuration values
-        this.defaultVersionedWidgetUrlProduction = Settings.DefaultWidgetVersionUrlPrefix + this.projectToken;
+        this.snippetUrl = verifySnippetUrl(reader.getStringParameter("snippetUrl"));
 
         // Optional settings
         this.devMode = reader.getBoolParameterDefaultFalse("devMode");
@@ -87,18 +81,6 @@ class Settings {
 
         String defaultApiUrl = this.devMode ? DefaultApiUrlDevelopment : DefaultApiUrlProduction;
         this.apiUrl = stringOrDefault(reader.getStringParameter("apiUrl"), defaultApiUrl);
-
-        this.enableWidgetVersioning = reader.getBoolParameterDefaultFalse("enableWidgetVersioning");
-
-        if (this.devMode) {
-            this.snippetUrl = DefaultSnippetUrlDevelopment;
-        } else {
-            if (this.enableWidgetVersioning) {
-                this.snippetUrl = this.defaultVersionedWidgetUrlProduction;
-            } else {
-                this.snippetUrl = DefaultSnippetUrlProduction;
-            }
-        }
 
         this.ignoreClasses = reader.getArrayParameter("ignoreClasses");
         this.ignorePaths = normalizeIgnorePaths(reader.getArrayParameter("ignorePaths"));
@@ -146,6 +128,13 @@ class Settings {
             throw new ConfigurationError("Invalid configuration for \"defaultLang\", must match a supported language code.");
         }
         return lang;
+    }
+
+    private String verifySnippetUrl(String value) throws ConfigurationError {
+        if (value == null || value.isEmpty()) {
+            throw new ConfigurationError("Missing required configuration for \"snippetUrl\".");
+        }
+        return value;
     }
 
     private ArrayList<Lang> verifySupportedLangs(ArrayList<String> values, Lang defaultLang) throws ConfigurationError {
