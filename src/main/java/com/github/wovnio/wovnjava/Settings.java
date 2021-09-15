@@ -16,8 +16,7 @@ class Settings {
     public static final String DefaultApiUrlBase  = "https://wovn.global.ssl.fastly.net";
     public static final String DefaultApiUrlProduction  = DefaultApiUrlBase + "/v0/";
     public static final String DefaultApiUrlDevelopment = "http://localhost:3001/v0/";
-    public static final String DefaultSnippetUrlProduction  = "//j.wovn.io/1";
-    public static final String DefaultSnippetUrlDevelopment = "//j.dev-wovn.io:3000/1";
+    public static final String DefaultSnippetUrlProduction  = "https://j.wovn.io/1";
 
     // Required settings
     public final String projectToken;
@@ -130,7 +129,7 @@ class Settings {
 
     private String verifySnippetUrl(String value) throws ConfigurationError {
         if (value == null || value.isEmpty()) {
-            throw new ConfigurationError("Missing required configuration for \"snippetUrl\".");
+            return DefaultSnippetUrlProduction;
         }
         return value;
     }

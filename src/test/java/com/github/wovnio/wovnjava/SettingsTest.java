@@ -52,7 +52,7 @@ public class SettingsTest extends TestCase {
         assertEquals(emptyArrayList, s.ignoreClasses);
         assertEquals(emptyArrayList, s.ignorePaths);
 
-        assertEquals(Settings.DefaultSnippetUrlProduction, s.snippetUrl);
+        assertEquals("//j.wovn.io/1", s.snippetUrl);
         assertEquals(Settings.DefaultApiUrlProduction, s.apiUrl);
 
         assertEquals(Settings.DefaultTimeout, s.connectTimeout);
@@ -297,13 +297,12 @@ public class SettingsTest extends TestCase {
         assertEquals("http://test.test", s.apiUrl);
     }
 
-    public void testSnippetUrl__EmptyUrl__ThrowsException() throws ConfigurationError {
+    public void testSnippetUrl__EmptyUrl__UseDefaultInstead() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("snippetUrl", "");
         }});
-        assertThrows("Missing required configuration for \"snippetUrl\".", ConfigurationError.class, () -> {
-            new Settings(config);
-        });
+        Settings s = new Settings(config);
+        assertEquals(Settings.DefaultSnippetUrlProduction, s.snippetUrl);
     }
 
     public void testIgnorePaths__DeclareEmptyString__UseDefaultEmptyArray() throws ConfigurationError {
