@@ -16,15 +16,15 @@ class Settings {
     public static final String DefaultApiUrlBase  = "https://wovn.global.ssl.fastly.net";
     public static final String DefaultApiUrlProduction  = DefaultApiUrlBase + "/v0/";
     public static final String DefaultApiUrlDevelopment = "http://localhost:3001/v0/";
-    public static final String DefaultSnippetUrlDevelopment = "//j.dev-wovn.io:3000/1";
-    public static final String DefaultSnippetUrlProduction  = "https://j.wovn.io/1";
+    public static final String DefaultWidgetUrlDevelopment = "//j.dev-wovn.io:3000/1";
+    public static final String DefaultWidgetUrlProduction  = "https://j.wovn.io/1";
 
     // Required settings
     public final String projectToken;
     public final String urlPattern;
     public final Lang defaultLang;
     public final ArrayList<Lang> supportedLangs;
-    public final String snippetUrl;
+    public final String widgetUrl;
 
     // Optional settings
     public final boolean devMode;
@@ -72,7 +72,7 @@ class Settings {
             WovnLogger.enable();
         }
 
-        this.snippetUrl = this.devMode ? stringOrDefault(reader.getStringParameter("snippetUrl"), DefaultSnippetUrlDevelopment) : stringOrDefault(reader.getStringParameter("snippetUrl"), DefaultSnippetUrlProduction);
+        this.widgetUrl = this.devMode ? stringOrDefault(reader.getStringParameter("widgetUrl"), DefaultWidgetUrlDevelopment) : stringOrDefault(reader.getStringParameter("widgetUrl"), DefaultWidgetUrlProduction);
 
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
         this.langCodeAliases = parseLangCodeAliases(reader.getStringParameter("langCodeAliases"));

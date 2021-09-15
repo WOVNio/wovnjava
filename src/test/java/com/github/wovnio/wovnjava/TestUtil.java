@@ -43,7 +43,7 @@ public class TestUtil {
             put("urlPattern", "path");
             put("defaultLang", "en");
             put("supportedLangs", "en,ja");
-            put("snippetUrl", "//j.wovn.io/1");
+            put("widgetUrl", "//j.wovn.io/1");
         }};
         settings.putAll(options);
         return TestUtil.makeConfig(settings);

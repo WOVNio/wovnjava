@@ -29,7 +29,7 @@ class HtmlConverter {
         this.WOVN_WIDGET_URLS = new String[] {
             "j.wovn.io",
             "j.dev-wovn.io:3000",
-            this.settings.snippetUrl
+            this.settings.widgetUrl
         };
     }
 
@@ -162,7 +162,7 @@ class HtmlConverter {
             sb.append(CustomDomainLanguageSerializer.serializeToJson(settings.customDomainLanguages));
         }
         String key = sb.toString();
-        js.attr("src", settings.snippetUrl);
+        js.attr("src", settings.widgetUrl);
         js.attr("data-wovnio", key);
         js.attr("data-wovnio-type", "fallback");
         js.attr("async", "async");
