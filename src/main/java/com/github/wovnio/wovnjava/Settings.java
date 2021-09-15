@@ -16,6 +16,7 @@ class Settings {
     public static final String DefaultApiUrlBase  = "https://wovn.global.ssl.fastly.net";
     public static final String DefaultApiUrlProduction  = DefaultApiUrlBase + "/v0/";
     public static final String DefaultApiUrlDevelopment = "http://localhost:3001/v0/";
+    public static final String DefaultSnippetUrlDevelopment = "//j.dev-wovn.io:3000/1";
     public static final String DefaultSnippetUrlProduction  = "https://j.wovn.io/1";
 
     // Required settings
@@ -59,7 +60,6 @@ class Settings {
         this.urlPattern = verifyUrlPattern(reader.getStringParameter("urlPattern"));
         this.defaultLang = verifyDefaultLang(reader.getStringParameter("defaultLang"));
         this.supportedLangs = verifySupportedLangs(reader.getArrayParameter("supportedLangs"), this.defaultLang);
-        this.snippetUrl = stringOrDefault(reader.getStringParameter("snippetUrl"), DefaultSnippetUrlProduction);
 
         // Optional settings
         this.devMode = reader.getBoolParameterDefaultFalse("devMode");
@@ -71,6 +71,8 @@ class Settings {
         if (this.enableLogging) {
             WovnLogger.enable();
         }
+
+        this.snippetUrl = this.devMode ? stringOrDefault(reader.getStringParameter("snippetUrl"), DefaultSnippetUrlDevelopment) : stringOrDefault(reader.getStringParameter("snippetUrl"), DefaultSnippetUrlProduction);
 
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
         this.langCodeAliases = parseLangCodeAliases(reader.getStringParameter("langCodeAliases"));

@@ -297,12 +297,21 @@ public class SettingsTest extends TestCase {
         assertEquals("http://test.test", s.apiUrl);
     }
 
-    public void testSnippetUrl__EmptyUrl__UseDefaultInstead() throws ConfigurationError {
+    public void testSnippetUrl__Empty__ProductionMode__UseDefaultInstead() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
             put("snippetUrl", null);
         }});
         Settings s = new Settings(config);
         assertEquals(Settings.DefaultSnippetUrlProduction, s.snippetUrl);
+    }
+
+    public void testSnippetUrl__EmptyUrl__DevMode__UseDefaultInstead() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("devMode", "true");
+            put("snippetUrl", null);
+        }});
+        Settings s = new Settings(config);
+        assertEquals(Settings.DefaultSnippetUrlDevelopment, s.snippetUrl);
     }
 
     public void testIgnorePaths__DeclareEmptyString__UseDefaultEmptyArray() throws ConfigurationError {
