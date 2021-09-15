@@ -2,7 +2,6 @@ package com.github.wovnio.wovnjava;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
