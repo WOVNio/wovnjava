@@ -299,7 +299,7 @@ public class SettingsTest extends TestCase {
 
     public void testSnippetUrl__EmptyUrl__UseDefaultInstead() throws ConfigurationError {
         FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
-            put("snippetUrl", "");
+            put("snippetUrl", null);
         }});
         Settings s = new Settings(config);
         assertEquals(Settings.DefaultSnippetUrlProduction, s.snippetUrl);
