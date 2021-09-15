@@ -17,11 +17,7 @@ class HtmlConverter {
     private final HashMap<String, String> hreflangMap;
     private final HtmlReplaceMarker htmlReplaceMarker;
 
-    private static final String[] WOVN_WIDGET_URLS = new String[] {
-        "j.wovn.io",
-        "j.dev-wovn.io:3000",
-        Settings.DefaultVersionedWidgetUrlProduction
-    };
+    private final String[] WOVN_WIDGET_URLS;
 
     HtmlConverter(Settings settings, Headers headers, String original) {
         this.settings = settings;
@@ -29,6 +25,12 @@ class HtmlConverter {
         this.hreflangMap = headers.getHreflangUrlMap();
         doc = Jsoup.parse(original);
         doc.outputSettings().prettyPrint(false);
+        
+        this.WOVN_WIDGET_URLS = new String[] {
+            "j.wovn.io",
+            "j.dev-wovn.io:3000",
+            this.settings.defaultVersionedWidgetUrlProduction
+        };
     }
 
     String strip() {

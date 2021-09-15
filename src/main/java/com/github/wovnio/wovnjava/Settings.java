@@ -14,11 +14,14 @@ class Settings {
     // Default configuration values
     public static final int DefaultTimeout = 1000;
     public static final String DefaultApiUrlBase  = "https://wovn.global.ssl.fastly.net";
+    public static final String DefaultWidgetVersionUrlPrefix = "https://cdn.wovn.io/widget/";
     public static final String DefaultApiUrlProduction  = DefaultApiUrlBase + "/v0/";
-    public static final String DefaultVersionedWidgetUrlProduction  = DefaultApiUrlBase + "/widget";
     public static final String DefaultApiUrlDevelopment = "http://localhost:3001/v0/";
     public static final String DefaultSnippetUrlProduction  = "//j.wovn.io/1";
     public static final String DefaultSnippetUrlDevelopment = "//j.dev-wovn.io:3000/1";
+
+    // Derived default configuration values
+    public final String defaultVersionedWidgetUrlProduction;
 
     // Required settings
     public final String projectToken;
@@ -53,6 +56,8 @@ class Settings {
 
     public final String encoding;
 
+    public final boolean enableWidgetVersioning;
+
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
 
@@ -61,6 +66,9 @@ class Settings {
         this.urlPattern = verifyUrlPattern(reader.getStringParameter("urlPattern"));
         this.defaultLang = verifyDefaultLang(reader.getStringParameter("defaultLang"));
         this.supportedLangs = verifySupportedLangs(reader.getArrayParameter("supportedLangs"), this.defaultLang);
+
+        // Derived default configuration values
+        this.defaultVersionedWidgetUrlProduction = Settings.DefaultWidgetVersionUrlPrefix + this.projectToken;
 
         // Optional settings
         this.devMode = reader.getBoolParameterDefaultFalse("devMode");
@@ -79,7 +87,18 @@ class Settings {
 
         String defaultApiUrl = this.devMode ? DefaultApiUrlDevelopment : DefaultApiUrlProduction;
         this.apiUrl = stringOrDefault(reader.getStringParameter("apiUrl"), defaultApiUrl);
-        this.snippetUrl = this.devMode ? DefaultSnippetUrlDevelopment : DefaultSnippetUrlProduction;
+
+        this.enableWidgetVersioning = reader.getBoolParameterDefaultFalse("enableWidgetVersioning");
+
+        if (this.devMode) {
+            this.snippetUrl = DefaultSnippetUrlDevelopment;
+        } else {
+            if (this.enableWidgetVersioning) {
+                this.snippetUrl = this.defaultVersionedWidgetUrlProduction;
+            } else {
+                this.snippetUrl = DefaultSnippetUrlProduction;
+            }
+        }
 
         this.ignoreClasses = reader.getArrayParameter("ignoreClasses");
         this.ignorePaths = normalizeIgnorePaths(reader.getArrayParameter("ignorePaths"));

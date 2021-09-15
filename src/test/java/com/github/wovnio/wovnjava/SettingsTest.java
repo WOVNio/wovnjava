@@ -477,6 +477,16 @@ public class SettingsTest extends TestCase {
         assertEquals(4000, settings.outboundProxyPort);
     }
 
+    public void testEnableWidgetVersioning__SnippetURLShouldBeVersionedWhenEnabled() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("enableWidgetVersioning", "true");
+        }});
+
+        Settings settings = new Settings(config);
+
+        assertEquals("https://cdn.wovn.io/widget/123456", settings.snippetUrl);
+    }
+
     private void assertErrorThrown(FilterConfig config) {
         boolean errorThrown = false;
         try {
