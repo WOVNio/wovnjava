@@ -17,11 +17,7 @@ class HtmlConverter {
     private final HashMap<String, String> hreflangMap;
     private final HtmlReplaceMarker htmlReplaceMarker;
 
-    private static final String[] WOVN_WIDGET_URLS = new String[] {
-        "j.wovn.io",
-        "j.dev-wovn.io:3000",
-        Settings.DefaultVersionedWidgetUrlProduction
-    };
+    private final String[] WOVN_WIDGET_URLS;
 
     HtmlConverter(Settings settings, Headers headers, String original) {
         this.settings = settings;
@@ -29,6 +25,12 @@ class HtmlConverter {
         this.hreflangMap = headers.getHreflangUrlMap();
         doc = Jsoup.parse(original);
         doc.outputSettings().prettyPrint(false);
+        
+        this.WOVN_WIDGET_URLS = new String[] {
+            "j.wovn.io",
+            "j.dev-wovn.io:3000",
+            this.settings.widgetUrl
+        };
     }
 
     String strip() {
@@ -160,7 +162,7 @@ class HtmlConverter {
             sb.append(CustomDomainLanguageSerializer.serializeToJson(settings.customDomainLanguages));
         }
         String key = sb.toString();
-        js.attr("src", settings.snippetUrl);
+        js.attr("src", settings.widgetUrl);
         js.attr("data-wovnio", key);
         js.attr("data-wovnio-type", "fallback");
         js.attr("async", "async");

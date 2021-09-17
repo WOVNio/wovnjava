@@ -15,16 +15,16 @@ class Settings {
     public static final int DefaultTimeout = 1000;
     public static final String DefaultApiUrlBase  = "https://wovn.global.ssl.fastly.net";
     public static final String DefaultApiUrlProduction  = DefaultApiUrlBase + "/v0/";
-    public static final String DefaultVersionedWidgetUrlProduction  = DefaultApiUrlBase + "/widget";
     public static final String DefaultApiUrlDevelopment = "http://localhost:3001/v0/";
-    public static final String DefaultSnippetUrlProduction  = "//j.wovn.io/1";
-    public static final String DefaultSnippetUrlDevelopment = "//j.dev-wovn.io:3000/1";
+    public static final String DefaultWidgetUrlDevelopment = "//j.dev-wovn.io:3000/1";
+    public static final String DefaultWidgetUrlProduction  = "https://j.wovn.io/1";
 
     // Required settings
     public final String projectToken;
     public final String urlPattern;
     public final Lang defaultLang;
     public final ArrayList<Lang> supportedLangs;
+    public final String widgetUrl;
 
     // Optional settings
     public final boolean devMode;
@@ -37,7 +37,6 @@ class Settings {
     public final Map<Lang, String> langCodeAliases;
     public final CustomDomainLanguages customDomainLanguages;
 
-    public final String snippetUrl;
     public final String apiUrl;
     public final String originalUrlHeader;
     public final String originalQueryStringHeader;
@@ -73,13 +72,14 @@ class Settings {
             WovnLogger.enable();
         }
 
+        this.widgetUrl = this.devMode ? stringOrDefault(reader.getStringParameter("widgetUrl"), DefaultWidgetUrlDevelopment) : stringOrDefault(reader.getStringParameter("widgetUrl"), DefaultWidgetUrlProduction);
+
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
         this.langCodeAliases = parseLangCodeAliases(reader.getStringParameter("langCodeAliases"));
         this.customDomainLanguages = parseCustomDomainLangs(reader.getStringParameter("customDomainLangs"), this.supportedLangs);
 
         String defaultApiUrl = this.devMode ? DefaultApiUrlDevelopment : DefaultApiUrlProduction;
         this.apiUrl = stringOrDefault(reader.getStringParameter("apiUrl"), defaultApiUrl);
-        this.snippetUrl = this.devMode ? DefaultSnippetUrlDevelopment : DefaultSnippetUrlProduction;
 
         this.ignoreClasses = reader.getArrayParameter("ignoreClasses");
         this.ignorePaths = normalizeIgnorePaths(reader.getArrayParameter("ignorePaths"));
