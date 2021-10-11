@@ -14,7 +14,6 @@ import java.net.Proxy;
 import java.net.SocketTimeoutException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.security.MessageDigest;
@@ -84,6 +83,7 @@ class Api {
                 ByteArrayOutputStream compressedBody = gzipStream(apiBodyBytes);
                 compressedBody.writeTo(out);
                 con.setRequestProperty("Content-Type", "application/octet-stream");
+                con.setRequestProperty("Content-Encoding", "gzip");
                 con.setRequestProperty("Content-Length", String.valueOf(compressedBody.size()));
             } else {
                 out.write(apiBodyBytes);
