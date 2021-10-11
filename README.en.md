@@ -439,7 +439,7 @@ The logs make use of `java.util.logging` and it is most likely to appear in the 
 
 ### 2.17. compressApiRequests
 
-By default, translation API requests will be sent with gzip compression. Set to false to disable compression.
+By default, requests to the translation API will be sent with gzip compression. Set to false to disable compression.
 ## Supported Langauges
 
 Language code | Language name | Name in English
