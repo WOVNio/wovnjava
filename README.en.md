@@ -117,6 +117,8 @@ langCodeAliases           |          |
 customDomainLangs         |          |
 debugMode                 |          | false
 encoding                  |          | 
+enableLogging             |          | false
+compressApiRequests       |          | true
 
 ### 2.1. projectToken (required)
 
@@ -435,6 +437,9 @@ Commonly used encodings are `utf-8`, `Shift_JIS` and `EUC-JP`. For a complete li
 You can choose to enable WOVN's logging feature that will log some useful debug information by setting `enableLogging` to "true".
 The logs make use of `java.util.logging` and it is most likely to appear in the catalina logs.
 
+### 2.17. compressApiRequests
+
+By default, translation API requests will be sent with gzip compression. Set to false to disable compression.
 ## Supported Langauges
 
 Language code | Language name | Name in English
