@@ -34,10 +34,10 @@ class FilterConfigReader {
         return n;
     }
 
-    boolean getBoolParameterDefaultFalse(String paramName) {
+    boolean getBoolParameterOrDefault(String paramName, boolean defaultValue) {
         String param = this.config.getInitParameter(paramName);
         if (param == null) {
-            return false;
+            return defaultValue;
         }
         param = param.trim().toLowerCase();
         return param.equals("on") || param.equals("true") || param.equals("1");

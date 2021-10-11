@@ -14,7 +14,9 @@ import java.net.Proxy;
 import java.net.SocketTimeoutException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -72,15 +74,27 @@ class Api {
     String translate(String lang, String html, HttpURLConnection con) throws ApiException, ApiNoPageDataException {
         OutputStream out = null;
         try {
-            ByteArrayOutputStream body = gzipStream(getApiBody(lang, html).getBytes());
+            out = con.getOutputStream();
+
+            Map<String, String> apiParams = getApiParameters(lang, html);
+            String urlEncodedBody =  FormUrlEncoding.encode(apiParams);
+            byte[] apiBodyBytes = urlEncodedBody.getBytes();
+
+            if (this.settings.compressApiRequests) {
+                ByteArrayOutputStream compressedBody = gzipStream(apiBodyBytes);
+                compressedBody.writeTo(out);
+                con.setRequestProperty("Content-Type", "application/octet-stream");
+                con.setRequestProperty("Content-Length", String.valueOf(compressedBody.size()));
+            } else {
+                out.write(apiBodyBytes);
+                con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                con.setRequestProperty("Content-Length", String.valueOf(apiBodyBytes.length));  
+            }
             con.setDoOutput(true);
             con.setRequestProperty("X-Request-Id", WovnLogger.getUUID());
             con.setRequestProperty("Accept-Encoding", "gzip");
-            con.setRequestProperty("Content-Type", "application/octet-stream");
-            con.setRequestProperty("Content-Length", String.valueOf(body.size()));
+
             con.setRequestMethod("POST");
-            out = con.getOutputStream();
-            body.writeTo(out);
             out.close();
             out = null;
             this.responseHeaders.forwardFastlyHeaders(con);
@@ -98,8 +112,8 @@ class Api {
             else {
                 throw new ApiException("Failure", "Status code " + String.valueOf(status));
             }
-        } catch (UnsupportedEncodingException e) {
-            throw new ApiException("UnsupportedEncodingException", e.getMessage());
+        } catch (UnsupportedOperationException e) {
+            throw new ApiException("UnsupportedOperationException", e.getMessage());
         } catch (SocketTimeoutException e) {
             throw new ApiException("SocketTimeoutException", e.getMessage());
         } catch (IOException e) {
@@ -144,20 +158,20 @@ class Api {
         return html;
     }
 
-    private String getApiBody(String lang, String body) throws UnsupportedEncodingException {
-        StringBuilder sb = new StringBuilder();
-        appendKeyValue(sb, "url=", headers.getClientRequestUrlInDefaultLanguage());
-        appendKeyValue(sb, "&token=", settings.projectToken);
-        appendKeyValue(sb, "&lang_code=", lang);
-        appendKeyValue(sb, "&url_pattern=", settings.urlPattern);
-        appendKeyValue(sb, "&site_prefix_path=", settings.sitePrefixPath);
-        appendKeyValue(sb, "&custom_lang_aliases=", LanguageAliasSerializer.serializeToJson(settings.langCodeAliases));
-        appendKeyValue(sb, "&custom_domain_langs=", CustomDomainLanguageSerializer.serializeToJson(settings.customDomainLanguages));
-        appendKeyValue(sb, "&product=", "wovnjava");
-        appendKeyValue(sb, "&version=", Settings.VERSION);
-        appendKeyValue(sb, "&debug_mode=", String.valueOf(this.requestOptions.getDebugMode()));
-        appendKeyValue(sb, "&body=", body);
-        return sb.toString();
+    private Map<String, String> getApiParameters(String lang, String body) {
+        Map<String, String> result = new LinkedHashMap<String, String>();
+        result.put("url", headers.getClientRequestUrlInDefaultLanguage());
+        result.put("token", settings.projectToken);
+        result.put("lang_code", lang);
+        result.put("url_pattern", settings.urlPattern);
+        result.put("site_prefix_path", settings.sitePrefixPath);
+        result.put("custom_lang_aliases", LanguageAliasSerializer.serializeToJson(settings.langCodeAliases));
+        result.put("custom_domain_langs", CustomDomainLanguageSerializer.serializeToJson(settings.customDomainLanguages));
+        result.put("product", "wovnjava");
+        result.put("version", Settings.VERSION);
+        result.put("debug_mode", String.valueOf(this.requestOptions.getDebugMode()));
+        result.put("body", body);
+        return result;
     }
 
     private URL getApiUrl(String lang, String body) throws UnsupportedEncodingException, NoSuchAlgorithmException, MalformedURLException {
@@ -191,12 +205,7 @@ class Api {
         return DatatypeConverter.printHexBinary(digest).toUpperCase();
     }
 
-    private void appendKeyValue(StringBuilder sb, String key, String value) throws UnsupportedEncodingException {
-        sb.append(key);
-        appendValue(sb, value);
-    }
-
-    private void appendValue(StringBuilder sb, String value) throws UnsupportedEncodingException {
-        sb.append(URLEncoder.encode(value, "UTF-8"));
+    private void appendValue(StringBuilder sb, String value) throws UnsupportedOperationException {
+        sb.append(FormUrlEncoding.encodeValue(value));
     }
 }
