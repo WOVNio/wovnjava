@@ -73,7 +73,10 @@ class Api {
     String translate(String lang, String html, HttpURLConnection con) throws ApiException, ApiNoPageDataException {
         OutputStream out = null;
         try {
-            out = con.getOutputStream();
+            con.setDoOutput(true);
+            con.setRequestProperty("X-Request-Id", WovnLogger.getUUID());
+            con.setRequestProperty("Accept-Encoding", "gzip");
+            con.setRequestMethod("POST");
 
             Map<String, String> apiParams = getApiParameters(lang, html);
             String urlEncodedBody =  FormUrlEncoding.encode(apiParams);
@@ -81,20 +84,18 @@ class Api {
 
             if (this.settings.compressApiRequests) {
                 ByteArrayOutputStream compressedBody = gzipStream(apiBodyBytes);
-                compressedBody.writeTo(out);
                 con.setRequestProperty("Content-Type", "application/octet-stream");
                 con.setRequestProperty("Content-Encoding", "gzip");
                 con.setRequestProperty("Content-Length", String.valueOf(compressedBody.size()));
+                out = con.getOutputStream();
+                compressedBody.writeTo(out);
             } else {
-                out.write(apiBodyBytes);
                 con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                con.setRequestProperty("Content-Length", String.valueOf(apiBodyBytes.length));  
+                con.setRequestProperty("Content-Length", String.valueOf(apiBodyBytes.length));
+                out = con.getOutputStream();
+                out.write(apiBodyBytes);
             }
-            con.setDoOutput(true);
-            con.setRequestProperty("X-Request-Id", WovnLogger.getUUID());
-            con.setRequestProperty("Accept-Encoding", "gzip");
 
-            con.setRequestMethod("POST");
             out.close();
             out = null;
             this.responseHeaders.forwardFastlyHeaders(con);
@@ -117,7 +118,8 @@ class Api {
         } catch (SocketTimeoutException e) {
             throw new ApiException("SocketTimeoutException", e.getMessage());
         } catch (IOException e) {
-            throw new ApiException("IOException", e.getMessage());
+            e.printStackTrace();
+            throw new ApiException("IOException:", e.getMessage());
         } finally {
             if (out != null) {
                 try {
