@@ -32,6 +32,7 @@ class Settings {
     public final boolean useProxy;
     public final boolean enableFlushBuffer;
     public final boolean enableLogging;
+    public final boolean compressApiRequests;
 
     public final String sitePrefixPath;
     public final Map<Lang, String> langCodeAliases;
@@ -62,11 +63,12 @@ class Settings {
         this.supportedLangs = verifySupportedLangs(reader.getArrayParameter("supportedLangs"), this.defaultLang);
 
         // Optional settings
-        this.devMode = reader.getBoolParameterDefaultFalse("devMode");
-        this.debugMode = reader.getBoolParameterDefaultFalse("debugMode");
-        this.useProxy = reader.getBoolParameterDefaultFalse("useProxy");
-        this.enableFlushBuffer = reader.getBoolParameterDefaultFalse("enableFlushBuffer");
-        this.enableLogging = reader.getBoolParameterDefaultFalse("enableLogging");
+        this.devMode = reader.getBoolParameterOrDefault("devMode", false);
+        this.debugMode = reader.getBoolParameterOrDefault("debugMode", false);
+        this.useProxy = reader.getBoolParameterOrDefault("useProxy", false);
+        this.enableFlushBuffer = reader.getBoolParameterOrDefault("enableFlushBuffer", false);
+        this.enableLogging = reader.getBoolParameterOrDefault("enableLogging", false);
+        this.compressApiRequests = reader.getBoolParameterOrDefault("compressApiRequests", true);
 
         if (this.enableLogging) {
             WovnLogger.enable();

@@ -63,7 +63,7 @@ public class FilterConfigReaderTest extends TestCase {
         assertEquals(true, errorOnText);
     }
 
-    public void testGetBoolParameterDefaultFalse() {
+    public void testGetBoolParameterOrDefault() {
         FilterConfig config = TestUtil.makeConfig(new HashMap<String, String>() {{
             put("on", "on");
             put("true", "true");
@@ -73,14 +73,18 @@ public class FilterConfigReaderTest extends TestCase {
         }});
         FilterConfigReader reader = new FilterConfigReader(config);
 
-        assertEquals(true, reader.getBoolParameterDefaultFalse("on"));
-        assertEquals(true, reader.getBoolParameterDefaultFalse("true"));
-        assertEquals(true, reader.getBoolParameterDefaultFalse("1"));
+        assertEquals(true, reader.getBoolParameterOrDefault("on", false));
+        assertEquals(true, reader.getBoolParameterOrDefault("true", false));
+        assertEquals(true, reader.getBoolParameterOrDefault("1", false));
 
-        assertEquals(false, reader.getBoolParameterDefaultFalse(null));
-        assertEquals(false, reader.getBoolParameterDefaultFalse("not-set"));
-        assertEquals(false, reader.getBoolParameterDefaultFalse("empty-string"));
-        assertEquals(false, reader.getBoolParameterDefaultFalse("0"));
+        assertEquals(false, reader.getBoolParameterOrDefault(null, false));
+        assertEquals(true, reader.getBoolParameterOrDefault(null, true));
+        assertEquals(false, reader.getBoolParameterOrDefault("not-in-config", false));
+        assertEquals(true, reader.getBoolParameterOrDefault("not-in-config", true));
+        assertEquals(false, reader.getBoolParameterOrDefault("empty-string", false));
+        assertEquals(false, reader.getBoolParameterOrDefault("empty-string", true));
+        assertEquals(false, reader.getBoolParameterOrDefault("0", false));
+        assertEquals(false, reader.getBoolParameterOrDefault("0", true));
     }
 
     public void testGetArrayParameter() {

@@ -36,7 +36,7 @@ build_wovn_java:
 	make clean
 	make build
 	mkdir -p ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib
-	rm ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib/*.jar
+	rm -rf ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib/*.jar
 	cp ./target/wovnjava-$(WOVN_VERSION)*.jar ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib
 
 build_wovn_java_and_website:
