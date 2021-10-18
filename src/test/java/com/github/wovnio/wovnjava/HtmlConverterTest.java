@@ -17,7 +17,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testDisablePrettyPrint() throws ConfigurationError {
         String original = "<html><head></head><body>\n " + "hello" + "\t\n</body></html>";
-        String expected = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>\n " + "hello" + "\t\n</body></html>";
+        String expected = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>\n " + "hello" + "\t\n</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -26,7 +26,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testRemoveWovnSnippet() throws ConfigurationError {
         String original = "<html><head><script src=\"https://j.wovn.io/1\"></script><script src=\"https://j.dev-wovn.io:3000\"></script><script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script></head><body></body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -35,8 +35,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveScripts() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><script>alert(1)</script><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>a <script>console.log(1)</script>b</body></html>";
-        String removedHtml = "<html lang=\"en\"><head><script><!--wovn-marker-0--></script><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>a <script><!--wovn-marker-1--></script>b</body></html>";
+        String original = "<html lang=\"en\"><head><script>alert(1)</script><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>a <script>console.log(1)</script>b</body></html>";
+        String removedHtml = "<html lang=\"en\"><head><script><!--wovn-marker-0--></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>a <script><!--wovn-marker-1--></script>b</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -45,8 +45,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveHrefLangIfConflicts() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link ref=\"altername\" hreflang=\"en\" href=\"http://localhost:8080/\"><link ref=\"altername\" hreflang=\"ja\" href=\"http://localhost:8080/ja/\"><link ref=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"></head><body></body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link ref=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"altername\" hreflang=\"en\" href=\"http://localhost:8080/\"><link rel=\"altername\" hreflang=\"ja\" href=\"http://localhost:8080/ja/\"><link rel=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"></head><body></body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -55,8 +55,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveWovnIgnore() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><div>Hello <span wovn-ignore>Duke</span><span data-wovn-ignore>Silver</span>.</div></body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><div>Hello <span wovn-ignore><!--wovn-marker-0--></span><span data-wovn-ignore><!--wovn-marker-1--></span>.</div></body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><div>Hello <span wovn-ignore>Duke</span><span data-wovn-ignore>Silver</span>.</div></body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><div>Hello <span wovn-ignore><!--wovn-marker-0--></span><span data-wovn-ignore><!--wovn-marker-1--></span>.</div></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -65,11 +65,11 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveClassIgnore() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>" +
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>" +
           "<p class=\"no-ignore\">The pizza needs <b class=\"ingredient\">pineapple</b>, <span class=\"name\">Chad</span>!</p>" +
           "<p class=\"ignore-me\">It's a fruit, <span class=\"name\">Louie</span>!</p>" +
           "</body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>" +
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>" +
         "<p class=\"no-ignore\">The pizza needs <b class=\"ingredient\"><!--wovn-marker-0--></b>, <span class=\"name\"><!--wovn-marker-1--></span>!</p>" +
         "<p class=\"ignore-me\"><!--wovn-marker-2--></p>" +
         "</body></html>";
@@ -86,8 +86,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveForm() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT type=\"HIDDEN\" name=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"wovn-marker-0\"><input type=\"HIDDEN\" name=\"CSRF_TOKEN\" value=\"wovn-marker-1\"></form></body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT type=\"HIDDEN\" name=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"wovn-marker-0\"><input type=\"HIDDEN\" name=\"CSRF_TOKEN\" value=\"wovn-marker-1\"></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -98,8 +98,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testNested() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT type=\"HIDDEN\" name=\"CSRF_TOKEN\" value=\"RANDOM\"></form></body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form wovn-ignore><!--wovn-marker-1--></form></body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT type=\"HIDDEN\" name=\"CSRF_TOKEN\" value=\"RANDOM\"></form></body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form wovn-ignore><!--wovn-marker-1--></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -112,9 +112,9 @@ public class HtmlConverterTest extends TestCase {
     public void testConvertWithSitePrefixPath() throws ConfigurationError {
         String original = "<html><head></head><body></body></html>";
         String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=path&amp;version=" + Settings.VERSION + "&amp;sitePrefixPath=global\" data-wovnio-type=\"fallback\" async></script>";
-        String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/global/tokyo/\">" +
-                                   "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/en/tokyo/\">" +
-                                   "<link ref=\"alternate\" hreflang=\"th\" href=\"https://site.com/global/th/tokyo/\">";
+        String expectedHrefLangs = "<link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/global/tokyo/\">" +
+                                   "<link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/en/tokyo/\">" +
+                                   "<link rel=\"alternate\" hreflang=\"th\" href=\"https://site.com/global/th/tokyo/\">";
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
         String expectedHtml = "<html lang=\"ja\"><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
 
@@ -133,8 +133,8 @@ public class HtmlConverterTest extends TestCase {
     public void testConvert__HasLangCodeAliasSetting() throws ConfigurationError {
         String original = "<html><head></head><body></body></html>";
         String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=path&amp;version=" + Settings.VERSION + "&amp;langCodeAliases={&quot;en&quot;:&quot;en&quot;,&quot;ja&quot;:&quot;japan&quot;}\" data-wovnio-type=\"fallback\" async></script>";
-        String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/japan/tokyo\">" +
-                                   "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/en/tokyo\">";
+        String expectedHrefLangs = "<link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/japan/tokyo\">" +
+                                   "<link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/en/tokyo\">";
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
         String expectedHtml = "<html lang=\"ja\"><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
 
@@ -153,8 +153,8 @@ public class HtmlConverterTest extends TestCase {
     public void testConvertWithCustomDomain() throws ConfigurationError {
         String original = "<html><head></head><body></body></html>";
         String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=custom_domain&amp;version=" + Settings.VERSION + "&amp;customDomainLangs={&quot;site.com/english/&quot;:&quot;en&quot;,&quot;site.co.jp/&quot;:&quot;ja&quot;}\" data-wovnio-type=\"fallback\" async></script>";
-        String expectedHrefLangs = "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.co.jp/tokyo\">" +
-                                   "<link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/english/tokyo\">";
+        String expectedHrefLangs = "<link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.co.jp/tokyo\">" +
+                                   "<link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/english/tokyo\">";
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
         String expectedHtml = "<html lang=\"ja\"><head>" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
 
@@ -174,7 +174,7 @@ public class HtmlConverterTest extends TestCase {
         String original = "<html lang=\"en\"><head>" +
             "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script>" +
             "<script>alert(1)</script>" +
-            "<link ref=\"altername\" hreflang=\"en\" href=\"http://localhost:8080/\"><link ref=\"altername\" hreflang=\"ja\" href=\"http://localhost:8080/ja/\"><link ref=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\">" +
+            "<link rel=\"altername\" hreflang=\"en\" href=\"http://localhost:8080/\"><link rel=\"altername\" hreflang=\"ja\" href=\"http://localhost:8080/ja/\"><link rel=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\">" +
             "</head><body>" +
             "a <script>console.log(1)</script>b" +
             "<div>Hello <span wovn-ignore>Duke</span>.</div>" +
@@ -193,7 +193,7 @@ public class HtmlConverterTest extends TestCase {
             "</body></html>";
         String removedHtml = "<html lang=\"en\"><head>" +
             "<script><!--wovn-marker-0--></script>" +
-            "<link ref=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"><link ref=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link ref=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link ref=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\">" +
+            "<link rel=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\">" +
             "</head><body>" +
             "a <script><!--wovn-marker-1--></script>b" +
             "<div>Hello <span wovn-ignore><!--wovn-marker-9--></span>.</div>" +

@@ -172,7 +172,7 @@ class HtmlConverter {
     private void appendHrefLang() {
         for (Map.Entry<String, String> hreflang : this.hreflangMap.entrySet()) {
             Element link = new Element(Tag.valueOf("link"), "");
-            link.attr("ref", "alternate");
+            link.attr("rel", "alternate");
             link.attr("hreflang", hreflang.getKey());
             link.attr("href", hreflang.getValue());
             doc.head().appendChild(link);
