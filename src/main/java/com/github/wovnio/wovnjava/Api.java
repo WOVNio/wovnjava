@@ -167,6 +167,7 @@ class Api {
         result.put("lang_code", lang);
         result.put("url_pattern", settings.urlPattern);
         result.put("site_prefix_path", settings.sitePrefixPath);
+        result.put("lang_param_name", "wovn"); // TODO: add setting
         result.put("custom_lang_aliases", LanguageAliasSerializer.serializeToJson(settings.langCodeAliases));
         result.put("custom_domain_langs", CustomDomainLanguageSerializer.serializeToJson(settings.customDomainLanguages));
         result.put("product", "wovnjava");
