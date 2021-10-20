@@ -10,7 +10,6 @@
       <filter-class>com.github.wovnio.wovnjava.WovnServletFilter</filter-class>
       <init-param>
           <param-name>projectToken</param-name>
-          <!-- Change your project token -->
           <param-value>Token</param-value>
       </init-param>
       <init-param>
