@@ -29,7 +29,7 @@ class HtmlChecker {
     }
 
     public boolean canTranslateStatusCode(int statusCode) {
-        return !(statusCode >= 300 && statusCode < 400);
+        return statusCode >= 200 && statusCode < 300 || statusCode >= 400;
     }
 
     private boolean isAmp(String head) {
