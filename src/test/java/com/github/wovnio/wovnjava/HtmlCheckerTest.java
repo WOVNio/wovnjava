@@ -61,6 +61,17 @@ public class HtmlCheckerTest extends TestCase {
         assertCanTranslate(true, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">");
     }
 
+    public void testCanTranslateStatusCode() {
+        assertEquals(false, htmlChecker.canTranslateStatusCode(102));
+        assertEquals(false, htmlChecker.canTranslateStatusCode(199));
+        assertEquals(false, htmlChecker.canTranslateStatusCode(300));
+        assertEquals(false, htmlChecker.canTranslateStatusCode(399));
+        assertEquals(true, htmlChecker.canTranslateStatusCode(200));
+        assertEquals(true, htmlChecker.canTranslateStatusCode(299));
+        assertEquals(true, htmlChecker.canTranslateStatusCode(400));
+        assertEquals(true, htmlChecker.canTranslateStatusCode(404));
+    }
+
     private void assertCanTranslate(boolean expect, String prefix) {
         String template = "<head> <meta charset=\"utf-8\"></head><body>hello</body></html>";
         assertEquals(expect, htmlChecker.canTranslateContent(prefix + template));
