@@ -77,26 +77,6 @@ public class WovnServletFilterTest extends TestCase {
         assertEquals(false, responseObjectPassedToFilterChain instanceof WovnHttpServletResponse);
     }
 
-    public void testProcessRequestOnce__response3XX_do_not_translate() throws ServletException, IOException {
-        boolean requestIsAlreadyProcessed = false;
-        FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", TestUtil.emptyOption, requestIsAlreadyProcessed, 302);
-
-        ServletResponse responseObjectPassedToFilterChain = mock.res;
-        // If wovnjava is intercepting the request, the response object should be wrapped in a WovnHttpServletResponse
-        assertEquals(true, responseObjectPassedToFilterChain instanceof HttpServletResponse);
-        assertEquals(true, responseObjectPassedToFilterChain instanceof WovnHttpServletResponse);
-    }
-
-    public void testProcessRequestOnce__response1XX_do_not_translate() throws ServletException, IOException {
-        boolean requestIsAlreadyProcessed = false;
-        FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", TestUtil.emptyOption, requestIsAlreadyProcessed, 100);
-
-        ServletResponse responseObjectPassedToFilterChain = mock.res;
-        // If wovnjava is intercepting the request, the response object should be wrapped in a WovnHttpServletResponse
-        assertEquals(true, responseObjectPassedToFilterChain instanceof HttpServletResponse);
-        assertEquals(true, responseObjectPassedToFilterChain instanceof WovnHttpServletResponse);
-    }
-
     private final HashMap<String, String> pathOption = new HashMap<String, String>() {{
         put("urlPattern", "path");
     }};
