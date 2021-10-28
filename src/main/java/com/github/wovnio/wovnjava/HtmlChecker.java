@@ -16,11 +16,11 @@ class HtmlChecker {
                 && canTranslateStatusCode(response.getStatus());
     }
 
-    public boolean canTranslateContentType(String type) {
+    private boolean canTranslateContentType(String type) {
         return type == null || type.toLowerCase().contains("html");
     }
 
-    public boolean canTranslateContent(String html) {
+    private boolean canTranslateContent(String html) {
         if (html == null) {
             return false;
         }
@@ -29,7 +29,7 @@ class HtmlChecker {
         return isHtml(head) && !isAmp(head);
     }
 
-    public boolean canTranslateStatusCode(int statusCode) {
+    private boolean canTranslateStatusCode(int statusCode) {
         return statusCode >= 200 && statusCode < 300 || statusCode >= 400;
     }
 

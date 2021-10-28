@@ -1,16 +1,20 @@
 package com.github.wovnio.wovnjava;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.easymock.EasyMock;
+
 import junit.framework.TestCase;
 
 public class HtmlCheckerTest extends TestCase {
     private final HtmlChecker htmlChecker = new HtmlChecker();
 
     public void testCanTranslateContentType() {
-        assertEquals(true, htmlChecker.canTranslateContentType(null));
-        assertEquals(true, htmlChecker.canTranslateContentType("html"));
-        assertEquals(true, htmlChecker.canTranslateContentType("text/html"));
-        assertEquals(true, htmlChecker.canTranslateContentType("text/xhtml"));
-        assertEquals(false, htmlChecker.canTranslateContentType("text/plain"));
+        assertEquals(true, htmlChecker.canTranslate(getMockResponse(200, null), "<html"));
+        assertEquals(true, htmlChecker.canTranslate(getMockResponse(200, "html"), "<html"));
+        assertEquals(true, htmlChecker.canTranslate(getMockResponse(200, "text/html"), "<html"));
+        assertEquals(true, htmlChecker.canTranslate(getMockResponse(200, "text/xhtml"), "<html"));
+        assertEquals(false, htmlChecker.canTranslate(getMockResponse(200, "text/plain"), "<html"));
     }
 
     public void testIsTextFileContentType() {
@@ -24,9 +28,10 @@ public class HtmlCheckerTest extends TestCase {
     }
 
     public void testCanTranslate() {
-        assertEquals(false, htmlChecker.canTranslateContent(null));
-        assertEquals(false, htmlChecker.canTranslateContent(""));
-        assertEquals(false, htmlChecker.canTranslateContent("hello world"));
+        assertEquals(false, htmlChecker.canTranslate(getMockResponse(200, "text/html"), null));
+        assertEquals(false, htmlChecker.canTranslate(getMockResponse(200, "text/html"), ""));
+        assertEquals(false, htmlChecker.canTranslate(getMockResponse(200, "text/html"), "hello world"));
+
         assertCanTranslate(false, "<!doctype html><html ⚡>");
         assertCanTranslate(false, "<!doctype html><html amp>");
         assertCanTranslate(false, "<!doctype html><html\namp>");
@@ -62,22 +67,31 @@ public class HtmlCheckerTest extends TestCase {
     }
 
     public void testCanTranslateStatusCode() {
-        assertEquals(false, htmlChecker.canTranslateStatusCode(102));
-        assertEquals(false, htmlChecker.canTranslateStatusCode(199));
-        assertEquals(false, htmlChecker.canTranslateStatusCode(300));
-        assertEquals(false, htmlChecker.canTranslateStatusCode(399));
-        assertEquals(true, htmlChecker.canTranslateStatusCode(200));
-        assertEquals(true, htmlChecker.canTranslateStatusCode(299));
-        assertEquals(true, htmlChecker.canTranslateStatusCode(400));
-        assertEquals(true, htmlChecker.canTranslateStatusCode(404));
+        assertEquals(false, htmlChecker.canTranslate(getMockResponse(102, "html"), "<html"));
+        assertEquals(false, htmlChecker.canTranslate(getMockResponse(199, "html"), "<html"));
+        assertEquals(false, htmlChecker.canTranslate(getMockResponse(300, "html"), "<html"));
+        assertEquals(false, htmlChecker.canTranslate(getMockResponse(399, "html"), "<html"));
+
+        assertEquals(true, htmlChecker.canTranslate(getMockResponse(200, "html"), "<html"));
+        assertEquals(true, htmlChecker.canTranslate(getMockResponse(299, "html"), "<html"));
+        assertEquals(true, htmlChecker.canTranslate(getMockResponse(400, "html"), "<html"));
+        assertEquals(true, htmlChecker.canTranslate(getMockResponse(404, "html"), "<html"));
     }
 
     private void assertCanTranslate(boolean expect, String prefix) {
         String template = "<head> <meta charset=\"utf-8\"></head><body>hello</body></html>";
-        assertEquals(expect, htmlChecker.canTranslateContent(prefix + template));
-        assertEquals(expect, htmlChecker.canTranslateContent("  " + prefix + template));
-        assertEquals(expect, htmlChecker.canTranslateContent("\n" + prefix + template));
-        assertEquals(expect, htmlChecker.canTranslateContent("<!-- comment -->" + prefix + template));
-        assertEquals(expect, htmlChecker.canTranslateContent("<!-- comment -->\n " + prefix + template));
+        assertEquals(expect, htmlChecker.canTranslate(getMockResponse(200, "text/html"), prefix + template));
+        assertEquals(expect, htmlChecker.canTranslate(getMockResponse(200, "text/html"), "  " + prefix + template));
+        assertEquals(expect, htmlChecker.canTranslate(getMockResponse(200, "text/html"), "\n" + prefix + template));
+        assertEquals(expect, htmlChecker.canTranslate(getMockResponse(200, "text/html"), "<!-- comment -->" + prefix + template));
+        assertEquals(expect, htmlChecker.canTranslate(getMockResponse(200, "text/html"), "<!-- comment -->\n " + prefix + template));
+    }
+
+    private HttpServletResponse getMockResponse(int statusCode, String contentType) {
+        HttpServletResponse mock = EasyMock.mock(HttpServletResponse.class);
+        EasyMock.expect(mock.getStatus()).andReturn(statusCode);
+        EasyMock.expect(mock.getContentType()).andReturn(contentType);
+        EasyMock.replay(mock);
+        return mock;
     }
 }
