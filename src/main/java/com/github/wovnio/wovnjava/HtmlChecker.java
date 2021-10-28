@@ -6,8 +6,9 @@ import org.jsoup.nodes.Element;
 
 class HtmlChecker {
     public boolean isTextFileContentType(String contentType) {
-        return contentType == null || contentType.toLowerCase().contains("text/")
-                || contentType.toLowerCase().contains("html");
+        return contentType == null 
+            || contentType.toLowerCase().contains("text/")
+            || contentType.toLowerCase().contains("html");
     }
 
     public boolean canTranslate(HttpServletResponse response, String html) {
@@ -40,8 +41,10 @@ class HtmlChecker {
     private boolean isHtml(String head) {
         // TODO: implement better HTML check, keyword might appear
         // after the sample.
-        return head.contains("<?xml") || head.contains("<!doctype") || head.contains("<html")
-                || head.contains("<xhtml");
+        return head.contains("<?xml") 
+            || head.contains("<!doctype") 
+            || head.contains("<html") 
+            || head.contains("<xhtml");
     }
 
     private String getHead(String html) {
