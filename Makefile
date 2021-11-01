@@ -3,7 +3,7 @@ SHELL        := /bin/bash
 .SHELLFLAGS  := -eu -o pipefail -c
 
 VERSION := 8
-WOVN_VERSION := 1.10.0
+WOVN_VERSION := 1.11.0
 TARGET_DIR = ${PWD}
 MAVEN    = docker run -it --rm -v ${TARGET_DIR}:/project -v wovnjava-maven_repo:/root/.m2 -w /project maven:3-jdk-$(VERSION) mvn
 WEBSITE_CONFIG_FILE = pom.xml
