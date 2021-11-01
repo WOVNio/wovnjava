@@ -1,23 +1,26 @@
 package com.github.wovnio.wovnjava;
 
+import javax.servlet.http.HttpServletResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 class HtmlChecker {
     public boolean isTextFileContentType(String contentType) {
-        return contentType == null || contentType.toLowerCase().contains("text/") || contentType.toLowerCase().contains("html");
+        return contentType == null 
+            || contentType.toLowerCase().contains("text/")
+            || contentType.toLowerCase().contains("html");
     }
 
-    public boolean canTranslate(String contentType, String html) {
-        return canTranslateContentType(contentType) &&
-            canTranslateContent(html);
+    public boolean canTranslate(HttpServletResponse response, String html) {
+        return canTranslateContentType(response.getContentType()) && canTranslateContent(html)
+                && canTranslateStatusCode(response.getStatus());
     }
 
-    public boolean canTranslateContentType(String type) {
+    private boolean canTranslateContentType(String type) {
         return type == null || type.toLowerCase().contains("html");
     }
 
-    public boolean canTranslateContent(String html) {
+    private boolean canTranslateContent(String html) {
         if (html == null) {
             return false;
         }
@@ -26,17 +29,21 @@ class HtmlChecker {
         return isHtml(head) && !isAmp(head);
     }
 
+    private boolean canTranslateStatusCode(int statusCode) {
+        return statusCode >= 200 && statusCode < 300 || statusCode >= 400;
+    }
+
     private boolean isAmp(String head) {
         Element element = Jsoup.parse(head).getElementsByTag("html").first();
         return element != null && (element.hasAttr("amp") || element.hasAttr("⚡"));
     }
 
     private boolean isHtml(String head) {
-        // TODO: implement better HTML check, keyword might appear 
+        // TODO: implement better HTML check, keyword might appear
         // after the sample.
-        return head.contains("<?xml")
-            || head.contains("<!doctype")
-            || head.contains("<html")
+        return head.contains("<?xml") 
+            || head.contains("<!doctype") 
+            || head.contains("<html") 
             || head.contains("<xhtml");
     }
 

@@ -16,7 +16,7 @@ public class WovnServletFilterTest extends TestCase {
     }
 
     public void testHtmlWithLang() throws ServletException, IOException {
-        FilterChainMock mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/ja/", "/", pathOption);
+        FilterChainMock mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/ja/", "/", pathOption, 200);
         assertEquals("text/html; charset=utf-8", mock.res.getContentType());
         assertEquals("https://example.com/", mock.req.getRequestURL().toString());
     }
@@ -40,7 +40,7 @@ public class WovnServletFilterTest extends TestCase {
     }
 
     public void testCssWithLang() throws ServletException, IOException {
-        FilterChainMock mock = TestUtil.doServletFilter("text/css", "/ja/style.css", "/style.css", pathOption);
+        FilterChainMock mock = TestUtil.doServletFilter("text/css", "/ja/style.css", "/style.css", pathOption, 200);
         assertEquals("text/css", mock.res.getContentType());
         assertEquals("https://example.com/style.css", mock.req.getRequestURL().toString());
     }
@@ -52,14 +52,14 @@ public class WovnServletFilterTest extends TestCase {
     }
 
     public void testImageWithLang() throws ServletException, IOException {
-        FilterChainMock mock = TestUtil.doServletFilter("image/png", "/ja/image.png", "/image.png", pathOption);
+        FilterChainMock mock = TestUtil.doServletFilter("image/png", "/ja/image.png", "/image.png", pathOption, 200);
         assertEquals("image/png", mock.res.getContentType());
         assertEquals("https://example.com/image.png", mock.req.getRequestURL().toString());
     }
 
     public void testProcessRequestOnce__RequestNotProcessed__ProcessRequest() throws ServletException, IOException {
         boolean requestIsAlreadyProcessed = false;
-        FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", TestUtil.emptyOption, requestIsAlreadyProcessed);
+        FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", TestUtil.emptyOption, requestIsAlreadyProcessed, 200);
 
         ServletResponse responseObjectPassedToFilterChain = mock.res;
         // If wovnjava is intercepting the request, the response object should be wrapped in a WovnHttpServletResponse
@@ -69,7 +69,7 @@ public class WovnServletFilterTest extends TestCase {
 
     public void testProcessRequestOnce__RequestAlreadyProcessed__DoNotProcessRequestAgain() throws ServletException, IOException {
         boolean requestIsAlreadyProcessed = true;
-        FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", TestUtil.emptyOption, requestIsAlreadyProcessed);
+        FilterChainMock mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", TestUtil.emptyOption, requestIsAlreadyProcessed, 200);
 
         ServletResponse responseObjectPassedToFilterChain = mock.res;
         // If wovnjava is ignoring the request, the response object should NOT be wrapped in a WovnHttpServletResponse
