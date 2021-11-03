@@ -37,9 +37,9 @@ public class InterceptorTest extends TestCase {
         String html = translate("https://example.com/ja/", originalHtml, settings, mockApiTimeout(), mockResponseHeadersTimeout());
         String expect = "<!doctype html><html><head><title>test</title>" +
                         "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
-                        "<link ref=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
-                        "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
-                        "<link ref=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
+                        "<link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
+                        "<link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
+                        "<link rel=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
                         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" +
                         "</head><body>test</body></html>";
         assertEquals(expect, stripExtraSpaces(html));
@@ -55,9 +55,9 @@ public class InterceptorTest extends TestCase {
         String html = translate("https://example.com/", originalHtml, settings, null, null);
         String expect = "<!doctype html><html><head><title>test</title>" +
                         "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=token0&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;langCodeAliases={}&amp;version=" + version + "\" data-wovnio-type=\"fallback\" async></script>" +
-                        "<link ref=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
-                        "<link ref=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
-                        "<link ref=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
+                        "<link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
+                        "<link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
+                        "<link rel=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
                         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" +
                         "</head><body>test</body></html>";
         assertEquals(expect, stripExtraSpaces(html));
