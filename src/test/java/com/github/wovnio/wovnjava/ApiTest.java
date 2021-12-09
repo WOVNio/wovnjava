@@ -63,19 +63,20 @@ public class ApiTest extends TestCase {
         String result = api.translate("ja", html, con);
 
         String encodedApiRequestBody = decompress(requestStream.toByteArray());
-        String apiRequestBody = URLDecoder.decode(encodedApiRequestBody, "UTF-8");
-        String expectedRequestBody = "url=https://example.com/somepage/" +
-                                     "&token=token0" +
-                                     "&lang_code=ja" +
-                                     "&url_pattern=path" +
-                                     "&site_prefix_path=" +
-                                     "&lang_param_name=wovn" +
-                                     "&custom_lang_aliases={}" +
-                                     "&custom_domain_langs=" +
-                                     "&product=wovnjava" +
-                                     "&version=" + Settings.VERSION +
-                                     "&debug_mode=false" +
-                                     "&body=" + html;
+        String apiRequestBody = new String(encodedApiRequestBody);
+        String expectedRequestBody = "{\"url\":\"https:\\/\\/example.com\\/somepage\\/\"," + 
+                                     "\"token\":\"token0\"," + 
+                                     "\"lang_code\":\"ja\"," + 
+                                     "\"url_pattern\":\"path\"," +
+                                     "\"site_prefix_path\":\"\"," +
+                                     "\"lang_param_name\":\"wovn\"," +
+                                     "\"custom_lang_aliases\":\"{}\"," +
+                                     "\"custom_domain_langs\":\"\"," +
+                                     "\"product\":\"wovnjava\"," +
+                                     "\"version\":\"" + Settings.VERSION + "\"," +
+                                     "\"debug_mode\":\"false\"," +
+                                     "\"body\":\"\u003Chtml\u003Emuch content\u003C\\/html\u003E\"}";
+
         assertEquals(expectedRequestBody, apiRequestBody);
 
         return result;
