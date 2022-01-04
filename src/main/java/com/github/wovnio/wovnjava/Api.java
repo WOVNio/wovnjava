@@ -20,6 +20,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import javax.xml.bind.DatatypeConverter;
+import com.github.cliftonlabs.json_simple.Jsoner;
 
 import net.arnx.jsonic.JSON;
 
@@ -79,18 +80,18 @@ class Api {
             con.setRequestMethod("POST");
 
             Map<String, String> apiParams = getApiParameters(lang, html);
-            String urlEncodedBody =  FormUrlEncoding.encode(apiParams);
-            byte[] apiBodyBytes = urlEncodedBody.getBytes();
+            String jsonEncodedBody = Jsoner.serialize(apiParams);
+            byte[] apiBodyBytes = jsonEncodedBody.getBytes();
 
             if (this.settings.compressApiRequests) {
                 ByteArrayOutputStream compressedBody = gzipStream(apiBodyBytes);
-                con.setRequestProperty("Content-Type", "application/octet-stream");
+                con.setRequestProperty("Content-Type", "application/json");
                 con.setRequestProperty("Content-Encoding", "gzip");
                 con.setRequestProperty("Content-Length", String.valueOf(compressedBody.size()));
                 out = con.getOutputStream();
                 compressedBody.writeTo(out);
             } else {
-                con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                con.setRequestProperty("Content-Type", "application/json");
                 con.setRequestProperty("Content-Length", String.valueOf(apiBodyBytes.length));
                 out = con.getOutputStream();
                 out.write(apiBodyBytes);
