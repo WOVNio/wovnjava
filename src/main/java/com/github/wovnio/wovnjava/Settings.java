@@ -53,6 +53,10 @@ class Settings {
 
     public final String encoding;
 
+    public final String fixedHost;
+    public final String fixedScheme;
+    public final String fixedPort;
+
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
 
@@ -96,6 +100,9 @@ class Settings {
         this.outboundProxyPort = reader.getIntParameter("outboundProxyPort");
 
         this.encoding = stringOrDefault(reader.getStringParameter("encoding"), "");
+        this.fixedHost = stringOrDefault(reader.getStringParameter("fixedHost"), "");
+        this.fixedScheme = stringOrDefault(reader.getStringParameter("fixedScheme"), "");
+        this.fixedPort = stringOrDefault(reader.getStringParameter("fixedPort"), "");
     }
 
     private String verifyToken(String declaredUserToken, String declaredProjectToken) throws ConfigurationError {
