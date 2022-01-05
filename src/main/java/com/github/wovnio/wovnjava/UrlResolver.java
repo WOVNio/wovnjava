@@ -6,11 +6,10 @@ final class UrlResolver {
     private UrlResolver() {}
 
     static String computeClientRequestUrl(HttpServletRequest request, Settings settings) {
-        Boolean hasOverride = settings.fixedPort != -1;
         String path = clientRequestPath(request, settings.originalUrlHeader);
         String query = clientRequestQuery(request, settings.originalQueryStringHeader);
         
-        if (hasOverride) {
+        if (settings.hasUrlOverride) {
             return getUrlOverride(settings, path, query);
         }
 

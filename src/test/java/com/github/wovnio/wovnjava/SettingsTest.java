@@ -520,6 +520,15 @@ public class SettingsTest extends TestCase {
         assertEquals(3500, settings.fixedPort);
         assertEquals("http", settings.fixedScheme);
         assertEquals("site.com", settings.fixedHost);
+        assertEquals(true, settings.hasUrlOverride);
+    }
+
+    public void testVerifyFixedURLConfigs__no_override() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{}});
+
+        Settings settings = new Settings(config);
+
+        assertEquals(false, settings.hasUrlOverride);
     }
 
 
