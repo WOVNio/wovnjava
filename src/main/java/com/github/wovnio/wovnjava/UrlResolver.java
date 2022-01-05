@@ -6,16 +6,27 @@ final class UrlResolver {
     private UrlResolver() {}
 
     static String computeClientRequestUrl(HttpServletRequest request, Settings settings) {
-        String scheme = request.getScheme();
-        
-        if (!settings.fixedScheme.isEmpty()) {
-            scheme = settings.fixedScheme;
-        }
-
-        String host = clientRequestHostAndPort(request, settings);
+        Boolean hasOverride = settings.fixedPort != -1;
         String path = clientRequestPath(request, settings.originalUrlHeader);
         String query = clientRequestQuery(request, settings.originalQueryStringHeader);
+        
+        if (hasOverride) {
+            return getUrlOverride(settings, path, query);
+        }
+
+        String scheme = request.getScheme();
+        String host = clientRequestHostAndPort(request, settings);
         return scheme + "://" + host + path + query;
+    }
+
+    private static String getUrlOverride(Settings settings, String path, String query) {
+        String hostAndPort;
+        if (settings.fixedPort == 80 || settings.fixedPort == 443) {
+            hostAndPort = settings.fixedHost;
+        } else {
+            hostAndPort = settings.fixedHost + ":" + settings.fixedPort;
+        }
+        return settings.fixedScheme + "://" + hostAndPort + path + query;
     }
 
     private static String clientRequestHostAndPort(HttpServletRequest request, Settings settings) {
@@ -29,14 +40,6 @@ final class UrlResolver {
             if (forwardedPort != null && !forwardedPort.isEmpty()) {
                 port = Integer.parseInt(forwardedPort);
             }
-        }
-
-        if (settings.fixedPort != -1) {
-            port = settings.fixedPort;
-        }
-
-        if (!settings.fixedHost.isEmpty()) {
-            host = settings.fixedHost;
         }
 
         if (host == null) {
