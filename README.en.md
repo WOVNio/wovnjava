@@ -444,7 +444,7 @@ By default, requests to the translation API will be sent with gzip compression. 
 ### 2.18. fixedScheme, fixedHost, fixedPort
 These settings can be used if your web server is behind a load balancer where the request URL is different to what the user sees. They should be set to match the URL used in your WOVN.io project. These settings have higher presedence than `useProxy` if both are enabled at the same time.
 
-You must set all three of these settings at the same time, failing to do so will result in `ConfigurationError` exceptions being thrown.
+You must set all three of these settings at the same time or none at all, failing to do so will result in `ConfigurationError` exceptions being thrown.
 ## Supported Langauges
 
 Language code | Language name | Name in English
