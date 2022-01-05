@@ -31,8 +31,8 @@ final class UrlResolver {
             }
         }
 
-        if (!settings.fixedPort.isEmpty()) {
-            port = Integer.parseInt(settings.fixedPort);
+        if (settings.fixedPort != -1) {
+            port = settings.fixedPort;
         }
 
         if (!settings.fixedHost.isEmpty()) {

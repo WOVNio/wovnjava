@@ -55,7 +55,7 @@ class Settings {
 
     public final String fixedHost;
     public final String fixedScheme;
-    public final String fixedPort;
+    public final int fixedPort;
 
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
@@ -100,9 +100,17 @@ class Settings {
         this.outboundProxyPort = reader.getIntParameter("outboundProxyPort");
 
         this.encoding = stringOrDefault(reader.getStringParameter("encoding"), "");
+
         this.fixedHost = stringOrDefault(reader.getStringParameter("fixedHost"), "");
         this.fixedScheme = stringOrDefault(reader.getStringParameter("fixedScheme"), "");
-        this.fixedPort = stringOrDefault(reader.getStringParameter("fixedPort"), "");
+        this.fixedPort = positiveIntOrDefault(reader.getIntParameter("fixedPort"), -1);
+        this.verifyFixedURLConfigs(this.fixedHost, this.fixedScheme, this.fixedPort);
+    }
+
+    private void verifyFixedURLConfigs(String fixedHost, String fixedScheme, int fixedPort) throws ConfigurationError {
+        if ( (fixedHost.isEmpty() != fixedScheme.isEmpty()) || (fixedScheme.isEmpty() != (fixedPort == -1))) {
+            throw new ConfigurationError("Missing configuration: \"fixedHost\", \"fixedScheme\" and \"fixedPort\" must all be defined");
+        }
     }
 
     private String verifyToken(String declaredUserToken, String declaredProjectToken) throws ConfigurationError {

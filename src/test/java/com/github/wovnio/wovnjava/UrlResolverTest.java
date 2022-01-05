@@ -152,6 +152,7 @@ public class UrlResolverTest extends TestCase {
         Settings s = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("fixedHost", "example.com");
             put("fixedPort", "1234");
+            put("fixedScheme", "https");
         }});
 
         assertEquals("https://example.com:1234/en/tokyo?q=original", UrlResolver.computeClientRequestUrl(r, s));
@@ -188,6 +189,8 @@ public class UrlResolverTest extends TestCase {
         EasyMock.replay(r);
         Settings s = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("fixedScheme", "http");
+            put("fixedPort", "80");
+            put("fixedHost", "site.com");
         }});
 
         assertEquals("http://site.com/en/tokyo?q=original", UrlResolver.computeClientRequestUrl(r, s));
