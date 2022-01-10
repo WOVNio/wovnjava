@@ -491,6 +491,47 @@ public class SettingsTest extends TestCase {
         assertEquals(4000, settings.outboundProxyPort);
     }
 
+    public void testVerifyFixedURLConfigs__two_configs_missing() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("fixedScheme", "http");
+        }});
+
+        assertErrorThrown(config);
+    }
+
+    public void testVerifyFixedURLConfigs__one_config_missing() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("fixedScheme", "http");
+            put("fixedPort", "3500");
+        }});
+
+        assertErrorThrown(config);
+    }
+
+    public void testVerifyFixedURLConfigs__all_config_present_and_valid() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{
+            put("fixedScheme", "http");
+            put("fixedPort", "3500");
+            put("fixedHost", "site.com");
+        }});
+
+        Settings settings = new Settings(config);
+
+        assertEquals(3500, settings.fixedPort);
+        assertEquals("http", settings.fixedScheme);
+        assertEquals("site.com", settings.fixedHost);
+        assertEquals(true, settings.hasUrlOverride);
+    }
+
+    public void testVerifyFixedURLConfigs__no_override() throws ConfigurationError {
+        FilterConfig config = TestUtil.makeConfigWithValidDefaults(new HashMap<String, String>() {{}});
+
+        Settings settings = new Settings(config);
+
+        assertEquals(false, settings.hasUrlOverride);
+    }
+
+
     private void assertErrorThrown(FilterConfig config) {
         boolean errorThrown = false;
         try {
