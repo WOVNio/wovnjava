@@ -46,8 +46,6 @@ class Settings {
     public final String outboundProxyHost;
     public final int outboundProxyPort;
 
-    public final String encoding;
-
     public final String fixedHost;
     public final String fixedScheme;
     public final int fixedPort;
@@ -86,8 +84,6 @@ class Settings {
 
         this.outboundProxyHost = nonEmptyString(reader, "outboundProxyHost");
         this.outboundProxyPort = reader.getIntParameter("outboundProxyPort");
-
-        this.encoding = stringOrDefault(reader.getStringParameter("encoding"), "");
 
         this.fixedHost = stringOrDefault(reader.getStringParameter("fixedHost"), "");
         this.fixedScheme = stringOrDefault(reader.getStringParameter("fixedScheme"), "");
