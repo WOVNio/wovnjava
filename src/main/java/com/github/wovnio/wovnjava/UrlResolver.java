@@ -6,17 +6,32 @@ final class UrlResolver {
     private UrlResolver() {}
 
     static String computeClientRequestUrl(HttpServletRequest request, Settings settings) {
-        String scheme = request.getScheme();
-        String host = clientRequestHostAndPort(request, settings.useProxy);
         String path = clientRequestPath(request, settings.originalUrlHeader);
         String query = clientRequestQuery(request, settings.originalQueryStringHeader);
+        
+        if (settings.hasUrlOverride) {
+            return getUrlOverride(settings, path, query);
+        }
+
+        String scheme = request.getScheme();
+        String host = clientRequestHostAndPort(request, settings);
         return scheme + "://" + host + path + query;
     }
 
-    private static String clientRequestHostAndPort(HttpServletRequest request, boolean useProxy) {
+    private static String getUrlOverride(Settings settings, String path, String query) {
+        String hostAndPort;
+        if (settings.fixedPort == 80 || settings.fixedPort == 443) {
+            hostAndPort = settings.fixedHost;
+        } else {
+            hostAndPort = settings.fixedHost + ":" + settings.fixedPort;
+        }
+        return settings.fixedScheme + "://" + hostAndPort + path + query;
+    }
+
+    private static String clientRequestHostAndPort(HttpServletRequest request, Settings settings) {
         String host = null;
         Integer port = null;
-        if (useProxy) {
+        if (settings.useProxy) {
             // request.getHeader returns String or null
             host = request.getHeader("X-Forwarded-Host");
             // request.getHeader returns String or null
@@ -25,6 +40,7 @@ final class UrlResolver {
                 port = Integer.parseInt(forwardedPort);
             }
         }
+
         if (host == null) {
             // request.getServerName returns String
             host = request.getServerName();

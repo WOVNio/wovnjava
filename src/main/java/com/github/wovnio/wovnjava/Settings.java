@@ -46,6 +46,11 @@ class Settings {
     public final String outboundProxyHost;
     public final int outboundProxyPort;
 
+    public final String fixedHost;
+    public final String fixedScheme;
+    public final int fixedPort;
+    public final boolean hasUrlOverride;
+
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
 
@@ -79,6 +84,21 @@ class Settings {
 
         this.outboundProxyHost = nonEmptyString(reader, "outboundProxyHost");
         this.outboundProxyPort = reader.getIntParameter("outboundProxyPort");
+
+        this.fixedHost = stringOrDefault(reader.getStringParameter("fixedHost"), "");
+        this.fixedScheme = stringOrDefault(reader.getStringParameter("fixedScheme"), "");
+        this.fixedPort = positiveIntOrDefault(reader.getIntParameter("fixedPort"), -1);
+        this.verifyFixedURLConfigs(this.fixedHost, this.fixedScheme, this.fixedPort);
+        this.hasUrlOverride = this.fixedPort != -1;
+    }
+
+    private void verifyFixedURLConfigs(String fixedHost, String fixedScheme, int fixedPort) throws ConfigurationError {
+        // all three settings are either all set, or none is set
+        Boolean allTheSame = fixedHost.isEmpty() == fixedScheme.isEmpty() && fixedScheme.isEmpty() == (fixedPort == -1);
+
+        if (!allTheSame) {
+            throw new ConfigurationError("Missing configuration: \"fixedHost\", \"fixedScheme\" and \"fixedPort\" must all be defined");
+        }
     }
 
     private String verifyToken(String declaredUserToken, String declaredProjectToken) throws ConfigurationError {
