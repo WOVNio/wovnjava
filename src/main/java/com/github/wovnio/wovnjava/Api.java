@@ -47,7 +47,7 @@ class Api {
             WovnLogger.log(String.format("API url: %s", url.toString()));
             if (this.settings.outboundProxyHost== null) {
               con = (HttpURLConnection) url.openConnection();
-            } else{
+            } else {
               Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(this.settings.outboundProxyHost, this.settings.outboundProxyPort));
               con = (HttpURLConnection) url.openConnection(proxy);
             }
