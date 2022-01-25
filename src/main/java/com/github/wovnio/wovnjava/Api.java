@@ -42,10 +42,12 @@ class Api {
         HttpURLConnection con = null;
         try {
             URL url = getApiUrl(lang, html);
-            Proxy proxy = this.settings.outboundProxyHost== null
-                ? Proxy.NO_PROXY
-                : new Proxy(Proxy.Type.HTTP, new InetSocketAddress(this.settings.outboundProxyHost, this.settings.outboundProxyPort));
-            con = (HttpURLConnection) url.openConnection(proxy);
+            if (this.settings.outboundProxyHost== null) {
+              con = (HttpURLConnection) url.openConnection();
+            } else {
+              Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(this.settings.outboundProxyHost, this.settings.outboundProxyPort));
+              con = (HttpURLConnection) url.openConnection(proxy);
+            }
             con.setConnectTimeout(settings.connectTimeout);
             con.setReadTimeout(settings.readTimeout);
             return translate(lang, html, con);
