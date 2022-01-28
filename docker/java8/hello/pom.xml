@@ -23,7 +23,7 @@
     <dependency>
       <groupId>com.github.wovnio</groupId>
       <artifactId>wovnjava</artifactId>
-      <version>1.13.0</version>
+      <version>1.13.1</version>
       <scope>system</scope>
       <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/wovnjava-1.12.0-jar-with-dependencies.jar</systemPath>
     </dependency>
