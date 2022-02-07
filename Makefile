@@ -32,6 +32,7 @@ build_website:
 	$(eval TARGET_DIR := ${PWD}/docker/java$(VERSION)/hello)
 	rm -rf ${TARGET_DIR}/target
 	$(MAVEN) clean package -f $(WEBSITE_CONFIG_FILE)
+	$(MAVEN) clean -f $(WEBSITE_CONFIG_FILE)
 
 build_wovn_java:
 	make clean
