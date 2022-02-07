@@ -31,7 +31,7 @@
       <dependency>
           <groupId>com.github.wovnio</groupId>
           <artifactId>wovnjava</artifactId>
-          <version>1.1.0</version>
+          <version>JAVA_VERSION</version>
       </dependency>
   </dependencies>
 
