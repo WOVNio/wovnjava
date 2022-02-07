@@ -4,7 +4,7 @@
     {
       "name": "wovnjava-nginx",
       "cpu": 0,
-      "image": "257024234524.dkr.ecr.us-west-2.amazonaws.com/wovnjava-nginx:bc8d50f",
+      "image": "257024234524.dkr.ecr.us-west-2.amazonaws.com/wovnjava-nginx:latest",
       "mountPoints": [],
       "ulimits": [
         {
@@ -45,7 +45,7 @@
     {
       "name": "wovnjava",
       "cpu": 0,
-      "image": "257024234524.dkr.ecr.us-west-2.amazonaws.com/wovnjava:bc8d50f",
+      "image": "257024234524.dkr.ecr.us-west-2.amazonaws.com/wovnjava:latest",
       "mountPoints": [],
       "workingDirectory": "/usr/local/tomcat/webapps",
       "linuxParameters": {
