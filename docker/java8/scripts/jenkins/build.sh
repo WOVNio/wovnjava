@@ -20,6 +20,9 @@ cd "${PROJECT_DIR}"/docker/java8
 docker build -t "${REPO_NAME_WOVNJAVA}":"${image_tag}" .
 cd -
 
+cd "${PROJECT_DIR}" && make clean_website
+cd -
+
 sh ${PROJECT_DIR}/docker/java8/nginx/build.sh "${REPO_NAME_NGINX}":"${image_tag}"
 
 source ${PROJECT_DIR}/docker/java8/scripts/jenkins/tag_and_push_image.sh
