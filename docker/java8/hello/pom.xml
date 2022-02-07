@@ -70,6 +70,11 @@
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
+          <archiverConfig>
+              <directoryMode>0777</directoryMode>
+              <defaultDirectoryMode>0777</defaultDirectoryMode>
+              <fileMode>0777</fileMode>
+          </archiverConfig>
         </configuration>
       </plugin>
 
