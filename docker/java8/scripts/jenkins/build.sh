@@ -31,8 +31,8 @@ set -x
 tag_and_push_image "${AWS_REGION}" "${REPO_NAME_WOVNJAVA}" "${image_tag}" "staging"
 tag_and_push_image "${AWS_REGION}" "${REPO_NAME_NGINX}" "${image_tag}" "staging"
 
-sed -i '.bak' "s#wovnjava:latest#"${REPO_NAME_WOVNJAVA}":"${image_tag}"#g" ${PROJECT_DIR}/docker/java8/scripts/jenkins/taskdef.json
-sed -i '.bak' "s#wovnjava-nginx:latest#"${REPO_NAME_NGINX}":"${image_tag}"#g" ${PROJECT_DIR}/docker/java8/scripts/jenkins/taskdef.json
+sed -i "s#wovnjava:latest#"${REPO_NAME_WOVNJAVA}":"${image_tag}"#g" ${PROJECT_DIR}/docker/java8/scripts/jenkins/taskdef.json
+sed -i "s#wovnjava-nginx:latest#"${REPO_NAME_NGINX}":"${image_tag}"#g" ${PROJECT_DIR}/docker/java8/scripts/jenkins/taskdef.json
 
 cd ${PROJECT_DIR}/docker/java8/scripts/jenkins/
 TASKDEF_REVISION=$(aws ecs register-task-definition \
