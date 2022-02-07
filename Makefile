@@ -5,8 +5,7 @@ SHELL        := /bin/bash
 VERSION := 8
 WOVN_VERSION := 1.13.0
 TARGET_DIR = ${PWD}
-#MAVEN    = docker run -i --rm -v ${TARGET_DIR}:/project -v wovnjava-maven_repo:/root/.m2 -w /project maven:3-jdk-$(VERSION) ./mvn_startup.sh
-MAVEN    = docker run -ti --rm -u 1000 -v ${TARGET_DIR}:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 maven:3-jdk-$(VERSION) mvn -Duser.home=/var/maven
+MAVEN    = docker run -i --rm -v ${TARGET_DIR}:/project -v wovnjava-maven_repo:/root/.m2 -w /project maven:3-jdk-$(VERSION) mvn
 WEBSITE_CONFIG_FILE = pom.xml
 # WEBSITE_CONFIG_FILE = pom_jitpack.xml
 
@@ -39,7 +38,6 @@ build_wovn_java:
 	mkdir -p ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib
 	rm -rf ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib/*.jar
 	cp ./target/wovnjava-$(WOVN_VERSION)*.jar ./docker/java$(VERSION)/hello/src/main/webapp/WEB-INF/lib
-	rm -rf ${TARGET_DIR}/target
 
 build_wovn_java_and_website:
 	make build_wovn_java
