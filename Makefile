@@ -5,7 +5,7 @@ SHELL        := /bin/bash
 VERSION := 8
 WOVN_VERSION := 1.13.0
 TARGET_DIR = ${PWD}
-MAVEN    = docker run -i --rm -u 1000 -v ${TARGET_DIR}:/project -v wovnjava-maven_repo:/root/.m2 -w /project maven:3-jdk-$(VERSION) mvn
+MAVEN    = docker run -i --user jenkins:jenkins --rm -v ${TARGET_DIR}:/project -v wovnjava-maven_repo:/root/.m2 -w /project maven:3-jdk-$(VERSION) mvn
 WEBSITE_CONFIG_FILE = pom.xml
 # WEBSITE_CONFIG_FILE = pom_jitpack.xml
 
