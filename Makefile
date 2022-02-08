@@ -34,7 +34,6 @@ build_website:
 	$(MAVEN) clean package -f $(WEBSITE_CONFIG_FILE)
 
 clean_website:
-	make clean_website
 	$(eval TARGET_DIR := ${PWD}/docker/java$(VERSION)/hello)
 	$(MAVEN) clean -f $(WEBSITE_CONFIG_FILE)
 
