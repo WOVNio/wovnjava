@@ -9,12 +9,22 @@ CLUSTER_NAME="wovn-library-testing"
 TASKDEF_FAMILY_NAME="wovnjava"
 ECS_SERVICE_NAME="wovnjava"
 PROJECT_DIR=$(dirname "$0")/../../../..
+LIBRARY=$1
 
 commit_hash=$(git rev-parse --short HEAD)
 image_tag="${commit_hash}"
 
-cd "${PROJECT_DIR}" && make build_website
-cd -
+if [ ${LIBRARY} == "local" ]; then
+    cd "${PROJECT_DIR}" && make build_wovn_java_and_website
+    cd -
+elif [ ${LIBRARY} == "jitpack" ]; then
+    cd "${PROJECT_DIR}" && make build_website
+    cd -
+else
+    echo "Library version not correct"
+    exit 1
+fi
+
 
 cd "${PROJECT_DIR}"/docker/java8
 docker build -t "${REPO_NAME_WOVNJAVA}":"${image_tag}" .
