@@ -34,11 +34,15 @@
   <filter-mapping>
       <filter-name>wovn</filter-name>
       <url-pattern>/*</url-pattern>
+      <dispatcher>REQUEST</dispatcher>
+      <dispatcher>FORWARD</dispatcher>
   </filter-mapping>
 
   <filter-mapping>
    <filter-name>universalfilter</filter-name>
    <url-pattern>/custom_response/*</url-pattern>
+   <dispatcher>REQUEST</dispatcher>
+   <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
 </web-app>
