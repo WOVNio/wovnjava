@@ -13,7 +13,7 @@ PROJECT_DIR=$(dirname "$0")/../../../..
 commit_hash=$(git rev-parse --short HEAD)
 image_tag="${commit_hash}"
 
-cd "${PROJECT_DIR}" && make build_website
+cd "${PROJECT_DIR}" && make build_wovn_java_and_website
 cd -
 
 cd "${PROJECT_DIR}"/docker/java8
