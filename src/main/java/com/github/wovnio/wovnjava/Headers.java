@@ -1,7 +1,9 @@
 package com.github.wovnio.wovnjava;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.net.URL;
 import java.net.MalformedURLException;
 
@@ -117,6 +119,26 @@ class Headers {
 
     public boolean getIsValidRequest() {
         return this.isValidRequest;
+    }
+
+
+    private static final String[] searchEngineUserAgents = new String[] {
+        "Googlebot/",
+        "bingbot/",
+        "YandexBot/",
+        "YandexWebmaster/",
+        "DuckDuckBot-Https/",
+        "Baiduspider/",
+        "Slurp",
+        "Yahoo"
+    };
+
+    public boolean isSearchEngineBot() {
+        String userAgent = this.request.getHeader("User-Agent");
+        if (userAgent != null) {
+            return Arrays.stream(searchEngineUserAgents).anyMatch(userAgent::contains);
+        }
+        return false;
     }
 
     public LinkedHashMap<String, String> getHreflangUrlMap() {
