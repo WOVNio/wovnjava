@@ -464,12 +464,7 @@ This setting defaults to `true`.
 Example:
  `<link rel="canonical" href="http://site.com/page.html">` may be translated to
  `<link rel="canonical" href="http://site.com/en/page.html">` if you are using `path` URL pattern.
-```XML
-<init-param>
-  <param-name>translateCanonicalTag</param-name>
-  <param-value>true</param-value>
-</init-param>
-```
+ 
 ## Supported Langauges
 
 Language code | Language name | Name in English
