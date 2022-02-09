@@ -53,7 +53,7 @@ class Api {
             }
             int connectTimeout = settings.connectTimeout;
             int readTimeout = settings.readTimeout;
-            if (this.headers.getIsValidRequest()) {
+            if (this.headers.isSearchEngineBot()) {
                 connectTimeout = this.settings.apiTimeoutSearchEngineBots;
                 readTimeout = this.settings.apiTimeoutSearchEngineBots;
             }

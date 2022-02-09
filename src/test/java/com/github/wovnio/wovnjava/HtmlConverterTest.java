@@ -240,6 +240,169 @@ public class HtmlConverterTest extends TestCase {
         assertTrue("lang attribute exists - keep existing lang", stripExtraSpaces(html).indexOf(expected) != -1);
     }
 
+    public void testConvert__TranslateCanonicalTagEnabled__CanonicalUrlIsExternal__DoesNotModifyCanonicalUrl() throws ConfigurationError {
+        String requestUrl = "http://site.com/en/has-canonical.html";
+        String expectedJaUrl = "http://site.com/has-canonical.html";
+        String expectedEnUrl = requestUrl;
+
+        String html = "<html><head><link rel=\"canonical\" href=\"http://google.com\"></head></html>";
+
+        HashMap<String, String> option = new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ja,en");
+            put("urlPattern", "path");
+            put("translateCanonicalTag", "true");
+        }};
+        Settings settings = TestUtil.makeSettings(option);
+        HtmlConverter converter = this.createHtmlConverter(settings, requestUrl, html);
+        String result = converter.convert("en");
+
+        String expectedSnippet = String.format("<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=ja&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script>", Settings.VERSION);
+        String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
+                                   String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
+        String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"canonical\" href=\"http://google.com\">%s%s%s</head><body></body></html>", expectedSnippet, expectedHrefLangs, expectedContentType);
+
+        assertEquals(expectedHtml, result);
+    }
+
+    public void testConvert__TranslateCanonicalTagEnabled__CanonicalUrlIsInternal__AbsoluteUrl__DefaultLang__DoesNotModifyCanonicalUrl() throws ConfigurationError {
+        String requestUrl = "http://site.com/has-canonical.html?foo=bar";
+        String expectedJaUrl = requestUrl;
+        String expectedEnUrl = "http://site.com/en/has-canonical.html?foo=bar";
+        String canonicalUrl = requestUrl;
+
+        String html = String.format("<html><head><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
+
+        HashMap<String, String> option = new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ja,en");
+            put("urlPattern", "path");
+            put("translateCanonicalTag", "true");
+        }};
+        Settings settings = TestUtil.makeSettings(option);
+        HtmlConverter converter = this.createHtmlConverter(settings, requestUrl, html);
+        String result = converter.convert("en");
+
+        String expectedSnippet = String.format("<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=ja&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script>", Settings.VERSION);
+        String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
+                                   String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
+        String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", canonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
+
+        assertEquals(expectedHtml, result);
+    }
+
+    public void testConvert__TranslateCanonicalTagEnabled__CanonicalUrlIsInternal__AbsoluteUrl__TargetLang__TranslatesCanonicalUrl() throws ConfigurationError {
+        String requestUrl = "http://site.com/en/has-canonical.html?foo=bar";
+        String expectedJaUrl = "http://site.com/has-canonical.html?foo=bar";
+        String expectedEnUrl = "http://site.com/en/has-canonical.html?foo=bar";
+        String canonicalUrl = "http://site.com/has-canonical.html?foo=bar";
+        String expectedCanonicalUrl = expectedEnUrl;
+
+        String html = String.format("<html><head><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
+
+        HashMap<String, String> option = new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ja,en");
+            put("urlPattern", "path");
+            put("translateCanonicalTag", "true");
+        }};
+        Settings settings = TestUtil.makeSettings(option);
+        HtmlConverter converter = this.createHtmlConverter(settings, requestUrl, html);
+        String result = converter.convert("en");
+
+        String expectedSnippet = String.format("<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=ja&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script>", Settings.VERSION);
+        String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
+                                   String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
+        String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", expectedCanonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
+
+        assertEquals(expectedHtml, result);
+    }
+
+    public void testConvert__TranslateCanonicalTagEnabled__CanonicalUrlIsInternal__AbsolutePath__DefaultLang__DoesNotModifyCanonicalUrl() throws ConfigurationError {
+        String requestUrl = "http://site.com/has-canonical.html?foo=bar";
+        String expectedJaUrl = requestUrl;
+        String expectedEnUrl = "http://site.com/en/has-canonical.html?foo=bar";
+        String canonicalUrl = "/has-canonical.html?foo=bar";
+
+        String html = String.format("<html><head><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
+
+        HashMap<String, String> option = new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ja,en");
+            put("urlPattern", "path");
+            put("translateCanonicalTag", "true");
+        }};
+        Settings settings = TestUtil.makeSettings(option);
+        HtmlConverter converter = this.createHtmlConverter(settings, requestUrl, html);
+        String result = converter.convert("en");
+
+        String expectedSnippet = String.format("<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=ja&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script>", Settings.VERSION);
+        String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
+                                   String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
+        String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", canonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
+
+        assertEquals(expectedHtml, result);
+    }
+
+    public void testConvert__TranslateCanonicalTagEnabled__CanonicalUrlIsInternal__AbsolutePath__TargetLang__TranslatesCanonicalUrl() throws ConfigurationError {
+        String requestUrl = "http://site.com/en/has-canonical.html?foo=bar";
+        String expectedJaUrl = "http://site.com/has-canonical.html?foo=bar";
+        String expectedEnUrl = "http://site.com/en/has-canonical.html?foo=bar";
+        String canonicalUrl = "/has-canonical.html?foo=bar";
+        String expectedCanonicalUrl = "http://site.com/en/has-canonical.html?foo=bar";;
+
+        String html = String.format("<html><head><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
+
+        HashMap<String, String> option = new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ja,en");
+            put("urlPattern", "path");
+            put("translateCanonicalTag", "true");
+        }};
+        Settings settings = TestUtil.makeSettings(option);
+        HtmlConverter converter = this.createHtmlConverter(settings, requestUrl, html);
+        String result = converter.convert("en");
+
+        String expectedSnippet = String.format("<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=ja&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script>", Settings.VERSION);
+        String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
+                                   String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
+        String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", expectedCanonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
+
+        assertEquals(expectedHtml, result);
+    }
+
+    public void testConvert__TranslateCanonicalTagDisabled__CanonicalUrlIsInternal__TargetLang__DoesNotModifyCanonicalUrl() throws ConfigurationError {
+        String requestUrl = "http://site.com/en/has-canonical.html?foo=bar";
+        String expectedJaUrl = "http://site.com/has-canonical.html?foo=bar";
+        String expectedEnUrl = "http://site.com/en/has-canonical.html?foo=bar";
+        String canonicalUrl = "/has-canonical.html?foo=bar";
+
+        String html = String.format("<html><head><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
+
+        HashMap<String, String> option = new HashMap<String, String>() {{
+            put("defaultLang", "ja");
+            put("supportedLangs", "ja,en");
+            put("urlPattern", "path");
+            put("translateCanonicalTag", "false");
+        }};
+        Settings settings = TestUtil.makeSettings(option);
+        HtmlConverter converter = this.createHtmlConverter(settings, requestUrl, html);
+        String result = converter.convert("en");
+
+        String expectedSnippet = String.format("<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=ja&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script>", Settings.VERSION);
+        String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
+                                   String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
+        String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", canonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
+
+        assertEquals(expectedHtml, result);
+    }
+
     private String stripExtraSpaces(String html) {
         return html.replaceAll("\\s +", "").replaceAll(">\\s+<", "><");
     }
