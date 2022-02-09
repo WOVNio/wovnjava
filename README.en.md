@@ -119,6 +119,11 @@ debugMode                 |          | false
 encoding                  |          | 
 enableLogging             |          | false
 compressApiRequests       |          | true
+fixedScheme               |          | 
+fixedHost                 |          | 
+fixedPort                 |          | 
+apiTimeoutSearchEngineBots|          | 5000
+translateCanonicalTag     |          | true
 
 ### 2.1. projectToken (required)
 
@@ -445,6 +450,26 @@ By default, requests to the translation API will be sent with gzip compression. 
 These settings can be used if your web server is behind a load balancer where the request URL is different to what the user sees. They should be set to match the URL used in your WOVN.io project. These settings have higher presedence than `useProxy` if both are enabled at the same time.
 
 You must set all three of these settings at the same time or none at all, failing to do so will result in `ConfigurationError` exceptions being thrown.
+
+### 2.19. apiTimeoutSearchEngineBots
+Maximum time (in milliseconds) to call the WOVN.io translation API.
+This will be used if the current request is detected to be from a search engine bot. Currently, bots from Google, Yahoo, Bing, Yandex, DuckDuckGo and Baidu are supported.
+By default the timeout is 5000ms.
+
+### 2.20. translateCanonicalTag
+Configures if wovnjava should automatically translate existing canonical tag in the HTML. When set to `true`, wovnjava
+will translate the canonical URL with the current language code according to your `urlPattern` setting. 
+This setting defaults to `true`.
+
+Example:
+ `<link rel="canonical" href="http://site.com/page.html">` may be translated to
+ `<link rel="canonical" href="http://site.com/en/page.html">` if you are using `path` URL pattern.
+```XML
+<init-param>
+  <param-name>translateCanonicalTag</param-name>
+  <param-value>true</param-value>
+</init-param>
+```
 ## Supported Langauges
 
 Language code | Language name | Name in English
