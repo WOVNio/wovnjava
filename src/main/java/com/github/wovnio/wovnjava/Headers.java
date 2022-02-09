@@ -3,7 +3,6 @@ package com.github.wovnio.wovnjava;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.net.URL;
 import java.net.MalformedURLException;
 
