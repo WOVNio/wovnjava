@@ -185,15 +185,12 @@ class HtmlConverter {
     }
 
     private void translateCanonicalTag(String lang) {
-        Elements elements = doc.head().getElementsByTag("link");
+        Elements elements = doc.select("link[rel=\"canonical\"]");
         for (Element element : elements) {
-            String rel = element.attr("rel");
-            if (rel != null && rel.equalsIgnoreCase("canonical")) {
-                String href = element.attr("href");
-                if (href != null) {
-                    String translatedCanonicalUrl = this.headers.locationWithLangCode(href);
-                    element.attr("href", translatedCanonicalUrl);
-                }
+            String href = element.attr("href");
+            if (href != null) {
+                String translatedCanonicalUrl = this.headers.locationWithLangCode(href);
+                element.attr("href", translatedCanonicalUrl);
             }
         }
     }
