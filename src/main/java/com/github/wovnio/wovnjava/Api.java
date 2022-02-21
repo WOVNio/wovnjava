@@ -51,8 +51,15 @@ class Api {
               Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(this.settings.outboundProxyHost, this.settings.outboundProxyPort));
               con = (HttpURLConnection) url.openConnection(proxy);
             }
-            con.setConnectTimeout(settings.connectTimeout);
-            con.setReadTimeout(settings.readTimeout);
+            int connectTimeout = settings.connectTimeout;
+            int readTimeout = settings.readTimeout;
+            if (this.headers.isSearchEngineBot()) {
+                connectTimeout = this.settings.apiTimeoutSearchEngineBots;
+                readTimeout = this.settings.apiTimeoutSearchEngineBots;
+            }
+
+            con.setConnectTimeout(connectTimeout);
+            con.setReadTimeout(readTimeout);
             return translate(lang, html, con);
         } catch (UnsupportedEncodingException e) {
             WovnLogger.log("API error: unsupported encoding.");
@@ -176,6 +183,7 @@ class Api {
         result.put("product", "wovnjava");
         result.put("version", Settings.VERSION);
         result.put("debug_mode", String.valueOf(this.requestOptions.getDebugMode()));
+        result.put("translate_canonical_tag", String.valueOf(settings.translateCanonicalTag));
         result.put("body", body);
         return result;
     }

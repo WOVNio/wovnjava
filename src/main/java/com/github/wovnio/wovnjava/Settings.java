@@ -13,6 +13,7 @@ class Settings {
 
     // Default configuration values
     public static final int DefaultTimeout = 1000;
+    public static final int DefaultApiSearchEngineBotsTimeout = 5000;
     public static final String DefaultApiUrlBase  = "https://wovn.global.ssl.fastly.net";
     public static final String DefaultApiUrlProduction  = DefaultApiUrlBase + "/v0/";
     public static final String DefaultApiUrlDevelopment = "http://localhost:3001/v0/";
@@ -47,6 +48,7 @@ class Settings {
 
     public final int connectTimeout;
     public final int readTimeout;
+    public final int apiTimeoutSearchEngineBots;
 
     public final String outboundProxyHost;
     public final int outboundProxyPort;
@@ -57,6 +59,8 @@ class Settings {
     public final String fixedScheme;
     public final int fixedPort;
     public final boolean hasUrlOverride;
+    
+    public final boolean translateCanonicalTag;
 
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
@@ -97,6 +101,8 @@ class Settings {
         this.connectTimeout = positiveIntOrDefault(reader.getIntParameter("connectTimeout"), DefaultTimeout);
         this.readTimeout = positiveIntOrDefault(reader.getIntParameter("readTimeout"), DefaultTimeout);
 
+        this.apiTimeoutSearchEngineBots = positiveIntOrDefault(reader.getIntParameter("apiTimeoutSearchEngineBots"), DefaultApiSearchEngineBotsTimeout);
+
         this.outboundProxyHost = nonEmptyString(reader, "outboundProxyHost");
         this.outboundProxyPort = reader.getIntParameter("outboundProxyPort");
 
@@ -107,6 +113,8 @@ class Settings {
         this.fixedPort = positiveIntOrDefault(reader.getIntParameter("fixedPort"), -1);
         this.verifyFixedURLConfigs(this.fixedHost, this.fixedScheme, this.fixedPort);
         this.hasUrlOverride = this.fixedPort != -1;
+
+        this.translateCanonicalTag = reader.getBoolParameterOrDefault("translateCanonicalTag", true);
     }
 
     private void verifyFixedURLConfigs(String fixedHost, String fixedScheme, int fixedPort) throws ConfigurationError {

@@ -3,6 +3,9 @@ package com.github.wovnio.wovnjava;
 import java.util.HashMap;
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
+
+import org.easymock.EasyMock;
+
 import java.net.URL;
 import java.net.MalformedURLException;
 
@@ -351,5 +354,41 @@ public class HeadersTest extends TestCase {
 		assertEquals("https://th.example.com/home?user=123", hreflangs.get("th"));
 		assertEquals("https://zh-CHT.example.com/home?user=123", hreflangs.get("zh-Hant"));
 		assertEquals("https://zh-CHS.example.com/home?user=123", hreflangs.get("zh-Hans"));
+    }
+
+    public void testIsSearchEngineBot_NoUserAgent_False() throws ConfigurationError {
+        String userAgent = null;
+
+        Settings settings = TestUtil.makeSettings();
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        HttpServletRequest request = MockHttpServletRequest.create("https://example.com/home?user=123", userAgent);
+
+        Headers sut = new Headers(request, settings, patternHandler);
+
+        assertEquals(false, sut.isSearchEngineBot());
+    }
+
+    public void testIsSearchEngineBot_OrdinaryUserAgent_False() throws ConfigurationError {
+        String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.81 Safari/537.36";
+
+        Settings settings = TestUtil.makeSettings();
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        HttpServletRequest request = MockHttpServletRequest.create("https://example.com/home?user=123");
+
+        Headers sut = new Headers(request, settings, patternHandler);
+
+        assertEquals(false, sut.isSearchEngineBot());
+    }
+
+    public void testIsSearchEngineBot_SearchEngineBotUserAgent_True() throws ConfigurationError {
+        String userAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+
+        Settings settings = TestUtil.makeSettings();
+        UrlLanguagePatternHandler patternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+        HttpServletRequest request = MockHttpServletRequest.create("https://example.com/home?user=123", userAgent);
+
+        Headers sut = new Headers(request, settings, patternHandler);
+
+        assertEquals(true, sut.isSearchEngineBot());
     }
 }

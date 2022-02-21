@@ -14,6 +14,7 @@ import org.jsoup.parser.Tag;
 class HtmlConverter {
     private final Document doc;
     private final Settings settings;
+    private final Headers headers;
     private final HashMap<String, String> hreflangMap;
     private final HtmlReplaceMarker htmlReplaceMarker;
 
@@ -21,6 +22,7 @@ class HtmlConverter {
 
     HtmlConverter(Settings settings, Headers headers, String original) {
         this.settings = settings;
+        this.headers = headers;
         this.htmlReplaceMarker = new HtmlReplaceMarker();
         this.hreflangMap = headers.getHreflangUrlMap();
         doc = Jsoup.parse(original);
@@ -51,6 +53,9 @@ class HtmlConverter {
         appendHrefLang();
         replaceContentType();
         insertHtmlLangAttribute();
+        if (this.settings.translateCanonicalTag) {
+            translateCanonicalTag(lang);
+        }
         return doc.html();
     }
 
@@ -176,6 +181,17 @@ class HtmlConverter {
             link.attr("hreflang", hreflang.getKey());
             link.attr("href", hreflang.getValue());
             doc.head().appendChild(link);
+        }
+    }
+
+    private void translateCanonicalTag(String lang) {
+        Elements elements = doc.select("link[rel=\"canonical\"]");
+        for (Element element : elements) {
+            String href = element.attr("href");
+            if (href != null) {
+                String translatedCanonicalUrl = this.headers.locationWithLangCode(href);
+                element.attr("href", translatedCanonicalUrl);
+            }
         }
     }
 

@@ -13,9 +13,13 @@ public class MockHttpServletRequest {
     private static int DefaultTestPort = 443;
 
     public static HttpServletRequest create(String urlString) {
+        return create(urlString, null);
+    }
+
+    public static HttpServletRequest create(String urlString, String userAgent) {
         HttpServletRequest mock = EasyMock.createMock(HttpServletRequest.class);
         stubLocation(mock, parseURL(urlString));
-        stubHeaders(mock);
+        stubHeaders(mock, userAgent);
         EasyMock.replay(mock);
         return mock;
     }
@@ -64,8 +68,14 @@ public class MockHttpServletRequest {
     }
 
     private static void stubHeaders(HttpServletRequest mock) {
+        stubHeaders(mock, null);
+    }
+
+    private static void stubHeaders(HttpServletRequest mock, String userAgent) {
         /* `X-Wovn-Lang` is a Header value that we mock with our HttpServletRequestWrapper (unless the Header value already exists) */
         EasyMock.expect(mock.getHeader("X-Wovn-Lang")).andReturn(null).anyTimes();
+
+        EasyMock.expect(mock.getHeader("User-Agent")).andReturn(userAgent).anyTimes();
 
         /* Stub `X-Header-Test` for testing behavior of an existing Header value */
         EasyMock.expect(mock.getHeader("X-Header-Test")).andReturn("x-header-test-value").anyTimes();
