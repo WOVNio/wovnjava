@@ -47,7 +47,7 @@ public class ApiTest extends TestCase {
         }});
         UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
 
-        HttpServletRequest request = MockHttpServletRequest.create("https://example.com/ja/somepage/");
+        HttpServletRequest request = MockHttpServletRequest.create("https://example.com/ja/somepage/", "WOVN Browser");
         ResponseHeaders responseHeaders = mockResponseHeaders();
 
         Headers headers = new Headers(request, settings, urlLanguagePatternHandler);
@@ -76,7 +76,7 @@ public class ApiTest extends TestCase {
                                      "\"version\":\"" + Settings.VERSION + "\"," +
                                      "\"debug_mode\":\"false\"," +
                                      "\"translate_canonical_tag\":\"true\"," +
-                                     "\"user_agent\":\"\"," +
+                                     "\"user_agent\":\"WOVN Browser\"," +
                                      "\"body\":\"\u003Chtml\u003Emuch content\u003C\\/html\u003E\"}";
 
         assertEquals(expectedRequestBody, apiRequestBody);
