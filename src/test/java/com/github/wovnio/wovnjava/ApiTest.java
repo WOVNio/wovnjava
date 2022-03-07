@@ -76,6 +76,7 @@ public class ApiTest extends TestCase {
                                      "\"version\":\"" + Settings.VERSION + "\"," +
                                      "\"debug_mode\":\"false\"," +
                                      "\"translate_canonical_tag\":\"true\"," +
+                                     "\"user_agent\":\"\"," +
                                      "\"body\":\"\u003Chtml\u003Emuch content\u003C\\/html\u003E\"}";
 
         assertEquals(expectedRequestBody, apiRequestBody);

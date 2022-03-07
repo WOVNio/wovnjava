@@ -140,6 +140,14 @@ class Headers {
         return false;
     }
 
+    public String getUserAgent() {
+      String userAgent = this.request.getHeader("User-Agent");
+      if (userAgent == null) {
+        return "";
+      }
+      return userAgent;
+    }
+
     public LinkedHashMap<String, String> getHreflangUrlMap() {
         LinkedHashMap<String, String> hreflangs = new LinkedHashMap<String, String>();
         for (Lang supportedLang : this.settings.supportedLangs) {

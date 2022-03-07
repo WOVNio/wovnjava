@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 
 import javax.xml.bind.DatatypeConverter;
 import com.github.cliftonlabs.json_simple.Jsoner;
@@ -31,6 +32,7 @@ class Api {
     private final RequestOptions requestOptions;
     private final ResponseHeaders responseHeaders;
     private final String responseEncoding = "UTF-8"; // always response is UTF8
+    private final int DYNAMIC_LOADED_PAGE_TTL_MILI = 20 * 60 * 1000;
 
     Api(Settings settings, Headers headers, RequestOptions requestOptions, ResponseHeaders responseHeaders) {
         this.settings = settings;
@@ -184,6 +186,7 @@ class Api {
         result.put("version", Settings.VERSION);
         result.put("debug_mode", String.valueOf(this.requestOptions.getDebugMode()));
         result.put("translate_canonical_tag", String.valueOf(settings.translateCanonicalTag));
+        result.put("user_agent", this.headers.getUserAgent());
         result.put("body", body);
         return result;
     }
@@ -207,9 +210,18 @@ class Api {
         if (this.requestOptions.getCacheDisableMode() || this.requestOptions.getDebugMode()) {
             appendValue(sb, "&timestamp=");
             appendValue(sb, String.valueOf(System.currentTimeMillis()));
+        } else if (this.headers.isSearchEngineBot()) {
+          appendValue(sb, "&timestamp=");
+          appendValue(sb, getDynamicLoadingTimeStamp());
         }
         appendValue(sb, ")");
         return new URL(sb.toString());
+    }
+
+    private String getDynamicLoadingTimeStamp() {
+      long secondsSinceEpoch = System.currentTimeMillis() / DYNAMIC_LOADED_PAGE_TTL_MILI * DYNAMIC_LOADED_PAGE_TTL_MILI;
+      Date date = new Date(secondsSinceEpoch);
+      return date.toString();
     }
 
     private String hash(byte[] item) throws NoSuchAlgorithmException {
