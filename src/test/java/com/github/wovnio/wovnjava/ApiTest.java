@@ -1,6 +1,9 @@
 package com.github.wovnio.wovnjava;
 
 import java.io.InputStreamReader;
+
+import static org.junit.Assert.assertNotEquals;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
@@ -133,6 +136,11 @@ public class ApiTest extends TestCase {
       Clock nextClock = Clock.fixed(nextFixedInstant, ZoneId.systemDefault());
       Api nextApi = new Api(settings, headers, requestOptions, responseHeaders, nextClock);
       assertEquals(nextApi.getApiUrl("en", "").toString(), api.getApiUrl("en", "").toString());
+
+      Instant muchLaterFixedInstant = Instant.parse("2020-01-01T10:30:10.00Z");
+      Clock muchLaterClock = Clock.fixed(muchLaterFixedInstant, ZoneId.systemDefault());
+      Api muchLaterApi = new Api(settings, headers, requestOptions, responseHeaders, muchLaterClock);
+      assertNotEquals(muchLaterApi.getApiUrl("en", "").toString(), api.getApiUrl("en", "").toString());
     }
 
     private byte[] gzip(byte[] input) throws IOException, ProtocolException {
