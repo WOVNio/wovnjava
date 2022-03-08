@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.SocketTimeoutException;
@@ -16,11 +15,13 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.time.Clock;
 import java.util.Date;
 
-import javax.xml.bind.DatatypeConverter;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
 import net.arnx.jsonic.JSON;
@@ -33,12 +34,22 @@ class Api {
     private final ResponseHeaders responseHeaders;
     private final String responseEncoding = "UTF-8"; // always response is UTF8
     private final int DYNAMIC_LOADED_PAGE_TTL_MILI = 20 * 60 * 1000;
+    private final Clock clock;
 
     Api(Settings settings, Headers headers, RequestOptions requestOptions, ResponseHeaders responseHeaders) {
         this.settings = settings;
         this.headers = headers;
         this.requestOptions = requestOptions;
         this.responseHeaders = responseHeaders;
+        this.clock = Clock.systemDefaultZone();
+    }
+
+    Api(Settings settings, Headers headers, RequestOptions requestOptions, ResponseHeaders responseHeaders, Clock clock) {
+        this.settings = settings;
+        this.headers = headers;
+        this.requestOptions = requestOptions;
+        this.responseHeaders = responseHeaders;
+        this.clock = clock;
     }
 
     String translate(String lang, String html) throws ApiException, ApiNoPageDataException {
@@ -191,7 +202,7 @@ class Api {
         return result;
     }
 
-    private URL getApiUrl(String lang, String body) throws UnsupportedEncodingException, NoSuchAlgorithmException, MalformedURLException {
+    URL getApiUrl(String lang, String body) throws UnsupportedEncodingException, NoSuchAlgorithmException, MalformedURLException {
         StringBuilder sb = new StringBuilder();
         sb.append(settings.apiUrl);
         sb.append("translation?cache_key=");
@@ -219,17 +230,34 @@ class Api {
     }
 
     private String getDynamicLoadingTimeStamp() {
-      long secondsSinceEpoch = System.currentTimeMillis() / DYNAMIC_LOADED_PAGE_TTL_MILI * DYNAMIC_LOADED_PAGE_TTL_MILI;
+      long secondsSinceEpoch = this.clock.millis() / DYNAMIC_LOADED_PAGE_TTL_MILI * DYNAMIC_LOADED_PAGE_TTL_MILI;
       Date date = new Date(secondsSinceEpoch);
-      return date.toString();
+      SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+      format.setTimeZone(TimeZone.getTimeZone("JST"));
+      return format.format(date);
     }
 
     private String hash(byte[] item) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(item);
         byte[] digest = md.digest();
-        return DatatypeConverter.printHexBinary(digest).toUpperCase();
+        return this.encodeHexString(digest).toUpperCase();
     }
+
+    private String encodeHexString(byte[] byteArray) {
+      StringBuffer hexStringBuffer = new StringBuffer();
+      for (int i = 0; i < byteArray.length; i++) {
+          hexStringBuffer.append(byteToHex(byteArray[i]));
+      }
+      return hexStringBuffer.toString();
+    }
+
+    private String byteToHex(byte num) {
+      char[] hexDigits = new char[2];
+      hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
+      hexDigits[1] = Character.forDigit((num & 0xF), 16);
+      return new String(hexDigits);
+  }
 
     private void appendValue(StringBuilder sb, String value) throws UnsupportedOperationException {
         sb.append(FormUrlEncoding.encodeValue(value));

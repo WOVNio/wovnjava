@@ -10,7 +10,11 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
-import java.net.URLDecoder;
+import java.security.NoSuchAlgorithmException;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.TestCase;
@@ -82,6 +86,53 @@ public class ApiTest extends TestCase {
         assertEquals(expectedRequestBody, apiRequestBody);
 
         return result;
+    }
+
+    public void testGetApiUrl() throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException, NoSuchAlgorithmException {
+      Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+          put("projectToken", "token0");
+          put("defaultLang", "en");
+          put("supportedLangs", "en,ja,fr");
+          put("urlPattern", "path");
+      }});
+      UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+
+      HttpServletRequest request = MockHttpServletRequest.create("https://example.com/ja/somepage/", "WOVN Browser");
+      ResponseHeaders responseHeaders = mockResponseHeaders();
+
+      Headers headers = new Headers(request, settings, urlLanguagePatternHandler);
+      RequestOptions requestOptions = new RequestOptions(settings, request);
+
+      Api api = new Api(settings, headers, requestOptions, responseHeaders);
+      String expected_url = "https://wovn.global.ssl.fastly.net/v0/translation?cache_key=%28token%3Dtoken0%26settings_hash%3D5C76D283B72EEA106B91CE18830A2EE4%26body_hash%3DD41D8CD98F00B204E9800998ECF8427E%26path%3D%2Fsomepage%2F%26lang%3Den%26version%3Dwovnjava_" + Settings.VERSION + "%29";
+      assertEquals(expected_url, api.getApiUrl("en", "").toString());
+    }
+
+    public void testGetApiUrlWithSearchEngineBot() throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException, NoSuchAlgorithmException {
+      Instant fixedInstant = Instant.parse("2020-01-01T10:10:10.00Z");
+      Clock clock = Clock.fixed(fixedInstant, ZoneId.systemDefault());
+      Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+          put("projectToken", "token0");
+          put("defaultLang", "en");
+          put("supportedLangs", "en,ja,fr");
+          put("urlPattern", "path");
+      }});
+      UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
+
+      HttpServletRequest request = MockHttpServletRequest.create("https://example.com/ja/somepage/", "Googlebot/");
+      ResponseHeaders responseHeaders = mockResponseHeaders();
+
+      Headers headers = new Headers(request, settings, urlLanguagePatternHandler);
+      RequestOptions requestOptions = new RequestOptions(settings, request);
+
+      Api api = new Api(settings, headers, requestOptions, responseHeaders, clock);
+      String expected_url = "https://wovn.global.ssl.fastly.net/v0/translation?cache_key=%28token%3Dtoken0%26settings_hash%3D5C76D283B72EEA106B91CE18830A2EE4%26body_hash%3DD41D8CD98F00B204E9800998ECF8427E%26path%3D%2Fsomepage%2F%26lang%3Den%26version%3Dwovnjava_" + Settings.VERSION + "%26timestamp%3D2020-01-01T19%3A00%3A00%2B09%3A00%29";
+      assertEquals(expected_url, api.getApiUrl("en", "").toString());
+
+      Instant nextFixedInstant = Instant.parse("2020-01-01T10:11:10.00Z");
+      Clock nextClock = Clock.fixed(nextFixedInstant, ZoneId.systemDefault());
+      Api nextApi = new Api(settings, headers, requestOptions, responseHeaders, nextClock);
+      assertEquals(nextApi.getApiUrl("en", "").toString(), api.getApiUrl("en", "").toString());
     }
 
     private byte[] gzip(byte[] input) throws IOException, ProtocolException {
