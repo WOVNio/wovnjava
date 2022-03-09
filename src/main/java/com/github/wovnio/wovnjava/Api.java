@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.SocketTimeoutException;
@@ -16,10 +15,13 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.time.Clock;
+import java.util.Date;
 
-import javax.xml.bind.DatatypeConverter;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
 import net.arnx.jsonic.JSON;
@@ -31,12 +33,15 @@ class Api {
     private final RequestOptions requestOptions;
     private final ResponseHeaders responseHeaders;
     private final String responseEncoding = "UTF-8"; // always response is UTF8
+    private final long SEARCH_ENGINE_BOT_CACHE_TTL_MILI = 20 * 60 * 1000;
+    private final Clock clock;
 
-    Api(Settings settings, Headers headers, RequestOptions requestOptions, ResponseHeaders responseHeaders) {
+    Api(Settings settings, Headers headers, RequestOptions requestOptions, ResponseHeaders responseHeaders, Clock clock) {
         this.settings = settings;
         this.headers = headers;
         this.requestOptions = requestOptions;
         this.responseHeaders = responseHeaders;
+        this.clock = clock;
     }
 
     String translate(String lang, String html) throws ApiException, ApiNoPageDataException {
@@ -184,11 +189,12 @@ class Api {
         result.put("version", Settings.VERSION);
         result.put("debug_mode", String.valueOf(this.requestOptions.getDebugMode()));
         result.put("translate_canonical_tag", String.valueOf(settings.translateCanonicalTag));
+        result.put("user_agent", this.headers.getUserAgent());
         result.put("body", body);
         return result;
     }
 
-    private URL getApiUrl(String lang, String body) throws UnsupportedEncodingException, NoSuchAlgorithmException, MalformedURLException {
+    URL getApiUrl(String lang, String body) throws UnsupportedEncodingException, NoSuchAlgorithmException, MalformedURLException {
         StringBuilder sb = new StringBuilder();
         sb.append(settings.apiUrl);
         sb.append("translation?cache_key=");
@@ -207,18 +213,29 @@ class Api {
         if (this.requestOptions.getCacheDisableMode() || this.requestOptions.getDebugMode()) {
             appendValue(sb, "&timestamp=");
             appendValue(sb, String.valueOf(System.currentTimeMillis()));
+        } else if (this.headers.isSearchEngineBot()) {
+          appendValue(sb, "&timestamp=");
+          appendValue(sb, getDynamicLoadingTimeStamp());
         }
         appendValue(sb, ")");
         return new URL(sb.toString());
+    }
+
+    private String getDynamicLoadingTimeStamp() {
+      long roundedSecondsSinceEpoch = TimeUtils.roundDownTime(this.clock.millis(), SEARCH_ENGINE_BOT_CACHE_TTL_MILI);
+      Date date = new Date(roundedSecondsSinceEpoch);
+      SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+      format.setTimeZone(TimeZone.getTimeZone("JST"));
+      return format.format(date);
     }
 
     private String hash(byte[] item) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(item);
         byte[] digest = md.digest();
-        return DatatypeConverter.printHexBinary(digest).toUpperCase();
+        return StringUtils.encodeHexString(digest).toUpperCase();
     }
-
+    
     private void appendValue(StringBuilder sb, String value) throws UnsupportedOperationException {
         sb.append(FormUrlEncoding.encodeValue(value));
     }

@@ -2,6 +2,7 @@ package com.github.wovnio.wovnjava;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Clock;
 import java.util.UUID;
 
 import javax.servlet.Filter;
@@ -95,7 +96,7 @@ public class WovnServletFilter implements Filter {
             String body = null;
             if (htmlChecker.canTranslate(response, originalBody)) {
                 // html
-                Api api = new Api(settings, headers, requestOptions, responseHeaders);
+                Api api = new Api(settings, headers, requestOptions, responseHeaders, Clock.systemDefaultZone());
                 Interceptor interceptor = new Interceptor(headers, settings, api, responseHeaders);
                 body = interceptor.translate(originalBody);
             } else {
