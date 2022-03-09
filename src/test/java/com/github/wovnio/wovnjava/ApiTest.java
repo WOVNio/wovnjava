@@ -111,7 +111,7 @@ public class ApiTest extends TestCase {
       assertEquals(expected_url, api.getApiUrl("en", "").toString());
     }
 
-    public void testGetApiUrlWithSearchEngineBot() throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException, NoSuchAlgorithmException {
+    public void testGetApiUrlWithSearchEngineBot__cachedForTwentyMinutes() throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException, NoSuchAlgorithmException {
       Instant fixedInstant = Instant.parse("2020-01-01T10:10:10.00Z");
       Clock clock = Clock.fixed(fixedInstant, ZoneId.systemDefault());
       Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
