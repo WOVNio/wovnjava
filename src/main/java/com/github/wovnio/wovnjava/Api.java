@@ -33,7 +33,7 @@ class Api {
     private final RequestOptions requestOptions;
     private final ResponseHeaders responseHeaders;
     private final String responseEncoding = "UTF-8"; // always response is UTF8
-    private final int DYNAMIC_LOADED_PAGE_TTL_MILI = 20 * 60 * 1000;
+    private final long DYNAMIC_LOADED_PAGE_TTL_MILI = 20 * 60 * 1000;
     private final Clock clock;
 
     Api(Settings settings, Headers headers, RequestOptions requestOptions, ResponseHeaders responseHeaders, Clock clock) {
@@ -222,8 +222,8 @@ class Api {
     }
 
     private String getDynamicLoadingTimeStamp() {
-      long secondsSinceEpoch = this.clock.millis() / DYNAMIC_LOADED_PAGE_TTL_MILI * DYNAMIC_LOADED_PAGE_TTL_MILI;
-      Date date = new Date(secondsSinceEpoch);
+      long roundedSecondsSinceEpoch = TimeUtils.roundDownTime(this.clock.millis(), DYNAMIC_LOADED_PAGE_TTL_MILI);
+      Date date = new Date(roundedSecondsSinceEpoch);
       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
       format.setTimeZone(TimeZone.getTimeZone("JST"));
       return format.format(date);
