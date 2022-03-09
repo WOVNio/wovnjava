@@ -60,7 +60,7 @@ public class ApiTest extends TestCase {
         Headers headers = new Headers(request, settings, urlLanguagePatternHandler);
         RequestOptions requestOptions = new RequestOptions(settings, request);
 
-        Api api = new Api(settings, headers, requestOptions, responseHeaders);
+        Api api = new Api(settings, headers, requestOptions, responseHeaders, Clock.systemDefaultZone());
 
         ByteArrayOutputStream requestStream = new ByteArrayOutputStream();
         ByteArrayInputStream responseStream = new ByteArrayInputStream(apiServerResponse);
@@ -106,7 +106,7 @@ public class ApiTest extends TestCase {
       Headers headers = new Headers(request, settings, urlLanguagePatternHandler);
       RequestOptions requestOptions = new RequestOptions(settings, request);
 
-      Api api = new Api(settings, headers, requestOptions, responseHeaders);
+      Api api = new Api(settings, headers, requestOptions, responseHeaders, Clock.systemDefaultZone());
       String expected_url = "https://wovn.global.ssl.fastly.net/v0/translation?cache_key=%28token%3Dtoken0%26settings_hash%3D5C76D283B72EEA106B91CE18830A2EE4%26body_hash%3DD41D8CD98F00B204E9800998ECF8427E%26path%3D%2Fsomepage%2F%26lang%3Den%26version%3Dwovnjava_" + Settings.VERSION + "%29";
       assertEquals(expected_url, api.getApiUrl("en", "").toString());
     }

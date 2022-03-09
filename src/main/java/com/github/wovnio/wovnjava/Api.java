@@ -36,14 +36,6 @@ class Api {
     private final int DYNAMIC_LOADED_PAGE_TTL_MILI = 20 * 60 * 1000;
     private final Clock clock;
 
-    Api(Settings settings, Headers headers, RequestOptions requestOptions, ResponseHeaders responseHeaders) {
-        this.settings = settings;
-        this.headers = headers;
-        this.requestOptions = requestOptions;
-        this.responseHeaders = responseHeaders;
-        this.clock = Clock.systemDefaultZone();
-    }
-
     Api(Settings settings, Headers headers, RequestOptions requestOptions, ResponseHeaders responseHeaders, Clock clock) {
         this.settings = settings;
         this.headers = headers;
