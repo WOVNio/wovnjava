@@ -102,7 +102,6 @@ public class WovnServletFilter implements Filter {
                 // css, javascript or others
                 body = originalBody;
             }
-            wovnResponse.setContentLength(body.getBytes().length);
             wovnResponse.setCharacterEncoding("utf-8");
             PrintWriter out = response.getWriter();
             out.write(body);
