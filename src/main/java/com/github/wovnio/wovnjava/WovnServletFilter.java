@@ -104,7 +104,7 @@ public class WovnServletFilter implements Filter {
             }
             // wovnResponse.setContentLength(body.getBytes().length);
             WovnLogger.log("Response content-length:" + String.valueOf(body.getBytes().length));
-            if (body.length >= 50) {
+            if (body.length() >= 50) {
                 WovnLogger.log("Last 50 characters of response:" + body.substring(body.length() - 50));
             }
             wovnResponse.setCharacterEncoding("utf-8");
