@@ -18,11 +18,11 @@
     </repository>
   </repositories>
   <dependencies>
-      <dependency>
-          <groupId>com.github.wovnio</groupId>
-          <artifactId>wovnjava</artifactId>
-          <version>JAVA_VERSION</version>
-      </dependency>
+	<dependency>
+	    <groupId>com.github.wovnio</groupId>
+	    <artifactId>wovnjava</artifactId>
+	    <version>hotfix~remove-content-length-SNAPSHOT</version>
+	</dependency>
       <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
