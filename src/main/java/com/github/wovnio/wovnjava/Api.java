@@ -102,7 +102,7 @@ class Api {
                 compressedBody.writeTo(out);
             } else {
                 con.setRequestProperty("Content-Type", "application/json");
-                WovnLogger.log("api request content-length: " + String.valueOf(compressedBody.size()));
+                WovnLogger.log("api request content-length: " + String.valueOf(apiBodyBytes.length));
                 // con.setRequestProperty("Content-Length", String.valueOf(apiBodyBytes.length));
                 out = con.getOutputStream();
                 out.write(apiBodyBytes);
