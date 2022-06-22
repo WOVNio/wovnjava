@@ -67,7 +67,9 @@ public class WovnServletFilter implements Filter {
             if (headers.getIsPathInDefaultLanguage()) {
                 chain.doFilter(wovnRequest, response);
             } else {
-                wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, response);
+                String newPath = headers.getCurrentContextUrlInDefaultLanguage().getPath();
+                WovnLogger.log("Forwarding to " + newPath);
+                wovnRequest.getRequestDispatcher(newPath).forward(wovnRequest, response);
             }
         }
     }
@@ -90,8 +92,20 @@ public class WovnServletFilter implements Filter {
         }
 
         if (htmlChecker.isTextFileContentType(response.getContentType())) {
+            WovnLogger.log("Original response content type:" + response.getContentType());
+            WovnLogger.log("Original response character encoding:" + response.getCharacterEncoding());
+
+            if (requestOptions.getSetContentEncoding()) {
+                WovnLogger.log("Set initial response encoding: UTF-8");
+                wovnResponse.setCharacterEncoding("UTF-8");
+            }
+
             // text
             String originalBody = wovnResponse.toString();
+            if (originalBody.length() >= 50) {
+                WovnLogger.log("Last 50 characters of original response:" + originalBody.substring(originalBody.length() - 50));
+            }
+
             String body = null;
             if (htmlChecker.canTranslate(response, originalBody)) {
                 // html
@@ -107,7 +121,7 @@ public class WovnServletFilter implements Filter {
             if (body.length() >= 50) {
                 WovnLogger.log("Last 50 characters of response:" + body.substring(body.length() - 50));
             }
-            wovnResponse.setCharacterEncoding("utf-8");
+            wovnResponse.setCharacterEncoding("UTF-8");
             PrintWriter out = response.getWriter();
             out.write(body);
             out.close();

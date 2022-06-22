@@ -24,10 +24,13 @@ class RequestOptions {
      */
     private boolean debugMode;
 
+    private boolean setContentEncoding;
+
     RequestOptions(Settings settings, ServletRequest request) {
         this.disableMode = false;
         this.cacheDisableMode = false;
         this.debugMode = false;
+        this.setContentEncoding = false;
 
         String query = ((HttpServletRequest)request).getQueryString();
         if (query != null) {
@@ -36,6 +39,8 @@ class RequestOptions {
                 this.cacheDisableMode = query.matches("(.*)wovnCacheDisable(.*)");
                 this.debugMode = query.matches("(.*)wovnDebugMode(.*)");
             }
+
+            this.setContentEncoding = query.matches("(.*)wovnSetContentEncoding(.*)");
         }
     }
 
@@ -49,5 +54,9 @@ class RequestOptions {
 
     public boolean getDebugMode() {
         return this.debugMode;
+    }
+
+    public boolean getSetContentEncoding() {
+        return this.setContentEncoding;
     }
 }
