@@ -4,10 +4,6 @@ workflows:
   version: 2
   test:
     jobs:
-      - oraclejdk8
-      - oraclejdk7
-      - openjdk8
-      - openjdk7
       - openjdk6
 
 jobs:
@@ -26,9 +22,8 @@ jobs:
            sudo apt-get update
            sudo apt install -y maven
            cd ~/
-           sudo apt install python3-pip
            curl -O https://bootstrap.pypa.io/get-pip.py
-           python3.7 get-pip.py --user
+           python get-pip.py --user
            export PATH=~/.local/bin/:$PATH
            pip install awscli --upgrade --user
            aws s3 cp s3://$JDK7_FILE_PATH ./jdk7-oracle.tar.gz > /dev/null 2>&1
@@ -84,9 +79,8 @@ jobs:
            sudo apt-get update
            sudo apt install -y maven
            cd ~/
-           sudo apt install python3-pip
            curl -O https://bootstrap.pypa.io/get-pip.py
-           python3.7 get-pip.py --user
+           python get-pip.py --user
            export PATH=~/.local/bin/:$PATH
            pip install awscli --upgrade --user
            aws s3 cp s3://$JDK8_FILE_PATH ./jdk8-oracle.tar.gz > /dev/null 2>&1
