@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URLDecoder;
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,7 +64,7 @@ public class ApiTest extends TestCase {
         ByteArrayOutputStream requestStream = new ByteArrayOutputStream();
         ByteArrayInputStream responseStream = new ByteArrayInputStream(apiServerResponse);
         int returnCode = 200;
-        HttpURLConnection con = mockHttpURLConnection(requestStream, responseStream, returnCode, encoding);
+        HttpsURLConnection con = mockHttpsURLConnection(requestStream, responseStream, returnCode, encoding);
 
         String result = api.translate("ja", html, con);
 
@@ -96,8 +96,8 @@ public class ApiTest extends TestCase {
         return buffer.toByteArray();
     }
 
-    private HttpURLConnection mockHttpURLConnection(ByteArrayOutputStream requestStream, ByteArrayInputStream responseStream, int code, String encoding) throws IOException, ProtocolException {
-        HttpURLConnection mock = EasyMock.createMock(HttpURLConnection.class);
+    private HttpsURLConnection mockHttpsURLConnection(ByteArrayOutputStream requestStream, ByteArrayInputStream responseStream, int code, String encoding) throws IOException, ProtocolException {
+        HttpsURLConnection mock = EasyMock.createMock(HttpsURLConnection.class);
         mock.setDoOutput(true);
         mock.setRequestProperty(EasyMock.anyString(), EasyMock.anyString());
         EasyMock.expectLastCall().atLeastOnce();
@@ -133,7 +133,7 @@ public class ApiTest extends TestCase {
 
     private ResponseHeaders mockResponseHeaders() {
         ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
-        mock.forwardFastlyHeaders(EasyMock.anyObject(HttpURLConnection.class));
+        mock.forwardFastlyHeaders(EasyMock.anyObject(HttpsURLConnection.class));
         EasyMock.expectLastCall().times(1);
         mock.setApiStatusCode("200");
         EasyMock.expectLastCall().times(1);
