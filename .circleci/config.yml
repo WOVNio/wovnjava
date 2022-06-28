@@ -26,8 +26,8 @@ jobs:
            sudo apt-get update
            sudo apt install -y maven
            cd ~/
-           curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
-           python get-pip.py --user
+           curl -O https://bootstrap.pypa.io/get-pip.py
+           python3.7 get-pip.py --user
            export PATH=~/.local/bin/:$PATH
            pip install awscli --upgrade --user
            aws s3 cp s3://$JDK7_FILE_PATH ./jdk7-oracle.tar.gz > /dev/null 2>&1
@@ -84,7 +84,7 @@ jobs:
            sudo apt install -y maven
            cd ~/
            curl -O https://bootstrap.pypa.io/get-pip.py
-           python get-pip.py --user
+           python3.7 get-pip.py --user
            export PATH=~/.local/bin/:$PATH
            pip install awscli --upgrade --user
            aws s3 cp s3://$JDK8_FILE_PATH ./jdk8-oracle.tar.gz > /dev/null 2>&1
