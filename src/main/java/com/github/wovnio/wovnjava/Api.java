@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.MalformedURLException;
@@ -16,9 +15,11 @@ import java.util.LinkedHashMap;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.DatatypeConverter;
 
 import net.arnx.jsonic.JSON;
+import com.github.wovnio.wovnjava.tls.TLSSocketFactory;
 
 class Api {
     private final int READ_BUFFER_SIZE = 8196;
@@ -37,10 +38,11 @@ class Api {
 
     String translate(String lang, String html) throws ApiException {
         this.responseHeaders.setApiStatus("Requested");
-        HttpURLConnection con = null;
+        HttpsURLConnection con = null;
         try {
+            HttpsURLConnection.setDefaultSSLSocketFactory(new TLSSocketFactory());
             URL url = getApiUrl(lang, html);
-            con = (HttpURLConnection) url.openConnection();
+            con = (HttpsURLConnection) url.openConnection();
             con.setConnectTimeout(settings.connectTimeout);
             con.setReadTimeout(settings.readTimeout);
             return translate(lang, html, con);
@@ -61,7 +63,7 @@ class Api {
         }
     }
 
-    String translate(String lang, String html, HttpURLConnection con) throws ApiException {
+    String translate(String lang, String html, HttpsURLConnection con) throws ApiException {
         OutputStream out = null;
         try {
             ByteArrayOutputStream body = gzipStream(getApiBody(lang, html).getBytes());
@@ -77,7 +79,7 @@ class Api {
             this.responseHeaders.forwardFastlyHeaders(con);
             int status = con.getResponseCode();
             this.responseHeaders.setApiStatusCode(String.valueOf(status));
-            if (status == HttpURLConnection.HTTP_OK) {
+            if (status == HttpsURLConnection.HTTP_OK) {
                 InputStream input = con.getInputStream();
                 if ("gzip".equals(con.getContentEncoding())) {
                     input = new GZIPInputStream(input);
