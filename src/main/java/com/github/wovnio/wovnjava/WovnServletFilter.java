@@ -41,9 +41,9 @@ public class WovnServletFilter implements Filter {
             isRequestAlreadyProcessed = true;
             WovnLogger.log("Request is already processed by WOVN.");
         } else {
+            WovnLogger.clear();
             ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
         }
-
         RequestOptions requestOptions = new RequestOptions(this.settings, request);
         Headers headers = new Headers((HttpServletRequest)request, this.settings, this.urlLanguagePatternHandler);
 
@@ -67,7 +67,9 @@ public class WovnServletFilter implements Filter {
             if (headers.getIsPathInDefaultLanguage()) {
                 chain.doFilter(wovnRequest, response);
             } else {
-                wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, response);
+                String newPath = headers.getCurrentContextUrlInDefaultLanguage().getPath();
+                WovnLogger.log("Forwarding to " + newPath);
+                wovnRequest.getRequestDispatcher(newPath).forward(wovnRequest, response);
             }
         }
     }
@@ -78,7 +80,10 @@ public class WovnServletFilter implements Filter {
 
     private void tryTranslate(Headers headers, RequestOptions requestOptions, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(request, headers);
-        WovnHttpServletResponse wovnResponse = new WovnHttpServletResponse(response, headers, new Utf8(this.settings.encoding));
+
+        String overrideEncoding = requestOptions.getOverrideEncoding();
+        String responseEncoding = overrideEncoding != null ? overrideEncoding : this.settings.encoding;
+        WovnHttpServletResponse wovnResponse = new WovnHttpServletResponse(response, headers, new Utf8(responseEncoding));
 
         ResponseHeaders responseHeaders = new ResponseHeaders(response);
         responseHeaders.setApiStatus("Unused");
@@ -86,7 +91,9 @@ public class WovnServletFilter implements Filter {
         if (headers.getIsPathInDefaultLanguage()) {
             chain.doFilter(wovnRequest, wovnResponse);
         } else {
-            wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, wovnResponse);
+            String newPath = headers.getCurrentContextUrlInDefaultLanguage().getPath();
+            WovnLogger.log("Forwarding to" + newPath);
+            wovnRequest.getRequestDispatcher(newPath).forward(wovnRequest, wovnResponse);
         }
 
         if (htmlChecker.isTextFileContentType(response.getContentType())) {
@@ -98,12 +105,17 @@ public class WovnServletFilter implements Filter {
                 Api api = new Api(settings, headers, requestOptions, responseHeaders);
                 Interceptor interceptor = new Interceptor(headers, settings, api, responseHeaders);
                 body = interceptor.translate(originalBody);
+
+
+                if (requestOptions.getDebugMode()) {
+                    body += WovnLogger.getRequestLogsHtmlComment();
+                }
             } else {
                 // css, javascript or others
                 body = originalBody;
             }
-            wovnResponse.setContentLength(body.getBytes().length);
-            wovnResponse.setCharacterEncoding("utf-8");
+
+            wovnResponse.setCharacterEncoding("UTF-8");
             PrintWriter out = response.getWriter();
             out.write(body);
             out.close();
