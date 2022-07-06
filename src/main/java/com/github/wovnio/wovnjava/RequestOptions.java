@@ -27,13 +27,13 @@ class RequestOptions {
      */
     private boolean debugMode;
 
-    private String overrideEncoding;
+    private String encodingOverride;
 
     RequestOptions(Settings settings, ServletRequest request) {
         this.disableMode = false;
         this.cacheDisableMode = false;
         this.debugMode = false;
-        this.overrideEncoding = null;
+        this.encodingOverride = null;
 
         String query = ((HttpServletRequest)request).getQueryString();
         if (query != null) {
@@ -46,7 +46,7 @@ class RequestOptions {
                 Matcher m = pattern.matcher(query);
                 if (m.matches()) {
                     String encoding = m.group(2);
-                    this.overrideEncoding = encoding;
+                    this.encodingOverride = encoding;
                 }
             }
         }
@@ -64,7 +64,7 @@ class RequestOptions {
         return this.debugMode;
     }
 
-    public String getOverrideEncoding() {
-        return this.overrideEncoding;
+    public String getEncodingOverride() {
+        return this.encodingOverride;
     }
 }

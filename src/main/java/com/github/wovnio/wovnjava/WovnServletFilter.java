@@ -81,7 +81,7 @@ public class WovnServletFilter implements Filter {
     private void tryTranslate(Headers headers, RequestOptions requestOptions, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest(request, headers);
 
-        String overrideEncoding = requestOptions.getOverrideEncoding();
+        String overrideEncoding = requestOptions.getEncodingOverride();
         String responseEncoding = overrideEncoding != null ? overrideEncoding : this.settings.encoding;
         WovnHttpServletResponse wovnResponse = new WovnHttpServletResponse(response, headers, new Utf8(responseEncoding));
 
