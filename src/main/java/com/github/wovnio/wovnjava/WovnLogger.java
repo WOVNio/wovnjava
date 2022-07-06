@@ -29,7 +29,7 @@ class WovnLogger {
     public static void setUUID(String uuid) {
         WovnLogger.uuid = uuid;
     }
-    public static void resetLogs() {
+    public static void clear() {
         WovnLogger.requestLogs = new ArrayList<>();
     }
     
