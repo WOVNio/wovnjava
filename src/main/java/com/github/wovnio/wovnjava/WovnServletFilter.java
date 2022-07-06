@@ -37,14 +37,18 @@ public class WovnServletFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         WovnLogger.setUUID(UUID.randomUUID().toString());
         boolean isRequestAlreadyProcessed = false;
+        RequestOptions requestOptions = new RequestOptions(this.settings, request);
+
         if (((HttpServletResponse)response).containsHeader("X-Wovn-Handler")) {
             isRequestAlreadyProcessed = true;
             WovnLogger.log("Request is already processed by WOVN.");
         } else {
             WovnLogger.clear();
+            if (requestOptions.getDebugMode()) {
+                WovnLogger.log(Diagnostics.getDiagnosticInfo());
+            }
             ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
         }
-        RequestOptions requestOptions = new RequestOptions(this.settings, request);
         Headers headers = new Headers((HttpServletRequest)request, this.settings, this.urlLanguagePatternHandler);
 
         boolean canTranslateRequest = !requestOptions.getDisableMode() &&
