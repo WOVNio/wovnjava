@@ -42,7 +42,7 @@ class RequestOptions {
                 this.cacheDisableMode = query.matches("(.*)wovnCacheDisable(.*)");
                 this.debugMode = query.matches("(.*)wovnDebugMode(.*)");
 
-                Pattern pattern = Pattern.compile("(.*)wovnOverrideEncoding=([^&]*)");
+                Pattern pattern = Pattern.compile("(.*)wovnEncodingOverride=([^&]*)");
                 Matcher m = pattern.matcher(query);
                 if (m.matches()) {
                     String encoding = m.group(2);
