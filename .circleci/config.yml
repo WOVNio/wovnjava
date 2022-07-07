@@ -4,7 +4,7 @@ workflows:
   version: 2
   test:
     jobs:
-      - oraclejdk8
+      # - oraclejdk8 TODO: Repos have been deprecated, commands no longer work
       - openjdk8
 
 jobs:
