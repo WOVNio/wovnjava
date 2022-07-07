@@ -81,6 +81,7 @@ class Settings {
 
         if (this.enableLogging) {
             WovnLogger.enable();
+            WovnLogger.setDebugMode(this.debugMode);
         }
 
         this.widgetUrl = this.devMode ? stringOrDefault(reader.getStringParameter("widgetUrl"), DefaultWidgetUrlDevelopment) : stringOrDefault(reader.getStringParameter("widgetUrl"), DefaultWidgetUrlProduction);
