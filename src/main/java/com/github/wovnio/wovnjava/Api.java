@@ -70,6 +70,7 @@ class Api {
             String apiBody = getApiBody(lang, html);
             ByteArrayOutputStream body = gzipStream(apiBody.getBytes());
             con.setDoOutput(true);
+            con.setRequestProperty("X-Request-Id", WovnLogger.getUUID());
             con.setRequestProperty("Accept-Encoding", "gzip");
             con.setRequestProperty("Content-Type", "application/octet-stream");
             con.setRequestProperty("Content-Length", String.valueOf(body.size()));
