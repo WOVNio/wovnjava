@@ -37,6 +37,8 @@ public class WovnServletFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+        WovnLogger.log("__WOVNJAVA START");
+
         boolean isRequestAlreadyProcessed = false;
         if (((HttpServletResponse)response).containsHeader("X-Wovn-Handler")) {
             isRequestAlreadyProcessed = true;
