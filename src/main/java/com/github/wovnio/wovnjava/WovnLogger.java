@@ -30,7 +30,7 @@ class WovnLogger {
         WovnLogger.uuid = uuid;
     }
     public static void clear() {
-        WovnLogger.requestLogs = new ArrayList<>();
+        WovnLogger.requestLogs = new ArrayList<String>();
     }
     
     public static String getRequestLogsHtmlComment() {
