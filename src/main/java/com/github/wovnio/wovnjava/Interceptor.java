@@ -1,6 +1,5 @@
 package com.github.wovnio.wovnjava;
 
-import javax.servlet.http.HttpServletResponse;
 
 class Interceptor {
     private final Settings settings;
@@ -33,7 +32,7 @@ class Interceptor {
             return converter.restore(translatedBody);
         } catch (ApiException e) {
             responseHeaders.setApiStatus(e.getType());
-            Logger.log.error("ApiException", e);
+            WovnLogger.log("ApiException", e);
             return apiTranslateFail(body, lang);
         }
     }

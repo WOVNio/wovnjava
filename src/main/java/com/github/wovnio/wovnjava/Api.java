@@ -66,7 +66,8 @@ class Api {
     String translate(String lang, String html, HttpsURLConnection con) throws ApiException {
         OutputStream out = null;
         try {
-            ByteArrayOutputStream body = gzipStream(getApiBody(lang, html).getBytes());
+            String apiBody = getApiBody(lang, html);
+            ByteArrayOutputStream body = gzipStream(apiBody.getBytes());
             con.setDoOutput(true);
             con.setRequestProperty("Accept-Encoding", "gzip");
             con.setRequestProperty("Content-Type", "application/octet-stream");
@@ -86,6 +87,8 @@ class Api {
                 }
                 return extractHtml(input);
             } else {
+                WovnLogger.log(String.format("Translation API failed: status=%d url=%s body=%s", status, con.getURL().toString(), apiBody));
+
                 throw new ApiException("Failure", "Status code " + String.valueOf(status));
             }
         } catch (UnsupportedEncodingException e) {
@@ -99,7 +102,7 @@ class Api {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    Logger.log.error("Api close buffer error", e);
+                    WovnLogger.log("Api close buffer error", e);
                 }
             }
         }
