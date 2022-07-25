@@ -41,7 +41,7 @@
     <dependency>
       <groupId>com.github.wovnio</groupId>
       <artifactId>wovnjava</artifactId>
-      <version>1.0.6-jdk6</version>
+      <version>1.0.7-jdk6-logging</version>
     </dependency>
 
   </dependencies>
