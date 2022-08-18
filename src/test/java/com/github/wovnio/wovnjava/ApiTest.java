@@ -1,24 +1,18 @@
 package com.github.wovnio.wovnjava;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLDecoder;
 import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
 
