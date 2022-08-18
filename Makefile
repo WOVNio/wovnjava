@@ -12,4 +12,4 @@ build:
 
 .PHONY: start_local
 start_local:
-	cd docker/java6; make USE_LOCAL_BUILD=yes WOVN_VERSION=1.0.7-jdk6_logging && docker-compose up; cd -;
+	cd docker/java6; make USE_LOCAL_BUILD=yes WOVN_VERSION=1.0.7-jdk6 && docker-compose up; cd -;
