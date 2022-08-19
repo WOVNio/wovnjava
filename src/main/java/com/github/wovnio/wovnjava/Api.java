@@ -42,6 +42,7 @@ class Api {
         try {
             HttpsURLConnection.setDefaultSSLSocketFactory(new TLSSocketFactory());
             URL url = getApiUrl(lang, html);
+            WovnLogger.log(String.format("API url: %s", url.toString()));
             con = (HttpsURLConnection) url.openConnection();
             con.setConnectTimeout(settings.connectTimeout);
             con.setReadTimeout(settings.readTimeout);
@@ -66,8 +67,10 @@ class Api {
     String translate(String lang, String html, HttpsURLConnection con) throws ApiException {
         OutputStream out = null;
         try {
-            ByteArrayOutputStream body = gzipStream(getApiBody(lang, html).getBytes());
+            String apiBody = getApiBody(lang, html);
+            ByteArrayOutputStream body = gzipStream(apiBody.getBytes());
             con.setDoOutput(true);
+            con.setRequestProperty("X-Request-Id", WovnLogger.getUUID());
             con.setRequestProperty("Accept-Encoding", "gzip");
             con.setRequestProperty("Content-Type", "application/octet-stream");
             con.setRequestProperty("Content-Length", String.valueOf(body.size()));
@@ -80,15 +83,19 @@ class Api {
             int status = con.getResponseCode();
             this.responseHeaders.setApiStatusCode(String.valueOf(status));
             if (status == HttpsURLConnection.HTTP_OK) {
+                WovnLogger.log(String.format("Translation API success: status=[%d] url=[%s] body=[%s]", status, con.getURL().toString(), apiBody));
                 InputStream input = con.getInputStream();
                 if ("gzip".equals(con.getContentEncoding())) {
                     input = new GZIPInputStream(input);
                 }
                 return extractHtml(input);
             } else {
+                WovnLogger.log(String.format("Translation API failed: status=[%d] url=[%s] body=[%s]", status, con.getURL().toString(), apiBody));
+
                 throw new ApiException("Failure", "Status code " + String.valueOf(status));
             }
         } catch (UnsupportedEncodingException e) {
+            WovnLogger.log("API error: unsupported encoding.");
             throw new ApiException("UnsupportedEncodingException", e.getMessage());
         } catch (SocketTimeoutException e) {
             throw new ApiException("SocketTimeoutException", e.getMessage());
@@ -99,7 +106,7 @@ class Api {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    Logger.log.error("Api close buffer error", e);
+                    WovnLogger.log("Api close buffer error", e);
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.github.wovnio.wovnjava;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.UUID;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -37,14 +38,19 @@ public class WovnServletFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+        WovnLogger.setUUID(UUID.randomUUID().toString());
+
         boolean isRequestAlreadyProcessed = false;
+        RequestOptions requestOptions = new RequestOptions(this.settings, request);
+
         if (((HttpServletResponse)response).containsHeader("X-Wovn-Handler")) {
             isRequestAlreadyProcessed = true;
+            WovnLogger.log("Request is already processed by WOVN.");
         } else {
+            WovnLogger.clear();
             ((HttpServletResponse)response).setHeader("X-Wovn-Handler", "wovnjava_" + Settings.VERSION);
         }
 
-        RequestOptions requestOptions = new RequestOptions(this.settings, request);
         Headers headers = new Headers((HttpServletRequest)request, this.settings, this.urlLanguagePatternHandler);
 
         boolean canTranslateRequest = !requestOptions.getDisableMode() &&
@@ -58,14 +64,18 @@ public class WovnServletFilter implements Filter {
             ((HttpServletResponse) response).sendRedirect(headers.getClientRequestUrlInDefaultLanguage());
         } else if (canTranslateRequest) {
             /* Strip language code, pass on request, and attempt to translate the resulting response */
+            WovnLogger.log("Content can be translated.");
             tryTranslate(headers, requestOptions, (HttpServletRequest)request, (HttpServletResponse)response, chain);
         } else {
             /* Strip language code and pass through the request and response untouched */
+            WovnLogger.log("Content cannot be translated.");
             WovnHttpServletRequest wovnRequest = new WovnHttpServletRequest((HttpServletRequest)request, headers);
             if (headers.getIsPathInDefaultLanguage()) {
                 chain.doFilter(wovnRequest, response);
             } else {
-                wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, response);
+                String newPath = headers.getCurrentContextUrlInDefaultLanguage().getPath();
+                WovnLogger.log("Forwarding to " + newPath);
+                wovnRequest.getRequestDispatcher(newPath).forward(wovnRequest, response);
             }
         }
     }
@@ -84,7 +94,9 @@ public class WovnServletFilter implements Filter {
         if (headers.getIsPathInDefaultLanguage()) {
             chain.doFilter(wovnRequest, wovnResponse);
         } else {
-            wovnRequest.getRequestDispatcher(headers.getCurrentContextUrlInDefaultLanguage().getPath()).forward(wovnRequest, wovnResponse);
+            String newPath = headers.getCurrentContextUrlInDefaultLanguage().getPath();
+            WovnLogger.log("Forwarding to " + newPath);
+            wovnRequest.getRequestDispatcher(newPath).forward(wovnRequest, wovnResponse);
         }
 
         String originalBody = wovnResponse.toString();
@@ -96,6 +108,10 @@ public class WovnServletFilter implements Filter {
                 Api api = new Api(settings, headers, requestOptions, responseHeaders);
                 Interceptor interceptor = new Interceptor(headers, settings, api, responseHeaders);
                 body = interceptor.translate(originalBody);
+
+                if (requestOptions.getDebugMode()) {
+                    body += WovnLogger.getRequestLogsHtmlComment();
+                }
             } else {
                 // css, javascript or others
                 body = originalBody;

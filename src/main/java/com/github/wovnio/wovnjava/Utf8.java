@@ -21,7 +21,7 @@ public class Utf8 {
             try {
                 converted = (new String(data, encoding)).getBytes(encoding);
             } catch (UnsupportedEncodingException e) {
-                Logger.log.error("UnsupportedEncodingException while detecting encoding: ", e);
+                WovnLogger.log("UnsupportedEncodingException while detecting encoding: ", e);
                 continue;
             }
             if (Arrays.equals(converted, data)) {
@@ -34,9 +34,7 @@ public class Utf8 {
     static String toStringUtf8(byte[] data) {
         String encoding = detectEncoding(data);
 
-        if (Logger.isDebug()) {
-            Logger.log.info("encoding: " + encoding);
-        }
+        WovnLogger.log("encoding: " + encoding);
 
         if (encoding.equals("UTF-8")) {
             return new String(data);
@@ -44,7 +42,7 @@ public class Utf8 {
         try {
             return new String(data, encoding);
         } catch (UnsupportedEncodingException e) {
-            Logger.log.error("UnsupportedEncodingException while encoding to UTF-8: ", e);
+            WovnLogger.log("UnsupportedEncodingException while encoding to UTF-8: ", e);
             return new String(data);
         }
     }

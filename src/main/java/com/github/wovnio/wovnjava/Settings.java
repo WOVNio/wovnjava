@@ -28,6 +28,7 @@ class Settings {
     public final boolean debugMode;
     public final boolean useProxy;
     public final boolean enableFlushBuffer;
+    public final boolean enableLogging;
 
     public final String sitePrefixPath;
     public final CustomDomainLanguages customDomainLanguages;
@@ -56,6 +57,12 @@ class Settings {
         this.debugMode = reader.getBoolParameterDefaultFalse("debugMode");
         this.useProxy = reader.getBoolParameterDefaultFalse("useProxy");
         this.enableFlushBuffer = reader.getBoolParameterDefaultFalse("enableFlushBuffer");
+        this.enableLogging = reader.getBoolParameterDefaultFalse("enableLogging");
+
+        if (this.enableLogging) {
+            WovnLogger.enable();
+            WovnLogger.setDebugMode(this.debugMode);
+        }
 
         this.sitePrefixPath = normalizeSitePrefixPath(reader.getStringParameter("sitePrefixPath"));
         this.customDomainLanguages = parseCustomDomainLangs(reader.getStringParameter("customDomainLangs"), this.supportedLangs);
