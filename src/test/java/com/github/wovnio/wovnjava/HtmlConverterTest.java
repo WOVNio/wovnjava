@@ -98,8 +98,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveForm__Sanitize() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"contract=r&amp;pref=01&amp;line=95&amp;pref=01&amp;line=95&amp;station=1051005&amp;_adp_p_cp=66864&amp;wovn=ja&amp;_adp_e=&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;&amp;_adp_p_md=6785&amp;_adp_u=p&amp;_adp_p_ad=8130783&amp;_adp_c=wa&amp;_adp_p_agr=8370563\"></form></body></html>";
-        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"contract=r&amp;pref=01&amp;line=95&amp;pref=01&amp;line=95&amp;station=1051005&amp;_adp_p_cp=66864&amp;wovn=ja&amp;_adp_e=\"&gt;&amp;_adp_p_md=6785&amp;_adp_u=p&amp;_adp_p_ad=8130783&amp;_adp_c=wa&amp;_adp_p_agr=8370563\"></form></body></html>";
+        String original = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
+        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"\"&gt;\"></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
