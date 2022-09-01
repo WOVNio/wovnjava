@@ -97,6 +97,16 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(original.replace("INPUT", "input").replace("VALUE", "value"), stripExtraSpaces(converter.restore(html)));
     }
 
+    public void testRemoveForm__Sanitize() throws ConfigurationError {
+        String original = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
+        String sanitized = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"\"&gt;\"></form></body></html>";
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
+        String html = converter.strip();
+
+        assertEquals(sanitized, stripExtraSpaces(converter.restore(html)));
+    }
+
     public void testNested() throws ConfigurationError {
         String original = "<html><head></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT TYPE=\"HIDDEN\" NAME=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
         String removedHtml = "<html><head></head><body><form wovn-ignore><!--wovn-marker-1--></form></body></html>";
