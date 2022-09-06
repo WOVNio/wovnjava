@@ -99,7 +99,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testRemoveForm__Sanitize__DoubleQuotes() throws ConfigurationError {
         String original = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
-        String sanitized = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&quot;><script >alert(String.fromCharCode(88,83,83))</script>\"></form></body></html>";
+        String sanitized = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -109,7 +109,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testRemoveForm__Sanitize__SingleQuotes() throws ConfigurationError {
         String original = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\'&#39;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\'></form></body></html>";
-        String sanitized = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&#39;><script >alert(String.fromCharCode(88,83,83))</script>\"></form></body></html>";
+        String sanitized = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&#39;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();

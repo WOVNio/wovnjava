@@ -108,7 +108,9 @@ class HtmlConverter {
                 if (element.hasAttr("value")) {
                     String original = element.attr("value")
                     .replaceAll("\"", "&quot;")
-                    .replaceAll("'", "&#39;");
+                    .replaceAll("'", "&#39;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll("<", "&lt;");
                     String key = htmlReplaceMarker.generateKey();
                     element.removeAttr("value").removeAttr("VALUE");
                     element.attr("value", key);
