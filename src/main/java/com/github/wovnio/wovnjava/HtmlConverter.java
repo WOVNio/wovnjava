@@ -10,7 +10,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.parser.Tag;
-import org.jsoup.safety.Safelist;
 
 class HtmlConverter {
     private final Document doc;
