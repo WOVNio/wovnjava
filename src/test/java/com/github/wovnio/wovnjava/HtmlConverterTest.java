@@ -1,6 +1,5 @@
 package com.github.wovnio.wovnjava;
 
-import org.jsoup.Jsoup;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 
