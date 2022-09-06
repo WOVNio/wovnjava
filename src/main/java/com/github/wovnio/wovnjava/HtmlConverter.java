@@ -9,7 +9,6 @@ import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
-import org.jsoup.safety.Whitelist;
 
 class HtmlConverter {
     private final Document doc;
@@ -105,7 +104,11 @@ class HtmlConverter {
             String type = element.attr("type");
             if (type != null && type.toLowerCase().equals("hidden")) {
                 if (element.hasAttr("value")) {
-                    String original = Jsoup.clean(element.attr("value"), Whitelist.none());
+                    String original = element.attr("value")
+                    .replaceAll("\"", "&quot;")
+                    .replaceAll("'", "&#39;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll("<", "&lt;");
                     String key = htmlReplaceMarker.generateKey();
                     element.attr("value", key);
                     htmlReplaceMarker.addValue(key, original);
