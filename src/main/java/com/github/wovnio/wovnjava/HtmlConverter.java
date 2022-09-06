@@ -10,7 +10,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.parser.Tag;
-import org.jsoup.safety.Safelist;
 
 class HtmlConverter {
     private final Document doc;
@@ -133,7 +132,11 @@ class HtmlConverter {
             String type = element.attr("type");
             if (type != null && type.toLowerCase().equals("hidden")) {
                 if (element.hasAttr("value")) {
-                    String original = Jsoup.clean(element.attr("value"), Safelist.none());
+                    String original = element.attr("value")
+                        .replaceAll("\"", "&quot;")
+                        .replaceAll("\'", "&#39;")
+                        .replaceAll(">", "&gt;")
+                        .replaceAll("<", "&lt;");
                     String key = htmlReplaceMarker.generateKey();
                     element.attr("value", key);
                     htmlReplaceMarker.addValue(key, original);

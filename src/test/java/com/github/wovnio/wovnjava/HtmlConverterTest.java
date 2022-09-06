@@ -97,9 +97,29 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(original.replace("INPUT", "input").replace("VALUE", "value"), stripExtraSpaces(converter.restore(html)));
     }
 
-    public void testRemoveForm__Sanitize() throws ConfigurationError {
+    public void testRemoveForm__Sanitize__DoubleQuotes() throws ConfigurationError {
         String original = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
-        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"\"&gt;\"></form></body></html>";
+        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
+        String html = converter.strip();
+
+        assertEquals(sanitized, stripExtraSpaces(converter.restore(html)));
+    }
+
+    public void testRemoveForm__Sanitize__SingleQuotes() throws ConfigurationError {
+        String original = "<html lang=\"en\"><head></head><body><form><input type=\"hidden\" name=\"csrf\" value=\'&#39;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\'></form></body></html>";
+        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&#39;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
+        String html = converter.strip();
+
+        assertEquals(sanitized, stripExtraSpaces(converter.restore(html)));
+    }
+
+    public void testStrip__Sanitize() throws ConfigurationError {
+        String original = "<html lang=\"en\"><head></head><body><a title=\"&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></a></body></html>";
+        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><a title=\"&quot;><script >alert(String.fromCharCode(88,83,83))</script>\"></a></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
