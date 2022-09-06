@@ -107,7 +107,9 @@ class HtmlConverter {
             String type = element.attr("type");
             if (type != null && type.toLowerCase().equals("hidden")) {
                 if (element.hasAttr("value")) {
-                    String original = Jsoup.clean(element.attr("value"), Whitelist.none());
+                    String original = element.attr("value")
+                    .replaceAll("\"", "&quot;")
+                    .replaceAll("\'", "&#39;");
                     String key = htmlReplaceMarker.generateKey();
                     element.removeAttr("value").removeAttr("VALUE");
                     element.attr("value", key);
