@@ -105,6 +105,7 @@ class HtmlConverter {
             if (type != null && type.toLowerCase().equals("hidden")) {
                 if (element.hasAttr("value")) {
                     String original = element.attr("value")
+                    .replaceAll("&", "&amp;")
                     .replaceAll("\"", "&quot;")
                     .replaceAll("'", "&#39;")
                     .replaceAll(">", "&gt;")
