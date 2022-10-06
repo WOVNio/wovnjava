@@ -41,7 +41,7 @@
     <dependency>
       <groupId>com.github.wovnio</groupId>
       <artifactId>wovnjava</artifactId>
-      <version>1.0.9-jdk6</version>
+      <version>1.0.10-jdk6</version>
     </dependency>
 
   </dependencies>
