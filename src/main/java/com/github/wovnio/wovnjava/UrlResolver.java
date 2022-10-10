@@ -1,6 +1,6 @@
 package com.github.wovnio.wovnjava;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 final class UrlResolver {
     private UrlResolver() {}
@@ -65,7 +65,7 @@ final class UrlResolver {
         }
         if (path == null) {
             // request.getAttribute returns Object or null
-            Object forwardedPath = request.getAttribute("javax.servlet.forward.request_uri");
+            Object forwardedPath = request.getAttribute("jakarta.servlet.forward.request_uri");
             if (forwardedPath != null) {
                 path = forwardedPath.toString();
             }
@@ -89,7 +89,7 @@ final class UrlResolver {
         }
         if (query == null) {
             // request.getAttribute returns Object or null
-            Object forwardedQuery = request.getAttribute("javax.servlet.forward.query_string");
+            Object forwardedQuery = request.getAttribute("jakarta.servlet.forward.query_string");
             if (forwardedQuery != null) {
                 query = forwardedQuery.toString();
             }

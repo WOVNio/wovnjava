@@ -11,7 +11,7 @@ import java.util.zip.GZIPOutputStream;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URLDecoder;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import junit.framework.TestCase;
 

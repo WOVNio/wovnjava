@@ -5,8 +5,8 @@ import junit.framework.TestCase;
 import java.util.HashMap;
 import java.util.Enumeration;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class WovnHttpServletRequestTest extends TestCase {
 

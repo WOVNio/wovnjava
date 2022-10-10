@@ -2,9 +2,9 @@ package com.github.wovnio.wovnjava;
 
 import java.io.IOException;
 import java.util.HashMap;
-import javax.servlet.ServletException;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
 

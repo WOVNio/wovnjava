@@ -3,7 +3,7 @@ package com.github.wovnio.wovnjava;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
 
 class FilterServletOutputStream extends ServletOutputStream {
     private OutputStream stream;

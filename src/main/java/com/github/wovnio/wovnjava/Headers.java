@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.net.URL;
 import java.net.MalformedURLException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 class Headers {
     Settings settings;

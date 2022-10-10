@@ -9,7 +9,7 @@ import static org.junit.Assert.assertThrows;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.servlet.FilterConfig;
+import jakarta.servlet.FilterConfig;
 
 public class SettingsTest extends TestCase {
     private Lang english;

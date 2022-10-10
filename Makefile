@@ -2,10 +2,10 @@ MAKEFLAGS    += --warn-undefined-variables
 SHELL        := /bin/bash
 .SHELLFLAGS  := -eu -o pipefail -c
 
-VERSION := 8
+VERSION := 11
 WOVN_VERSION := 1.14.5
 TARGET_DIR = ${PWD}
-MAVEN    = docker run -i --rm -v ${TARGET_DIR}:/project -v wovnjava-maven_repo:/root/.m2 -w /project maven:3-jdk-$(VERSION) mvn
+MAVEN    = docker run -i --rm -v ${TARGET_DIR}:/project -v wovnjava-maven_repo:/root/.m2 -w /project maven:3-eclipse-temurin-$(VERSION) mvn
 WEBSITE_CONFIG_FILE = pom.xml
 # WEBSITE_CONFIG_FILE = pom_jitpack.xml
 
@@ -49,4 +49,4 @@ build_wovn_java_and_website:
 	make build_website
 
 restart:
-	docker-compose -f docker/java$(VERSION)/docker-compose.yml restart tomcat-jdk8
+	docker-compose -f docker/java$(VERSION)/docker-compose.yml restart tomcat-jdk11

@@ -1,4 +1,4 @@
-FROM andreptb/tomcat:8-jdk8
+FROM tomcat:10-jdk11
 RUN apk update && \
     apk add --no-cache bash curl && \
     apk add openrc --no-cache && \

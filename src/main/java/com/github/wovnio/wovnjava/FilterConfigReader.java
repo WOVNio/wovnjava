@@ -2,7 +2,7 @@ package com.github.wovnio.wovnjava;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import javax.servlet.FilterConfig;
+import jakarta.servlet.FilterConfig;
 
 class FilterConfigReader {
     private final FilterConfig config;

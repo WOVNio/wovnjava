@@ -3,7 +3,7 @@ package com.github.wovnio.wovnjava;
 import junit.framework.TestCase;
 import java.util.HashMap;
 import java.util.ArrayList;
-import javax.servlet.FilterConfig;
+import jakarta.servlet.FilterConfig;
 
 public class FilterConfigReaderTest extends TestCase {
     public void testGetStringParameter() {
