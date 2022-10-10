@@ -5,7 +5,7 @@ workflows:
   test:
     jobs:
       # - oraclejdk8 TODO: Repos have been deprecated, commands no longer work
-      - openjdk8
+      - openjdk11
 
 jobs:
   oraclejdk8:
@@ -65,9 +65,9 @@ jobs:
           path: target/artifacts/
 
 
-  openjdk8:
+  openjdk11:
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/openjdk:11-jdk
     steps:
       - checkout
 
