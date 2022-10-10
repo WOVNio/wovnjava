@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 
 class FilterServletOutputStream extends ServletOutputStream {
     private OutputStream stream;
@@ -35,5 +36,15 @@ class FilterServletOutputStream extends ServletOutputStream {
     @Override
     public void flush() throws IOException {
         stream.flush();
+    }
+
+    @Override
+    public boolean isReady() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+        throw new UnsupportedOperationException();
     }
 }
