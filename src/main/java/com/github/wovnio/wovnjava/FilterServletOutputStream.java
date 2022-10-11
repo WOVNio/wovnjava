@@ -40,11 +40,11 @@ class FilterServletOutputStream extends ServletOutputStream {
 
     @Override
     public boolean isReady() {
-        throw new UnsupportedOperationException();
+        return true;
     }
 
     @Override
     public void setWriteListener(WriteListener writeListener) {
-        throw new UnsupportedOperationException();
+        return;
     }
 }
