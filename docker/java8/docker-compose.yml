@@ -2,7 +2,7 @@ version: '3'
 services:
   tomcat-jdk8:
     container_name: wovnjava-tomcat-jdk8
-    image: "andreptb/tomcat:8-jdk8"
+    image: "tomcat:9-jdk17"
     ports:
       - 8080:8080
     volumes:
