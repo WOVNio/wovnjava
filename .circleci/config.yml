@@ -65,7 +65,7 @@ jobs:
           path: target/artifacts/
 
 
-  openjdk8:
+  openjdk17:
     docker:
       - image: circleci/openjdk:17-jdk
     steps:
