@@ -1,0 +1,24 @@
+version: '3'
+services:
+  tomcat-jdk17:
+    container_name: wovnjava-tomcat-jdk17
+    image: "tomcat:9-jdk17"
+    ports:
+      - 8080:8080
+    volumes:
+      - ./hello/target:/usr/local/tomcat/webapps
+      - ./logs:/usr/local/tomcat/logs
+    networks:
+      - backend-network
+
+  ## ngrok allows you to expose a web server running on your local machine to the internet,
+  ## Access to http://127.0.0.1:4040 , Ngrok Web Interface.
+  ngrok:
+    container_name: wovnjava-ngrok-jdk17
+    image: lukaszlach/ngrok
+    ports:
+      - 4040:4040
+    command: [ ngrok, http, "tomcat-jdk17:8080", --log, /dev/stdout, --log-format, term ]
+networks:
+  backend-network:
+    name: 'backend-network'
