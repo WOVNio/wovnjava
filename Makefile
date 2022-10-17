@@ -49,4 +49,4 @@ build_wovn_java_and_website:
 	make build_website
 
 restart:
-	docker-compose -f docker/java$(VERSION)/docker-compose.yml restart tomcat-jdk8
+	docker-compose -f docker/java$(VERSION)/docker-compose.yml restart tomcat-jdk17
