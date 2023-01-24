@@ -522,7 +522,7 @@ pt-BR | Português (Brasil) | Portuguese (Brazil)
 pt-PT | Português (Portugal) | Portuguese (Portugal)
 ru | Русский | Russian
 es | Español | Spanish
-es-RA | Español (Argentina) | Spanish (Argentina)
+es-AR | Español (Argentina) | Spanish (Argentina)
 es-CL | Español (Chile) | Spanish (Chile)
 es-CO | Español (Colombia) | Spanish (Colombia)
 es-CR | Español (Costa Rica) | Spanish (Costa Rica)
