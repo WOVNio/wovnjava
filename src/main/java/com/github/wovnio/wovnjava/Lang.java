@@ -62,7 +62,7 @@ class Lang {
         langs.add(new Lang("pt-PT", "pt-PT", "Portuguese (Portugal)", "Português (Portugal)"));
         langs.add(new Lang("ru", "ru", "Russian", "Русский"));
         langs.add(new Lang("es", "es", "Spanish", "Español"));
-        langs.add(new Lang("es-RA", "es-RA", "Spanish (Argentina)", "Español (Argentina)"));
+        langs.add(new Lang("es-AR", "es-AR", "Spanish (Argentina)", "Español (Argentina)"));
         langs.add(new Lang("es-CL", "es-CL", "Spanish (Chile)", "Español (Chile)"));
         langs.add(new Lang("es-CO", "es-CO", "Spanish (Colombia)", "Español (Colombia)"));
         langs.add(new Lang("es-CR", "es-CR", "Spanish (Costa Rica)", "Español (Costa Rica)"));
