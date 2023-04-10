@@ -19,7 +19,7 @@ build:
 	$(MAVEN) package -f pom.jdk$(VERSION).xml -Dmaven.test.skip
 
 test:
-	$(MAVEN) test -f pom.jdk$(VERSION).xml -Dtest=WovnServletFilterTest
+	$(MAVEN) test -f pom.jdk$(VERSION).xml
 
 start:
 	docker-compose -f docker/java$(VERSION)/docker-compose.yml up

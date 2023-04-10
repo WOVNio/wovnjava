@@ -124,6 +124,7 @@ fixedHost                 |          |
 fixedPort                 |          | 
 apiTimeoutSearchEngineBots|          | 5000
 translateCanonicalTag     |          | true
+overrideContentLength     |          | false
 
 ### 2.1. projectToken (required)
 
@@ -464,6 +465,10 @@ This setting defaults to `true`.
 Example:
  `<link rel="canonical" href="http://site.com/page.html">` may be translated to
  `<link rel="canonical" href="http://site.com/en/page.html">` if you are using `path` URL pattern.
+
+ ### 2.21. overrideContentLength
+Configures if wovnjava should set the Content-Length header after translation.
+This setting defaults to `false`. If you experience issues with truncated responses, turning this setting on may help.
  
 ## Supported Langauges
 
