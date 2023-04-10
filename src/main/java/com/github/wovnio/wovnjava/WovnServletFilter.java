@@ -93,6 +93,7 @@ public class WovnServletFilter implements Filter {
         responseHeaders.setApiStatus("Unused");
 
         if (headers.getIsPathInDefaultLanguage()) {
+            WovnLogger.log("Passing to next filter");
             chain.doFilter(wovnRequest, wovnResponse);
         } else {
             String newPath = headers.getCurrentContextUrlInDefaultLanguage().getPath();
@@ -119,6 +120,9 @@ public class WovnServletFilter implements Filter {
                 body = originalBody;
             }
 
+            if (this.settings.overrideContentLength) {
+                wovnResponse.setContentLength(body.getBytes().length);
+            }
             wovnResponse.setCharacterEncoding("UTF-8");
             PrintWriter out = response.getWriter();
             out.write(body);

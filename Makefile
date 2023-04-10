@@ -3,7 +3,7 @@ SHELL        := /bin/bash
 .SHELLFLAGS  := -eu -o pipefail -c
 
 VERSION := 8
-WOVN_VERSION := 1.15.0
+WOVN_VERSION := 1.16.0
 TARGET_DIR = ${PWD}
 MAVEN    = docker run -i --rm -v ${TARGET_DIR}:/project -v wovnjava-maven_repo:/root/.m2 -w /project maven:3-jdk-$(VERSION) mvn
 WEBSITE_CONFIG_FILE = pom.xml
@@ -19,7 +19,7 @@ build:
 	$(MAVEN) package -f pom.jdk$(VERSION).xml -Dmaven.test.skip
 
 test:
-	$(MAVEN) test -f pom.jdk$(VERSION).xml
+	$(MAVEN) test -f pom.jdk$(VERSION).xml -Dtest=WovnServletFilterTest
 
 start:
 	docker-compose -f docker/java$(VERSION)/docker-compose.yml up

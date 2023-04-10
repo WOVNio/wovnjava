@@ -61,6 +61,7 @@ class Settings {
     public final boolean hasUrlOverride;
     
     public final boolean translateCanonicalTag;
+    public final boolean overrideContentLength;
 
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
@@ -116,6 +117,7 @@ class Settings {
         this.hasUrlOverride = this.fixedPort != -1;
 
         this.translateCanonicalTag = reader.getBoolParameterOrDefault("translateCanonicalTag", true);
+        this.overrideContentLength = reader.getBoolParameterOrDefault("overrideContentLength", false);
     }
 
     private void verifyFixedURLConfigs(String fixedHost, String fixedScheme, int fixedPort) throws ConfigurationError {
