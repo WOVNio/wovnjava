@@ -14,7 +14,6 @@ public class FilterChainMock implements FilterChain {
 
     public FilterChainMock(String originalResponseBody) {
         this.originalResponseBody = originalResponseBody;
-        
     }
 
     public void doFilter(ServletRequest req, ServletResponse res) throws IOException {
