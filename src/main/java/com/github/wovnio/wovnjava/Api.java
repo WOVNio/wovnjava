@@ -96,10 +96,12 @@ class Api {
                 ByteArrayOutputStream compressedBody = gzipStream(apiBodyBytes);
                 con.setRequestProperty("Content-Type", "application/json");
                 con.setRequestProperty("Content-Encoding", "gzip");
+                con.setRequestProperty("Content-Length", String.valueOf(compressedBody.size()));
                 out = con.getOutputStream();
                 compressedBody.writeTo(out);
             } else {
                 con.setRequestProperty("Content-Type", "application/json");
+                con.setRequestProperty("Content-Length", String.valueOf(apiBodyBytes.length));
                 out = con.getOutputStream();
                 out.write(apiBodyBytes);
             }

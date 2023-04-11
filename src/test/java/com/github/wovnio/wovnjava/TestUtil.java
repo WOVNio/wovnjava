@@ -1,5 +1,6 @@
 package com.github.wovnio.wovnjava;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -8,16 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletResponse;
+
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 
 public class TestUtil {
-    public static final HashMap<String, String> emptyOption = new HashMap<String, String>();
-
-    public static FilterConfig makeConfig() {
-        return makeConfig(emptyOption);
-    }
-
     public static FilterConfig makeConfig(HashMap<String, String> options) {
         FilterConfig mock = EasyMock.createMock(FilterConfig.class);
         EasyMock.expect(mock.getInitParameter(EasyMock.anyString())).andAnswer(
@@ -34,7 +32,7 @@ public class TestUtil {
     }
 
     public static FilterConfig makeConfigWithValidDefaults() {
-        return makeConfigWithValidDefaults(emptyOption);
+        return makeConfigWithValidDefaults(new HashMap<>());
     }
 
     public static FilterConfig makeConfigWithValidDefaults(HashMap<String, String> options) {
@@ -50,22 +48,22 @@ public class TestUtil {
     }
 
     public static Settings makeSettings() throws ConfigurationError {
-        return makeSettings(emptyOption);
+        return makeSettings(new HashMap<>());
     }
 
     public static Settings makeSettings(HashMap<String, String> options) throws ConfigurationError {
         return new Settings(makeConfigWithValidDefaults(options));
     }
 
-    public static HttpServletResponse mockResponse(String contentType, String encoding, int statusCode) throws IOException {
-        return mockResponse(contentType, encoding, false, statusCode);
-    }
-
-    public static HttpServletResponse mockResponse(String contentType, String encoding, boolean isPreviouslyProcessed, int statusCode) throws IOException {
+    public static HttpServletResponse mockResponse(String contentType, String encoding, boolean isPreviouslyProcessed, int statusCode, int expectedContentLength, StringWriter responseBuffer) throws IOException {
         HttpServletResponse mock = EasyMock.createMock(HttpServletResponse.class);
+        if (expectedContentLength != -1) {
+            mock.setContentLength(expectedContentLength);
+            EasyMock.expectLastCall();
+        }
         mock.setCharacterEncoding("UTF-8");
         EasyMock.expectLastCall();
-        EasyMock.expect(mock.getWriter()).andReturn(new PrintWriter(new StringWriter()));
+        EasyMock.expect(mock.getWriter()).andReturn(new PrintWriter(responseBuffer)).anyTimes();
         EasyMock.expect(mock.getContentType()).andReturn(contentType).atLeastOnce();
         EasyMock.expect(mock.getCharacterEncoding()).andReturn(encoding);
         EasyMock.expect(mock.getStatus()).andReturn(statusCode);
@@ -85,34 +83,44 @@ public class TestUtil {
         return mock;
     }
 
-    public static FilterChainMock doServletFilter(String contentType, String path) throws ServletException, IOException {
-        return doServletFilter(contentType, path, path, emptyOption, 200);
+    public static TestFilterResult doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option, String originalResponseBody) throws ServletException, IOException {
+        return doServletFilter(contentType, path, forwardPath, option, false, 200, originalResponseBody);
     }
 
-    public static FilterChainMock doServletFilter(String contentType, String path, HashMap<String, String> option) throws ServletException, IOException {
-        return doServletFilter(contentType, path, path, option, 200);
+    public static TestFilterResult doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option, boolean isPreviouslyProcessed, int statusCode, String originalResponseBody) throws ServletException, IOException {
+        return doServletFilter(contentType, path, forwardPath, option, isPreviouslyProcessed, statusCode, originalResponseBody, -1);
     }
 
-    public static FilterChainMock doServletFilter(String contentType, String path, String forwardPath) throws ServletException, IOException {
-        return doServletFilter(contentType, path, forwardPath, emptyOption, 200);
-    }
-
-    public static FilterChainMock doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option, int statusCode) throws ServletException, IOException {
-        return doServletFilter(contentType, path, forwardPath, option, false, statusCode);
-    }
-
-    public static FilterChainMock doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option, boolean isPreviouslyProcessed, int statusCode) throws ServletException, IOException {
-        RequestDispatcherMock dispatcher = new RequestDispatcherMock();
+    public static TestFilterResult doServletFilter(String contentType, String path, String forwardPath, HashMap<String, String> option, boolean isPreviouslyProcessed, int statusCode, String originalResponseBody, int expectedContentLength) throws ServletException, IOException {
+        RequestDispatcherMock customerApplication = new RequestDispatcherMock(originalResponseBody);
         String requestUrl = "https://example.com" + path;
-        HttpServletRequest req = MockHttpServletRequest.createWithForwardingDispatcher(requestUrl, forwardPath, dispatcher);
-        HttpServletResponse res = mockResponse(contentType, "", isPreviouslyProcessed, statusCode);
+        HttpServletRequest req = MockHttpServletRequest.createWithForwardingDispatcher(requestUrl, forwardPath, customerApplication);
+
+        StringWriter responseBuffer = new StringWriter();
+        HttpServletResponse res = mockResponse(contentType, "UTF-8", isPreviouslyProcessed, statusCode, expectedContentLength, responseBuffer);
+
         FilterConfig filterConfig = makeConfigWithValidDefaults(option);
-        FilterChainMock filterChain = new FilterChainMock();
+        FilterChainMock filterChain = new FilterChainMock(originalResponseBody);
         WovnServletFilter filter = new WovnServletFilter();
         filter.init(filterConfig);
+
         filter.doFilter(req, res, filterChain);
-        filterChain.req = filterChain.req == null ? dispatcher.req : filterChain.req;
-        filterChain.res = filterChain.res == null ? dispatcher.res : filterChain.res;
-        return filterChain;
+
+        filterChain.req = filterChain.req == null ? customerApplication.req : filterChain.req;
+        filterChain.res = filterChain.res == null ? res : filterChain.res;
+
+        return new TestUtil.TestFilterResult(responseBuffer, filterChain.req, filterChain.res);
+    }
+
+    public static class TestFilterResult {
+        public StringWriter responseBuffer;
+        public HttpServletRequest request;
+        public ServletResponse response;
+
+        public TestFilterResult(StringWriter responseBuffer, HttpServletRequest request, ServletResponse response) {
+            this.responseBuffer = responseBuffer;
+            this.request = request;
+            this.response = response;
+        }
     }
 }
