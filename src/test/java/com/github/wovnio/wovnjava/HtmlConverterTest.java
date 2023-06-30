@@ -124,7 +124,7 @@ public class HtmlConverterTest extends TestCase {
         for (int i = 1; i <= 50; i++) {
             String iStr = Integer.toString(i);
 
-            original += String.format("<input type=\"hidden\" name=\"field_%s\" value=\"%s\">", iStr, iStr);
+            original += String.format("<INPUT type=\"hidden\" name=\"field_%s\" value=\"%s\">", iStr, iStr);
             removedHtml += String.format("<input type=\"hidden\" name=\"field_%s\" value=\"%s\">", iStr, iStr);
         }
 
