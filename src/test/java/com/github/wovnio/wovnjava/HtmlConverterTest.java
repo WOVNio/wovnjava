@@ -119,23 +119,23 @@ public class HtmlConverterTest extends TestCase {
 
     public void testRemoveForm__MultipleHiddenFields() throws ConfigurationError {
         String original = "<HTML lang=\"en\"><HEAD></HEAD><BODY><FORM>";
-        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form>";
+        String expectedRestoredHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form>";
 
         for (int i = 1; i <= 50; i++) {
             String iStr = Integer.toString(i);
 
             original += String.format("<INPUT type=\"hidden\" name=\"field_%s\" value=\"%s\">", iStr, iStr);
-            removedHtml += String.format("<input type=\"hidden\" name=\"field_%s\" value=\"%s\">", iStr, iStr);
+            expectedRestoredHtml += String.format("<input type=\"hidden\" name=\"field_%s\" value=\"%s\">", iStr, iStr);
         }
 
         original += "</FORM></BODY></HTML>";
-        removedHtml += "</form></body></html>";
+        expectedRestoredHtml += "</form></body></html>";
 
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
 
-        assertEquals(removedHtml, stripExtraSpaces(converter.restore(html)));
+        assertEquals(expectedRestoredHtml, stripExtraSpaces(converter.restore(html)));
     }
 
     public void testStrip__Sanitize() throws ConfigurationError {
