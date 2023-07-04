@@ -117,6 +117,27 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(sanitized, stripExtraSpaces(converter.restore(html)));
     }
 
+    public void testRemoveForm__MultipleHiddenFields() throws ConfigurationError {
+        String original = "<HTML lang=\"en\"><HEAD></HEAD><BODY><FORM>";
+        String expectedRestoredHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form>";
+
+        for (int i = 1; i <= 50; i++) {
+            String iStr = Integer.toString(i);
+
+            original += String.format("<INPUT type=\"hidden\" name=\"field_%s\" value=\"%s\">", iStr, iStr);
+            expectedRestoredHtml += String.format("<input type=\"hidden\" name=\"field_%s\" value=\"%s\">", iStr, iStr);
+        }
+
+        original += "</FORM></BODY></HTML>";
+        expectedRestoredHtml += "</form></body></html>";
+
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
+        String html = converter.strip();
+
+        assertEquals(expectedRestoredHtml, stripExtraSpaces(converter.restore(html)));
+    }
+
     public void testStrip__Sanitize() throws ConfigurationError {
         String original = "<html lang=\"en\"><head></head><body><a title=\"&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></a></body></html>";
         String sanitized = "<html lang=\"en\"><head></head><body><a title=\"&quot;><script >alert(String.fromCharCode(88,83,83))</script>\"></a></body></html>";
