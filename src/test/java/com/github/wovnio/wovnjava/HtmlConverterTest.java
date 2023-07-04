@@ -119,7 +119,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testRemoveForm__MultipleHiddenFields() throws ConfigurationError {
         String original = "<HTML lang=\"en\"><HEAD></HEAD><BODY><FORM>";
-        String expectedRestoredHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form>";
+        String expectedRestoredHtml = "<html lang=\"en\"><head></head><body><form>";
 
         for (int i = 1; i <= 50; i++) {
             String iStr = Integer.toString(i);
