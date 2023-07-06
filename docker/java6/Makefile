@@ -3,7 +3,7 @@ SHELL        := /bin/bash
 .SHELLFLAGS  := -eu -o pipefail -c
 
 USE_LOCAL_BUILD ?= no
-WOVN_VERSION    ?= 1.0.10-jdk6
+WOVN_VERSION    ?= 1.0.11-jdk6
 PROJECT_NAME     = hello
 PROJECT_LIB_PATH = $(PROJECT_NAME)/src/main/webapp/WEB-INF/lib
 

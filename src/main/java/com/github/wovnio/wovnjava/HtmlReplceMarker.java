@@ -1,14 +1,16 @@
 package com.github.wovnio.wovnjava;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 
 class HtmlReplaceMarker {
     private final String WOVN_MARKER_PREFIX = "wovn-marker-";
-    private final HashMap<String, String> mappedValues;
+    private final LinkedHashMap<String, String> mappedValues;
     private int keyCount;
 
     HtmlReplaceMarker() {
-        this.mappedValues = new HashMap<String, String>();
+        this.mappedValues = new LinkedHashMap<String, String>();
         this.keyCount = 0;
     }
 
@@ -24,7 +26,13 @@ class HtmlReplaceMarker {
     }
 
     public String revert(String markedHTML) {
-        for (String key: mappedValues.keySet()) {
+        ArrayList<String> reversedKeys = new ArrayList<String>(mappedValues.keySet());
+
+        // Reverse the order so longer keys don't get replaced
+        // e.g. `wovn-marker-11` doesn't get replaced by `wovn-marker-1`
+        Collections.reverse(reversedKeys);
+
+        for (String key: reversedKeys) {
             String original = mappedValues.get(key);
             markedHTML = markedHTML.replace(key, original);
         }
