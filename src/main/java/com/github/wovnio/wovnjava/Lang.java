@@ -51,6 +51,7 @@ class Lang {
         langs.add(new Lang("ja", "ja", "Japanese", "日本語"));
         langs.add(new Lang("ko", "ko", "Korean", "한국어"));
         langs.add(new Lang("lv", "lv", "Latvian", "Latviešu"));
+        langs.add(new Lang("mn", "mn", "Mongolian", "монгол"));
         langs.add(new Lang("ms", "ms", "Malay", "Bahasa Melayu"));
         langs.add(new Lang("my", "my", "Burmese", "ဗမာစာ"));
         langs.add(new Lang("ne", "ne", "Nepali", "नेपाली भाषा"));
@@ -81,6 +82,7 @@ class Lang {
         langs.add(new Lang("tr", "tr", "Turkish", "Türkçe"));
         langs.add(new Lang("uk", "uk", "Ukrainian", "Українська"));
         langs.add(new Lang("ur", "ur", "Urdu", "اردو"));
+        langs.add(new Lang("uz", "uz", "Uzbek", "Oʻzbekcha"));
         langs.add(new Lang("vi", "vi", "Vietnamese", "Tiếng Việt"));
         langs.add(new Lang("tl", "tl", "Tagalog", "Tagalog"));
         langs.add(new Lang("km", "km", "Khmer", "ភាសាខ្មែរ"));
