@@ -2,9 +2,9 @@ package com.github.wovnio.wovnjava;
 
 import java.io.IOException;
 import java.util.HashMap;
-import javax.servlet.ServletException;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
 
@@ -40,7 +40,7 @@ public class WovnServletFilterTest extends TestCase {
         String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
 
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/ja/", "/", settings, originalResponseBody);;
-        
+
         assertEquals(expectedResponseBody, mock.responseBuffer.toString());
         assertEquals("text/html; charset=utf-8", mock.response.getContentType());
         assertEquals("https://example.com/", mock.request.getRequestURL().toString());
@@ -52,7 +52,7 @@ public class WovnServletFilterTest extends TestCase {
         String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=query&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/?wovn=ja\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
 
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/?wovn=ja", "/", settings, originalResponseBody);;
-        
+
         assertEquals(expectedResponseBody, mock.responseBuffer.toString());
         assertEquals("text/html; charset=utf-8", mock.response.getContentType());
         assertEquals("/", mock.request.getRequestURI());
@@ -64,7 +64,7 @@ public class WovnServletFilterTest extends TestCase {
         String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=subdomain&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://ja.example.com/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
 
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/", "/", settings, originalResponseBody);;
-        
+
         assertEquals(expectedResponseBody, mock.responseBuffer.toString());
         assertEquals("text/html; charset=utf-8", mock.response.getContentType());
         assertEquals("/", mock.request.getRequestURI());
@@ -76,7 +76,7 @@ public class WovnServletFilterTest extends TestCase {
         String expectedResponseBody = originalResponseBody;
 
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/css", "/dir/style.css", "/dir/style.css", settings, originalResponseBody);;
-        
+
         assertEquals(expectedResponseBody, mock.responseBuffer.toString());
         assertEquals("text/css", mock.response.getContentType());
         assertEquals("/dir/style.css", mock.request.getRequestURI());
@@ -86,9 +86,9 @@ public class WovnServletFilterTest extends TestCase {
         HashMap<String, String> settings = createSettings("path");
         String originalResponseBody = "body { color: red; }";
         String expectedResponseBody = originalResponseBody;
-        
+
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/css", "/ja/style.css", "/style.css", settings, originalResponseBody);;
-        
+
         assertEquals(expectedResponseBody, mock.responseBuffer.toString());
         assertEquals("text/css", mock.response.getContentType());
         assertEquals("https://example.com/style.css", mock.request.getRequestURL().toString());
@@ -100,7 +100,7 @@ public class WovnServletFilterTest extends TestCase {
         String expectedResponseBody = originalResponseBody;
 
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("image/png", "/image.png", "/image.png", settings, originalResponseBody);;
-        
+
         assertEquals(expectedResponseBody, mock.responseBuffer.toString());
         assertEquals("image/png", mock.response.getContentType());
         assertEquals("/image.png", mock.request.getRequestURI());
@@ -136,7 +136,7 @@ public class WovnServletFilterTest extends TestCase {
         HashMap<String, String> settings = createSettings("path");
         String originalResponseBody = "<html>Original</html>";
         String expectedResponseBody = originalResponseBody;
-        
+
         boolean requestIsAlreadyProcessed = true;
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", settings, requestIsAlreadyProcessed, 200, originalResponseBody);
 

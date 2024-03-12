@@ -1,12 +1,12 @@
 package com.github.wovnio.wovnjava;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 class HtmlChecker {
     public boolean isTextFileContentType(String contentType) {
-        return contentType == null 
+        return contentType == null
             || contentType.toLowerCase().contains("text/")
             || contentType.toLowerCase().contains("html");
     }
@@ -41,9 +41,9 @@ class HtmlChecker {
     private boolean isHtml(String head) {
         // TODO: implement better HTML check, keyword might appear
         // after the sample.
-        return head.contains("<?xml") 
-            || head.contains("<!doctype") 
-            || head.contains("<html") 
+        return head.contains("<?xml")
+            || head.contains("<!doctype")
+            || head.contains("<html")
             || head.contains("<xhtml");
     }
 

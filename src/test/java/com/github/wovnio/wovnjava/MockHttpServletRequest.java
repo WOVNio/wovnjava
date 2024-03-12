@@ -4,8 +4,8 @@ import java.util.Vector;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.lang.IllegalArgumentException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.RequestDispatcher;
 
 import org.easymock.EasyMock;
 
@@ -63,8 +63,8 @@ public class MockHttpServletRequest {
         EasyMock.expect(mock.getServerName()).andReturn(url.getHost()).anyTimes();
         EasyMock.expect(mock.getQueryString()).andReturn(url.getQuery()).anyTimes();
         EasyMock.expect(mock.getServerPort()).andReturn(port).anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.request_uri")).andReturn(null).anyTimes();
-        EasyMock.expect(mock.getAttribute("javax.servlet.forward.query_string")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("jakarta.servlet.forward.request_uri")).andReturn(null).anyTimes();
+        EasyMock.expect(mock.getAttribute("jakarta.servlet.forward.query_string")).andReturn(null).anyTimes();
     }
 
     private static void stubHeaders(HttpServletRequest mock) {

@@ -1,8 +1,8 @@
 package com.github.wovnio.wovnjava;
 
 import java.util.HashMap;
-import javax.servlet.FilterConfig;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.easymock.EasyMock;
 

@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.net.URL;
 import java.net.MalformedURLException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 class Headers {
     Settings settings;
@@ -30,7 +30,7 @@ class Headers {
     Headers(HttpServletRequest request, Settings settings, UrlLanguagePatternHandler urlLanguagePatternHandler) {
         this.settings = settings;
         this.request = request;
-        this.urlLanguagePatternHandler = urlLanguagePatternHandler;            
+        this.urlLanguagePatternHandler = urlLanguagePatternHandler;
         String clientRequestUrl = UrlResolver.computeClientRequestUrl(request, settings);
         this.requestLang = this.urlLanguagePatternHandler.getLang(clientRequestUrl);
         this.clientRequestUrlInDefaultLanguage = this.urlLanguagePatternHandler.convertToDefaultLanguage(clientRequestUrl);
