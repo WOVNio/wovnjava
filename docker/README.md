@@ -34,7 +34,7 @@ The big difference is version for `source` and `target`.
 
 # Start using your local environment
 To build local docker environemnt, this repository is using the following three docker images.
-1. andreptb/tomcat: Tomcat is software to run Java Servlet
+1. tomcat: Tomcat is software to run Java Servlet
 2. maven: Maven is software to manage and build Java Servlet
 3. ngrok: This is utility tool to make your local website accessible from the outside
 

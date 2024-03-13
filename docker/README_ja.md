@@ -34,7 +34,7 @@ Java6とJava7用のブランチが存在します。
 
 # ローカル環境の使用
 ローカルDocker環境を構築するために、このリポジトリでは以下の３つのDockerイメージを使用しています。
-1. andreptb/tomcat: TomcatはJava Servletを実行するソフトウェアです
+1. tomcat: TomcatはJava Servletを実行するソフトウェアです
 2. maven: MavenはJavaServletを管理・ビルドするためのソフトウェアです
 3. ngrok: ローカルウェブサイトを外部からアクセス可能にする便利ツールです
 

@@ -15,17 +15,17 @@
 
   <dependencies>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.1.0</version>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>5.0.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.github.wovnio</groupId>
       <artifactId>wovnjava</artifactId>
-      <version>1.16.1</version>
+      <version>2.0.0</version>
       <scope>system</scope>
-      <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/wovnjava-1.16.1-jar-with-dependencies.jar</systemPath>
+      <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/wovnjava-2.0.0-jar-with-dependencies.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>
