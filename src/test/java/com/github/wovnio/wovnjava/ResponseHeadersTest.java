@@ -1,7 +1,7 @@
 package com.github.wovnio.wovnjava;
 
 import java.net.HttpURLConnection;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
 

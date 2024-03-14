@@ -3,7 +3,8 @@ package com.github.wovnio.wovnjava;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 
 class FilterServletOutputStream extends ServletOutputStream {
     private OutputStream stream;
@@ -35,5 +36,14 @@ class FilterServletOutputStream extends ServletOutputStream {
     @Override
     public void flush() throws IOException {
         stream.flush();
+    }
+
+    @Override
+    public boolean isReady() {
+        return true;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
     }
 }

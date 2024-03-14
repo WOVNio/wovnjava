@@ -11,7 +11,7 @@ import java.util.zip.GZIPOutputStream;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URLDecoder;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import junit.framework.TestCase;
 
@@ -64,9 +64,9 @@ public class ApiTest extends TestCase {
 
         String encodedApiRequestBody = decompress(requestStream.toByteArray());
         String apiRequestBody = new String(encodedApiRequestBody);
-        String expectedRequestBody = "{\"url\":\"https:\\/\\/example.com\\/somepage\\/\"," + 
-                                     "\"token\":\"token0\"," + 
-                                     "\"lang_code\":\"ja\"," + 
+        String expectedRequestBody = "{\"url\":\"https:\\/\\/example.com\\/somepage\\/\"," +
+                                     "\"token\":\"token0\"," +
+                                     "\"lang_code\":\"ja\"," +
                                      "\"url_pattern\":\"path\"," +
                                      "\"site_prefix_path\":\"\"," +
                                      "\"lang_param_name\":\"wovn\"," +

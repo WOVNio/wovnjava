@@ -5,8 +5,8 @@ import java.util.Map;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import javax.servlet.FilterConfig;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.servlet.FilterConfig;
+import jakarta.xml.bind.DatatypeConverter;
 
 class Settings {
     public static final String VERSION = Version.readProjectVersion();
@@ -59,7 +59,7 @@ class Settings {
     public final String fixedScheme;
     public final int fixedPort;
     public final boolean hasUrlOverride;
-    
+
     public final boolean translateCanonicalTag;
     public final boolean overrideContentLength;
 

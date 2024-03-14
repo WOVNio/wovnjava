@@ -1,6 +1,6 @@
 package com.github.wovnio.wovnjava;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
 import org.easymock.EasyMock;

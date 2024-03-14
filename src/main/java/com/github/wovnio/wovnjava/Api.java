@@ -19,7 +19,7 @@ import java.util.Map;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
 import net.arnx.jsonic.JSON;
