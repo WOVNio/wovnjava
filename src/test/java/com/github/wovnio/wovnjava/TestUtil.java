@@ -66,7 +66,7 @@ public class TestUtil {
         EasyMock.expect(mock.getWriter()).andReturn(new PrintWriter(responseBuffer)).anyTimes();
         EasyMock.expect(mock.getContentType()).andReturn(contentType).atLeastOnce();
         EasyMock.expect(mock.getCharacterEncoding()).andReturn(encoding);
-        EasyMock.expect(mock.getStatus()).andReturn(statusCode);
+        EasyMock.expect(mock.getStatus()).andReturn(statusCode).anyTimes();
         mock.setHeader(EasyMock.anyString(), EasyMock.anyString());
         EasyMock.expectLastCall().atLeastOnce();
         if (isPreviouslyProcessed) {

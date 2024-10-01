@@ -25,6 +25,10 @@ class ResponseHeaders {
         this.response = response;
     }
 
+    public int getStatusCode() {
+        return this.response.getStatus();
+    }
+
     public void setApiStatus(String value) {
         this.response.setHeader(ResponseHeaders.apiStatusHeaderName, value);
     }

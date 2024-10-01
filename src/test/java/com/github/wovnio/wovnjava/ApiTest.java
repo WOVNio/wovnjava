@@ -48,7 +48,7 @@ public class ApiTest extends TestCase {
         UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
 
         HttpServletRequest request = MockHttpServletRequest.create("https://example.com/ja/somepage/");
-        ResponseHeaders responseHeaders = mockResponseHeaders();
+        ResponseHeaders responseHeaders = mockResponseHeaders(statusCode);
 
         Headers headers = new Headers(request, settings, urlLanguagePatternHandler);
         RequestOptions requestOptions = new RequestOptions(settings, request);
@@ -76,6 +76,7 @@ public class ApiTest extends TestCase {
                                      "\"version\":\"" + Settings.VERSION + "\"," +
                                      "\"debug_mode\":\"false\"," +
                                      "\"translate_canonical_tag\":\"true\"," +
+                                     "\"page_status_code\":\"" + String.valueOf(statusCode) + "\"," +
                                      "\"body\":\"\u003Chtml\u003Emuch content\u003C\\/html\u003E\"}";
 
         assertEquals(expectedRequestBody, apiRequestBody);
@@ -129,12 +130,13 @@ public class ApiTest extends TestCase {
         return sb.toString();
     }
 
-    private static ResponseHeaders mockResponseHeaders() {
+    private static ResponseHeaders mockResponseHeaders(int statusCode) {
         ResponseHeaders mock = EasyMock.createMock(ResponseHeaders.class);
         mock.forwardFastlyHeaders(EasyMock.anyObject(HttpURLConnection.class));
         EasyMock.expectLastCall().times(1);
         mock.setApiStatusCode("200");
         EasyMock.expectLastCall().times(1);
+        EasyMock.expect(mock.getStatusCode()).andReturn(statusCode);
         EasyMock.replay(mock);
         return mock;
     }
