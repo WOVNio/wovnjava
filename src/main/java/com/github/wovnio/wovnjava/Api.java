@@ -185,7 +185,7 @@ class Api {
         result.put("debug_mode", String.valueOf(this.requestOptions.getDebugMode()));
         result.put("translate_canonical_tag", String.valueOf(settings.translateCanonicalTag));
         result.put("page_status_code", String.valueOf(this.responseHeaders.getStatusCode()));
-        result.put("hreflang_x_default_lang", String.valueOf(settings.hreflangXDefaultLang));
+        result.put("hreflang_x_default_lang", settings.hreflangXDefaultLangRaw);
         result.put("body", body);
         return result;
     }

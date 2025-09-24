@@ -64,6 +64,7 @@ class Settings {
     public final boolean overrideContentLength;
 
     public final Lang hreflangXDefaultLang;
+    public final String hreflangXDefaultLangRaw;
 
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
@@ -122,6 +123,7 @@ class Settings {
         this.overrideContentLength = reader.getBoolParameterOrDefault("overrideContentLength", false);
 
         this.hreflangXDefaultLang = verifyHreflangXDefaultLang(reader.getStringParameter("hreflangXDefaultLang"));
+        this.hreflangXDefaultLangRaw = stringOrDefault(reader.getStringParameter("hreflangXDefaultLang"), "");
     }
 
     private void verifyFixedURLConfigs(String fixedHost, String fixedScheme, int fixedPort) throws ConfigurationError {
