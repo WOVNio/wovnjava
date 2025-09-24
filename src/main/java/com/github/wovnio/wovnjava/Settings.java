@@ -63,6 +63,8 @@ class Settings {
     public final boolean translateCanonicalTag;
     public final boolean overrideContentLength;
 
+    public final Lang hreflangXDefaultLang;
+
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
 
@@ -118,6 +120,8 @@ class Settings {
 
         this.translateCanonicalTag = reader.getBoolParameterOrDefault("translateCanonicalTag", true);
         this.overrideContentLength = reader.getBoolParameterOrDefault("overrideContentLength", false);
+
+        this.hreflangXDefaultLang = verifyHreflangXDefaultLang(reader.getStringParameter("hreflangXDefaultLang"));
     }
 
     private void verifyFixedURLConfigs(String fixedHost, String fixedScheme, int fixedPort) throws ConfigurationError {
@@ -155,9 +159,21 @@ class Settings {
         if (value == null || value.isEmpty()) {
             throw new ConfigurationError("Missing required configuration for \"defaultLang\".");
         }
+        return verifyValidLang(value, "defaultLang");
+    }
+
+    private Lang verifyHreflangXDefaultLang(String value) throws ConfigurationError {
+        if (value == null || value.isEmpty()) {
+            return this.defaultLang;
+        }
+
+        return verifyValidLang(value, "hreflangXDefaultLang");
+    }
+
+    private Lang verifyValidLang(String value, String settingKey) throws ConfigurationError {
         Lang lang = Lang.get(value);
         if (lang == null) {
-            throw new ConfigurationError("Invalid configuration for \"defaultLang\", must match a supported language code.");
+            throw new ConfigurationError("Invalid configuration for \"" + settingKey + "\", must match a supported language code.");
         }
         return lang;
     }

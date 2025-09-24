@@ -17,6 +17,7 @@ class HtmlConverter {
     private final Headers headers;
     private final HashMap<String, String> hreflangMap;
     private final HtmlReplaceMarker htmlReplaceMarker;
+    private boolean hasExistingXDefaultHreflang = false;
 
     private final String[] WOVN_WIDGET_URLS;
 
@@ -67,8 +68,13 @@ class HtmlConverter {
         Elements elements = doc.head().getElementsByTag("link");
         for (Element element : elements) {
             String hreflang = element.attr("hreflang");
-            if (hreflang != null && this.hreflangMap.containsKey(hreflang.toLowerCase())) {
-                element.remove();
+            if (hreflang != null) {
+                boolean isXDefault = hreflang.toLowerCase().equals("x-default");
+                if (isXDefault) {
+                    this.hasExistingXDefaultHreflang = true;
+                } else if (this.hreflangMap.containsKey(hreflang.toLowerCase())) {
+                    element.remove();
+                }
             }
         }
     }
@@ -181,6 +187,10 @@ class HtmlConverter {
 
     private void appendHrefLang() {
         for (Map.Entry<String, String> hreflang : this.hreflangMap.entrySet()) {
+            if (hreflang.getKey().equals("X-Default") && this.hasExistingXDefaultHreflang) {
+                continue;
+            }
+
             Element link = new Element(Tag.valueOf("link"), "");
             link.attr("rel", "alternate");
             link.attr("hreflang", hreflang.getKey());
