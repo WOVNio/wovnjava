@@ -63,8 +63,8 @@ class Settings {
     public final boolean translateCanonicalTag;
     public final boolean overrideContentLength;
 
-    public final Lang hreflangXDefaultLang;
-    public final String hreflangXDefaultLangRaw;
+    public final Lang hreflangXDefaultLangWithFallback;
+    public final String hreflangXDefaultLang;
 
     Settings(FilterConfig config) throws ConfigurationError {
         FilterConfigReader reader = new FilterConfigReader(config);
@@ -122,8 +122,8 @@ class Settings {
         this.translateCanonicalTag = reader.getBoolParameterOrDefault("translateCanonicalTag", true);
         this.overrideContentLength = reader.getBoolParameterOrDefault("overrideContentLength", false);
 
-        this.hreflangXDefaultLang = verifyHreflangXDefaultLang(reader.getStringParameter("hreflangXDefaultLang"));
-        this.hreflangXDefaultLangRaw = stringOrDefault(reader.getStringParameter("hreflangXDefaultLang"), "");
+        this.hreflangXDefaultLangWithFallback = verifyHreflangXDefaultLang(reader.getStringParameter("hreflangXDefaultLang"));
+        this.hreflangXDefaultLang= stringOrDefault(reader.getStringParameter("hreflangXDefaultLang"), "");
     }
 
     private void verifyFixedURLConfigs(String fixedHost, String fixedScheme, int fixedPort) throws ConfigurationError {
