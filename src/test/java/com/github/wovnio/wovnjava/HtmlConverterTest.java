@@ -456,7 +456,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testConvert__NoXDefaultHreflang__NoConfig__InsertedWithDefaultLang() throws ConfigurationError {
         String original = "<html></html>";
-        String expectedConvertedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://site.com/global/tokyo/\"></head><body></body></html>";
+        String expectedConvertedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://site.com/global/tokyo/\" data-wovn=\"true\"></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String convertedHtml = converter.strip();
@@ -474,7 +474,7 @@ public class HtmlConverterTest extends TestCase {
 
     public void testConvert__NoXDefaultHreflang__HasConfig__InsertedWithConfiguredLang() throws ConfigurationError {
         String original = "<html></html>";
-        String expectedConvertedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://site.com/fr/global/tokyo/\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
+        String expectedConvertedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://site.com/fr/global/tokyo/\" data-wovn=\"true\"></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("supportedLangs", "en,fr,ja");
             put("hreflangXDefaultLang", "fr");
