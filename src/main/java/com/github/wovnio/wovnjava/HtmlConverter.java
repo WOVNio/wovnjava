@@ -69,10 +69,11 @@ class HtmlConverter {
         for (Element element : elements) {
             String hreflang = element.attr("hreflang");
             if (hreflang != null) {
-                boolean isXDefault = hreflang.toLowerCase().equals("x-default");
+                String hreflangLower = hreflang.toLowerCase();
+                boolean isXDefault = hreflangLower.equals("x-default");
                 if (isXDefault) {
                     this.hasExistingXDefaultHreflang = true;
-                } else if (this.hreflangMap.containsKey(hreflang.toLowerCase())) {
+                } else if (this.hreflangMap.containsKey(hreflangLower)) {
                     element.remove();
                 }
             }
