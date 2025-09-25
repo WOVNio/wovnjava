@@ -196,6 +196,7 @@ class HtmlConverter {
             link.attr("rel", "alternate");
             link.attr("hreflang", hreflang.getKey());
             link.attr("href", hreflang.getValue());
+            link.attr("data-wovn", "true");
             doc.head().appendChild(link);
         }
     }
