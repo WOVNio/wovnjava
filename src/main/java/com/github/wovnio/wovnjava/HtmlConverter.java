@@ -188,7 +188,7 @@ class HtmlConverter {
 
     private void appendHrefLang() {
         for (Map.Entry<String, String> hreflang : this.hreflangMap.entrySet()) {
-            if (hreflang.getKey().equals("X-Default") && this.hasExistingXDefaultHreflang) {
+            if (hreflang.getKey().equals("x-default") && this.hasExistingXDefaultHreflang) {
                 continue;
             }
 

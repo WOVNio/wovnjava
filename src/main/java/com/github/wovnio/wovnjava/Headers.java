@@ -153,10 +153,10 @@ class Headers {
 
         Lang xDefaultLang = this.settings.hreflangXDefaultLangWithFallback;
         if (xDefaultLang.codeISO639_1.equals(settings.defaultLang.codeISO639_1)) {
-            hreflangs.put("X-Default", urlDefaultLang);
+            hreflangs.put("x-default", urlDefaultLang);
         } else {
             String targetLangUrl = this.urlLanguagePatternHandler.convertToTargetLanguage(this.clientRequestUrlInDefaultLanguage, xDefaultLang);
-            hreflangs.put("X-Default", targetLangUrl);
+            hreflangs.put("x-default", targetLangUrl);
         }
 
         return hreflangs;
