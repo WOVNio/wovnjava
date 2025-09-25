@@ -153,7 +153,7 @@ class Headers {
 
         Lang xDefaultLang = this.settings.hreflangXDefaultLang;
         if (xDefaultLang.codeISO639_1.equals(settings.defaultLang.codeISO639_1)) {
-            hreflangs.put("X-Default", hreflangCodeDefaultLang);
+            hreflangs.put("X-Default", urlDefaultLang);
         } else {
             String targetLangUrl = this.urlLanguagePatternHandler.convertToTargetLanguage(this.clientRequestUrlInDefaultLanguage, xDefaultLang);
             hreflangs.put("X-Default", targetLangUrl);

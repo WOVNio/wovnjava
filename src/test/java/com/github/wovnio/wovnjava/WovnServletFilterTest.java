@@ -12,7 +12,7 @@ public class WovnServletFilterTest extends TestCase {
     public void testHtml() throws ServletException, IOException {
         HashMap<String, String> settings = createSettings("path");
         String originalResponseBody = "<html>Original</html>";
-        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
+        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\"><link rel=\"alternate\" hreflang=\"X-Default\" href=\"https://example.com/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
 
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/", "/", settings, originalResponseBody);;
 
@@ -24,7 +24,7 @@ public class WovnServletFilterTest extends TestCase {
     public void testHtml__OverrideContentLengthTurnedOn__SetsContentLength() throws ServletException, IOException {
         HashMap<String, String> settings = createSettings("path", true);
         String originalResponseBody = "<html>Original</html>";
-        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
+        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\"><link rel=\"alternate\" hreflang=\"X-Default\" href=\"https://example.com/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
         int expectedContentLength = expectedResponseBody.getBytes().length;
 
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/", "/", settings, false, 200, originalResponseBody, expectedContentLength);
@@ -37,7 +37,7 @@ public class WovnServletFilterTest extends TestCase {
     public void testHtmlWithLang() throws ServletException, IOException {
         HashMap<String, String> settings = createSettings("path");
         String originalResponseBody = "<html>Original</html>";
-        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
+        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\"><link rel=\"alternate\" hreflang=\"X-Default\" href=\"https://example.com/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
 
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/ja/", "/", settings, originalResponseBody);;
 
@@ -49,7 +49,7 @@ public class WovnServletFilterTest extends TestCase {
     public void testHtmlWithQueryLang() throws ServletException, IOException {
         HashMap<String, String> settings = createSettings("query");
         String originalResponseBody = "<html>Original</html>";
-        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=query&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/?wovn=ja\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
+        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=en&amp;urlPattern=query&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/?wovn=ja\"><link rel=\"alternate\" hreflang=\"X-Default\" href=\"https://example.com/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
 
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/?wovn=ja", "/", settings, originalResponseBody);;
 
@@ -61,7 +61,7 @@ public class WovnServletFilterTest extends TestCase {
     public void testHtmlWithSubdomain() throws ServletException, IOException {
         HashMap<String, String> settings = createSettings("subdomain");
         String originalResponseBody = "<html>Original</html>";
-        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=subdomain&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://ja.example.com/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
+        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=subdomain&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://ja.example.com/\"><link rel=\"alternate\" hreflang=\"X-Default\" href=\"https://example.com/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
 
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/html; charset=utf-8", "/", "/", settings, originalResponseBody);;
 
@@ -120,7 +120,7 @@ public class WovnServletFilterTest extends TestCase {
     public void testProcessRequestOnce__RequestNotProcessed__ProcessRequest() throws ServletException, IOException {
         HashMap<String, String> settings = createSettings("path");
         String originalResponseBody = "<html>Original</html>";
-        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/search/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/search/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
+        String expectedResponseBody = String.format("<html lang=\"en\"><head><script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=%s\" data-wovnio-type=\"fallback\" async></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/search/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/search/\"><link rel=\"alternate\" hreflang=\"X-Default\" href=\"https://example.com/search/\"><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body>Original</body></html>", Settings.VERSION);
 
         boolean requestIsAlreadyProcessed = false;
         TestUtil.TestFilterResult mock = TestUtil.doServletFilter("text/html", "/search/", "/search/", settings, requestIsAlreadyProcessed, 200, originalResponseBody);

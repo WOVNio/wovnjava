@@ -36,15 +36,100 @@ public class ApiTest extends TestCase {
         assertEquals(expectedHtml, resultingHtml);
     }
 
-    private static String testTranslate(byte[] apiServerResponse, String encoding, int statusCode) throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException {
-        String html = "<html>much content</html>";
-
+    public void testApiParams__NoXDefaultHreflangSetting__FallbackNotSentToApi() throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException {
+        byte[] apiServerResponse = "{\"body\": \"<html><body>response html</body></html>\"}".getBytes();
+        String encoding = "";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
             put("projectToken", "token0");
             put("defaultLang", "en");
             put("supportedLangs", "en,ja,fr");
             put("urlPattern", "path");
         }});
+
+        String expectedRequestBody = "{\"url\":\"https:\\/\\/example.com\\/somepage\\/\"," +
+                        "\"token\":\"token0\"," +
+                        "\"lang_code\":\"ja\"," +
+                        "\"url_pattern\":\"path\"," +
+                        "\"site_prefix_path\":\"\"," +
+                        "\"lang_param_name\":\"wovn\"," +
+                        "\"custom_lang_aliases\":\"{}\"," +
+                        "\"custom_domain_langs\":\"\"," +
+                        "\"product\":\"wovnjava\"," +
+                        "\"version\":\"" + Settings.VERSION + "\"," +
+                        "\"debug_mode\":\"false\"," +
+                        "\"translate_canonical_tag\":\"true\"," +
+                        "\"page_status_code\":\"200\"," +
+                        "\"hreflang_x_default_lang\":\"\"," +
+                        "\"body\":\"\u003Chtml\u003Emuch content\u003C\\/html\u003E\"}";
+
+
+        String resultingHtml = testTranslate(apiServerResponse, encoding, 200, settings, expectedRequestBody);
+        String expectedHtml = "<html><body>response html</body></html>";
+        assertEquals(expectedHtml, resultingHtml);
+    }
+
+    public void testApiParams__HasXDefaultHreflangSetting__SentToApi() throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException {
+        byte[] apiServerResponse = "{\"body\": \"<html><body>response html</body></html>\"}".getBytes();
+        String encoding = "";
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("projectToken", "token0");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,fr");
+            put("urlPattern", "path");
+            put("hreflangXDefaultLang", "fr");
+        }});
+
+        String expectedRequestBody = "{\"url\":\"https:\\/\\/example.com\\/somepage\\/\"," +
+                        "\"token\":\"token0\"," +
+                        "\"lang_code\":\"ja\"," +
+                        "\"url_pattern\":\"path\"," +
+                        "\"site_prefix_path\":\"\"," +
+                        "\"lang_param_name\":\"wovn\"," +
+                        "\"custom_lang_aliases\":\"{}\"," +
+                        "\"custom_domain_langs\":\"\"," +
+                        "\"product\":\"wovnjava\"," +
+                        "\"version\":\"" + Settings.VERSION + "\"," +
+                        "\"debug_mode\":\"false\"," +
+                        "\"translate_canonical_tag\":\"true\"," +
+                        "\"page_status_code\":\"200\"," +
+                        "\"hreflang_x_default_lang\":\"fr\"," +
+                        "\"body\":\"\u003Chtml\u003Emuch content\u003C\\/html\u003E\"}";
+
+
+        String resultingHtml = testTranslate(apiServerResponse, encoding, 200, settings, expectedRequestBody);
+        String expectedHtml = "<html><body>response html</body></html>";
+        assertEquals(expectedHtml, resultingHtml);
+    }
+
+    private static String testTranslate(byte[] apiServerResponse, String encoding, int statusCode) throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException {
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{
+            put("projectToken", "token0");
+            put("defaultLang", "en");
+            put("supportedLangs", "en,ja,fr");
+            put("urlPattern", "path");
+        }});
+
+        String expectedRequestBody = "{\"url\":\"https:\\/\\/example.com\\/somepage\\/\"," +
+                                "\"token\":\"token0\"," +
+                                "\"lang_code\":\"ja\"," +
+                                "\"url_pattern\":\"path\"," +
+                                "\"site_prefix_path\":\"\"," +
+                                "\"lang_param_name\":\"wovn\"," +
+                                "\"custom_lang_aliases\":\"{}\"," +
+                                "\"custom_domain_langs\":\"\"," +
+                                "\"product\":\"wovnjava\"," +
+                                "\"version\":\"" + Settings.VERSION + "\"," +
+                                "\"debug_mode\":\"false\"," +
+                                "\"translate_canonical_tag\":\"true\"," +
+                                "\"page_status_code\":\"" + String.valueOf(statusCode) + "\"," +
+                                "\"hreflang_x_default_lang\":\"\"," +
+                                "\"body\":\"\u003Chtml\u003Emuch content\u003C\\/html\u003E\"}";
+        return testTranslate(apiServerResponse, encoding, statusCode, settings, expectedRequestBody);
+    }
+
+    private static String testTranslate(byte[] apiServerResponse, String encoding, int statusCode, Settings settings, String expectedRequestBody) throws ApiException, IOException, ProtocolException, ConfigurationError, ApiNoPageDataException {
+        String html = "<html>much content</html>";
+        
         UrlLanguagePatternHandler urlLanguagePatternHandler = UrlLanguagePatternHandlerFactory.create(settings);
 
         HttpServletRequest request = MockHttpServletRequest.create("https://example.com/ja/somepage/");
@@ -64,20 +149,6 @@ public class ApiTest extends TestCase {
 
         String encodedApiRequestBody = decompress(requestStream.toByteArray());
         String apiRequestBody = new String(encodedApiRequestBody);
-        String expectedRequestBody = "{\"url\":\"https:\\/\\/example.com\\/somepage\\/\"," +
-                                     "\"token\":\"token0\"," +
-                                     "\"lang_code\":\"ja\"," +
-                                     "\"url_pattern\":\"path\"," +
-                                     "\"site_prefix_path\":\"\"," +
-                                     "\"lang_param_name\":\"wovn\"," +
-                                     "\"custom_lang_aliases\":\"{}\"," +
-                                     "\"custom_domain_langs\":\"\"," +
-                                     "\"product\":\"wovnjava\"," +
-                                     "\"version\":\"" + Settings.VERSION + "\"," +
-                                     "\"debug_mode\":\"false\"," +
-                                     "\"translate_canonical_tag\":\"true\"," +
-                                     "\"page_status_code\":\"" + String.valueOf(statusCode) + "\"," +
-                                     "\"body\":\"\u003Chtml\u003Emuch content\u003C\\/html\u003E\"}";
 
         assertEquals(expectedRequestBody, apiRequestBody);
 
