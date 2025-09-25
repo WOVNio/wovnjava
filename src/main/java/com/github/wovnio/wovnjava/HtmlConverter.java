@@ -188,7 +188,8 @@ class HtmlConverter {
 
     private void appendHrefLang() {
         for (Map.Entry<String, String> hreflang : this.hreflangMap.entrySet()) {
-            if (hreflang.getKey().equals("x-default") && this.hasExistingXDefaultHreflang) {
+            boolean isXDefault = hreflang.getKey().equals("x-default");
+            if (isXDefault && this.hasExistingXDefaultHreflang) {
                 continue;
             }
 
@@ -196,7 +197,9 @@ class HtmlConverter {
             link.attr("rel", "alternate");
             link.attr("hreflang", hreflang.getKey());
             link.attr("href", hreflang.getValue());
-            link.attr("data-wovn", "true");
+            if (isXDefault) {
+                link.attr("data-wovn", "true");
+            }
             doc.head().appendChild(link);
         }
     }
