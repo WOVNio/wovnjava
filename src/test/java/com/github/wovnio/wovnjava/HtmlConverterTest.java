@@ -16,8 +16,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testDisablePrettyPrint() throws ConfigurationError {
-        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head><body>\n " + "hello" + "\t\n</body></html>";
-        String expected = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>\n " + "hello" + "\t\n</body></html>";
+        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"></head><body>\n " + "hello" + "\t\n</body></html>";
+        String expected = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>\n " + "hello" + "\t\n</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -25,8 +25,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveWovnSnippet() throws ConfigurationError {
-        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><script src=\"https://j.wovn.io/1\"></script><script src=\"https://j.dev-wovn.io:3000\"></script><script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script></head><body></body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
+        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><script src=\"https://j.wovn.io/1\"></script><script src=\"https://j.dev-wovn.io:3000\"></script><script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script></head><body></body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -35,8 +35,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveScripts() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><script>alert(1)</script><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>a <script>console.log(1)</script>b</body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><script><!--wovn-marker-0--></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>a <script><!--wovn-marker-1--></script>b</body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><script>alert(1)</script><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>a <script>console.log(1)</script>b</body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><script><!--wovn-marker-0--></script><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>a <script><!--wovn-marker-1--></script>b</body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -45,8 +45,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveHrefLangIfConflicts() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"altername\" hreflang=\"en\" href=\"http://localhost:8080/\"><link rel=\"altername\" hreflang=\"ja\" href=\"http://localhost:8080/ja/\"><link rel=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"></head><body></body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"altername\" hreflang=\"en\" href=\"http://localhost:8080/\"><link rel=\"altername\" hreflang=\"ja\" href=\"http://localhost:8080/ja/\"><link rel=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"></head><body></body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -55,8 +55,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveWovnIgnore() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><div>Hello <span wovn-ignore>Duke</span><span data-wovn-ignore>Silver</span>.</div></body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><div>Hello <span wovn-ignore><!--wovn-marker-0--></span><span data-wovn-ignore><!--wovn-marker-1--></span>.</div></body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><div>Hello <span wovn-ignore>Duke</span><span data-wovn-ignore>Silver</span>.</div></body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><div>Hello <span wovn-ignore><!--wovn-marker-0--></span><span data-wovn-ignore><!--wovn-marker-1--></span>.</div></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -65,11 +65,11 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveClassIgnore() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>" +
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>" +
           "<p class=\"no-ignore\">The pizza needs <b class=\"ingredient\">pineapple</b>, <span class=\"name\">Chad</span>!</p>" +
           "<p class=\"ignore-me\">It's a fruit, <span class=\"name\">Louie</span>!</p>" +
           "</body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>" +
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body>" +
         "<p class=\"no-ignore\">The pizza needs <b class=\"ingredient\"><!--wovn-marker-0--></b>, <span class=\"name\"><!--wovn-marker-1--></span>!</p>" +
         "<p class=\"ignore-me\"><!--wovn-marker-2--></p>" +
         "</body></html>";
@@ -86,8 +86,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveForm() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT type=\"HIDDEN\" name=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"wovn-marker-0\"><input type=\"HIDDEN\" name=\"CSRF_TOKEN\" value=\"wovn-marker-1\"></form></body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT type=\"HIDDEN\" name=\"CSRF_TOKEN\" VALUE=\"RANDOM\"></form></body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"wovn-marker-0\"><input type=\"HIDDEN\" name=\"CSRF_TOKEN\" value=\"wovn-marker-1\"></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -98,8 +98,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveForm__Sanitize__DoubleQuotes() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&test=true&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
-        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&amp;test=true&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&test=true&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
+        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&amp;test=true&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -108,8 +108,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveForm__Sanitize__SingleQuotes() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\'&test=true&#39;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\'></form></body></html>";
-        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&amp;test=true&#39;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\'&test=true&#39;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\'></form></body></html>";
+        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><input type=\"hidden\" name=\"csrf\" value=\"&amp;test=true&#39;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -118,8 +118,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testRemoveForm__MultipleHiddenFields() throws ConfigurationError {
-        String original = "<HTML lang=\"en\"><HEAD><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></HEAD><BODY><FORM>";
-        String expectedRestoredHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form>";
+        String original = "<HTML lang=\"en\"><HEAD><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"></HEAD><BODY><FORM>";
+        String expectedRestoredHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form>";
 
         for (int i = 1; i <= 50; i++) {
             String iStr = Integer.toString(i);
@@ -139,8 +139,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testStrip__Sanitize() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head><body><a title=\"&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></a></body></html>";
-        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><a title=\"&quot;><script >alert(String.fromCharCode(88,83,83))</script>\"></a></body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"></head><body><a title=\"&quot;&gt;&lt;script &gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;\"></a></body></html>";
+        String sanitized = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><a title=\"&quot;><script >alert(String.fromCharCode(88,83,83))</script>\"></a></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -149,8 +149,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testNested() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT type=\"HIDDEN\" name=\"CSRF_TOKEN\" value=\"RANDOM\"></form></body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form wovn-ignore><!--wovn-marker-1--></form></body></html>";
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form wovn-ignore><script></script><input type=\"hidden\" name=\"csrf\" value=\"random\"><INPUT type=\"HIDDEN\" name=\"CSRF_TOKEN\" value=\"RANDOM\"></form></body></html>";
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form wovn-ignore><!--wovn-marker-1--></form></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String html = converter.strip();
@@ -161,13 +161,13 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testConvertWithSitePrefixPath() throws ConfigurationError {
-        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head><body></body></html>";
+        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"></head><body></body></html>";
         String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=path&amp;version=" + Settings.VERSION + "&amp;sitePrefixPath=global\" data-wovnio-type=\"fallback\" async></script>";
         String expectedHrefLangs = "<link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/global/tokyo/\">" +
                                    "<link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/en/tokyo/\">" +
                                    "<link rel=\"alternate\" hreflang=\"th\" href=\"https://site.com/global/th/tokyo/\">";
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = "<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\">" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
+        String expectedHtml = "<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\">" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -182,12 +182,12 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testConvert__HasLangCodeAliasSetting() throws ConfigurationError {
-        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head><body></body></html>";
+        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"></head><body></body></html>";
         String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=path&amp;version=" + Settings.VERSION + "&amp;langCodeAliases={&quot;en&quot;:&quot;en&quot;,&quot;ja&quot;:&quot;japan&quot;}\" data-wovnio-type=\"fallback\" async></script>";
         String expectedHrefLangs = "<link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/japan/tokyo\">" +
                                    "<link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/en/tokyo\">";
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = "<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\">" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
+        String expectedHtml = "<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\">" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -202,12 +202,12 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testConvertWithCustomDomain() throws ConfigurationError {
-        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head><body></body></html>";
+        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"></head><body></body></html>";
         String expectedSnippet = "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=123456&amp;backend=true&amp;currentLang=ja&amp;defaultLang=ja&amp;urlPattern=custom_domain&amp;version=" + Settings.VERSION + "&amp;customDomainLangs={&quot;site.com/english/&quot;:&quot;en&quot;,&quot;site.co.jp/&quot;:&quot;ja&quot;}\" data-wovnio-type=\"fallback\" async></script>";
         String expectedHrefLangs = "<link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.co.jp/tokyo\">" +
                                    "<link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/english/tokyo\">";
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = "<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\">" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
+        String expectedHtml = "<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\">" + expectedSnippet + expectedHrefLangs + expectedContentType + "</head><body></body></html>";
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -222,7 +222,7 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testMixAllCase() throws ConfigurationError {
-        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\">" +
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\">" +
             "<script src=\"//j.wovn.io/1\" data-wovnio=\"key=NCmbvk&amp;backend=true&amp;currentLang=en&amp;defaultLang=en&amp;urlPattern=path&amp;version=0.0.0\" data-wovnio-type=\"backend_without_api\" async></script>" +
             "<script>alert(1)</script>" +
             "<link rel=\"altername\" hreflang=\"en\" href=\"http://localhost:8080/\"><link rel=\"altername\" hreflang=\"ja\" href=\"http://localhost:8080/ja/\"><link rel=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\">" +
@@ -242,7 +242,7 @@ public class HtmlConverterTest extends TestCase {
             "<script>9</script>" +
             "<script>10</script>" +
             "</body></html>";
-        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\">" +
+        String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\">" +
             "<script><!--wovn-marker-0--></script>" +
             "<link rel=\"altername\" hreflang=\"ar\" href=\"http://localhost:8080/ar/\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\">" +
             "</head><body>" +
@@ -280,12 +280,12 @@ public class HtmlConverterTest extends TestCase {
         }};
         Settings settings = TestUtil.makeSettings(option);
 
-        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head><body><a>hello</a></body></html>";
+        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"></head><body><a>hello</a></body></html>";
         String expected = "<html lang=\"en\"";
         String html = this.createHtmlConverter(settings, location, original).convert("en");
         assertTrue("general case - insert lang attribute", stripExtraSpaces(html).indexOf(expected) != -1);
 
-        original = "<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head><body><a>hello</a></body></html>";
+        original = "<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"></head><body><a>hello</a></body></html>";
         expected = "<html lang=\"ja\"";
         html = this.createHtmlConverter(settings, location, original).convert("en");
         assertTrue("lang attribute exists - keep existing lang", stripExtraSpaces(html).indexOf(expected) != -1);
@@ -296,7 +296,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedJaUrl = "http://site.com/has-canonical.html";
         String expectedEnUrl = requestUrl;
 
-        String html = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"http://google.com\"></head></html>";
+        String html = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"http://google.com\"></head></html>";
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -312,7 +312,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
                                    String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"http://google.com\">%s%s%s</head><body></body></html>", expectedSnippet, expectedHrefLangs, expectedContentType);
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"http://google.com\">%s%s%s</head><body></body></html>", expectedSnippet, expectedHrefLangs, expectedContentType);
 
         assertEquals(expectedHtml, result);
     }
@@ -323,7 +323,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedEnUrl = "http://site.com/en/has-canonical.html?foo=bar";
         String canonicalUrl = requestUrl;
 
-        String html = String.format("<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
+        String html = String.format("<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -339,7 +339,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
                                    String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", canonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", canonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
 
         assertEquals(expectedHtml, result);
     }
@@ -351,7 +351,7 @@ public class HtmlConverterTest extends TestCase {
         String canonicalUrl = "http://site.com/has-canonical.html?foo=bar";
         String expectedCanonicalUrl = expectedEnUrl;
 
-        String html = String.format("<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
+        String html = String.format("<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -367,7 +367,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
                                    String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", expectedCanonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", expectedCanonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
 
         assertEquals(expectedHtml, result);
     }
@@ -378,7 +378,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedEnUrl = "http://site.com/en/has-canonical.html?foo=bar";
         String canonicalUrl = "/has-canonical.html?foo=bar";
 
-        String html = String.format("<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
+        String html = String.format("<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -394,7 +394,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
                                    String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", canonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", canonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
 
         assertEquals(expectedHtml, result);
     }
@@ -406,7 +406,7 @@ public class HtmlConverterTest extends TestCase {
         String canonicalUrl = "/has-canonical.html?foo=bar";
         String expectedCanonicalUrl = "http://site.com/en/has-canonical.html?foo=bar";;
 
-        String html = String.format("<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
+        String html = String.format("<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -422,7 +422,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
                                    String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", expectedCanonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", expectedCanonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
 
         assertEquals(expectedHtml, result);
     }
@@ -433,7 +433,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedEnUrl = "http://site.com/en/has-canonical.html?foo=bar";
         String canonicalUrl = "/has-canonical.html?foo=bar";
 
-        String html = String.format("<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
+        String html = String.format("<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"%s\"></head></html>", canonicalUrl);
 
         HashMap<String, String> option = new HashMap<String, String>() {{
             put("defaultLang", "ja");
@@ -449,7 +449,7 @@ public class HtmlConverterTest extends TestCase {
         String expectedHrefLangs = String.format("<link rel=\"alternate\" hreflang=\"ja\" href=\"%s\">", expectedJaUrl) +
                                    String.format("<link rel=\"alternate\" hreflang=\"en\" href=\"%s\">", expectedEnUrl);
         String expectedContentType = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
-        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", canonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
+        String expectedHtml = String.format("<html lang=\"ja\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"canonical\" href=\"%s\">%s%s%s</head><body></body></html>", canonicalUrl, expectedSnippet, expectedHrefLangs, expectedContentType);
 
         assertEquals(expectedHtml, result);
     }
@@ -464,8 +464,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testConvert__ExistingXDefaultHreflang__DoesNotModify() throws ConfigurationError {
-        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"x-Default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head></html>";
-        String expectedConvertedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"x-Default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
+        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"x-Default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head></html>";
+        String expectedConvertedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"x-Default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String convertedHtml = converter.strip();
