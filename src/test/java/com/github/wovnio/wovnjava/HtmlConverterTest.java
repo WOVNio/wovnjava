@@ -464,8 +464,8 @@ public class HtmlConverterTest extends TestCase {
     }
 
     public void testConvert__ExistingXDefaultHreflang__DoesNotModify() throws ConfigurationError {
-        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"x-Default\" href=\"https://customer-existing.com\" data-wovn=\"true\"></head></html>";
-        String expectedConvertedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"x-Default\" href=\"https://customer-existing.com\" data-wovn=\"true\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
+        String original = "<html><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"x-Default\" href=\"https://customer-existing.com\"></head></html>";
+        String expectedConvertedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"x-Default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body></body></html>";
         Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
         HtmlConverter converter = this.createHtmlConverter(settings, location, original);
         String convertedHtml = converter.strip();
