@@ -38,6 +38,7 @@ public class InterceptorTest extends TestCase {
                         "<link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
                         "<link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
                         "<link rel=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
+                        "<link rel=\"alternate\" hreflang=\"x-default\" href=\"https://example.com/\" data-wovn=\"true\">" +
                         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" +
                         "</head><body>test</body></html>";
         assertEquals(expect, stripExtraSpaces(html));
@@ -56,6 +57,7 @@ public class InterceptorTest extends TestCase {
                         "<link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
                         "<link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
                         "<link rel=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
+                        "<link rel=\"alternate\" hreflang=\"x-default\" href=\"https://example.com/\" data-wovn=\"true\">" +
                         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" +
                         "</head><body>test</body></html>";
         assertEquals(expect, stripExtraSpaces(html));
@@ -74,6 +76,7 @@ public class InterceptorTest extends TestCase {
                         "<link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/\">" +
                         "<link rel=\"alternate\" hreflang=\"ja\" href=\"https://example.com/ja/\">" +
                         "<link rel=\"alternate\" hreflang=\"fr\" href=\"https://example.com/fr/\">" +
+                        "<link rel=\"alternate\" hreflang=\"x-default\" href=\"https://example.com/\" data-wovn=\"true\">" +
                         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" +
                         "</head><body>test</body></html>";
         assertEquals(expect, stripExtraSpaces(html));

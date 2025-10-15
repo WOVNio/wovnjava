@@ -313,7 +313,8 @@ public class HeadersTest extends TestCase {
 
 		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
 
-		assertEquals(3, hreflangs.size());
+		assertEquals(4, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("x-default"));
 		assertEquals("https://example.com/home?user=123", hreflangs.get("en"));
 		assertEquals("https://example.com/home/ja?user=123", hreflangs.get("ja"));
 		assertEquals("https://example.com/home/fr?user=123", hreflangs.get("fr"));
@@ -331,7 +332,8 @@ public class HeadersTest extends TestCase {
 
 		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
 
-		assertEquals(2, hreflangs.size());
+		assertEquals(3, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("x-default"));
 		assertEquals("https://example.com/home?user=123", hreflangs.get("ja"));
 		assertEquals("https://example.com/home?user=123&wovn=ko", hreflangs.get("ko"));
     }
@@ -348,7 +350,8 @@ public class HeadersTest extends TestCase {
 
 		HashMap<String, String> hreflangs = sut.getHreflangUrlMap();
 
-		assertEquals(5, hreflangs.size());
+		assertEquals(6, hreflangs.size());
+		assertEquals("https://example.com/home?user=123", hreflangs.get("x-default"));
 		assertEquals("https://example.com/home?user=123", hreflangs.get("ja"));
 		assertEquals("https://ko.example.com/home?user=123", hreflangs.get("ko"));
 		assertEquals("https://th.example.com/home?user=123", hreflangs.get("th"));
