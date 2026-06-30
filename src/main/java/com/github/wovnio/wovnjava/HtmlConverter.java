@@ -226,9 +226,20 @@ class HtmlConverter {
     }
 
     private void replaceNodeToMarkerComment(Element element) {
+        // RCDATA elements (textarea, title) treat inner content as plain text, not HTML.
+        // HTML comment markers would become literal text and leak into form submissions.
+        if (isRcdataElement(element)) {
+            return;
+        }
+
         String commentKey = htmlReplaceMarker.addCommentValue(htmlReplaceMarker.revert(element.html()));
         element.html("");
         element.appendChild(new Comment(commentKey));
+    }
+
+    private boolean isRcdataElement(Element element) {
+        String tagName = element.tagName();
+        return tagName.equals("textarea") || tagName.equals("title");
     }
 
     private void replaceContentType() {

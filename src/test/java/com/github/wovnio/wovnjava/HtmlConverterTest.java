@@ -54,6 +54,27 @@ public class HtmlConverterTest extends TestCase {
         assertEquals(removedHtml, stripExtraSpaces(converter.restore(html)));
     }
 
+    public void testRemoveWovnIgnore__Textarea__LeavesContentUnchanged() throws ConfigurationError {
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><form><textarea data-wovn-ignore name=\"inquiry\"></textarea></form></body></html>";
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
+        String html = converter.strip();
+
+        assertEquals(original, stripExtraSpaces(html));
+        assertEquals(original, stripExtraSpaces(converter.restore(html)));
+    }
+
+    public void testRemoveWovnIgnore__TextareaWithContent__LeavesContentUnchanged() throws ConfigurationError {
+        String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><textarea wovn-ignore>default text</textarea></body></html>";
+        Settings settings = TestUtil.makeSettings(new HashMap<String, String>() {{ put("supportedLangs", "en,fr,ja"); }});
+        HtmlConverter converter = this.createHtmlConverter(settings, location, original);
+        String html = converter.strip();
+
+        assertFalse(html.contains("wovn-marker"));
+        assertEquals(original, stripExtraSpaces(html));
+        assertEquals(original, stripExtraSpaces(converter.restore(html)));
+    }
+
     public void testRemoveWovnIgnore() throws ConfigurationError {
         String original = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><div>Hello <span wovn-ignore>Duke</span><span data-wovn-ignore>Silver</span>.</div></body></html>";
         String removedHtml = "<html lang=\"en\"><head><link rel=\"alternate\" hreflang=\"x-default\" href=\"https://customer-existing.com\"><link rel=\"alternate\" hreflang=\"en\" href=\"https://site.com/global/tokyo/\"><link rel=\"alternate\" hreflang=\"fr\" href=\"https://site.com/fr/global/tokyo/\"><link rel=\"alternate\" hreflang=\"ja\" href=\"https://site.com/ja/global/tokyo/\"></head><body><div>Hello <span wovn-ignore><!--wovn-marker-0--></span><span data-wovn-ignore><!--wovn-marker-1--></span>.</div></body></html>";
