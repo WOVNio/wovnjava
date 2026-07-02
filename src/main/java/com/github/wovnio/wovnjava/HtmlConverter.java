@@ -226,9 +226,18 @@ class HtmlConverter {
     }
 
     private void replaceNodeToMarkerComment(Element element) {
-        String commentKey = htmlReplaceMarker.addCommentValue(htmlReplaceMarker.revert(element.html()));
-        element.html("");
-        element.appendChild(new Comment(commentKey));
+        String tagName = element.tagName();
+        String elementHtml = htmlReplaceMarker.revert(element.html());
+
+        if (tagName.equals("textarea") || tagName.equals("title")) {
+            String key = htmlReplaceMarker.generateKey();
+            htmlReplaceMarker.addValue(key, elementHtml);
+            element.text(key);
+        } else {
+            String commentKey = htmlReplaceMarker.addCommentValue(elementHtml);
+            element.html("");
+            element.appendChild(new Comment(commentKey));
+        }
     }
 
     private void replaceContentType() {
