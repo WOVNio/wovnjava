@@ -226,30 +226,18 @@ class HtmlConverter {
     }
 
     private void replaceNodeToMarkerComment(Element element) {
-        if (isRcdataElement(element)) {
-            replaceRcdataToMarker(element);
-            return;
-        }
-
-        String commentKey = htmlReplaceMarker.addCommentValue(htmlReplaceMarker.revert(element.html()));
-        element.html("");
-        element.appendChild(new Comment(commentKey));
-    }
-
-    private void replaceRcdataToMarker(Element element) {
-        String original = htmlReplaceMarker.revert(element.text());
-        if (original.contains("wovn-marker-")) {
-            return;
-        }
-
-        String key = htmlReplaceMarker.generateKey();
-        htmlReplaceMarker.addValue(key, original);
-        element.text(key);
-    }
-
-    private boolean isRcdataElement(Element element) {
         String tagName = element.tagName();
-        return tagName.equals("textarea") || tagName.equals("title");
+        String elementHtml = htmlReplaceMarker.revert(element.html());
+
+        if (tagName.equals("textarea") || tagName.equals("title")) {
+            String key = htmlReplaceMarker.generateKey();
+            htmlReplaceMarker.addValue(key, elementHtml);
+            element.text(key);
+        } else {
+            String commentKey = htmlReplaceMarker.addCommentValue(elementHtml);
+            element.html("");
+            element.appendChild(new Comment(commentKey));
+        }
     }
 
     private void replaceContentType() {
